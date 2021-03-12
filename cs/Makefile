@@ -1,6 +1,6 @@
 export TEXINPUTS=../tex//:
 
-all: prace.pdf abstrakt.pdf
+all: prace.pdf abstrakt.pdf abstraktEn.pdf
 
 # LaTeX je potreba spustit nekolikrat, aby spravne spocital odkazy
 prace.pdf: prace.tex $(wildcard *.tex) literatura.bib prace.xmpdata
@@ -12,6 +12,9 @@ prace.pdf: prace.tex $(wildcard *.tex) literatura.bib prace.xmpdata
 abstrakt.pdf: abstrakt.tex abstrakt.xmpdata
 	pdflatex $<
 
+abstraktEn.pdf: abstraktEn.tex abstraktEn.xmpdata
+	pdflatex $<
+
 clean:
 	rm -f *.log *.dvi *.aux *.toc *.lof *.lot *.out *.bbl *.blg *.xmpi
-	rm -f prace.pdf abstrakt.pdf
+	rm -f prace.pdf abstrakt.pdf abstraktEn.pdf
