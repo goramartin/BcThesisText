@@ -1,7 +1,7 @@
 % Metadata k uložení do PDF, podrobnější popis viz dokumentace balíčku pdfx.
 
-\Author{Jméno Příjmení}
-\Title{Název práce}
-\Keywords{klíčová slova\sep další taková\sep ještě jiná}
-\Subject{Abstrakt práce}
+\Author{Martin Gora}
+\Title{Vylepšení agregace dotazovacího enginu pro grafové databáze}
+\Keywords{grafové databáze\sep agregace dat\sep proudové systémy}
+\Subject{Abstrakt práce blah blha}
 \Publisher{Univerzita Karlova}
