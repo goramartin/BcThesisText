@@ -20,7 +20,7 @@ As-Skitter    & 1696415   & 11095298 \\
 \bottomrule
 \end{tabular}
 
-\caption{Grafy použité k experimentu}
+\caption{Vybrané grafy použité k experimentu}
 \label{tab.grafBase}
 \end{table}
 
@@ -158,7 +158,8 @@ As-Skitter    & 82 \\
 \label{tab.seeds}
 \end{table}
 
-Aby nedocházelo k omylům při opakování experimentů, uvádíme útržek kódu použitého nastavení programu PropertyGenerator.cs dle tabulky generovaných vlastností \ref{tab.grafProps}:
+Program generuje hodnoty definované ve statické položce \verb+propGenerators+ a zachovává jejich pořadí ve výsledném datovém souboru.
+Aby nedocházelo k omylům při opakování experimentů, uvádíme útržek kódu použité inicializace položky dle tabulky generovaných vlastností \ref{tab.grafProps} pro všechny tři grafy:
 \begin{code}
     static PropGenerator[] propGenerators = new PropGenerator[]
     {
