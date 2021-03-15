@@ -1,0 +1,19 @@
+Ted delam zpracovani vysledku:
+
+zacit mini uvodem, co vlastne delame a co je cil
+
+pokracovat vyberem dat a dogenerovavanim properties, citace na grafy, ukazat soubor, odkaz na prilohy
+
+pak udelat vyber dotazu a proc byly vybrany
+
+metodika - postup, ukazat soubory, odkaz na mereni z codeproject, hw pozadavky
+
+pred diskuzi udelat shrnuti vysledku pro matchovani
+
+diskuze: dve moznosti, bud vysledky a az pak diskuze, nebo to prolinat
+
+
+pozn:
+tabulku pujdou do priloh
+originalni grafy a dogenerovane veci taky
+pak samotny skript na dogenerovani a setrideni dat
