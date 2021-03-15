@@ -1,3 +1,182 @@
 \chapter{Experiment}
 
+Aby bylo možné porovnat stávající řešení s nově navrženým řešením na poli rychlosti zpracovávání dotazů, podrobili jsme
+jsme zmíněná řešení experimentu. Vykonaný experiment proběhne na reálných grafech různé velikosti s uměle vygenerovanými
+vlastnostmi naležící vrcholům. Nad danými grafy provedeme vybrané množství dotazů, které nám umožní sledovat a porovnat chování řešení v různých situacích. 
 
+\section{Příprava dat}
+
+Pro náš experiment jsme použili tři orientované grafy z databáze SNAP\footnote{\citet{snapnets}}.
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{lrr}
+\toprule
+\mc{} & \mc{\textbf{\#Vrcholů}} & \mc{\textbf{\#Hran}} \\
+\midrule
+Amazon0601     & 403394 & 3387388 \\
+WebBerkStan & 685230   & 7600595 \\
+As-Skitter    & 1696415   & 11095298 \\
+\bottomrule
+\end{tabular}
+
+\caption{Grafy použité k experimentu}
+\label{tab.grafBase}
+\end{table}
+
+\begin{itemize}
+
+\item \textbf{Amazon0601:} Jedná se o graf vytvořený procházením webových stránek Amazonu na základě featury „Customers Who Bought This Item Also Bought“ ze dne 1.6.2003. V grafu existuje hrana z $i$ do $j$, pokud je produkt $i$ často zakoupen s produktem $j$.
+
+\item \textbf{WebBerkStan:} Graf popisuje odkazy webových stránek domén \url{https://www.stanford.edu/} a \url{https://www.berkeley.edu/}. Vrcholem je webová stránka a hrana představuje hypertextový odkaz mezi stránkami.
+
+\item \textbf{As-Skitter:} Topologický graf internetu vytvořený programem \verb+traceroute+ z roku 2005. Ačkoliv je uvedeno, že daný graf je neorientovaný, vnitřní hlavička souborů uvádí opak, proto jsme se daný graf rozhodli přesto využít.
+
+\end{itemize}
+
+Samotné grafy obsahují pouze seznam hran. Následuje ukázka souboru grafu Amazon0601:
+
+\begin{code}
+# Directed graph (each unordered pair of nodes is saved once): 
+    Amazon0601.txt: 
+# Amazon product co-purchaisng network from June 01 2003
+# Nodes: 403394 Edges: 3387388
+# FromNodeId	ToNodeId
+0	1
+0	2
+0	3
+0	4
+0	5
+0	6
+0	7
+\end{code}
+
+\subsection{Transformace grafových dat}
+
+Abychom mohli dané grafy použít, museli jsme je přetransformovat do platného formátu vstupních souborů dotazovacího enginu. Výstupem transformace budou soubory popisující schéma vrcholů/hran NodeTypes.txt/EdgeTypes.txt a samotné datové soubory vrcholů/hran Nodes.txt/Edges.txt.
+V našem případě graf bude obsahovat pouze jeden typ hrany a jeden typ vrcholu. Dané omození ovlivňuje pouze vyhledávání vzoru, které není přínosné pro náš experiment, protože snižuje počet nalezených výsledků. 
+
+Cílem transformace je získat formát datových souborů Nodes.txt/Edges.txt odpovídající schématu:
+\begin{code}
+Soubor EdgeTypes.txt:
+[
+{
+"Kind": "BasicEdge"
+}
+]
+
+Soubor NodeTypes.txt:
+[
+{
+"Kind": "BasicNode"
+}
+]
+
+\end{code}
+
+Program provádějící transformaci je obsahem přílohy zdrojových kódů \ref{prilohy.kod} v souboru GrapDataBuilder.cs, který vygeneruje datové soubory Nodes.txt a Edges.txt dle výše vypsaného schématu.
+Pro připomenutí zmíníme, že prvni sloupeček v datových souborech Edges.txt a Nodes.txt odpovídá unikátnímu \verb+ID+ v rámci celého grafu.
+Výstupní soubor Edges.txt bude obsahovat hrany setřízené v rostoucím pořadí dle položky \verb+FromNodeId+ s přidělenými \verb+IDs+ od hodnoty \verb+ID+ posledního vrcholu v souboru Nodes.txt.
+Samotný soubor Nodes.txt obsahuje setřizené vrcholy podle \verb+ID+ v rostoucím pořadí. Je nutné zmínit, že setřízení dat podle \verb+ID+ není nežádoucí, jelikož nezaručuje nic o seskupení vrcholů v daném grafu.
+
+Následuje ukázka výstupních souborů transformace pro graf Amazon0601:  
+\begin{code}
+Soubor Edges.txt:
+403395 BasicEdge 0 1
+403396 BasicEdge 0 2
+403397 BasicEdge 0 3
+403398 BasicEdge 0 4
+...
+
+Soubor Nodes.txt:
+0 BasicNode 
+1 BasicNode 
+2 BasicNode 
+3 BasicNode
+...
+\end{code}
+
+\subsection{Generování Properties vrcholů}
+
+Posledním krokem přípravy dat pro experiment je vygenerovat Properties vrcholů.
+Jsme si vědomi, že nejideálnější způsob testování je graf s reálnými daty, nicméně dané omezení jsme se rozhodli aplikovat kvůli problematickému hledání vhodných dat s triviální transformací do vhodného vstupního formátu.
+Proto pro každý vrchol náhodně vygenerujeme hodnoty tří Properties. 
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{lll}
+\toprule
+\mc{\textbf{Property}} & \mc{\textbf{Type}}  & \mc{\textbf{Popis}}\\
+\midrule
+PropOne     & integer &  \verb+Int32+ s rozsahem $[0, 100000]$ \\
+PropTwo & integer   & \verb+Int32+ s rozsahem $[$\verb+Int32.MinValue+$,$ \verb+Int32.MaxValue+$]$ \\
+PropThree    & string &  délka $[2, 8]$ ASCII znaků s rozsahem $[33, 126]$ \\
+\bottomrule
+\end{tabular}
+
+\caption{Generované Properties vrcholů}
+\label{tab.grafProps}
+\end{table}
+
+\begin{itemize}
+
+\item \textbf{PropTwo} hodnoty jsou rovněž generováný střídavě kladně a záporně, aby nastal rovnoměrný počet záporných a kladných hodnot.
+
+\item \textbf{PropThree} hodnoty jsou pouze ASCII znaky z rozsahu $[33, 126]$. Dané omezení výplývá z vlastností dotazovacího enginu, aby bylo možné bez obtíží načíst datový soubor.
+
+\end{itemize}
+
+Na základě tabulky generovaných Properties \ref{tab.grafProps} následuje ukázka upraveného souboru schématu pro vrcholy:
+\begin{code}
+Soubor NodeTypes.txt:
+[
+{
+"Kind": "BasicNode",
+"PropOne": "integer",
+"PropTwo": "integer",
+"PropThree": "string"
+}
+]
+\end{code}
+
+Výsledné hodnoty Properties do souborů Edges.txt/Nodes.txt jsou vygenerovány pomocí programu, který používá generátor náhodných čísel. Program je obsažen v příloze zdrojových kódů \ref{prilohy.kod} v souboru PropertyGenerator.cs.
+Pro každý graf bylo použité jiné \verb+Seed+ pro inicializaci náhodného generátoru v daném programu. Samotná \verb+Seeds+ byla vygenerována rovněž náhodně.
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{lr}
+\toprule
+\mc{} & \mc{\textbf{Seed}} \\
+\midrule
+Amazon0601     & 429185 \\
+WebBerkStan &  20022 \\
+As-Skitter    & 82 \\
+\bottomrule
+\end{tabular}
+
+\caption{Inicializační hodnoty náhodného generátoru pro PropertyGenerator.cs}
+\label{tab.seeds}
+\end{table}
+
+Aby nedocházelo k omylům při opakování experimentů, uvádíme útržek kódu použitého nastavení programu PropertyGenerator.cs dle tabulky generovaných vlastností \ref{tab.grafProps}:
+\begin{code}
+    static PropGenerator[] propGenerators = new PropGenerator[]
+    {
+        new Int32Generator(0, 100_000, false),
+        new Int32Generator(true),
+        new StringASCIIGenerator(2, 8, 33, 126)
+    };
+\end{code}
+
+Timto jsme dokončili poslední nutný krok k vygenerování platných vstupních dat pro dotazovací engine. Použité grafy k transformaci a výsledné datové soubory jsou obsahem přílohy grafů pro experiment \ref{prilohy.grafy}
+
+\section{Výběr testovaných dotazů}
+
+V této sekci provedeme výběr a popis dotazů, které budou objektem testování.
+
+\section{Metodika}
+
+C
+\subsection{HW}
+
+\section{Výsledky a diskuze}
