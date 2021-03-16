@@ -168,8 +168,8 @@ Timto jsme dokončili poslední nutný krok k vygenerování platných vstupníc
 \section{Výběr dotazů}
 
 Dotazy použité při experimentu dělíme do tří kategorií a to Match, Order by a Group by.
-Pro připomenutí zmíníme, že proměnné použité v jiných částech než Match způsobují ukládání daných promenných do tabulky.
-Přidělené zkratky dotazům budou uváděný ve výsledcích experimentu místo celých dotazů. 
+Pro připomenutí zmíníme, že proměnné použité v jiných částech než Match způsobují ukládání daných proměnných do tabulky.
+Přidělené zkratky dotazům budou uváděný ve výsledcích experimentu namísto celých dotazů. 
 
 \subsection{Dotazy Match}
 
@@ -209,11 +209,10 @@ M\_Q4 & select x, y, z match (x) -> (y) -> (z); \\
 \subsection{Dotazy Order by}
 
 \begin{table}[!htb]
-\small
 \centering
 \begin{tabular}{ll}
 \toprule
-\mc{Zkratka} & \mc{\textbf{Dotaz}} \\
+\mc{\textbf{Zkratka}} & \mc{\textbf{Dotaz}} \\
 \midrule
 O\_Q1 & select y match (x) -> (y) -> (z) order by y; \\
 O\_Q2 & select y, x match (x) -> (y) -> (z) order by y, x;\\
@@ -246,7 +245,7 @@ O\_Q4 & select x.PropThree match (x) -> (y) -> (z) order by x.PropThree \\
 \centering
 \begin{tabular}{ll}
 \toprule
-\mc{Zkratka} & \mc{\textbf{Dotaz}} \\
+\mc{\textbf{Zkratka}} & \mc{\textbf{Dotaz}} \\
 \midrule
 G\_Q1 & select min(y.PropOne), avg(y.PropOne) match (x) -> (y) -> (z);\\
 G\_Q2 & select min(y.PropOne), avg(y.PropOne) match (x) -> (y) -> (z) group by y;\\
@@ -262,7 +261,7 @@ G\_Q7 & select min(x.PropOne), avg(x.PropOne) match (x) -> (y) -> (z) group by x
 \label{tab.dotazG}
 \end{table}
 
-Pro volbu agregačních funkcí jsme zvolili \verb+min(y.PropOne)+ a \verb+avg(y.PropOne)+, protože představují netriviální praci narozdíl od funkcí \verb+sum+/\verb+count+.
+Pro volbu agregačních funkcí jsme zvolili \verb+min(y.PropOne)+ a \verb+avg(y.PropOne)+, protože představují netriviální práci narozdíl od funkcí \verb+sum+/\verb+count+.
 V případě \verb+min(y.PropOne)+ v paralelních řešeních dochází k mechanismu \verb+CompareExchange+ a u \verb+avg(y.PropOne)+ dojde ke dvou atomickým přičtením.
 
 \begin{itemize}
@@ -281,8 +280,72 @@ V případě \verb+min(y.PropOne)+ v paralelních řešeních dochází k mechan
 
 \section{Metodika}
 
+Pro provedení experimentu jsme připravili jednoduchý benchmark, který je součástí příloh zdrojových kódů \ref{prilohy.kod}.
+Paralelizování řešení jsme otestovali při zatížení všech dostupných jader procesoru (argument \verb+ThreadCount = 8+).
+Při spuštění programu dojde k navýšení priority procesu, aby docházelo k méně častému vykonávání ostatních procesů na pozadí během testování. 
+Pro \verb+ThreadCount = 1+ navíc dochází k navýšení priority hlavního vlákna. 
+To není možné u paralelního testování, protože vlákna běží v nativním \verb+ThreadPool+, který neumožňuje navyšování priority vláken.
 
+Následuje ukázka hlavní smyčky benchmarku:
 
+\begin{code}
+...
+ WarmUp(...);
+...
+double[] times = new double[repetitions];
+for (int i = 0; i < repetitions; i++)
+{
+    CleanGC();
+    
+    var q = Query.Create(..., false); 
+
+    timer.Restart();
+
+    q.Compute();
+
+    timer.Stop();
+    times[i] = timer.ElapsedMilliseconds;
+
+    ...
+}
+\end{code}
+Hlavní smyčka benchmarku se skládá z 5-ti opakování warm up fáze následovanou 15-ti opakováními měřené části. 
+
+V konstruktoru \verb+Query.Create(..., false)+ argument \verb+false+ způsobuje, že vykonávaný dotaz neprovede \verb+select+ část dotazu, která není cílem testování.
+
+Před měřením dochází vždy k úklidu haldy. 
+\begin{code}
+static void CleanGC()
+{
+    GC.Collect();
+    GC.WaitForPendingFinalizers();
+    GC.Collect();
+}
+\end{code}
+K měření uplynulé doby  jsme použili nativní třídu C\# \verb+Stopwatch+, protože náš hardware a operační systém podporuje high-resolution performance counter.
+Pro interpretaci výsledků jsme zvolili medián naměřených hodnot, který je doprovázen minimem a maximem.
+
+\subsection{Argumenty pro jednotlivé grafy}
+
+Pro měření argumenty \verb+FixedArraySize+ a \verb+VerticesPerThread+ jsme volili následovně:
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{lrr}
+\toprule
+\mc{} & \mc{\textbf{FixedArraySize}} & \mc{\textbf{VerticesPerThread}} \\
+\midrule
+Amazon0601 &  4194304 & 512 \\
+WebBerkStan & 4194304 & 512 \\
+As-Skitter & 8388608 & 1024\\
+\bottomrule
+\end{tabular}
+
+\caption{Výber argumentů konstruktoru dotazu pro grafy}
+\label{tab.args}
+\end{table}
+
+Dané argumenty se nám nejvíce osvědčili v průběhu vývoje dotazovacího enginu. Vyhledávání vzoru na nich docilovalo nejrychlejších výsledků.
 
 \subsection{Hardwarová specifikace}
 
@@ -293,6 +356,8 @@ Všechny testy proběhly na notebooku Lenovo ThinkPad E14 Gen. 2 verze 20T6000MC
 \item 24GB RAM DDR4 s 3200 MHz
 \end{itemize}
 
-
+Každému testování předcházel studený reboot systému a odpojení od internetu. 
+V průběhu testování neběžel žádný klientský proces kromě benchmarku a nativních systémových procesů. 
+Rovněž, použitý notebook byl napájen po celou dobu testování.
 
 \section{Výsledky a diskuze}
