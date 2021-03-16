@@ -268,11 +268,13 @@ V případě \verb+min(y.PropOne)+ v paralelních řešeních dochází k mechan
 
 \item \textbf{G\_Q1} testuje single group Group by. Vše je agregováno pouze do jedné skupiny. 
 
-\item \textbf{G\_Q2} testuje vytváření skupin podle \verb+ID+ vrcholů y
+\item \textbf{G\_Q2} testuje vytváření skupin podle \verb+ID+ vrcholů y.
 
 \item \textbf{G\_Q3} přidává k \textbf{G\_Q2} overhead za ukládání a zpracovávání (hash + compare) další proměnné.
 
 \item \textbf{G\_Q4} testuje vytváření skupin náhodně vygenerovaných hodnot Int32 (viz \ref{tab.grafProps}). 
+
+\item \textbf{G\_Q5} testuje situaci, kdy při paralelním zpracování žádné jiné vlákno během vyhledávaní nenajde stejnou hodnotu.
 
 \item \textbf{G\_Q7} testuje situaci, kdy dojde k rozprostření několika stejných hodnot v grafu. Dodává větší šanci, že nějaké vlákno během paralelního zpracování dostane stejnou skupinu jako vlákno jiné.
 
