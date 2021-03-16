@@ -311,7 +311,7 @@ for (int i = 0; i < repetitions; i++)
     ...
 }
 \end{code}
-Hlavní smyčka benchmarku se skládá z 5-ti opakování warm up fáze následovanou 15-ti opakováními měřené části. 
+Hlavní smyčka benchmarku se skládá z 5-ti opakování warm up fáze následovanou 15-ti opakováními měřené části. Měřená část obaluje pouze vykonání dotazu bez konstrukce. 
 
 V konstruktoru \verb+Query.Create(..., false)+ argument \verb+false+ způsobuje, že vykonávaný dotaz neprovede \verb+select+ část dotazu, která není cílem testování.
 
@@ -326,6 +326,8 @@ static void CleanGC()
 \end{code}
 K měření uplynulé doby  jsme použili nativní třídu C\# \verb+Stopwatch+, protože náš hardware a operační systém podporuje high-resolution performance counter.
 Pro interpretaci výsledků jsme zvolili medián naměřených hodnot, který je doprovázen minimem a maximem.
+
+Benchmark společně s dotazovacím enginem a potřebnými knihovnami byl přeložen v \verb+Release+ módu Visual Studia 2019 pro platformu x64 cílící na .NET Framework 4.8. 
 
 \subsection{Argumenty pro jednotlivé grafy}
 
