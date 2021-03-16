@@ -1,8 +1,9 @@
 \chapter{Experiment}
 
-Aby bylo možné porovnat stávající řešení s nově navrženým řešením na poli rychlosti zpracovávání dotazů, podrobili jsme
-jsme zmíněná řešení experimentu. Vykonaný experiment proběhne na reálných grafech různé velikosti s uměle vygenerovanými
-vlastnostmi naležící vrcholům. Nad danými grafy provedeme vybrané množství dotazů, které nám umožní sledovat a porovnat chování řešení v různých situacích. 
+Aby bylo možné porovnat stávající řešení s nově navrženým řešením na poli rychlosti zpracovávání dotazů, podrobili jsme zmíněná řešení experimentu. 
+Vykonaný experiment proběhne na reálných grafech různé velikosti s uměle vygenerovanými vlastnostmi naležící vrcholům. 
+Nad danými grafy provedeme vybrané množství dotazů, které nám umožní sledovat a porovnat chování řešení v různých situacích.
+Experiment bude zakončen diskuzí nad výsledky. 
 
 \section{Příprava dat}
 
@@ -20,7 +21,7 @@ As-Skitter    & 1696415   & 11095298 \\
 \bottomrule
 \end{tabular}
 
-\caption{Vybrané grafy použité k experimentu}
+\caption{Vybrané grafy pro experiment}
 \label{tab.grafBase}
 \end{table}
 
@@ -30,11 +31,12 @@ As-Skitter    & 1696415   & 11095298 \\
 
 \item \textbf{WebBerkStan:} Graf popisuje odkazy webových stránek domén \url{https://www.stanford.edu/} a \url{https://www.berkeley.edu/}. Vrcholem je webová stránka a hrana představuje hypertextový odkaz mezi stránkami.
 
-\item \textbf{As-Skitter:} Topologický graf internetu vytvořený programem \verb+traceroute+ z roku 2005. Ačkoliv je uvedeno, že daný graf je neorientovaný, vnitřní hlavička souborů uvádí opak, proto jsme se daný graf rozhodli přesto využít.
+\item \textbf{As-Skitter:} Topologický graf internetu z roku 2005 vytvořený programem \verb+traceroutes+. Ačkoliv je uvedeno, že daný graf je neorientovaný, vnitřní hlavička souboru uvádí opak, proto jsme se daný graf rozhodli přesto využít.
 
 \end{itemize}
 
-Samotné grafy obsahují pouze seznam hran. Následuje ukázka souboru grafu Amazon0601:
+Samotné grafy obsahují pouze seznam hran. Abychom mohli dané grafy využít, bylo nutné je transformovat a vygenerovat k nim Properties na vrcholech. 
+Při příkladu transformace budeme vycházet z následující ukázky hlavičky (graf Amazon0601):
 
 \begin{code}
 # Directed graph (each unordered pair of nodes is saved once): 
@@ -46,62 +48,51 @@ Samotné grafy obsahují pouze seznam hran. Následuje ukázka souboru grafu Ama
 0	2
 0	3
 0	4
-0	5
-0	6
-0	7
 \end{code}
 
 \subsection{Transformace grafových dat}
 
-Abychom mohli dané grafy použít, museli jsme je přetransformovat do platného formátu vstupních souborů dotazovacího enginu. Výstupem transformace budou soubory popisující schéma vrcholů/hran NodeTypes.txt/EdgeTypes.txt a samotné datové soubory vrcholů/hran Nodes.txt/Edges.txt.
-V našem případě graf bude obsahovat pouze jeden typ hrany a jeden typ vrcholu. Dané omození ovlivňuje pouze vyhledávání vzoru, které není přínosné pro náš experiment, protože snižuje počet nalezených výsledků. 
+Výstupem transformace budou soubory popisující schéma vrcholů/hran NodeTypes.txt/EdgeTypes.txt a datové soubory vrcholů/hran Nodes.txt/Edges.txt.
+V našem případě graf bude obsahovat pouze jeden typ hrany a jeden typ vrcholu. Dané omezení ovlivňuje pouze vyhledávání vzoru, které není určující pro náš experiment. 
 
-Cílem transformace je získat formát datových souborů Nodes.txt/Edges.txt odpovídající schématu:
+Ukázka zvoleného schématu pro Nodes.txt/Edges.txt:
 \begin{code}
 Soubor EdgeTypes.txt:
 [
-{
-"Kind": "BasicEdge"
-}
+{ "Kind": "BasicEdge" }
 ]
 
 Soubor NodeTypes.txt:
-[
-{
-"Kind": "BasicNode"
-}
+[ 
+{ "Kind": "BasicNode" }
 ]
 
 \end{code}
 
-Program provádějící transformaci je obsahem přílohy zdrojových kódů \ref{prilohy.kod} v souboru GrapDataBuilder.cs, který vygeneruje datové soubory Nodes.txt a Edges.txt dle výše vypsaného schématu.
-Pro připomenutí zmíníme, že prvni sloupeček v datových souborech Edges.txt a Nodes.txt odpovídá unikátnímu \verb+ID+ v rámci celého grafu.
-Výstupní soubor Edges.txt bude obsahovat hrany setřízené v rostoucím pořadí dle položky \verb+FromNodeId+ s přidělenými \verb+IDs+ od hodnoty \verb+ID+ posledního vrcholu v souboru Nodes.txt.
+Generování souborů Edges.txt/Nodes.txt provádí program, který je obsahem přílohy zdrojových kódů \ref{prilohy.kod} v souboru GrapDataBuilder.cs.
+Výstupní soubor Edges.txt bude obsahovat hrany v rostoucím pořadí dle položky \verb+FromNodeId+ z originálního souboru s přidělenými \verb+IDs+ od hodnoty \verb+ID+ posledního vrcholu v souboru Nodes.txt.
 Samotný soubor Nodes.txt obsahuje setřizené vrcholy podle \verb+ID+ v rostoucím pořadí. Je nutné zmínit, že setřízení dat podle \verb+ID+ není nežádoucí, jelikož nezaručuje nic o seskupení vrcholů v daném grafu.
+Pro připomenutí zmíníme, že prvni sloupeček v datových souborech Edges.txt a Nodes.txt odpovídá unikátnímu \verb+ID+ v rámci celého grafu.
 
 Následuje ukázka výstupních souborů transformace pro graf Amazon0601:  
 \begin{code}
 Soubor Edges.txt:
 403395 BasicEdge 0 1
 403396 BasicEdge 0 2
-403397 BasicEdge 0 3
-403398 BasicEdge 0 4
 ...
 
 Soubor Nodes.txt:
 0 BasicNode 
 1 BasicNode 
-2 BasicNode 
-3 BasicNode
 ...
 \end{code}
 
 \subsection{Generování Properties vrcholů}
 
-Posledním krokem přípravy dat pro experiment je vygenerovat Properties vrcholů.
-Jsme si vědomi, že nejideálnější způsob testování je graf s reálnými daty, nicméně dané omezení jsme se rozhodli aplikovat kvůli problematickému hledání vhodných dat s triviální transformací do vhodného vstupního formátu.
+Posledním krokem přípravy dat pro experiment je vygenerování Properties vrcholů.
+Jsme si vědomi, že nejideálnější způsob testování je graf s reálnými daty, nicméně dané omezení jsme se rozhodli aplikovat kvůli problematickému hledání vhodných dat, které nevyžadují netriviální transformaci do vhodného vstupního formátu.
 Proto pro každý vrchol náhodně vygenerujeme hodnoty tří Properties. 
-
+\clearpage
 \begin{table}[!htb]
 \centering
 \begin{tabular}{lll}
@@ -130,17 +121,17 @@ Na základě tabulky generovaných Properties \ref{tab.grafProps} následuje uk�
 \begin{code}
 Soubor NodeTypes.txt:
 [
-{
+{ 
 "Kind": "BasicNode",
 "PropOne": "integer",
 "PropTwo": "integer",
-"PropThree": "string"
+"PropThree": "string" 
 }
 ]
 \end{code}
 
 Výsledné hodnoty Properties do souborů Edges.txt/Nodes.txt jsou vygenerovány pomocí programu, který používá generátor náhodných čísel. Program je obsažen v příloze zdrojových kódů \ref{prilohy.kod} v souboru PropertyGenerator.cs.
-Pro každý graf bylo použité jiné \verb+Seed+ pro inicializaci náhodného generátoru v daném programu. Samotná \verb+Seeds+ byla vygenerována rovněž náhodně.
+Pro každý graf bylo použité jiné \verb+Seed+ pro inicializaci náhodného generátoru. Samotná \verb+Seeds+ byla vygenerována rovněž náhodně.
 
 \begin{table}[!htb]
 \centering
@@ -160,6 +151,8 @@ As-Skitter    & 82 \\
 
 Program generuje hodnoty definované ve statické položce \verb+propGenerators+ a zachovává jejich pořadí ve výsledném datovém souboru.
 Aby nedocházelo k omylům při opakování experimentů, uvádíme útržek kódu použité inicializace položky dle tabulky generovaných vlastností \ref{tab.grafProps} pro všechny tři grafy:
+\clearpage
+
 \begin{code}
     static PropGenerator[] propGenerators = new PropGenerator[]
     {
@@ -169,15 +162,137 @@ Aby nedocházelo k omylům při opakování experimentů, uvádíme útržek kó
     };
 \end{code}
 
+
 Timto jsme dokončili poslední nutný krok k vygenerování platných vstupních dat pro dotazovací engine. Použité grafy k transformaci a výsledné datové soubory jsou obsahem přílohy grafů pro experiment \ref{prilohy.grafy}
 
-\section{Výběr testovaných dotazů}
+\section{Výběr dotazů}
 
-V této sekci provedeme výběr a popis dotazů, které budou objektem testování.
+Dotazy použité při experimentu dělíme do tří kategorií a to Match, Order by a Group by.
+Pro připomenutí zmíníme, že proměnné použité v jiných částech než Match způsobují ukládání daných promenných do tabulky.
+Přidělené zkratky dotazům budou uváděný ve výsledcích experimentu místo celých dotazů. 
+
+\subsection{Dotazy Match}
+
+Každý dotaz provádí vyhledáváním vzoru v grafu.
+Níže zmíněné dotazy nám při experimentu pomohou oddělit čas agregací od času stráveném vyhledáváním vzoru.
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{ll}
+\toprule
+\mc{\textbf{Zkratka}} & \mc{\textbf{Dotaz}} \\
+\midrule
+M\_Q1 & select count(*) match (x) -> (y) -> (z); \\
+M\_Q2 & select x match (x) -> (y) -> (z); \\
+M\_Q3 & select x, y match (x) -> (y) -> (z); \\
+M\_Q4 & select x, y, z match (x) -> (y) -> (z); \\
+\bottomrule
+\end{tabular}
+
+\caption{Dotazy Match}
+\label{tab.dotazM}
+\end{table}
+
+\begin{itemize}
+
+\item \textbf{M\_Q1} testuje pouze dobu strávenou vyhledáváním vzoru.
+
+\item \textbf{M\_Q2} testuje vyhledávání společně s ukládáním proměnné x do tabulky výsledků.
+
+\item \textbf{M\_Q3} testuje vyhledávání společně s ukládáním proměnné x a y do tabulky výsledků.
+
+\item \textbf{M\_Q4} testuje vyhledávání společně s ukládáním proměnné x, y a z do tabulky výsledků.
+\end{itemize}
+
+\clearpage
+
+\subsection{Dotazy Order by}
+
+\begin{table}[!htb]
+\small
+\centering
+\begin{tabular}{ll}
+\toprule
+\mc{Zkratka} & \mc{\textbf{Dotaz}} \\
+\midrule
+O\_Q1 & select y match (x) -> (y) -> (z) order by y; \\
+O\_Q2 & select y, x match (x) -> (y) -> (z) order by y, x;\\
+O\_Q3 & select x.PropTwo match (x) -> (y) -> (z) order by x.PropTwo;\\
+O\_Q4 & select x.PropThree match (x) -> (y) -> (z) order by x.PropThree \\
+\bottomrule
+\end{tabular}
+
+\caption{Dotazy Order by}
+\label{tab.dotazO}
+\end{table}
+
+\begin{itemize}
+
+\item \textbf{O\_Q1} testuje třídění podle \verb+ID+ vrcholů y. 
+
+\item \textbf{O\_Q2} přidává do kontextu \textbf{O\_Q1} overhead za porovnávání a ukládání další proměnné.
+
+\item \textbf{O\_Q3} testuje třídění náhodně vygenerovaných hodnot Int32 (viz \ref{tab.grafProps}).
+
+\item \textbf{O\_Q4} testuje třídění náhodně vygenerovaných řetězců (viz \ref{tab.grafProps}).
+
+\end{itemize}
+
+
+\subsection{Dotazy Group by}
+
+\begin{table}[!htb]
+\scriptsize
+\centering
+\begin{tabular}{ll}
+\toprule
+\mc{Zkratka} & \mc{\textbf{Dotaz}} \\
+\midrule
+G\_Q1 & select min(y.PropOne), avg(y.PropOne) match (x) -> (y) -> (z);\\
+G\_Q2 & select min(y.PropOne), avg(y.PropOne) match (x) -> (y) -> (z) group by y;\\
+G\_Q3 & select min(y.PropOne), avg(y.PropOne) match (x) -> (y) -> (z) group by y, x;\\
+G\_Q4 & select min(x.PropOne), avg(x.PropOne) match (x) -> (y) -> (z) group by x.PropTwo;\\
+G\_Q5 & select min(x.PropOne), avg(x.PropOne) match (x) -> (y) -> (z) group by x;\\
+G\_Q6 & select min(x.PropOne), avg(x.PropOne) match (x) -> (y) -> (z) group by x, y;\\
+G\_Q7 & select min(x.PropOne), avg(x.PropOne) match (x) -> (y) -> (z) group by x.PropOne;\\
+\bottomrule
+\end{tabular}
+
+\caption{Dotazy Group by}
+\label{tab.dotazG}
+\end{table}
+
+Pro volbu agregačních funkcí jsme zvolili \verb+min(y.PropOne)+ a \verb+avg(y.PropOne)+, protože představují netriviální praci narozdíl od funkcí \verb+sum+/\verb+count+.
+V případě \verb+min(y.PropOne)+ v paralelních řešeních dochází k mechanismu \verb+CompareExchange+ a u \verb+avg(y.PropOne)+ dojde ke dvou atomickým přičtením.
+
+\begin{itemize}
+
+\item \textbf{G\_Q1} testuje single group Group by. Vše je agregováno pouze do jedné skupiny. 
+
+\item \textbf{G\_Q2} testuje vytváření skupin podle \verb+ID+ vrcholů y
+
+\item \textbf{G\_Q3} přidává k \textbf{G\_Q2} overhead za ukládání a zpracovávání (hash + compare) další proměnné.
+
+\item \textbf{G\_Q4} testuje vytváření skupin náhodně vygenerovaných hodnot Int32 (viz \ref{tab.grafProps}). 
+
+\item \textbf{G\_Q7} testuje situaci, kdy dojde k rozprostření několika stejných hodnot v grafu. Dodává větší šanci, že nějaké vlákno během paralelního zpracování dostane stejnou skupinu jako vlákno jiné.
+
+\end{itemize}
 
 \section{Metodika}
 
-C
-\subsection{HW}
+
+
+
+\subsection{Hardwarová specifikace}
+
+Všechny testy proběhly na notebooku Lenovo ThinkPad E14 Gen. 2 verze 20T6000MCK s operačním systémem Windows 10 x64.
+\begin{itemize} 
+\item 8 jádrový procesor AMD Ryzen 7 4700U (2GHz, TB 4.1GHz)
+
+\item 24GB RAM DDR4 s 3200 MHz
+\end{itemize}
+
+
 
 \section{Výsledky a diskuze}
