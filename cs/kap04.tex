@@ -195,13 +195,13 @@ M\_Q4 & select x, y, z match (x) -> (y) -> (z); \\
 
 \begin{itemize}
 
-\item \textbf{M\_Q1} testuje pouze dobu strávenou vyhledáváním vzoru.
+\item M\_Q1 testuje pouze dobu strávenou vyhledáváním vzoru.
 
-\item \textbf{M\_Q2} testuje vyhledávání společně s ukládáním proměnné x do tabulky výsledků.
+\item M\_Q2 testuje vyhledávání společně s ukládáním proměnné x do tabulky výsledků.
 
-\item \textbf{M\_Q3} testuje vyhledávání společně s ukládáním proměnné x a y do tabulky výsledků.
+\item M\_Q3 testuje vyhledávání společně s ukládáním proměnné x a y do tabulky výsledků.
 
-\item \textbf{M\_Q4} testuje vyhledávání společně s ukládáním proměnné x, y a z do tabulky výsledků.
+\item M\_Q4 testuje vyhledávání společně s ukládáním proměnné x, y a z do tabulky výsledků.
 \end{itemize}
 
 \clearpage
@@ -227,13 +227,10 @@ O\_Q4 & select x.PropThree match (x) -> (y) -> (z) order by x.PropThree \\
 
 \begin{itemize}
 
-\item \textbf{O\_Q1} testuje třídění podle \verb+ID+ vrcholů y. 
-
-\item \textbf{O\_Q2} přidává do kontextu \textbf{O\_Q1} overhead za porovnávání a ukládání další proměnné.
-
-\item \textbf{O\_Q3} testuje třídění náhodně vygenerovaných hodnot Int32 (viz \ref{tab.grafProps}).
-
-\item \textbf{O\_Q4} testuje třídění náhodně vygenerovaných řetězců (viz \ref{tab.grafProps}).
+\item O\_Q1 testuje třídění podle \verb+ID+ vrcholů y. 
+\item O\_Q2 přidává do kontextu O\_Q1 overhead za porovnávání a ukládání další proměnné.
+\item O\_Q3 testuje třídění náhodně vygenerovaných hodnot Int32 (viz \ref{tab.grafProps}).
+\item O\_Q4 testuje třídění náhodně vygenerovaných řetězců (viz \ref{tab.grafProps}).
 
 \end{itemize}
 
@@ -261,22 +258,17 @@ G\_Q7 & select min(x.PropOne), avg(x.PropOne) match (x) -> (y) -> (z) group by x
 \label{tab.dotazG}
 \end{table}
 
-Pro volbu agregačních funkcí jsme zvolili \verb+min(y.PropOne)+ a \verb+avg(y.PropOne)+, protože představují netriviální práci narozdíl od funkcí \verb+sum+/\verb+count+.
-V případě \verb+min(y.PropOne)+ v paralelních řešeních dochází k mechanismu \verb+CompareExchange+ a u \verb+avg(y.PropOne)+ dojde ke dvou atomickým přičtením.
+Pro výpočet agregačních funkcí jsme zvolili funkce \verb+min+ a \verb+avg+, protože představují netriviální práci narozdíl od funkcí \verb+sum+/\verb+count+.
+V případě \verb+min+ v paralelních řešeních dochází k mechanismu \verb+CompareExchange+ a u \verb+avg+ dojde ke dvou atomickým přičtením.
 
 \begin{itemize}
 
-\item \textbf{G\_Q1} testuje single group Group by. Vše je agregováno pouze do jedné skupiny. 
-
-\item \textbf{G\_Q2} testuje vytváření skupin podle \verb+ID+ vrcholů y.
-
-\item \textbf{G\_Q3} přidává k \textbf{G\_Q2} overhead za ukládání a zpracovávání (hash + compare) další proměnné.
-
-\item \textbf{G\_Q4} testuje vytváření skupin náhodně vygenerovaných hodnot Int32 (viz \ref{tab.grafProps}). 
-
-\item \textbf{G\_Q5} testuje situaci, kdy při paralelním zpracování žádné jiné vlákno během vyhledávaní nenajde stejnou hodnotu.
-
-\item \textbf{G\_Q7} testuje situaci, kdy dojde k rozprostření několika stejných hodnot v grafu. Dodává větší šanci, že nějaké vlákno během paralelního zpracování dostane stejnou skupinu jako vlákno jiné.
+\item G\_Q1 testuje single group Group by. Vše je agregováno pouze do jedné skupiny. 
+\item G\_Q2 testuje vytváření skupin podle \verb+ID+ vrcholů y.
+\item G\_Q3 přidává k G\_Q2 overhead za ukládání a zpracovávání (hash + compare) další proměnné.
+\item G\_Q4 testuje vytváření skupin náhodně vygenerovaných hodnot Int32 (viz \ref{tab.grafProps}). 
+\item G\_Q5 testuje situaci, kdy při paralelním zpracování žádné jiné vlákno během vyhledávaní nenajde stejnou hodnotu.
+\item G\_Q7 testuje situaci, kdy dojde k rozprostření několika stejných hodnot v grafu. Dodává větší šanci, že nějaké vlákno během paralelního zpracování dostane stejnou skupinu jako vlákno jiné.
 
 \end{itemize}
 
@@ -297,23 +289,21 @@ Následuje ukázka hlavní smyčky benchmarku:
 double[] times = new double[repetitions];
 for (int i = 0; i < repetitions; i++)
 {
-    CleanGC();
-    
+    CleanGC(); 
     var q = Query.Create(..., false); 
-
     timer.Restart();
 
     q.Compute();
 
     timer.Stop();
     times[i] = timer.ElapsedMilliseconds;
-
     ...
 }
 \end{code}
-Hlavní smyčka benchmarku se skládá z 5-ti opakování warm up fáze následovanou 15-ti opakováními měřené části. Měřená část obaluje pouze vykonání dotazu bez konstrukce. 
-
+Hlavní smyčka benchmarku se skládá z 5-ti opakování warm up fáze následovanou 15-ti opakováními měřené části. 
+Měřená část obaluje pouze vykonání dotazu bez konstrukce dotazu. 
 V konstruktoru \verb+Query.Create(..., false)+ argument \verb+false+ způsobuje, že vykonávaný dotaz neprovede \verb+select+ část dotazu, která není cílem testování.
+Výsledná doba je tedy čas strávený částí Match (výhledávání vzoru) společně s částí Group/Order by. 
 
 Před měřením dochází vždy k úklidu haldy. 
 \begin{code}
@@ -327,9 +317,8 @@ static void CleanGC()
 K měření uplynulé doby  jsme použili nativní třídu C\# \verb+Stopwatch+, protože náš hardware a operační systém podporuje high-resolution performance counter.
 Pro interpretaci výsledků jsme zvolili medián naměřených hodnot, který je doprovázen minimem a maximem.
 
-Benchmark společně s dotazovacím enginem a potřebnými knihovnami byl přeložen v \verb+Release+ módu Visual Studia 2019 pro platformu x64 cílící na .NET Framework 4.8. 
 
-\subsection{Argumenty pro jednotlivé grafy}
+\subsection{Volitelné argumenty konstruktoru dotazu}
 
 Pro měření argumenty \verb+FixedArraySize+ a \verb+VerticesPerThread+ jsme volili následovně:
 
@@ -360,8 +349,16 @@ Všechny testy proběhly na notebooku Lenovo ThinkPad E14 Gen. 2 verze 20T6000MC
 \item 24GB RAM DDR4 s 3200 MHz
 \end{itemize}
 
+\subsection{Příprava hardwaru}
+
 Každému testování předcházel studený reboot systému a odpojení od internetu. 
 V průběhu testování neběžel žádný klientský proces kromě benchmarku a nativních systémových procesů. 
 Rovněž, použitý notebook byl napájen po celou dobu testování.
+
+\subsection{Překlad}
+
+Benchmark společně s dotazovacím enginem a potřebnými knihovnami byl přeložen v \verb+Release+ módu Visual Studia 2019 pro platformu x64 cílící na .NET Framework 4.8. 
+
+
 
 \section{Výsledky a diskuze}
