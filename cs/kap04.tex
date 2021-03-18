@@ -6,6 +6,7 @@ Nad danými grafy provedeme vybrané množství dotazů, které nám umožní sl
 Experiment bude zakončen diskuzí nad výsledky. 
 
 \section{Příprava dat}
+\label{expr.graphs}
 
 Pro náš experiment jsme použili tři orientované grafy z databáze SNAP\footnote{\citet{snapnets}}.
 
@@ -166,6 +167,7 @@ Aby nedocházelo k omylům při opakování experimentů, uvádíme útržek kó
 Timto jsme dokončili poslední nutný krok k vygenerování platných vstupních dat pro dotazovací engine. Použité grafy k transformaci a výsledné datové soubory jsou obsahem přílohy grafů pro experiment \ref{prilohy.grafy}
 
 \section{Výběr dotazů}
+\label{expr.dotazy}
 
 Dotazy použité při experimentu dělíme do tří kategorií a to Match, Order by a Group by.
 Pro připomenutí zmíníme, že proměnné použité v jiných částech než Match způsobují ukládání daných proměnných do tabulky.
@@ -359,6 +361,46 @@ Rovněž, použitý notebook byl napájen po celou dobu testování.
 
 Benchmark společně s dotazovacím enginem a potřebnými knihovnami byl přeložen v \verb+Release+ módu Visual Studia 2019 pro platformu x64 cílící na .NET Framework 4.8. 
 
-
-
 \section{Výsledky a diskuze}
+
+V této sekci prezentujeme naměřená data pro všechny tři grafy (\ref{expr.graphs}), které jsme podrobili dotazům z sekce \ref{expr.dotazy}.
+
+\subsection{Výsledky Match}
+
+Stávající a vylepšené verze Group/Order by jsou značně ovlivněny vyhledáváním vzoru. Řešení Half-Streamed a Streamed řešení zpracovává výsledky v moment jejich nalezení, zatímco Normal řešení je zpracovává po dokončení celého hledání.
+Proto uvádíme výsledky a analýzu dotazů Match zvlášť, aby bylo možné sledovat čas výhradně strávený vyhledáváním a uložením všech nalezených výsledků do tabulky.
+
+\begin{figure}[!htb]
+\includegraphics[width=\linewidth]{../img/amazonMatch.pdf}\centering
+\caption{Doba vykonání dotazů Match pro graf Amazon0601. Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 32373599.}
+\label{figure.amazonMatch}
+\end{figure}
+
+\begin{figure}[!htb]
+\includegraphics[width=\linewidth]{../img/webberkstanMatch.pdf}\centering
+\caption{Doba vykonání dotazů Match pro graf WebBerkStan. Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 222498869.}
+\label{figure.webberkstanMatch}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[!htb]
+\includegraphics[width=\linewidth]{../img/skitterMatch.pdf}\centering
+\caption{Doba vykonání dotazů Match pro graf As-Skitter. Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 453674558.}
+\label{figure.skitterMatch}
+\end{figure}
+
+Zbytek sekce věnujeme popisu obrázků \ref{figure.amazonMatch}, \ref{figure.webberkstanMatch} a \ref{figure.skitterMatch}. Paralelizace startovního prohledávacího vrcholu (tj. každé vlákno dostává opakovaně množství vrcholů k prohledání určené argumentem \verb+VerticesPerThread+, dokud se nevyčerpají všechny vrcholy grafu) dociluje zrychlení v rozmezí $4.17$-krát až $5.56$-krát pro všechny grafy.
+Výsledky pro jednotlivé dotazy dopadly podle našeho očekávání. Dotaz M\_Q1 provádí pouze vyhledávání výsledků bez ukládání do tabulky a je nejrychlejší. 
+Všechny ostatní dotazy dosahují zpomalení závíslé na počtu ukládaných proměnných (počet ukládaných proměnných definuje část Select), tedy čím více proměnných k uložení tím je vykonání pomalejší a to platí i pro paralelní verzi. 
+Pro představu, každá proměnná (element grafu) je uložena do vlastního sloupečku, který je lokální pro vlákno (\verb+List<Element[FixedArraySize]>+). Lokalita sloupečků vede na potřebu mergování výsledků vláken. 
+Nicméně, díky ukládání do polí fixní délky nastává nutnost pouze zarovnat poslední nezaplněná pole, zbytek práce mergování je jen přesunutí několika pointrů na pole. 
+Tento proces je paralelizovaný pouze přes sloupečky, tedy v dotazu M\_Q2 mergování beží pouze v jednom vlákně a proto obsahuje nejvyšší skok rychlosti mezi dotazem před a dotazem po. 
+Obecně vidíme, že ukládání výsledků nepřináší až tak velkou přítež na dobu vykonávání jako paměťovou, kdy všechny výsledky jsou uloženy v paměti. 
+Například, všechny dotazy na grafu As-Skitter (obrázek \ref{figure.skitterMatch}), vygenerují 453674558 výsledků, což představuje na x64 platformě 3.629 GB pro jeden sloupeček.
+Zmíněné poznatky použijeme při analýze experimentů pro Group/Order by.
+
+\clearpage
+
+\subsection{Výsledky Order by}
+
