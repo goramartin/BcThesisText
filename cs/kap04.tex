@@ -240,20 +240,20 @@ O\_Q4 & select x.PropThree match (x) -> (y) -> (z) order by x.PropThree \\
 \subsection{Dotazy Group by}
 
 \begin{table}[!htb]
-\scriptsize
 \centering
 \begin{tabular}{ll}
 \toprule
 \mc{\textbf{Zkratka}} & \mc{\textbf{Dotaz}} \\
 \midrule
-G\_Q1 & select min(y.PropOne), avg(y.PropOne) match (x) -> (y) -> (z);\\
-G\_Q2 & select min(y.PropOne), avg(y.PropOne) match (x) -> (y) -> (z) group by y;\\
-G\_Q3 & select min(y.PropOne), avg(y.PropOne) match (x) -> (y) -> (z) group by y, x;\\
-G\_Q4 & select min(x.PropOne), avg(x.PropOne) match (x) -> (y) -> (z) group by x.PropTwo;\\
-G\_Q5 & select min(x.PropOne), avg(x.PropOne) match (x) -> (y) -> (z) group by x;\\
-G\_Q6 & select min(x.PropOne), avg(x.PropOne) match (x) -> (y) -> (z) group by x, y;\\
-G\_Q7 & select min(x.PropOne), avg(x.PropOne) match (x) -> (y) -> (z) group by x.PropOne;\\
+G\_Q1 & select min(y.PropOne), avg(y.PropOne) \_M;\\
+G\_Q2 & select min(y.PropOne), avg(y.PropOne) \_M group by y;\\
+G\_Q3 & select min(y.PropOne), avg(y.PropOne) \_M group by y, x;\\
+G\_Q4 & select min(x.PropOne), avg(x.PropOne) \_M group by x.PropTwo;\\
+G\_Q5 & select min(x.PropOne), avg(x.PropOne) \_M group by x;\\
+G\_Q6 & select min(x.PropOne), avg(x.PropOne) \_M group by x, y;\\
+G\_Q7 & select min(x.PropOne), avg(x.PropOne) \_M group by x.PropOne;\\
 \bottomrule
+\multicolumn{2}{l}{\footnotesize \textit{Pozn:} \_M = match (x) -> (y) -> (z).}
 \end{tabular}
 
 \caption{Dotazy Group by}
@@ -302,6 +302,7 @@ for (int i = 0; i < repetitions; i++)
     ...
 }
 \end{code}
+
 Hlavní smyčka benchmarku se skládá z 5-ti opakování warm up fáze následovanou 15-ti opakováními měřené části. 
 Měřená část obaluje pouze vykonání dotazu bez konstrukce dotazu. 
 V konstruktoru \verb+Query.Create(..., false)+ argument \verb+false+ způsobuje, že vykonávaný dotaz neprovede \verb+select+ část dotazu, která není cílem testování.
@@ -316,6 +317,7 @@ static void CleanGC()
     GC.Collect();
 }
 \end{code}
+
 K měření uplynulé doby  jsme použili nativní třídu C\# \verb+Stopwatch+, protože náš hardware a operační systém podporuje high-resolution performance counter.
 Pro interpretaci výsledků jsme zvolili medián naměřených hodnot, který je doprovázen minimem a maximem.
 
@@ -361,6 +363,8 @@ Rovněž, použitý notebook byl napájen po celou dobu testování.
 
 Benchmark společně s dotazovacím enginem a potřebnými knihovnami byl přeložen v \verb+Release+ módu Visual Studia 2019 pro platformu x64 cílící na .NET Framework 4.8. 
 
+\clearpage
+
 \section{Výsledky a diskuze}
 
 V této sekci prezentujeme naměřená data pro všechny tři grafy (\ref{expr.graphs}), které jsme podrobili dotazům z sekce \ref{expr.dotazy}.
@@ -370,25 +374,26 @@ V této sekci prezentujeme naměřená data pro všechny tři grafy (\ref{expr.g
 Stávající a vylepšené verze Group/Order by jsou značně ovlivněny vyhledáváním vzoru. Řešení Half-Streamed a Streamed řešení zpracovává výsledky v moment jejich nalezení, zatímco Normal řešení je zpracovává po dokončení celého hledání.
 Proto uvádíme výsledky a analýzu dotazů Match zvlášť, aby bylo možné sledovat čas výhradně strávený vyhledáváním a uložením všech nalezených výsledků do tabulky.
 
-\begin{figure}[!htb]
+\begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonMatch.pdf}\centering
 \caption{Doba vykonání dotazů Match pro graf Amazon0601. Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 32373599.}
 \label{figure.amazonMatch}
 \end{figure}
 
-\begin{figure}[!htb]
+\begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanMatch.pdf}\centering
 \caption{Doba vykonání dotazů Match pro graf WebBerkStan. Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 222498869.}
 \label{figure.webberkstanMatch}
 \end{figure}
 
-\clearpage
-
-\begin{figure}[!htb]
+\begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/skitterMatch.pdf}\centering
 \caption{Doba vykonání dotazů Match pro graf As-Skitter. Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 453674558.}
 \label{figure.skitterMatch}
 \end{figure}
+
+\clearpage
+
 
 Zbytek sekce věnujeme popisu obrázků \ref{figure.amazonMatch}, \ref{figure.webberkstanMatch} a \ref{figure.skitterMatch}. Paralelizace startovního prohledávacího vrcholu (tj. každé vlákno dostává opakovaně množství vrcholů k prohledání určené argumentem \verb+VerticesPerThread+, dokud se nevyčerpají všechny vrcholy grafu) dociluje zrychlení v rozmezí $4.17$-krát až $5.56$-krát pro všechny grafy.
 Výsledky pro jednotlivé dotazy dopadly podle našeho očekávání. Dotaz M\_Q1 provádí pouze vyhledávání výsledků bez ukládání do tabulky a je nejrychlejší. 
@@ -399,8 +404,6 @@ Tento proces je paralelizovaný pouze přes sloupečky, tedy v dotazu M\_Q2 merg
 Obecně vidíme, že ukládání výsledků nepřináší až tak velkou přítež na dobu vykonávání jako paměťovou, kdy všechny výsledky jsou uloženy v paměti. 
 Například, všechny dotazy na grafu As-Skitter (obrázek \ref{figure.skitterMatch}), vygenerují 453674558 výsledků, což představuje na x64 platformě 3.629 GB pro jeden sloupeček.
 Zmíněné poznatky použijeme při analýze experimentů pro Group/Order by.
-
-\clearpage
 
 \subsection{Výsledky Order by}
 
