@@ -376,7 +376,7 @@ U paralelního řešení Streamed jsou výsledky zpracovány globálně, zatímc
 
 \subsection{Výsledky Match}
 
-Stávající a vylepšené verze Group/Order by jsou značně ovlivněny vyhledáváním vzoru. Řešení Half-Streamed a Streamed řešení zpracovává výsledky v moment jejich nalezení, zatímco Normal řešení je zpracovává po dokončení celého hledání.
+Stávající a vylepšené verze Group/Order by jsou značně ovlivněny vyhledáváním vzoru. 
 Proto uvádíme výsledky a analýzu dotazů Match zvlášť, aby bylo možné sledovat čas výhradně strávený vyhledáváním a uložením všech nalezených výsledků do tabulky.
 
 \begin{figure}[!htp]
@@ -453,14 +453,20 @@ Samotná přihrádka obsahuje opět tabulku a indexační strom přistupné pomo
 Při porovnávání je nutné mít na paměti, že lokálně bežící části používájí cachování popsané v sekci (TODO).  
 
 Nyní budeme prezetovat výsledky paralelizace (obrázky \ref{figure.amazonOrderPar} a \ref{figure.webberkstanOrderPar}).
-Pro dotazy O\_Q1 a O\_Q2 vidíme u Streamed řešení mnohonásobný rozdíl vůči ostatním řešením, protože přihrádky jsou rozděleny na základě rozsahu typu klíče, tj. \verb+[Int32.MinValue, Int32.MaxValue]+.
+Pro dotazy O\_Q1 a O\_Q2 vidíme u Streamed řešení mnohonásobný rozdíl vůči ostatním řešením, protože přihrádky jsou rozděleny na základě rozsahu typu klíče (např. pro O\_Q3 \verb+[Int32.MinValue, Int32.MaxValue]+).
 Avšak, hodnoty třídění spadaní do rozsahu \verb+ID+ vrcholů grafu, což představuje rozsah $\approx [0,\#vrcholů]$. 
-Rozsah hodnot třídění spadá vždy do jedné přihrádky a výsledná doba je rovna doby single thread řešení s overheadem za přistupovaný zámek.
-U dotazů O\_Q3 a O\_Q4 je tříděno pomocí hodnot vygenerovaných náhodně spadající do celého rozsahu typu klíče a předčil všechna ostatní řešení. 
+Rozsah hodnot třídění spadá vždy do jedné přihrádky a výsledná doba je rovna době single thread řešení s overheadem za přistupovaný zámek.
+U dotazů O\_Q3 a O\_Q4 je tříděno pomocí hodnot vygenerovaných náhodně spadající do celého rozsahu typu klíče a zde Streamed řešení předčilo všechna ostatní. 
+Pro budoucí rozšíření by chtělo zvážit vytvoření statistik rozsahů jednotlivých Properties, aby bylo možné lépe vytvořit rozdělení přihrádek.
 
-Half-Streamed řešení se přibližuje Normal řešení v prvních dvou dotazech a překonává jej v třetím i čtvrtém dotazu pro řešení používající ABTreeValueAccumulator.
+Half-Streamed řešení se přibližuje Normal řešení v prvních dvou dotazech a překonává jej ve třetím i čtvrtém dotazu pro řešení používající ABTreeValueAccumulator.
 U třetího a čtvrtého dotazu se porovnává pomocí Properties. V single thread zpracovávání jsme viděli overhead za dané porovnání.
-V druhém kroku u daného Half-Streamed řešení dochází k mergování pouze akumulovaných skupin, což rapidně sníží počet porovnávání a tady odtud výhoda oproti Normal Merge sort řešení.
+V druhém kroku u daného Half-Streamed řešení dochází k mergování pouze akumulovaných skupin, což rapidně sníží počet porovnávání při mergi a odtud výhoda oproti Normal Merge sort řešení. 
+To samé platí u Streamed řešení, protože počáteční rozhashování způsobí vkládání do mnohonásobně menší skupiny výsledků.
+
+Zajímavý výsledek testování je i poměr velikosti zrychlení vylepšených řešení, kdy zrychlení Normal řešení zaostavá. 
+Implementace paralelního Merge sortu funguje na principu postupného rozdělování a při každém rozdělení se vytváří nové \verb+Tasks+ pro \verb+ThreadPool+.
+U vylepšených řešení běži jedna metoda pro každé vlákno po dobu celého zpracování. Jestli se jedná o hlavní důvod poznatku by vyžadovalo dalšího testování. 
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonOrderByPar.pdf}\centering
@@ -473,3 +479,9 @@ V druhém kroku u daného Half-Streamed řešení dochází k mergování pouze 
 \caption{Doba vykonání dotazů Order by pro graf WebBerkStan (sekce \ref{tab.grafBase}).  Běh osmi vláken. Počet tříděných výsledků je 222498869.}
 \label{figure.webberkstanOrderPar}
 \end{figure}
+
+\clearpage
+
+\subsection{Výsledky Group by}
+
+asdksflrk jr arjl r t
