@@ -414,14 +414,15 @@ Zmíněné poznatky použijeme při analýze experimentů pro Group/Order by.
 
 Z důvodu časové a prostorové složitosti třídění na grafu As-Skitter jsme se rozhodli jej vynechat pro Order by dotazy.
 
-Vylepšená řešení při přichozím výsledku jej uloží do tabulky (stejné tabulky jako v řešení Normal) a následně vloží index výsledku v tabulce do indexovací struktury, tj. v našem případě $(a, b)$-strom\footnote{\citet{dataLecture}}, kde $b=2a$. 
+Vylepšená řešení při přichozím výsledku jej uloží do tabulky (stejné tabulky jako v řešení Normal) a následně vloží index výsledku v tabulce do indexovací struktury, tj. v našem případě $(a, b)$-strom\footnote{\citet[03. (a,b)-trees]{dataLecture}}, kde $b=2a$. 
 Používáme $b=256$.
 V řešení ABTree se jedná o obecný $(a, b)$-strom, zatímco řešení ABTreeValueAccumulator výsledky (indexy) mající stejnou hodnotu klíčů třídění uloží do \verb+List<int>+.
+Zástupce Normal řešení je Merge sort\footnote{\citet{hpcsharp}}.
 
 Začneme řešením běžícím v jednom vlákně, tj. obrázky  \ref{figure.amazonOrderST} a \ref{figure.webberkstanOrderST}.
 Můžeme si všimnout, že výsledky vypadají v rámci daných grafů konzistentně pro každý dotaz.
 Ani jedno z vylepšených řešení nedokázalo porazit mód Normal, což odpovídá našim předpokladům. 
-Je to protože daný strom podléhá režii za insert $\Theta(\log n \cdot (a/\log a))$\footnote{\citet[03. (a,b)-trees str. 6]{dataLecture}}, kdy dochází k častému alokování nových vrcholů a překopírovávání prvků při splitu.
+Je to protože daný strom podléhá režii za insert $\Theta(\log n \cdot (a/\log a))$ (\citet[03. (a,b)-trees str. 6]{dataLecture}), kdy dochází k častému alokování nových vrcholů a překopírovávání prvků při splitu.
 Nejproblematičtější část je množství tříděných výsledků, kdy počet samotných hodnot klíčů třídění je omezen počtem vrcholů v grafu (tabulka \ref{tab.grafBase}). 
 Daná situace vede k vytváření posloupnosti stejných hodnot ve vrcholech a následné nemožnosti využít jejich podstromy. 
 Celý problém jsme vyřešelili v řešení ABTreeValueAccumulator, kdy se duplicitní hodnoty ukládají do zmíněného pole a tím omezujeme velikost výsledného stromu. 
@@ -457,7 +458,7 @@ Pro dotazy O\_Q1 a O\_Q2 vidíme u Streamed řešení mnohonásobný rozdíl vů
 Avšak, hodnoty třídění spadaní do rozsahu \verb+ID+ vrcholů grafu, což představuje rozsah $\approx [0,\#vrcholů]$. 
 Rozsah hodnot třídění spadá vždy do jedné přihrádky a výsledná doba je rovna době single thread řešení s overheadem za přistupovaný zámek.
 U dotazů O\_Q3 a O\_Q4 je tříděno pomocí hodnot vygenerovaných náhodně spadající do celého rozsahu typu klíče a zde Streamed řešení předčilo všechna ostatní. 
-Pro budoucí rozšíření by chtělo zvážit vytvoření statistik rozsahů jednotlivých Properties, aby bylo možné lépe vytvořit rozdělení přihrádek.
+Pro budoucí rozšíření by bylo nutné zvážit vytvoření statistik rozsahů jednotlivých Properties, aby bylo možné lépe vytvořit rozdělení přihrádek.
 
 Half-Streamed řešení se přibližuje Normal řešení v prvních dvou dotazech a překonává jej ve třetím i čtvrtém dotazu pro řešení používající ABTreeValueAccumulator.
 U třetího a čtvrtého dotazu se porovnává pomocí Properties. V single thread zpracovávání jsme viděli overhead za dané porovnání.
