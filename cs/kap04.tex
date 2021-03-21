@@ -359,6 +359,7 @@ Každému testování předcházel studený reboot systému a odpojení od inter
 V průběhu testování neběžel žádný klientský proces kromě benchmarku a nativních systémových procesů. 
 Rovněž, použitý notebook byl napájen po celou dobu testování.
 
+
 \subsection{Překlad}
 
 Benchmark společně s dotazovacím enginem a potřebnými knihovnami byl přeložen v \verb+Release+ módu Visual Studia 2019 pro platformu x64 cílící na .NET Framework 4.8. 
@@ -369,6 +370,10 @@ Benchmark společně s dotazovacím enginem a potřebnými knihovnami byl přelo
 
 V této sekci prezentujeme naměřená data pro všechny tři grafy (\ref{expr.graphs}), které jsme podrobili dotazům z sekce \ref{expr.dotazy}.
 
+U grafů Group/Order by se držíme značení odpovídající z kapitoly implementace (tj. ve tvaru (mód enginu): (Název řešení) (způsob ukládání výsledků u Group by)? )
+Pro připomenutí zmíníme, že mód Normal vykonává Group/Order by až po dokončení vyhledávání, vylepšené módy Streamed a Half-Streamed je vykonávájí v průběhu vyhledávání.
+U paralelního řešení Streamed jsou výsledky zpracovány globálně, zatímco u Half-Streamed řešení dochází k lokálnímu zpracování zakončeném mergováním.
+
 \subsection{Výsledky Match}
 
 Stávající a vylepšené verze Group/Order by jsou značně ovlivněny vyhledáváním vzoru. Řešení Half-Streamed a Streamed řešení zpracovává výsledky v moment jejich nalezení, zatímco Normal řešení je zpracovává po dokončení celého hledání.
@@ -376,29 +381,29 @@ Proto uvádíme výsledky a analýzu dotazů Match zvlášť, aby bylo možné s
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonMatch.pdf}\centering
-\caption{Doba vykonání dotazů Match pro graf Amazon0601. Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 32373599.}
+\caption{Doba vykonání dotazů Match pro graf Amazon0601 (sekce \ref{tab.grafBase}). Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 32373599.}
 \label{figure.amazonMatch}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanMatch.pdf}\centering
-\caption{Doba vykonání dotazů Match pro graf WebBerkStan. Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 222498869.}
+\caption{Doba vykonání dotazů Match pro graf WebBerkStan (sekce \ref{tab.grafBase}). Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 222498869.}
 \label{figure.webberkstanMatch}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/skitterMatch.pdf}\centering
-\caption{Doba vykonání dotazů Match pro graf As-Skitter. Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 453674558.}
+\caption{Doba vykonání dotazů Match pro graf As-Skitter (sekce \ref{tab.grafBase}). Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 453674558.}
 \label{figure.skitterMatch}
 \end{figure}
 
 \clearpage
 
-
 Zbytek sekce věnujeme popisu obrázků \ref{figure.amazonMatch}, \ref{figure.webberkstanMatch} a \ref{figure.skitterMatch}. Paralelizace startovního prohledávacího vrcholu (tj. každé vlákno dostává opakovaně množství vrcholů k prohledání určené argumentem \verb+VerticesPerThread+, dokud se nevyčerpají všechny vrcholy grafu) dociluje zrychlení v rozmezí $4.17$-krát až $5.56$-krát pro všechny grafy.
 Výsledky pro jednotlivé dotazy dopadly podle našeho očekávání. Dotaz M\_Q1 provádí pouze vyhledávání výsledků bez ukládání do tabulky a je nejrychlejší. 
 Všechny ostatní dotazy dosahují zpomalení závíslé na počtu ukládaných proměnných (počet ukládaných proměnných definuje část Select), tedy čím více proměnných k uložení tím je vykonání pomalejší a to platí i pro paralelní verzi. 
 Pro představu, každá proměnná (element grafu) je uložena do vlastního sloupečku, který je lokální pro vlákno (\verb+List<Element[FixedArraySize]>+). Lokalita sloupečků vede na potřebu mergování výsledků vláken. 
+
 Nicméně, díky ukládání do polí fixní délky nastává nutnost pouze zarovnat poslední nezaplněná pole, zbytek práce mergování je jen přesunutí několika pointrů na pole. 
 Tento proces je paralelizovaný pouze přes sloupečky, tedy v dotazu M\_Q2 mergování beží pouze v jednom vlákně a proto obsahuje nejvyšší skok rychlosti mezi dotazem před a dotazem po. 
 Obecně vidíme, že ukládání výsledků nepřináší až tak velkou přítež na dobu vykonávání jako paměťovou, kdy všechny výsledky jsou uloženy v paměti. 
@@ -407,3 +412,64 @@ Zmíněné poznatky použijeme při analýze experimentů pro Group/Order by.
 
 \subsection{Výsledky Order by}
 
+Z důvodu časové a prostorové složitosti třídění na grafu As-Skitter jsme se rozhodli jej vynechat pro Order by dotazy.
+
+Vylepšená řešení při přichozím výsledku jej uloží do tabulky (stejné tabulky jako v řešení Normal) a následně vloží index výsledku v tabulce do indexovací struktury, tj. v našem případě $(a, b)$-strom\footnote{\citet{dataLecture}}, kde $b=2a$. 
+Používáme $b=256$.
+V řešení ABTree se jedná o obecný $(a, b)$-strom, zatímco řešení ABTreeValueAccumulator výsledky (indexy) mající stejnou hodnotu klíčů třídění uloží do \verb+List<int>+.
+
+Začneme řešením běžícím v jednom vlákně, tj. obrázky  \ref{figure.amazonOrderST} a \ref{figure.webberkstanOrderST}.
+Můžeme si všimnout, že výsledky vypadají v rámci daných grafů konzistentně pro každý dotaz.
+Ani jedno z vylepšených řešení nedokázalo porazit mód Normal, což odpovídá našim předpokladům. 
+Je to protože daný strom podléhá režii za insert $\Theta(\log n \cdot (a/\log a))$\footnote{\citet[03. (a,b)-trees str. 6]{dataLecture}}, kdy dochází k častému alokování nových vrcholů a překopírovávání prvků při splitu.
+Nejproblematičtější část je množství tříděných výsledků, kdy počet samotných hodnot klíčů třídění je omezen počtem vrcholů v grafu (tabulka \ref{tab.grafBase}). 
+Daná situace vede k vytváření posloupnosti stejných hodnot ve vrcholech a následné nemožnosti využít jejich podstromy. 
+Celý problém jsme vyřešelili v řešení ABTreeValueAccumulator, kdy se duplicitní hodnoty ukládají do zmíněného pole a tím omezujeme velikost výsledného stromu. 
+Jak vidíme na obrázcích, řešení se přibližuje rychlosti řešení Normal.
+
+\begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/amazonOrderByST.pdf}\centering
+\caption{Doba vykonání dotazů Order by pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet tříděných výsledků je 32373599.}
+\label{figure.amazonOrderST}
+\end{figure}
+
+\begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/webberkstanOrderByST.pdf}\centering
+\caption{Doba vykonání dotazů Order by pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet tříděných výsledků je 222498869.}
+\label{figure.webberkstanOrderST}
+\end{figure}
+
+\clearpage
+
+Z grafů vidíme, že třídění podle \verb+ID+ (O\_Q1 a O\_Q2) vůči Properties (O\_Q3 a O\_Q4) vede ke znatelnému overheadu.
+Je to způsobeno nutným přístupem k databázi, při kterém se ověřuje, jestli daná vlastnost existuje na daném elementu a následném čtení hodnoty ze struktury obsahující ji.
+
+Paralelní zpracování aplikuje použité verze $(a, b)$-stromů ze zpracování pro jedno vlákno. 
+Half-Streamed řešení obsahuje lokální tabulku a indexační strom pro každé běžící vlákno. 
+Po dokončení vyhledávání se obsahy stromů překopírují do pole a dojde k paralelnímu 2-way merge používající stejnou funkci jako paralelní Merge sort. 
+Streamed řešení rozdělí rozsah prvního třídícího klíče do přihrádek rovnoměrné velikosti. 
+Při příchozím výsledku se získá hodnota prvního klíče třídění a určí se jeho přihrádka, kde počet přihrádek je heuristicky zvolen jako $m=t^2$, kde $t=\#vláken$. 
+Samotná přihrádka obsahuje opět tabulku a indexační strom přistupné pomocí zámku. 
+Při porovnávání je nutné mít na paměti, že lokálně bežící části používájí cachování popsané v sekci (TODO).  
+
+Nyní budeme prezetovat výsledky paralelizace (obrázky \ref{figure.amazonOrderPar} a \ref{figure.webberkstanOrderPar}).
+Pro dotazy O\_Q1 a O\_Q2 vidíme u Streamed řešení mnohonásobný rozdíl vůči ostatním řešením, protože přihrádky jsou rozděleny na základě rozsahu typu klíče, tj. \verb+[Int32.MinValue, Int32.MaxValue]+.
+Avšak, hodnoty třídění spadaní do rozsahu \verb+ID+ vrcholů grafu, což představuje rozsah $\approx [0,\#vrcholů]$. 
+Rozsah hodnot třídění spadá vždy do jedné přihrádky a výsledná doba je rovna doby single thread řešení s overheadem za přistupovaný zámek.
+U dotazů O\_Q3 a O\_Q4 je tříděno pomocí hodnot vygenerovaných náhodně spadající do celého rozsahu typu klíče a předčil všechna ostatní řešení. 
+
+Half-Streamed řešení se přibližuje Normal řešení v prvních dvou dotazech a překonává jej v třetím i čtvrtém dotazu pro řešení používající ABTreeValueAccumulator.
+U třetího a čtvrtého dotazu se porovnává pomocí Properties. V single thread zpracovávání jsme viděli overhead za dané porovnání.
+V druhém kroku u daného Half-Streamed řešení dochází k mergování pouze akumulovaných skupin, což rapidně sníží počet porovnávání a tady odtud výhoda oproti Normal Merge sort řešení.
+
+\begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/amazonOrderByPar.pdf}\centering
+\caption{Doba vykonání dotazů Order by pro graf Amazon0601 (sekce \ref{tab.grafBase}).  Běh osmi vláken. Počet tříděných výsledků je 222498869.}
+\label{figure.amazonOrderPar}
+\end{figure}
+
+\begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/webberkstanOrderByPar.pdf}\centering
+\caption{Doba vykonání dotazů Order by pro graf WebBerkStan (sekce \ref{tab.grafBase}).  Běh osmi vláken. Počet tříděných výsledků je 222498869.}
+\label{figure.webberkstanOrderPar}
+\end{figure}
