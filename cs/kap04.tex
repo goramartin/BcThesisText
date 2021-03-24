@@ -508,23 +508,59 @@ Streamed: ABTreeValueAccumulator & $[0,81; 5,72]$-krát \\
 \label{tab.OrderByZrychleni}
 \end{table}
 
-
-
-
 \subsection{Výsledky Group by}
 
-asdksflrk jr arjl r t
+Analýzu výsledků dotazu G\_Q1 uvádíme samostatně, protože testuje pouze agregační funkce a nikoliv seskupování.
+Po levé straně je běh v jednom vlákně a na pravé straně běh osmi vláken.
 
 \begin{figure}[!htp]
     \centering
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width=0.9\textwidth]{../img/aa.pdf} % first figure itself
-        \caption{first figure}
+        \includegraphics[width=0.9\textwidth]{../img/amazonGroupByQ1ST.pdf} % first figure itself
+        \caption{Doba vykonání dotazu G\_Q1 pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 32373599.}
+        \label{figure.amazonGQ1ST}
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width=0.9\textwidth]{../img/aa.pdf} % second figure itself
-        \caption{second figure}
+        \includegraphics[width=0.9\textwidth]{../img/amazonGroupByQ1Par.pdf} % second figure itself
+        \caption{Doba vykonání dotazu G\_Q1 pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 32373599.}
+        \label{figure.amazonGQ1Par}
     \end{minipage}
 \end{figure}
+
+\begin{figure}[!htp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{../img/webberkstanGroupByQ1ST.pdf} % first figure itself
+        \caption{Doba vykonání dotazu G\_Q1 pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 222498869.}
+        \label{figure.webberkstanGQ1ST}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{../img/webberkstanGroupByQ1Par.pdf} % second figure itself
+        \caption{Doba vykonání dotazu G\_Q1 pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 222498869.}
+        \label{figure.webberkstanGQ1Par}
+    \end{minipage}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[!htp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{../img/skitterGroupByQ1ST.pdf} % first figure itself
+        \caption{Doba vykonání dotazu G\_Q1 pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 453674558.}
+        \label{figure.skitterGQ1ST}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{../img/skitterGroupByQ1Par.pdf} % second figure itself
+        \caption{Doba vykonání dotazu G\_Q1 pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 453674558.}
+        \label{figure.skitterGQ1Par}
+    \end{minipage}
+\end{figure}
+
+Na obrázcích \ref{figure.amazonGQ1ST} až \ref{figure.skitterGQ1Par} lze vidět
