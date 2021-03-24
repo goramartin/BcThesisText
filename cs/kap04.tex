@@ -565,10 +565,12 @@ Po levé straně je běh v jednom vlákně a na pravé straně běh osmi vláken
 \end{figure}
 
 Na obrázcích \ref{figure.amazonGQ1ST} až \ref{figure.skitterGQ1Par} lze vidět značnou konzistenci mezi výsledky testování při nárustu počtu výsledků vyhledávání.
-Half-Streamed a Streamed řešení zde neukládá výsledky vyhledávání do tabulky, ale pouze na aktuální výsledek aplikuje agregační funkce a následně jej zahodí. 
+Half-Streamed a Streamed řešení zde neukládá výsledky vyhledávání do tabulky, ale pouze na aktuální výsledek aplikuje agregační funkce a následně jej zahodí.
+To způsobuje značnou výhodu oproti Normal řešení, které drží všechny výsledky v paměti.
 Použijeme-li poznatky z sekce \ref{matchResults} o zpomalení způsobeném ukládáním výsledků do tabulky zjistíme (v našem případě jedné proměnné), že rozdíl mezi Normal a Half-Streamed řešením se pohybuje právě v rozsahu onoho zpomalení.
 To platí pro běh jednoho vlákna i běhu osmi vláken. 
-Problem představuje Streamed řešení, jelikož k jednomu výsledku přistupuje osm vláken najednou a dochází k synchronizaci.
+Problem představuje Streamed řešení, jelikož k jednomu výsledku přistupuje osm vláken najednou a dochází zde k synchronizaci. 
+Zrychlení je zde pouze v rozsahu $[1,81; 2,64]$.
 Předpokládali jsme, že kámen úrazu tkví v funkci \verb+min+, kde dochází k synchronizaci pomocí \verb+CompareExchange+ mechanismu.
 Abychom to dokázali, vykonali jsme další experiment na největším grafu As-Skitter. Použili jsme dotaz select avg(y.PropOne) match (x) -> (y) -> (z);.
 
@@ -577,10 +579,11 @@ Abychom to dokázali, vykonali jsme další experiment na největším grafu As-
     \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=0.9\textwidth]{../img/skitterGroupByQ1ParNoMin.pdf} % first figure itself
-        \caption{Doba vykonání dotazu G\_Q1 pro graf As-Skitter (sekce \ref{tab.grafBase}) společně se Streamed řešením pro dotaz select avg(y.PropOne) match (x) -> (y) -> (z);. Běh osmi vláken. Počet seskupovaných výsledků je 453674558.}
+        \caption{Doba vykonání dotazů G\_Q1 a select avg(y.PropOne) match (x) -> (y) -> (z); pro graf As-Skitter (sekce \ref{tab.grafBase}) pouze Streamed řešení. Běh osmi vláken. Počet seskupovaných výsledků je 453674558.}
         \label{figure.skitterGQ1ParNoMin}
     \end{minipage}\hfill
 \end{figure}
 
 Výsledek experimentu je zobrazen na obrázku \ref{figure.skitterGQ1ParNoMin}. 
-Dokázali jsme, že problematická část je funkce \verb+min+. 
+Dokázali jsme, že problematická část je funkce \verb+min+, která způsobuje značně zpomalení.
+
