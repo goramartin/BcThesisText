@@ -473,8 +473,8 @@ Zrychlení Merge sortu zaostavá. Maximální zrychlení u ostatních řešení 
 Implementace paralelního Merge sortu funguje na principu postupného recurzivního rozdělování, při kterém se vytváří nové \verb+Tasks+ pro \verb+ThreadPool+.
 U vylepšených řešení běži jedna metoda pro každé vlákno po dobu celého zpracování. Jestli se jedná o hlavní důvod poznatku by vyžadovalo dalšího testování. 
 
-Jako důsledek testování můžeme konstatovat, že agregování v průběhu vyhledávání nepřináší předpokládané výhody.
-Zrychlení nastává pouze u paralelizace řešení při dostatečně náhodném rozložení dat třádění.
+Jako důsledek testování můžeme konstatovat, že třídění v průběhu vyhledávání nepřináší předpokládané výhody.
+Zrychlení nastává pouze u paralelizace řešení při dostatečně náhodném rozložení dat třídění, pokud samotná porovnání jsou drahá.
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonOrderByPar.pdf}\centering
