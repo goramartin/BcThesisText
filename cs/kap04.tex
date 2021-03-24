@@ -422,9 +422,9 @@ Zástupce Normal řešení je Merge sort\footnote{\citet{hpcsharp}}.
 Začneme řešením běžícím v jednom vlákně, tj. obrázky  \ref{figure.amazonOrderST} a \ref{figure.webberkstanOrderST}.
 Můžeme si všimnout, že výsledky vypadají v rámci daných grafů konzistentně pro každý dotaz.
 Ani jedno z vylepšených řešení nedokázalo porazit mód Normal, což odpovídá našim předpokladům. 
-Je to protože daný strom podléhá režii za insert $\Theta(\log n \cdot (a/\log a))$ (\citet[03. (a,b)-trees str. 6]{dataLecture}), kdy dochází k častému alokování nových vrcholů a překopírovávání prvků při splitu.
+Je to protože daný strom podléhá režii za \verb+Insert+ $\Theta(\log n \cdot (a/\log a))$ (\citet[03. (a,b)-trees str. 6]{dataLecture}), kdy dochází k častému alokování nových vrcholů a překopírovávání prvků při splitu.
 Nejproblematičtější část je množství tříděných výsledků, kdy počet samotných hodnot klíčů třídění je omezen počtem vrcholů v grafu (tabulka \ref{tab.grafBase}). 
-Daná situace vede k vytváření posloupnosti stejných hodnot ve vrcholech a následné nemožnosti využít jejich podstromy. 
+Daná situace vede k opakovanému zatřizování výsledků se stejnou hodnotou a tím navyšování velikosti stromu společně s počtem porovnání na \verb+Insert+.
 Celý problém jsme vyřešelili v řešení ABTreeValueAccumulator, kdy se duplicitní hodnoty ukládají do zmíněného pole a tím omezujeme velikost výsledného stromu. 
 Jak vidíme na obrázcích, řešení se přibližuje rychlosti řešení Normal.
 
