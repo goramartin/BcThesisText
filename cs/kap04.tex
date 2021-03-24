@@ -100,9 +100,9 @@ Proto pro každý vrchol náhodně vygenerujeme hodnoty tří Properties.
 \toprule
 \mc{\textbf{Property}} & \mc{\textbf{Type}}  & \mc{\textbf{Popis}}\\
 \midrule
-PropOne     & integer &  \verb+Int32+ s rozsahem $[0, 100000]$ \\
-PropTwo & integer   & \verb+Int32+ s rozsahem $[$\verb+Int32.MinValue+$,$ \verb+Int32.MaxValue+$]$ \\
-PropThree    & string &  délka $[2, 8]$ ASCII znaků s rozsahem $[33, 126]$ \\
+PropOne     & integer &  \verb+Int32+ s rozsahem $[0; 100000]$ \\
+PropTwo & integer   & \verb+Int32+ s rozsahem $[$\verb+Int32.MinValue+; \verb+Int32.MaxValue+$]$ \\
+PropThree    & string &  délka $[2; 8]$ ASCII znaků s rozsahem $[33; 126]$ \\
 \bottomrule
 \end{tabular}
 
@@ -114,7 +114,7 @@ PropThree    & string &  délka $[2, 8]$ ASCII znaků s rozsahem $[33, 126]$ \\
 
 \item \textbf{PropTwo} hodnoty jsou rovněž generováný střídavě kladně a záporně, aby nastal rovnoměrný počet záporných a kladných hodnot.
 
-\item \textbf{PropThree} hodnoty jsou pouze ASCII znaky z rozsahu $[33, 126]$. Dané omezení výplývá z vlastností dotazovacího enginu, aby bylo možné bez obtíží načíst datový soubor.
+\item \textbf{PropThree} hodnoty jsou pouze ASCII znaky z rozsahu $[33; 126]$. Dané omezení výplývá z vlastností dotazovacího enginu, aby bylo možné bez obtíží načíst datový soubor.
 
 \end{itemize}
 
@@ -399,7 +399,8 @@ Proto uvádíme výsledky a analýzu dotazů Match zvlášť, aby bylo možné s
 
 \clearpage
 
-Zbytek sekce věnujeme popisu obrázků \ref{figure.amazonMatch}, \ref{figure.webberkstanMatch} a \ref{figure.skitterMatch}. Paralelizace startovního prohledávacího vrcholu (tj. každé vlákno dostává opakovaně množství vrcholů k prohledání určené argumentem \verb+VerticesPerThread+, dokud se nevyčerpají všechny vrcholy grafu) dociluje zrychlení v rozmezí $4.17$-krát až $5.56$-krát pro všechny grafy.
+Zbytek sekce věnujeme popisu obrázků \ref{figure.amazonMatch}, \ref{figure.webberkstanMatch} a \ref{figure.skitterMatch}. 
+Paralelizace startovního prohledávacího vrcholu (tj. každé vlákno dostává opakovaně množství vrcholů k prohledání určené argumentem \verb+VerticesPerThread+, dokud se nevyčerpají všechny vrcholy grafu) dociluje zrychlení v rozmezí $[4,17; 5,56]$-krát pro všechny grafy.
 Výsledky pro jednotlivé dotazy dopadly podle našeho očekávání. Dotaz M\_Q1 provádí pouze vyhledávání výsledků bez ukládání do tabulky a je nejrychlejší. 
 Všechny ostatní dotazy dosahují zpomalení závíslé na počtu ukládaných proměnných (počet ukládaných proměnných definuje část Select), tedy čím více proměnných k uložení tím je vykonání pomalejší a to platí i pro paralelní verzi. 
 Pro představu, každá proměnná (element grafu) je uložena do vlastního sloupečku, který je lokální pro vlákno (\verb+List<Element[FixedArraySize]>+). Lokalita sloupečků vede na potřebu mergování výsledků vláken. 
@@ -455,8 +456,8 @@ Samotná přihrádka obsahuje opět tabulku a indexační strom přistupné pomo
 Při porovnávání je nutné mít na paměti, že lokálně bežící části používájí cachování popsané v sekci (TODO).  
 
 Nyní budeme prezetovat výsledky paralelizace (obrázky \ref{figure.amazonOrderPar} a \ref{figure.webberkstanOrderPar}).
-Pro dotazy O\_Q1 a O\_Q2 vidíme u Streamed řešení mnohonásobný rozdíl vůči ostatním řešením, protože přihrádky jsou rozděleny na základě rozsahu typu klíče (např. pro O\_Q3 \verb+[Int32.MinValue, Int32.MaxValue]+).
-Avšak, hodnoty třídění spadaní do rozsahu \verb+ID+ vrcholů grafu, což představuje rozsah $\approx [0,\#vrcholů]$. 
+Pro dotazy O\_Q1 a O\_Q2 vidíme u Streamed řešení mnohonásobný rozdíl vůči ostatním řešením, protože přihrádky jsou rozděleny na základě rozsahu typu klíče (např. pro O\_Q3 $[$\verb+Int32.MinValue+; \verb+Int32.MaxValue+$]$).
+Avšak, hodnoty třídění spadaní do rozsahu \verb+ID+ vrcholů grafu, což představuje rozsah $\approx [0; \#vrcholů]$. 
 Rozsah hodnot třídění spadá vždy do jedné přihrádky a výsledná doba je rovna době single thread řešení s overheadem za přistupovaný zámek.
 U dotazů O\_Q3 a O\_Q4 je tříděno pomocí hodnot vygenerovaných náhodně spadající do celého rozsahu typu klíče a zde Streamed řešení předčilo všechna ostatní. 
 Pro budoucí rozšíření by bylo nutné zvážit vytvoření statistik rozsahů jednotlivých Properties, aby bylo možné lépe vytvořit rozdělení přihrádek.
@@ -464,16 +465,16 @@ Pro budoucí rozšíření by bylo nutné zvážit vytvoření statistik rozsah�
 Half-Streamed řešení se přibližuje Normal řešení v prvních dvou dotazech a překonává jej ve třetím i čtvrtém dotazu pro řešení používající ABTreeValueAccumulator.
 U třetího a čtvrtého dotazu se porovnává pomocí Properties. V single thread zpracovávání jsme viděli overhead za dané porovnání.
 V druhém kroku u daného Half-Streamed řešení dochází k mergování pouze akumulovaných skupin, což rapidně sníží počet porovnávání při mergi a odtud výhoda oproti Normal Merge sort řešení. 
-To samé platí u Streamed řešení, protože počáteční rozhashování způsobí vkládání do mnohonásobně menší skupiny výsledků. 
+To samé platí u Streamed řešení, protože počáteční rozhašování způsobí vkládání do mnohonásobně menší skupiny výsledků. 
 Celá situace je navíc umocněna zmíněným cachovaním porovnávaných hodnot. 
 
-Zajímavý výsledek testování je i poměr velikosti zrychlení vylepšených módů, který jsme neočekávali. 
-Zrychlení Normal řešení zaostavá vůči ostatním řešením. 
-Implementace paralelního Merge sortu funguje na principu postupného rozdělování a při každém rozdělení se vytváří nové \verb+Tasks+ pro \verb+ThreadPool+.
+Zajímavý výsledek testování je rozsah zrychlení vylepšených módů (tabulka \ref{tab.OrderByZrychleni}), který jsme neočekávali. 
+Zrychlení Merge sortu zaostavá. Maximální zrychlení u ostatních řešení je až pětinásobné. 
+Implementace paralelního Merge sortu funguje na principu postupného recurzivního rozdělování, při kterém se vytváří nové \verb+Tasks+ pro \verb+ThreadPool+.
 U vylepšených řešení běži jedna metoda pro každé vlákno po dobu celého zpracování. Jestli se jedná o hlavní důvod poznatku by vyžadovalo dalšího testování. 
 
 Jako důsledek testování můžeme konstatovat, že agregování v průběhu vyhledávání nepřináší předpokládané výhody.
-Zrychlení nastává pouze u paralelizace řešení při dostatečně náhodných datech třádění.
+Zrychlení nastává pouze u paralelizace řešení při dostatečně náhodném rozložení dat třádění.
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonOrderByPar.pdf}\centering
@@ -489,11 +490,32 @@ Zrychlení nastává pouze u paralelizace řešení při dostatečně náhodnýc
 
 \clearpage
 
+\begin{table}[!htb]
+\centering
+\begin{tabular}{lr}
+\toprule
+\mc{} & \mc{\textbf{Zrychlení}} \\
+\midrule
+Merge sort &  $[3,33; 4,42]$-krát \\
+Half-Streamed: ABTree & $[4,36; 4,81]$-krát  \\
+Half-Streamed: ABTreeValueAccumulator & $[3,76; 5,18]$-krát \\
+Streamed: ABTree & $[0,78; 5,3]$-krát  \\
+Streamed: ABTreeValueAccumulator & $[0,81; 5,72]$-krát \\
+\bottomrule
+\end{tabular}
+
+\caption{Rozsah zrychlení paralelizovaných řešení pomocí osmi vláken v ramci grafů pro dotazy Order by.}
+\label{tab.OrderByZrychleni}
+\end{table}
+
+
+
+
 \subsection{Výsledky Group by}
 
 asdksflrk jr arjl r t
 
-\begin{figure}
+\begin{figure}[!htp]
     \centering
     \begin{minipage}{0.45\textwidth}
         \centering
