@@ -375,6 +375,7 @@ Pro připomenutí zmíníme, že mód Normal vykonává Group/Order by až po do
 U paralelního řešení Streamed jsou výsledky zpracovány globálně, zatímco u Half-Streamed řešení dochází k lokálnímu zpracování zakončeném mergováním.
 
 \subsection{Výsledky Match}
+\label{matchResults}
 
 Stávající a vylepšené verze Group/Order by jsou značně ovlivněny vyhledáváním vzoru. 
 Proto uvádíme výsledky a analýzu dotazů Match zvlášť, aby bylo možné sledovat čas výhradně strávený vyhledáváním a uložením všech nalezených výsledků do tabulky.
@@ -563,4 +564,23 @@ Po levé straně je běh v jednom vlákně a na pravé straně běh osmi vláken
     \end{minipage}
 \end{figure}
 
-Na obrázcích \ref{figure.amazonGQ1ST} až \ref{figure.skitterGQ1Par} lze vidět
+Na obrázcích \ref{figure.amazonGQ1ST} až \ref{figure.skitterGQ1Par} lze vidět značnou konzistenci mezi výsledky testování při nárustu počtu výsledků vyhledávání.
+Half-Streamed a Streamed řešení zde neukládá výsledky vyhledávání do tabulky, ale pouze na aktuální výsledek aplikuje agregační funkce a následně jej zahodí. 
+Použijeme-li poznatky z sekce \ref{matchResults} o zpomalení způsobeném ukládáním výsledků do tabulky zjistíme (v našem případě jedné proměnné), že rozdíl mezi Normal a Half-Streamed řešením se pohybuje právě v rozsahu onoho zpomalení.
+To platí pro běh jednoho vlákna i běhu osmi vláken. 
+Problem představuje Streamed řešení, jelikož k jednomu výsledku přistupuje osm vláken najednou a dochází k synchronizaci.
+Předpokládali jsme, že kámen úrazu tkví v funkci \verb+min+, kde dochází k synchronizaci pomocí \verb+CompareExchange+ mechanismu.
+Abychom to dokázali, vykonali jsme další experiment na největším grafu As-Skitter. Použili jsme dotaz select avg(y.PropOne) match (x) -> (y) -> (z);.
+
+\begin{figure}[!htp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{../img/skitterGroupByQ1ParNoMin.pdf} % first figure itself
+        \caption{Doba vykonání dotazu G\_Q1 pro graf As-Skitter (sekce \ref{tab.grafBase}) společně se Streamed řešením pro dotaz select avg(y.PropOne) match (x) -> (y) -> (z);. Běh osmi vláken. Počet seskupovaných výsledků je 453674558.}
+        \label{figure.skitterGQ1ParNoMin}
+    \end{minipage}\hfill
+\end{figure}
+
+Výsledek experimentu je zobrazen na obrázku \ref{figure.skitterGQ1ParNoMin}. 
+Dokázali jsme, že problematická část je funkce \verb+min+. 
