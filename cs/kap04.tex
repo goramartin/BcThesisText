@@ -1,6 +1,6 @@
 \chapter{Experiment}
 
-Aby bylo možné porovnat stávající řešení s nově navrženým řešením na poli rychlosti zpracovávání dotazů, podrobili jsme zmíněná řešení experimentu. 
+Aby bylo možné porovnat stávající řešení s nově navrženým řešením na poli rychlosti zpracovávání dotazů a ověřit naše předpoklady, podrobili jsme zmíněná řešení experimentu. 
 Vykonaný experiment proběhne na reálných grafech různé velikosti s uměle vygenerovanými vlastnostmi naležící vrcholům. 
 Nad danými grafy provedeme vybrané množství dotazů, které nám umožní sledovat a porovnat chování řešení v různých situacích.
 Experiment bude zakončen diskuzí nad výsledky. 
@@ -91,7 +91,7 @@ Soubor Nodes.txt:
 \subsection{Generování Properties vrcholů}
 
 Posledním krokem přípravy dat pro experiment je vygenerování Properties vrcholů.
-Jsme si vědomi, že nejideálnější způsob testování je graf s reálnými daty, nicméně dané omezení jsme se rozhodli aplikovat kvůli problematickému hledání vhodných dat, které nevyžadují netriviální transformaci do vhodného vstupního formátu.
+Jsme si vědomi, že nejideálnější způsob testování je graf s reálnými daty. Nicméně, dané omezení jsme se rozhodli aplikovat kvůli problematickému hledání vhodných dat, které nevyžadují netriviální transformaci do vhodného vstupního formátu.
 Proto pro každý vrchol náhodně vygenerujeme hodnoty tří Properties. 
 \clearpage
 \begin{table}[!htb]
@@ -442,14 +442,15 @@ Jak vidíme na obrázcích, řešení se přibližuje rychlosti řešení Normal
 
 \clearpage
 
-Z grafů vidíme, že třídění podle \verb+ID+ (O\_Q1 a O\_Q2) vůči Properties (O\_Q3 a O\_Q4) vede ke znatelnému overheadu.
+Dle našich předpokladů se ukázalo, že třídění podle \verb+ID+ (O\_Q1 a O\_Q2) vůči Properties (O\_Q3 a O\_Q4) vede ke znatelnému overheadu.
 Je to způsobeno nutným přístupem k databázi, při kterém se ověřuje, jestli daná vlastnost existuje na daném elementu a následném čtení hodnoty ze struktury obsahující ji.
 
 Paralelní zpracování aplikuje použité verze $(a, b)$-stromů ze zpracování pro jedno vlákno. 
 Half-Streamed řešení obsahuje lokální tabulku a indexační strom pro každé běžící vlákno. 
 Po dokončení vyhledávání se obsahy stromů překopírují do pole a dojde k paralelnímu 2-way merge používající stejnou funkci jako paralelní Merge sort. 
 Streamed řešení rozdělí rozsah prvního třídícího klíče do přihrádek rovnoměrné velikosti. 
-Při příchozím výsledku se získá hodnota prvního klíče třídění a určí se jeho přihrádka, kde počet přihrádek je heuristicky zvolen jako $m=t^2$, kde $t=\#vláken$. 
+Při příchozím výsledku se získá hodnota prvního klíče třídění a určí se jeho přihrádka. 
+Počet přihrádek je heuristicky zvolen jako $m=t^2$, kde $t=\#vláken$. 
 Samotná přihrádka obsahuje opět tabulku a indexační strom přistupné pomocí zámku. 
 Při porovnávání je nutné mít na paměti, že lokálně bežící části používájí cachování popsané v sekci (TODO).  
 
@@ -463,11 +464,16 @@ Pro budoucí rozšíření by bylo nutné zvážit vytvoření statistik rozsah�
 Half-Streamed řešení se přibližuje Normal řešení v prvních dvou dotazech a překonává jej ve třetím i čtvrtém dotazu pro řešení používající ABTreeValueAccumulator.
 U třetího a čtvrtého dotazu se porovnává pomocí Properties. V single thread zpracovávání jsme viděli overhead za dané porovnání.
 V druhém kroku u daného Half-Streamed řešení dochází k mergování pouze akumulovaných skupin, což rapidně sníží počet porovnávání při mergi a odtud výhoda oproti Normal Merge sort řešení. 
-To samé platí u Streamed řešení, protože počáteční rozhashování způsobí vkládání do mnohonásobně menší skupiny výsledků.
+To samé platí u Streamed řešení, protože počáteční rozhashování způsobí vkládání do mnohonásobně menší skupiny výsledků. 
+Celá situace je navíc umocněna zmíněným cachovaním porovnávaných hodnot. 
 
-Zajímavý výsledek testování je i poměr velikosti zrychlení vylepšených řešení, kdy zrychlení Normal řešení zaostavá. 
+Zajímavý výsledek testování je i poměr velikosti zrychlení vylepšených módů, který jsme neočekávali. 
+Zrychlení Normal řešení zaostavá vůči ostatním řešením. 
 Implementace paralelního Merge sortu funguje na principu postupného rozdělování a při každém rozdělení se vytváří nové \verb+Tasks+ pro \verb+ThreadPool+.
 U vylepšených řešení běži jedna metoda pro každé vlákno po dobu celého zpracování. Jestli se jedná o hlavní důvod poznatku by vyžadovalo dalšího testování. 
+
+Jako důsledek testování můžeme konstatovat, že agregování v průběhu vyhledávání nepřináší předpokládané výhody.
+Zrychlení nastává pouze u paralelizace řešení při dostatečně náhodných datech třádění.
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonOrderByPar.pdf}\centering
@@ -486,3 +492,17 @@ U vylepšených řešení běži jedna metoda pro každé vlákno po dobu celéh
 \subsection{Výsledky Group by}
 
 asdksflrk jr arjl r t
+
+\begin{figure}
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{../img/aa.pdf} % first figure itself
+        \caption{first figure}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{../img/aa.pdf} % second figure itself
+        \caption{second figure}
+    \end{minipage}
+\end{figure}
