@@ -472,7 +472,7 @@ Celá situace je navíc umocněna zmíněným cachovaním porovnávaných hodnot
 
 Zajímavý výsledek testování je rozsah zrychlení vylepšených módů (tabulka \ref{tab.OrderByZrychleni}), který jsme neočekávali. 
 Zrychlení Merge sortu zaostavá. Maximální zrychlení u ostatních řešení je až pětinásobné. 
-Implementace paralelního Merge sortu funguje na principu postupného recurzivního rozdělování, při kterém se vytváří nové \verb+Tasks+ pro \verb+ThreadPool+.
+Implementace paralelního Merge sortu funguje na principu postupného rekurzivního rozdělování, při kterém se vytváří nové \verb+Tasks+ pro \verb+ThreadPool+.
 U vylepšených řešení běži jedna metoda pro každé vlákno po dobu celého zpracování. Jestli se jedná o hlavní důvod poznatku by vyžadovalo dalšího testování. 
 
 Jako důsledek testování můžeme konstatovat, že třídění v průběhu vyhledávání nepřináší předpokládané výhody.
@@ -577,7 +577,7 @@ Než postoupíme dál připomeneme hlavní rozdíly řešení a značení u zobr
 Každé řešení používá k Group by mapu (\verb+Dictionary<key, value>+).
 Normal řešení ukládá všechny výsledky vyhledávání vzoru do tabulky a po dokončení vykoná Group by. 
 Half-Streamed řešení vykonává Group by v průběhu hledání a ukládá do tabulky pouze výsledky, pro které ještě neexistuje skupina v použité mapě.
-Pro zmíněná řešení se jako \verb+key+ používá index do tabulky a následně výpočet hodnoty klíče.
+Pro zmíněná řešení se jako \verb+key+ používá index do tabulky a skrze něj se následně výpočtou hodnoty klíče.
 Streamed řešení nepoužívá tabulku, ale hodnoty klíče ukládá rovnou do mapy. 
 Objevující se značení Bucket a List určuje způsob ukládání výsledků agregačních funkcí (\verb+min+, \verb+avg+...) jako \verb+value+ záznam v mapě:
 
@@ -630,4 +630,42 @@ Přehození rolí si vysvětlujeme overheadem za množství vytvářených polí
 Paralelní řešení používají doposud zmíněná značení.
 Global řešení seskupuje výsledky globálně pomocí paralelní mapy (\verb+ConcurrentDictionary+).
 Two-Step řešení seskupuje výsledky nejdříve lokálně pomocí mapy a následném mergi do paralelní mapy.
+LocalGroupByLocalTwoWayMerge řešení seskupuje lokálně a následně merguje výsledky vláken po dvojicích.
+Výsledky paralelizování jsou zobrazeny na obrázcích \ref{figure.amazonGroupByPar}, \ref{figure.webberkstanGroupByPar} a \ref{figure.skitterGroupByPar}.
+Byli jsme překvapeni, že vylepšená řešení se mnohdy nevyrovnala původním řešením.
+
+\begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/amazonGroupByPar.pdf}\centering
+\caption{Doba vykonání dotazů Group by pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 32373599.}
+\label{figure.amazonGroupByPar}
+\end{figure}
+
+\begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/webberkstanGroupByPar.pdf}\centering
+\caption{Doba vykonání dotazů Group by pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 222498869.}
+\label{figure.webberkstanGroupByPar}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/skitterGroupByPar.pdf}\centering
+\caption{Doba vykonání dotazů Group by pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 453674558.}
+\label{figure.skitterGroupByPar}
+\end{figure}
+
+Streamed řešení, ačkoliv bylo nejrychlejší v jednovláknovém běhu, tak zde se pouze vyrovnalo nejrychlejším Normal řešením a nebo bylo pomalejší.
+Danou situaci si vysvětlujeme dvojitou synchronizací. 
+Prvni vrstva synchronizace nastává u přistupu k paralelní mapě a čtení/vložení záznamu.
+Po získání \verb+value+ z mapy následuje druhá vrstva, která obsahuje volání thread-safe funkcí pro výpočet agregovaných hodnot pro danou skupinu.
+Otestovali jsme overhead zvlášť čtení a vložení \verb+ConcurrentDictionary+ vůči \verb+Dictionary+ pro jedno vlákno. 
+Ukázalo se, že pouhé vkládání nových prvků do paralelní mapy trvá až 5-ti násobek doby obyčejné mapy.
+Samostatné čtení hodnot z paralelní mapy je o 9\% pomalejší.
+Z obrázků \ref{figure.amazonGQ1Par}, \ref{figure.webberkstanGQ1Par} a \ref{figure.skitterGQ1Par} pak vidíme cenu za synchronizaci na agregačních funkcích.
+Nicméně, v porovnání s řešením Normal: Global (použivá stejný princip) je vidět zrychlení, protože nepouživá tabulku výsledků.
+Jediný bod, který si neumíme vysvětlit je na obrázku \ref{figure.skitterGroupByPar} dotaz G\_Q5. 
+Streamed řešení je pomalejší, než Normal: Global.
+Všem řešením dominuje Normal: LocalGroupByLocalTwoWayMerge (Bucket), které provádí vše lokálně.
+
+Opět zde vidíme zpomalení implementace List vůči Bucket.
 
