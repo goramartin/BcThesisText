@@ -370,7 +370,8 @@ Benchmark společně s dotazovacím enginem a potřebnými knihovnami byl přelo
 
 V této sekci prezentujeme naměřená data pro všechny tři grafy (\ref{expr.graphs}), které jsme podrobili dotazům z sekce \ref{expr.dotazy}.
 
-U grafů Group/Order by se držíme značení odpovídající z kapitoly implementace (tj. ve tvaru (mód enginu): (Název řešení) (způsob ukládání výsledků u Group by)? )
+U grafů Group/Order by se držíme značení odpovídající z kapitoly implementace (tj. ve tvaru (mód enginu): (Název řešení) (způsob ukládání výsledků u Group by)? ).
+Pokud řešení obsahuje kombinaci módů, pak řešení pro dané módy jsou totožná.
 Pro připomenutí zmíníme, že mód Normal vykonává Group/Order by až po dokončení vyhledávání, vylepšené módy Streamed a Half-Streamed je vykonávájí v průběhu vyhledávání.
 U paralelního řešení Streamed jsou výsledky zpracovány globálně, zatímco u Half-Streamed řešení dochází k lokálnímu zpracování zakončeném mergováním.
 
@@ -570,5 +571,63 @@ To způsobuje značnou výhodu oproti Normal řešení, které drží všechny v
 Použijeme-li poznatky z sekce \ref{matchResults} o zpomalení způsobeném ukládáním výsledků do tabulky zjistíme (v našem případě jedné proměnné), že rozdíl mezi Normal a Half-Streamed řešením se pohybuje právě v rozsahu onoho zpomalení.
 To platí pro běh jednoho vlákna i běhu osmi vláken. 
 Problem představuje paralelní Streamed řešení, jelikož k jednomu výsledku přistupuje osm vláken najednou, což způsobuje značné zpomalení kvůli nutné synchronizaci při výpočtu funkcí \verb+min+ a \verb+avg+. 
-Zrychlení je zde pouze v rozsahu $[1,81; 2,64]$, zatímco u zbylých řešení je $[3,67; 4,61]$.
+Zrychlení je zde pouze v rozsahu $[1,81; 2,64]$-krát, zatímco u zbylých řešení je $[3,67; 4,61]$-krát.
+
+Než postoupíme dál připomeneme hlavní rozdíly řešení a značení u zobrazených grafů. 
+Každé řešení používá k Group by mapu (\verb+Dictionary<key, value>+).
+Normal řešení ukládá všechny výsledky vyhledávání vzoru do tabulky a po dokončení vykoná Group by. 
+Half-Streamed řešení vykonává Group by v průběhu hledání a ukládá do tabulky pouze výsledky, pro které ještě neexistuje skupina v použité mapě.
+Pro zmíněná řešení se jako \verb+key+ používá index do tabulky a následně výpočet hodnoty klíče.
+Streamed řešení nepoužívá tabulku, ale hodnoty klíče ukládá rovnou do mapy. 
+Objevující se značení Bucket a List určuje způsob ukládání výsledků agregačních funkcí (\verb+min+, \verb+avg+...) jako \verb+value+ záznam v mapě:
+
+\begin{code}
+Bucket:
+Dictionary<key, BucketResult[]> map; // Used map.
+class BucketResult {}
+class BucketResult<T>: BucketResult { T value; }
+
+List:
+Dictionary<key, tableIndex> map; // Used map.
+ListResults aggResults; // Agg. func. values of a group 
+                        // are accessed via tableIndex.
+class ListResults { ListHolder[] holders; }
+class ListHolder {}
+class ListHolder<T> : ListHolder { List<T> values }
+\end{code}
+
+\begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/amazonGroupByST.pdf}\centering
+\caption{Doba vykonání dotazů Group by pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 32373599.}
+\label{figure.amazonGroupByST}
+\end{figure}
+
+\begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/webberkstanGroupByST.pdf}\centering
+\caption{Doba vykonání dotazů Group by pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 222498869.}
+\label{figure.webberkstanGroupByST}
+\end{figure}
+
+\begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/skitterGroupByST.pdf}\centering
+\caption{Doba vykonání dotazů Group by pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 453674558.}
+\label{figure.skitterGroupByST}
+\end{figure}
+
+Na obrázcích \ref{figure.amazonGroupByST}, \ref{figure.webberkstanGroupByST} a \ref{figure.skitterGroupByST} vidíme výsledky Group by pro běh v jednom vlákně.
+Dvojice dotazů G\_Q3/G\_Q6, G\_Q2/G\_Q5 a G\_Q4/G\_Q7 jsou pouze mírně rozličná a můžeme u nich vidět konzistenci výsledků pro použité grafy.
+Řešení vykonávající Group by v průběhu vyhledávání překonávají Normal řešení. 
+Nejznačnější zrychlení nastává u Streamed řešení, kdy není použita tabulka výsledků vyhledávání.
+Velice mírné zrychlení můžeme vidět u Half-Streamed řešení.
+Je to způsobeno implementací použité tabulky pro výsledky vyhledávání. 
+Ačkoliv se ukládá výsledek jen pokud pro něj neexistuje skupina, tak reference na pole obsahující výsledek vyhledávání se uloží do položky \verb+temporaryRow+ (sekce TODO).
+A ve výsledku částečně simuluje kopírování jedné proměnné do tabulky. 
+Největší skok pak právě nastává v dotazech G\_Q3 a G\_Q6, kdy se ukládají dvě proměnné.
+Platí, že použité ukládání List je pomalejší než Bucket, kvůli indirekci navíc. 
+To neplatí v dotazech G\_Q3 a G\_Q6, kde je zastoupeno nejvíce vytvářených skupin mezi ostatními dotazy.
+Přehození rolí si vysvětlujeme overheadem za množství vytvářených polí, které se vyrovná použité indirekci.
+
+Paralelní řešení používají doposud zmíněná značení.
+Global řešení seskupuje výsledky globálně pomocí paralelní mapy (\verb+ConcurrentDictionary+).
+Two-Step řešení seskupuje výsledky nejdříve lokálně pomocí mapy a následném mergi do paralelní mapy.
 
