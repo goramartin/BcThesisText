@@ -367,7 +367,7 @@ Benchmark společně s dotazovacím enginem a potřebnými knihovnami byl přelo
 
 \clearpage
 
-\section{Výsledky a diskuze}
+\section{Výsledky}
 
 V této sekci prezentujeme naměřená data pro všechny tři grafy (\ref{expr.graphs}), které jsme podrobili dotazům z sekce \ref{expr.dotazy}.
 
@@ -376,7 +376,7 @@ Pokud řešení obsahuje kombinaci módů, pak řešení pro dané módy jsou to
 Pro připomenutí zmíníme, že mód Normal vykonává Group/Order by až po dokončení vyhledávání, vylepšené módy Streamed a Half-Streamed je vykonávájí v průběhu vyhledávání.
 U paralelního řešení Streamed jsou výsledky zpracovány globálně, zatímco u Half-Streamed řešení dochází k lokálnímu zpracování zakončeném mergováním.
 
-\subsection{Výsledky Match}
+\subsection{Match}
 \label{matchResults}
 
 Stávající a vylepšené verze Group/Order by jsou značně ovlivněny vyhledáváním vzoru. 
@@ -414,7 +414,7 @@ Obecně vidíme, že ukládání výsledků nepřináší až tak velkou příte
 Například, všechny dotazy na grafu As-Skitter (obrázek \ref{figure.skitterMatch}), vygenerují 453674558 výsledků, což představuje na x64 platformě 3.629 GB pro jeden sloupeček.
 Zmíněné poznatky použijeme při analýze experimentů pro Group/Order by.
 
-\subsection{Výsledky Order by}
+\subsection{Order by}
 
 Z důvodu časové a prostorové složitosti třídění na grafu As-Skitter jsme se rozhodli jej vynechat pro Order by dotazy.
 
@@ -511,7 +511,7 @@ Streamed: ABTreeValueAccumulator & $[0,81; 5,72]$-krát \\
 \label{tab.OrderByZrychleni}
 \end{table}
 
-\subsection{Výsledky Group by}
+\subsection{Group by}
 
 Analýzu výsledků dotazu G\_Q1 uvádíme samostatně, protože testuje pouze agregační funkce a nikoliv seskupování.
 Po levé straně je běh v jednom vlákně a na pravé straně běh osmi vláken.
