@@ -1,4 +1,5 @@
 \chapter{Experiment}
+\label{expr}
 
 Aby bylo možné porovnat stávající řešení s nově navrženým řešením na poli rychlosti zpracovávání dotazů a ověřit naše předpoklady, podrobili jsme zmíněná řešení experimentu. 
 Vykonaný experiment proběhne na reálných grafech různé velikosti s uměle vygenerovanými vlastnostmi naležící vrcholům. 
@@ -703,3 +704,9 @@ Dokonce se zde objevuje i zmíněná anomálie Streamed řešení z obrázků \r
 Z výsledků usuzujeme, že vylepšená řešení pro náš případ paralelizace neposkytují z hlediska rychlosti vykonání znatelné výhody oproti stávajícím řešením.
 Pro budoucí práci by bylo vhodné udělat podrobnější testování pro rozličtné počty použitých vláken a sledovat skalabilitu daných řešení.
 Zvýhodnění nastává pouze v případě single thread vykonávání u Streamed řešení, jež nepoužívá tabulku výsledků vyhledávání.
+Další možný budoucí výzkum může sledovat obecný problém rozdělení dat vláken během vyhledávání. 
+Normal přistup rovnoměrně rozděluje množství výsledků pro každé vlákno.
+Vylepšená řešení pak závisí na vlastnostech prohledávání grafu a může způsobit značné nerovnoměrnosti počtu výsledků mezi vlákny.
+Dané situace jsme netestovali a tento výzkum není součástí zadání této práce, nicméně může se jednat o další důvod, který způsobuje zpomalení vylepšených řešení. 
+
+\textit{Tímto jsme zakončili prezentaci výsledků. Všechna nasbíraná data použitá k tvorbě grafů je možné nalézt v příloze výsledků benchmarku \ref{prilohy.grafyVysledky}.}
