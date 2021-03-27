@@ -623,16 +623,16 @@ Je to způsobeno implementací použité tabulky pro výsledky vyhledávání.
 Ačkoliv se ukládá výsledek jen pokud pro něj neexistuje skupina, tak reference na pole obsahující výsledek vyhledávání se uloží do položky \verb+temporaryRow+ (sekce TODO).
 A ve výsledku částečně simuluje kopírování jedné proměnné do tabulky. 
 Největší skok pak právě nastává v dotazech G\_Q3 a G\_Q6, kdy se ukládají dvě proměnné.
-Platí, že použité ukládání List je pomalejší než Bucket, kvůli indirekci navíc. 
-To neplatí v dotazech G\_Q3 a G\_Q6, kde je zastoupeno nejvíce vytvářených skupin mezi ostatními dotazy.
-Přehození rolí si vysvětlujeme overheadem za množství vytvářených polí, které se vyrovná použité indirekci.
+Na největším grafu platí, že použité ukládání List je pomalejší než Bucket, kvůli indirekci navíc.
+Na menších grafech rozdíly ustupují a dokonce nastavají situace, kdy je List rychlejší.
+Přehození rolí si vysvětlujeme overheadem za množství vytvářených polí (tj. hodně alokací, málo přístupů), které se vyrovná použité indirekci.
+Na grafu Amazon0601, pak u  G\_Q3 a G\_Q6 dotazů je Streamed řešení pomalejší než Half-Streamed (List), protože také vytváří pole jako Bucket řešení (viz implementace TODO).
 
 Paralelní řešení používají doposud zmíněná značení.
 Global řešení seskupuje výsledky globálně pomocí paralelní mapy (\verb+ConcurrentDictionary+).
 Two-Step řešení seskupuje výsledky nejdříve lokálně pomocí mapy a následném mergi do paralelní mapy.
 LocalGroupByLocalTwoWayMerge řešení seskupuje lokálně a následně merguje výsledky vláken po dvojicích.
 Výsledky paralelizování jsou zobrazeny na obrázcích \ref{figure.amazonGroupByPar}, \ref{figure.webberkstanGroupByPar} a \ref{figure.skitterGroupByPar}.
-Byli jsme překvapeni, že vylepšená řešení se mnohdy nevyrovnala původním řešením.
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonGroupByPar.pdf}\centering
@@ -654,6 +654,7 @@ Byli jsme překvapeni, že vylepšená řešení se mnohdy nevyrovnala původní
 \label{figure.skitterGroupByPar}
 \end{figure}
 
+Byli jsme překvapeni, že vylepšená řešení se mnohdy nevyrovnala původním řešením.
 Streamed řešení, ačkoliv bylo nejrychlejší v jednovláknovém běhu, tak zde se pouze vyrovnalo nejrychlejším Normal řešením a nebo bylo pomalejší.
 Danou situaci si vysvětlujeme dvojitou synchronizací. 
 Prvni vrstva synchronizace nastává u přistupu k paralelní mapě a čtení/vložení záznamu.
@@ -667,5 +668,16 @@ Jediný bod, který si neumíme vysvětlit je na obrázku \ref{figure.skitterGro
 Streamed řešení je pomalejší, než Normal: Global.
 Všem řešením dominuje Normal: LocalGroupByLocalTwoWayMerge (Bucket), které provádí vše lokálně.
 
-Opět zde vidíme zpomalení implementace List vůči Bucket.
+Dále, opět zde vidíme zpomalení implementace List vůči Bucket.
+Rozdíly jsou znatelnější než u single thread řešení.
+Neočekávané výsledky nastaly u řešení Normal: Two-Step proti Half-Streamed: Two-Step.
+Half-Streamed řešení je pomalejší než Normal řešení nebo jsou vyrovnané.
+Z výsledků single thread řešení jsme viděli, že rozdíl daných módů je minimální.
+Dané zhoršení si vysvětlujeme druhým krokem (mergem do paralelní mapy).
+Half-Streamed řešení zde vytváří a překopírovává struktury, jež mají více položek (tj. kopíruje větší množství dat).
 
+\clearpage
+
+Z výsledků usuzujeme, že vylepšená řešení pro náš případ paralelizace neposkytují z hlediska rychlosti vykonání znatelné výhody oproti stávajícím řešením.
+Pro budoucí práci by bylo vhodné udělat podrovnější testování pro rozličtné počty použitých vláken a sledovat scalabilitu daných řešení.
+Doposud jsme používali agregační funkce \verb+min+ a \verb+avg+ nyní přejdeme k výsledkům, která pouze seskupují výsledky vyhledávání.
