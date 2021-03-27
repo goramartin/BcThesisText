@@ -261,7 +261,8 @@ G\_Q7 & select min(x.PropOne), avg(x.PropOne) \_M group by x.PropOne;\\
 \end{table}
 
 Pro výpočet agregačních funkcí jsme zvolili funkce \verb+min+ a \verb+avg+, protože představují netriviální práci narozdíl od funkcí \verb+sum+/\verb+count+.
-V případě \verb+min+ v paralelních řešeních dochází k mechanismu \verb+CompareExchange+ a u \verb+avg+ dojde ke dvou atomickým přičtením.
+Otestujeme i samotné seskupování, a to na dotazech G\_Q2 až G\_Q7. V dotazech nahradíme Select část prvním klíčem Group by. 
+Dané dotazy značíme symbolem $'$ (např. G\_Q2$')$.
 
 \begin{itemize}
 
@@ -664,11 +665,11 @@ Ukázalo se, že pouhé vkládání nových prvků do paralelní mapy trvá až 
 Samostatné čtení hodnot z paralelní mapy je o 9\% pomalejší.
 Z obrázků \ref{figure.amazonGQ1Par}, \ref{figure.webberkstanGQ1Par} a \ref{figure.skitterGQ1Par} pak vidíme cenu za synchronizaci na agregačních funkcích.
 Nicméně, v porovnání s řešením Normal: Global (použivá stejný princip) je vidět zrychlení, protože nepouživá tabulku výsledků.
-Jediný bod, který si neumíme vysvětlit je na obrázku \ref{figure.skitterGroupByPar} dotaz G\_Q5. 
+Jediný bod, který si neumíme vysvětlit je na obrázku \ref{figure.skitterGroupByPar} dotazy G\_Q4/G\_Q5 a obrázku \ref{figure.amazonGroupByPar} dotazy G\_Q3/G\_Q6 (dolní mez). 
 Streamed řešení je pomalejší, než Normal: Global.
 Všem řešením dominuje Normal: LocalGroupByLocalTwoWayMerge (Bucket), které provádí vše lokálně.
 
-Dále, opět zde vidíme zpomalení implementace List vůči Bucket.
+Dále zde opět vidíme zpomalení implementace List vůči Bucket.
 Rozdíly jsou znatelnější než u single thread řešení.
 Neočekávané výsledky nastaly u řešení Normal: Two-Step proti Half-Streamed: Two-Step.
 Half-Streamed řešení je pomalejší než Normal řešení nebo jsou vyrovnané.
@@ -676,8 +677,29 @@ Z výsledků single thread řešení jsme viděli, že rozdíl daných módů je
 Dané zhoršení si vysvětlujeme druhým krokem (mergem do paralelní mapy).
 Half-Streamed řešení zde vytváří a překopírovává struktury, jež mají více položek (tj. kopíruje větší množství dat).
 
-\clearpage
+\begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/amazonGroupByParNoAgg.pdf}\centering
+\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 32373599.}
+\label{figure.amazonGroupByParNoAgg}
+\end{figure}
+
+\begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/webberkstanGroupByParNoAgg.pdf}\centering
+\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 222498869.}
+\label{figure.webberkstanGroupByParNoAgg}
+\end{figure}
+
+\begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/skitterGroupByParNoAgg.pdf}\centering
+\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 453674558.}
+\label{figure.skitterGroupByParNoAgg}
+\end{figure}
+
+Nyní přejdeme k výsledkům dotazů nepoužívající agregační funkce, obrázky \ref{figure.amazonGroupByParNoAgg}, \ref{figure.webberkstanGroupByParNoAgg} a \ref{figure.skitterGroupByParNoAgg}.
+Opět zde dominuje řešení Normal: LocalGroupByLocalTwoWayMerge, což nás ujišťuje v předpokladu, že značné zpomalení ostatních řešení je způsobeno synchronizací.
+Pokud bychom porovnali výsledky s grafy s agregačními funkcemi zjistíme konzistenci mezi výsledky. 
+Dokonce se zde objevuje i zmíněná anomálie Streamed řešení z obrázků \ref{figure.skitterGroupByPar} a \ref{figure.amazonGroupByPar}.
 
 Z výsledků usuzujeme, že vylepšená řešení pro náš případ paralelizace neposkytují z hlediska rychlosti vykonání znatelné výhody oproti stávajícím řešením.
-Pro budoucí práci by bylo vhodné udělat podrovnější testování pro rozličtné počty použitých vláken a sledovat scalabilitu daných řešení.
-Doposud jsme používali agregační funkce \verb+min+ a \verb+avg+ nyní přejdeme k výsledkům, která pouze seskupují výsledky vyhledávání.
+Pro budoucí práci by bylo vhodné udělat podrobnější testování pro rozličtné počty použitých vláken a sledovat skalabilitu daných řešení.
+Zvýhodnění nastává pouze v případě single thread vykonávání u Streamed řešení, jež nepoužívá tabulku výsledků vyhledávání.
