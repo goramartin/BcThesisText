@@ -603,11 +603,22 @@ class ListHolder<T> : ListHolder { List<T> values }
 \caption{Doba vykonání dotazů Group by pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 32373599.}
 \label{figure.amazonGroupByST}
 \end{figure}
+\begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/amazonGroupBySTNoAgg.pdf}\centering
+\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 32373599.}
+\label{figure.amazonGroupBySTNoAgg}
+\end{figure}
+
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanGroupByST.pdf}\centering
 \caption{Doba vykonání dotazů Group by pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 222498869.}
 \label{figure.webberkstanGroupByST}
+\end{figure}
+\begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/webberkstanGroupBySTNoAgg.pdf}\centering
+\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 222498869.}
+\label{figure.webberkstanGroupBySTNoAgg}
 \end{figure}
 
 \begin{figure}[!htp]
@@ -615,69 +626,63 @@ class ListHolder<T> : ListHolder { List<T> values }
 \caption{Doba vykonání dotazů Group by pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 453674558.}
 \label{figure.skitterGroupByST}
 \end{figure}
+\begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/skitterGroupBySTNoAgg.pdf}\centering
+\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 453674558.}
+\label{figure.skitterGroupBySTNoAgg}
+\end{figure}
 
 Na obrázcích \ref{figure.amazonGroupByST}, \ref{figure.webberkstanGroupByST} a \ref{figure.skitterGroupByST} vidíme výsledky Group by pro běh v jednom vlákně.
+Výsledky na obrázcích \ref{figure.amazonGroupBySTNoAgg}, \ref{figure.webberkstanGroupBySTNoAgg} a \ref{figure.skitterGroupBySTNoAgg} představují dotazy bez agregačních funkcí v části Select.
 Dvojice dotazů G\_Q3/G\_Q6, G\_Q2/G\_Q5 a G\_Q4/G\_Q7 jsou pouze mírně rozličná a můžeme u nich vidět konzistenci výsledků pro použité grafy.
-Řešení vykonávající Group by v průběhu vyhledávání překonávají Normal řešení. 
-Nejznačnější zrychlení nastává u Streamed řešení, kdy není použita tabulka výsledků vyhledávání.
-Velice mírné zrychlení můžeme vidět u Half-Streamed řešení.
-Je to způsobeno implementací použité tabulky pro výsledky vyhledávání. 
-Ačkoliv se ukládá výsledek jen pokud pro něj neexistuje skupina, tak reference na pole obsahující výsledek vyhledávání se uloží do položky \verb+temporaryRow+ (sekce TODO).
-A ve výsledku částečně simuluje kopírování jedné proměnné do tabulky. 
-Největší skok pak právě nastává v dotazech G\_Q3 a G\_Q6, kdy se ukládají dvě proměnné.
+Řešení vykonávající Group by v průběhu vyhledávání překonávají Normal řešení.
+S růstem počtu výsledku se rozdíly mezi módy prohlubují. 
+Například, zrychlení Streamed řešení je znatelnější u grafu As-Skitter než u grafu Amazon0601. 
+
+Obecně nejznačnější zrychlení nastává u Streamed řešení, kdy není použita tabulka výsledků.
+Velice mírné zrychlení můžeme vidět u Half-Streamed řešení, které ukládá jen reprezentanty skupiny.
+U dotazů G\_Q2$'$, G\_Q5$'$ a G\_Q7$'$ (bez agregačních funkcí) nastávají situace, kdy Half-Streamed řešení je pomalejší než Normal.
+A navíc u grafu Amazon0601 i G\_Q4$'$, kde stejná situace existuje pro dotazy s ag. funkcemi G\_Q4 a G\_Q5.
+Situaci jsme neočekávali.
+Výsvětlujeme si ji následovně.
+Dané dotazy by měly vygenerovat malé množství skupin.
+Half-Streamed řešení používá při zpracování výsledku položku tabulky \verb+temporaryRow+, do které přesouvá pointr na pole výsleků.
+Skrze danou položku pak následně přistupuje k výsledku při vkládání do mapy. 
+Na dané přesouvání se můžeme dívat jako na kopírovaní jedné proměnné do tabulky.
+Při úspěšném vložení nastane navíc překopírování výsleků do pravé tabulky.
+Což odpovídá větší režii na zpracování výsledku než u Normal řešení.
+Proto vídíme pokles rychlosti a celkově jen mírné zrychlení u Half-Streamed řešení v jiných případech.
+Největší skok pak právě nastává v dotazech G\_Q3 a G\_Q6, kdy se ukládají dvě proměnné a navíc zde existuje vícero skupin.
+Tedy samotná řežie Normal řešení je značně pomalejší, protože musí ukládat vždy dvě proměnné, zatímco Half-Streamed jen přesouvá pointr.
+Zajímavé je, že dané situace nastávají u dotazů bez agregačních funkcí, přestože všechna řešení pro jejich reprezentaci používají stejné funkce a struktury (List/Bucket).
+Předpokládali bychom tedy stejnou situaci i na ostatních (větších) grafech.
+Absenci jevu neumíme plně objasnit.
+
 Na největším grafu platí, že použité ukládání List je pomalejší než Bucket, kvůli indirekci navíc.
-Na menších grafech rozdíly ustupují a dokonce nastavají situace, kdy je List rychlejší.
-Přehození rolí si vysvětlujeme overheadem za množství vytvářených polí (tj. hodně alokací, málo přístupů), které se vyrovná použité indirekci.
+Na menších grafech rozdíly ustupují a dokonce nastavají situace, kdy je List rychlejší. 
+Přesněji u dotazů G\_Q3 a G\_Q6.
+Přehození rolí si u nich vysvětlujeme overheadem za množství vytvářených polí (tj. hodně alokací, málo přístupů), které se vyrovná použité indirekci.
 Na grafu Amazon0601, pak u  G\_Q3 a G\_Q6 dotazů je Streamed řešení pomalejší než Half-Streamed (List), protože také vytváří pole jako Bucket řešení (viz implementace TODO).
+U dalších grafů je pak počet vytváření polí mnohonosábně menší než počet přístupů k nim.
+
+Můžeme říct, že vylepšená řešení pro single thread Group by jsou výhodnější z hlediska rychlosti vykonávání než řešení Normal. 
+Nyní přejdeme k výsledkům paralelizace.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Paralelní řešení používají doposud zmíněná značení.
 Global řešení seskupuje výsledky globálně pomocí paralelní mapy (\verb+ConcurrentDictionary+).
 Two-Step řešení seskupuje výsledky nejdříve lokálně pomocí mapy a následném mergi do paralelní mapy.
-LocalGroupByLocalTwoWayMerge řešení seskupuje lokálně a následně merguje výsledky vláken po dvojicích.
+LocalGroupByLocalTwoWayMerge řešení seskupuje lokálně a následně merguje výsledky vláken po dvojicích. 
+Toto Mergování si můžeme představit jako binární strom. Listy jsou výsledky vláken a vnitřní vrcholy jsou akce mergování.
 Výsledky paralelizování jsou zobrazeny na obrázcích \ref{figure.amazonGroupByPar}, \ref{figure.webberkstanGroupByPar} a \ref{figure.skitterGroupByPar}.
+Obrázky \ref{figure.amazonGroupByParNoAgg}, \ref{figure.webberkstanGroupByParNoAgg} a \ref{figure.skitterGroupByParNoAgg} obsahují výsledky dotazů bez agregačních funkcí.
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonGroupByPar.pdf}\centering
 \caption{Doba vykonání dotazů Group by pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 32373599.}
 \label{figure.amazonGroupByPar}
 \end{figure}
-
-\begin{figure}[!htp]
-\includegraphics[width=\linewidth]{../img/webberkstanGroupByPar.pdf}\centering
-\caption{Doba vykonání dotazů Group by pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 222498869.}
-\label{figure.webberkstanGroupByPar}
-\end{figure}
-
-\clearpage
-
-\begin{figure}[!htp]
-\includegraphics[width=\linewidth]{../img/skitterGroupByPar.pdf}\centering
-\caption{Doba vykonání dotazů Group by pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 453674558.}
-\label{figure.skitterGroupByPar}
-\end{figure}
-
-Byli jsme překvapeni, že vylepšená řešení se mnohdy nevyrovnala původním řešením.
-Streamed řešení, ačkoliv bylo nejrychlejší v jednovláknovém běhu, tak zde se pouze vyrovnalo nejrychlejším Normal řešením a nebo bylo pomalejší.
-Danou situaci si vysvětlujeme dvojitou synchronizací. 
-Prvni vrstva synchronizace nastává u přistupu k paralelní mapě a čtení/vložení záznamu.
-Po získání \verb+value+ z mapy následuje druhá vrstva, která obsahuje volání thread-safe funkcí pro výpočet agregovaných hodnot pro danou skupinu.
-Otestovali jsme overhead zvlášť čtení a vložení \verb+ConcurrentDictionary+ vůči \verb+Dictionary+ pro jedno vlákno. 
-Ukázalo se, že pouhé vkládání nových prvků do paralelní mapy trvá až 5-ti násobek doby obyčejné mapy.
-Samostatné čtení hodnot z paralelní mapy je o 9\% pomalejší.
-Z obrázků \ref{figure.amazonGQ1Par}, \ref{figure.webberkstanGQ1Par} a \ref{figure.skitterGQ1Par} pak vidíme cenu za synchronizaci na agregačních funkcích.
-Nicméně, v porovnání s řešením Normal: Global (použivá stejný princip) je vidět zrychlení, protože nepouživá tabulku výsledků.
-Jediný bod, který si neumíme vysvětlit je na obrázku \ref{figure.skitterGroupByPar} dotazy G\_Q4/G\_Q5 a obrázku \ref{figure.amazonGroupByPar} dotazy G\_Q3/G\_Q6 (dolní mez). 
-Streamed řešení je pomalejší, než Normal: Global.
-Všem řešením dominuje Normal: LocalGroupByLocalTwoWayMerge (Bucket), které provádí vše lokálně.
-
-Dále zde opět vidíme zpomalení implementace List vůči Bucket.
-Rozdíly jsou znatelnější než u single thread řešení.
-Neočekávané výsledky nastaly u řešení Normal: Two-Step proti Half-Streamed: Two-Step.
-Half-Streamed řešení je pomalejší než Normal řešení nebo jsou vyrovnané.
-Z výsledků single thread řešení jsme viděli, že rozdíl daných módů je minimální.
-Dané zhoršení si vysvětlujeme druhým krokem (mergem do paralelní mapy).
-Half-Streamed řešení zde vytváří a překopírovává struktury, jež mají více položek (tj. kopíruje větší množství dat).
-
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonGroupByParNoAgg.pdf}\centering
 \caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 32373599.}
@@ -685,28 +690,83 @@ Half-Streamed řešení zde vytváří a překopírovává struktury, jež mají
 \end{figure}
 
 \begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/webberkstanGroupByPar.pdf}\centering
+\caption{Doba vykonání dotazů Group by pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 222498869.}
+\label{figure.webberkstanGroupByPar}
+\end{figure}
+\begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanGroupByParNoAgg.pdf}\centering
 \caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 222498869.}
 \label{figure.webberkstanGroupByParNoAgg}
 \end{figure}
 
 \begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/skitterGroupByPar.pdf}\centering
+\caption{Doba vykonání dotazů Group by pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 453674558.}
+\label{figure.skitterGroupByPar}
+\end{figure}
+\begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/skitterGroupByParNoAgg.pdf}\centering
 \caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 453674558.}
 \label{figure.skitterGroupByParNoAgg}
 \end{figure}
 
-Nyní přejdeme k výsledkům dotazů nepoužívající agregační funkce, obrázky \ref{figure.amazonGroupByParNoAgg}, \ref{figure.webberkstanGroupByParNoAgg} a \ref{figure.skitterGroupByParNoAgg}.
-Opět zde dominuje řešení Normal: LocalGroupByLocalTwoWayMerge, což nás ujišťuje v předpokladu, že značné zpomalení ostatních řešení je způsobeno synchronizací.
-Pokud bychom porovnali výsledky s grafy s agregačními funkcemi zjistíme konzistenci mezi výsledky. 
-Dokonce se zde objevuje i zmíněná anomálie Streamed řešení z obrázků \ref{figure.skitterGroupByPar} a \ref{figure.amazonGroupByPar}.
+Byli jsme překvapeni, že vylepšená řešení se mnohdy nevyrovnala původním řešením.
+Streamed řešení, ačkoliv bylo nejrychlejší v jednovláknovém běhu, tak zde se pouze vyrovnalo nejrychlejším Normal řešením a nebo bylo pomalejší.
+Danou situaci si vysvětlujeme synchronizací. 
+Prvni vrstva synchronizace nastává u přistupu k paralelní mapě a čtení/vložení záznamu.
+Po získání \verb+value+ z mapy následuje druhá vrstva, která obsahuje volání thread-safe funkcí pro výpočet agregovaných hodnot pro danou skupinu.
+Z obrázků \ref{figure.amazonGQ1Par}, \ref{figure.webberkstanGQ1Par} a \ref{figure.skitterGQ1Par} (Streamed řešení) jsme viděli cenu za synchronizaci na agregačních funkcích při přístupu osmi vláken.
+Pro představu pouhé režie paralelní mapy jsme otestovali overhead zvlášť čtení a vložení \verb+ConcurrentDictionary<int, int>+ vůči \verb+Dictionary<int,int>+ pro jedno vlákno.
+Následuje příklad kódu použitého při testu:
+\begin{code}
+Random ran = new Random(100100);
+Stopwatch timer = new Stopwatch();
+Dictionary<int, int> map = new Dictionary<int, int>();
+ConcurrentDictionary<int, int> parMap = 
+    new ConcurrentDictionary<int, int>();
+...
+// Insert.
+for (int i = 0; i < 1_000_000; i++)
+{
+    // Based on the used map choose (1) or (2).
+    (1) if (!map.TryGetValue(i, out int value)) map.Add(i, i);
+    (2) var tmp = parMap.GetOrAdd(i, i);
+}
+...
+// Read.
+for (int i = 0; i < 100_000_000; i++)
+{
+    var val = ran.Next(0, 1_000_000);
+    // Based on the used map choose (1) or (2).
+    (1) if (!map.TryGetValue(val, out int value));
+    (2) var tmp = parMap.GetOrAdd(val, val);
+}
+\end{code}
+Ukázalo se, že pouhé vkládání náhodně generovaných prvků do paralelní mapy trvá až 5-ti násobek doby obyčejné mapy.
+Samostatné čtení náhodně generovaných hodnot, které existují v mapě, je o 9\% pomalejší.
+Nicméně, v porovnání s řešením Normal: Global (použivá stejný princip) je vidět zrychlení, protože nepouživá tabulku výsledků.
+Jediný bod, který si neumíme vysvětlit je na grafech \ref{figure.skitterGroupByPar} a \ref{figure.skitterGroupByParNoAgg} dotazy G\_Q4/G\_Q5 a obrázku \ref{figure.amazonGroupByPar} dotazy G\_Q3/G\_Q6 (dolní mez). 
+Streamed řešení je pomalejší, než Normal: Global.
+Všem řešením dominuje Normal: LocalGroupByLocalTwoWayMerge, které provádí vše lokálně a ujišťuje nás v předpokladu, že hlavní overhead je způsoben synchonizací.
+Například dané řešení vůči Normal: Two-Step. 
+Je zde vidět overhead za použití paralelní mapy vůči mergování lokálně po dvojicích, jelikož samotný první krok je totožný pro obě řešení.
+Zpomalení Normal: Two-Step je ještě znatelnější pro dotazy G\_Q3/G\_Q3$'$ a G\_Q6/G\_Q6$'$, kdy se vytváří množství skupin.
+
+Dále zde opět vidíme zpomalení implementace List vůči Bucket.
+Rozdíly jsou znatelnější než u single thread řešení.
+Neočekávané výsledky nastaly u řešení Normal: Two-Step proti Half-Streamed: Two-Step.
+Half-Streamed řešení je pomalejší než Normal řešení nebo jsou vyrovnané.
+U single thread řešení jsme viděli, že daná situace nastává jen u určitých dotazů bez agregačních funkcí a na nejmenším grafu Amazon0601 i pro dotazy s nimi.
+Nyní nastává i u dotazů s ag. funkcemi.
 
 Z výsledků usuzujeme, že vylepšená řešení pro náš případ paralelizace neposkytují z hlediska rychlosti vykonání znatelné výhody oproti stávajícím řešením.
-Pro budoucí práci by bylo vhodné udělat podrobnější testování pro rozličtné počty použitých vláken a sledovat skalabilitu daných řešení.
+Pro budoucí práci by bylo vhodné udělat podrobnější testování pro rozličné počty použitých vláken a sledovat skalabilitu daných řešení.
 Zvýhodnění nastává pouze v případě single thread vykonávání u Streamed řešení, jež nepoužívá tabulku výsledků vyhledávání.
 Další možný budoucí výzkum může sledovat obecný problém rozdělení dat vláken během vyhledávání. 
 Normal přistup rovnoměrně rozděluje množství výsledků pro každé vlákno.
 Vylepšená řešení pak závisí na vlastnostech prohledávání grafu a může způsobit značné nerovnoměrnosti počtu výsledků mezi vlákny.
-Dané situace jsme netestovali a tento výzkum není součástí zadání této práce, nicméně může se jednat o další důvod, který způsobuje zpomalení vylepšených řešení. 
+Situace je částečně řešena rozdělováním malých částí vrcholů k prohledání, ale nemůže zaručit stoprocentně rovnoměrné rozdělení.
 
-\textit{Tímto jsme zakončili prezentaci výsledků. Všechna nasbíraná data použitá k tvorbě grafů je možné nalézt v příloze výsledků benchmarku \ref{prilohy.grafyVysledky}.}
+\bigskip
+\textit{Tímto jsme zakončili prezentaci výsledků. Všechna nasbíraná data použitá k tvorbě grafů je možné nalézt v příloze výsledků benchmarku (\ref{prilohy.grafyVysledky}).}
