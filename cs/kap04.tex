@@ -55,7 +55,8 @@ Při příkladu transformace budeme vycházet z následující ukázky hlavičky
 \subsection{Transformace grafových dat}
 
 Výstupem transformace budou soubory popisující schéma vrcholů/hran NodeTypes.txt/EdgeTypes.txt a datové soubory vrcholů/hran Nodes.txt/Edges.txt.
-V našem případě graf bude obsahovat pouze jeden typ hrany a jeden typ vrcholu. Dané omezení ovlivňuje pouze vyhledávání vzoru, které není určující pro náš experiment. 
+V našem případě graf bude obsahovat pouze jeden typ hrany a jeden typ vrcholu. 
+Dané omezení pouze snižuje počet nalezených výsledků, což není určující pro náš experiment. 
 
 Ukázka zvoleného schématu pro Nodes.txt/Edges.txt:
 \begin{code}
@@ -246,35 +247,45 @@ O\_Q4 & select x.PropThree match (x) -> (y) -> (z) order by x.PropThree \\
 \toprule
 \mc{\textbf{Zkratka}} & \mc{\textbf{Dotaz}} \\
 \midrule
-G\_Q1 & select min(y.PropOne), avg(y.PropOne) \_M;\\
-G\_Q2 & select min(y.PropOne), avg(y.PropOne) \_M group by y;\\
-G\_Q3 & select min(y.PropOne), avg(y.PropOne) \_M group by y, x;\\
-G\_Q4 & select min(x.PropOne), avg(x.PropOne) \_M group by x.PropTwo;\\
-G\_Q5 & select min(x.PropOne), avg(x.PropOne) \_M group by x;\\
-G\_Q6 & select min(x.PropOne), avg(x.PropOne) \_M group by x, y;\\
-G\_Q7 & select min(x.PropOne), avg(x.PropOne) \_M group by x.PropOne;\\
+G\_Q1 & select min(y.PropOne), avg(y.PropOne) $M$;\\
+G\_Q2 & select min(y.PropOne), avg(y.PropOne) $M$ group by y;\\
+G\_Q3 & select min(x.PropOne), avg(x.PropOne) $M$ group by x;\\
+G\_Q4 & select min(y.PropOne), avg(y.PropOne) $M$ group by y, x;\\
+G\_Q5 & select min(x.PropOne), avg(x.PropOne) $M$ group by x, y;\\
+G\_Q6 & select min(x.PropOne), avg(x.PropOne) $M$ group by x.PropTwo;\\
+G\_Q7 & select min(x.PropOne), avg(x.PropOne) $M$ group by x.PropOne;\\
+G\_Q8 & select min(x.PropOne), avg(x.PropOne) $M$ group by x.PropFour;\\
 \bottomrule
-\multicolumn{2}{l}{\footnotesize \textit{Pozn:} \_M = match (x) -> (y) -> (z).}
+\multicolumn{2}{l}{\footnotesize \textit{Pozn:} $M$ = match (x) -> (y) -> (z).}
 \end{tabular}
 
 \caption{Dotazy Group by}
 \label{tab.dotazG}
 \end{table}
 
-Pro výpočet agregačních funkcí jsme zvolili funkce \verb+min+ a \verb+avg+, protože představují netriviální práci narozdíl od funkcí \verb+sum+/\verb+count+.
-Otestujeme i samotné seskupování, a to na dotazech G\_Q2 až G\_Q7. V dotazech nahradíme Select část prvním klíčem Group by. 
+Pro výpočet agregačních funkcí jsme zvolili funkce \verb+min+ a \verb+avg+, protože představují netriviální práci narozdíl od funkcí \verb+sum+/\verb+count+ (jedno přičtení proměnné).
+Funkce \verb+min+ porovná a prohodí výsledek. 
+Thread-safe verze používá mechanismus \verb+CompareExchange+. 
+Funkce \verb+avg+ provádí dva přičtení proměnné. 
+Thread-safe verze používá atomická přičtení. 
+Otestujeme i samotné seskupování na dotazech G\_Q2 až G\_Q8. 
+V dotazech nahradíme Select část prvním klíčem Group by. 
 Dané dotazy značíme symbolem $'$ (např. G\_Q2$')$.
 
 \begin{itemize}
 
 \item G\_Q1 testuje single group Group by. Vše je agregováno pouze do jedné skupiny. 
-\item G\_Q2 testuje vytváření skupin podle \verb+ID+ vrcholů y.
-\item G\_Q3 přidává k G\_Q2 overhead za ukládání a zpracovávání (hash + compare) další proměnné.
-\item G\_Q4 testuje vytváření skupin náhodně vygenerovaných hodnot Int32 (viz \ref{tab.grafProps}). 
-\item G\_Q5 testuje situaci, kdy při paralelním zpracování žádné jiné vlákno během vyhledávaní nenajde stejnou hodnotu.
-\item G\_Q7 testuje situaci, kdy dojde k rozprostření několika stejných hodnot v grafu. Dodává větší šanci, že nějaké vlákno během paralelního zpracování dostane stejnou skupinu jako vlákno jiné.
+\item G\_Q2 a G\_Q3  testuje vytváření skupin podle \verb+ID+ vrcholů. Rozdíl mezi nimi je ten, že proměnná x je při paralelním zpracování přístupná pouze jednomu vláknu za celý běh vyhledávání. Maximální počet skupin je ze shora omezen počtem vrcholů v grafu.
+\item G\_Q4 a G\_Q5 přidávájí overhead za ukládání a zpracovávání (hash + compare) další proměnné. Počet skupin je ze shora omezen počtem hran v grafu. Tyto dotazy obsahují nejvíce skupin mezi zbylými dotazy.
+\item G\_Q6 testuje vytváření skupin náhodně vygenerovaných hodnot z celého rozsahu \verb+Int32+ (viz \ref{tab.grafProps}). Počet skupin je ze shora omezen počtem vrcholů v grafu.
+\item G\_Q7 testuje vytváření skupin náhodně vygenerovaných hodnot z rozsahu $[0; 100000]$ \verb+Int32+ (viz \ref{tab.grafProps}). Dojde k rozprostření několika stejných hodnot v grafu. Maximální počet skupin je 100000.
+\item G\_Q8  testuje vytváření skupin náhodně vygenerovaných hodnot z rozsahu $[0; 1000]$ \verb+Int32+ (viz \ref{tab.grafProps}). Dojde k rozprostření mnoha stejných hodnot v grafu. Maximální počet skupin je 1000.
 
 \end{itemize}
+
+Dotazy G\_Q4/G\_Q5, G\_Q6, G\_Q7 a G\_Q8 nám umožní sledovat chování řešení při snižování počtu vytvářených skupin.
+Pro G\_Q4 a G\_Q6 bude vidět overhead za porovnání Property vůči \verb+ID+.
+
 
 \section{Metodika}
 
@@ -344,6 +355,8 @@ As-Skitter & 8388608 & 1024\\
 \label{tab.args}
 \end{table}
 
+FixedArraySize udává fixní velikost polí v tabulce použité pro ukládání výsledků (tj. sloupeček je pole polí).
+VerticesPerThread určuje počet přidělovaných vrcholů k prohledání v průběhu paralelní Match části. 
 Dané argumenty se nám nejvíce osvědčili v průběhu vývoje dotazovacího enginu. Vyhledávání vzoru na nich docilovalo nejrychlejších výsledků.
 
 \subsection{Hardwarová specifikace}
@@ -447,6 +460,9 @@ Jak vidíme na obrázcích, řešení se přibližuje rychlosti řešení Normal
 
 \clearpage
 
+
+Problém by nastal, pokud by množství hodnot odpovídalo počtu nalezených výsledků. 
+V tomto případě bychom vytvářeli zbytečný overhead za režii pole.
 Dle našich předpokladů se ukázalo, že třídění podle \verb+ID+ (O\_Q1 a O\_Q2) vůči Properties (O\_Q3 a O\_Q4) vede ke znatelnému overheadu.
 Je to způsobeno nutným přístupem k databázi, při kterém se ověřuje, jestli daná vlastnost existuje na daném elementu a následném čtení hodnoty ze struktury obsahující ji.
 
@@ -461,8 +477,9 @@ Při porovnávání je nutné mít na paměti, že lokálně bežící části p
 
 Nyní budeme prezetovat výsledky paralelizace (obrázky \ref{figure.amazonOrderPar} a \ref{figure.webberkstanOrderPar}).
 Pro dotazy O\_Q1 a O\_Q2 vidíme u Streamed řešení mnohonásobný rozdíl vůči ostatním řešením, protože přihrádky jsou rozděleny na základě rozsahu typu klíče (např. pro O\_Q3 $[$\verb+Int32.MinValue+; \verb+Int32.MaxValue+$]$).
-Avšak, hodnoty třídění spadaní do rozsahu \verb+ID+ vrcholů grafu, což představuje rozsah $\approx [0; \#vrcholů]$. 
-Rozsah hodnot třídění spadá vždy do jedné přihrádky a výsledná doba je rovna době single thread řešení s overheadem za přistupovaný zámek.
+Avšak, hodnoty třídění spadají do rozsahu \verb+ID+ vrcholů grafu, což představuje rozsah $\approx [0; \#vrcholů]$. 
+Hodnota třídění spadá vždy do jedné přihrádky a výsledná doba je rovna době single thread řešení s overheadem za přistupovaný zámek.
+Pro O\_Q1 je to zpomalení o $[20,51; 21]$\% a pro O\_Q2 $[17,64; 18,9]$\%.
 U dotazů O\_Q3 a O\_Q4 je tříděno pomocí hodnot vygenerovaných náhodně spadající do celého rozsahu typu klíče a zde Streamed řešení předčilo všechna ostatní. 
 Pro budoucí rozšíření by bylo nutné zvážit vytvoření statistik rozsahů jednotlivých Properties, aby bylo možné lépe vytvořit rozdělení přihrádek.
 
@@ -634,25 +651,24 @@ class ListHolder<T> : ListHolder { List<T> values }
 
 Na obrázcích \ref{figure.amazonGroupByST}, \ref{figure.webberkstanGroupByST} a \ref{figure.skitterGroupByST} vidíme výsledky Group by pro běh v jednom vlákně.
 Výsledky na obrázcích \ref{figure.amazonGroupBySTNoAgg}, \ref{figure.webberkstanGroupBySTNoAgg} a \ref{figure.skitterGroupBySTNoAgg} představují dotazy bez agregačních funkcí v části Select.
-Dvojice dotazů G\_Q3/G\_Q6, G\_Q2/G\_Q5 a G\_Q4/G\_Q7 jsou pouze mírně rozličná a můžeme u nich vidět konzistenci výsledků pro použité grafy.
+Dvojice dotazů G\_Q4/G\_Q5, G\_Q2/G\_Q3 a G\_Q6/G\_Q7/G\_Q8 jsou pouze mírně rozličná a můžeme u nich vidět konzistenci výsledků pro použité grafy.
 Řešení vykonávající Group by v průběhu vyhledávání překonávají Normal řešení.
 S růstem počtu výsledku se rozdíly mezi módy prohlubují. 
 Například, zrychlení Streamed řešení je znatelnější u grafu As-Skitter než u grafu Amazon0601. 
 
 Obecně nejznačnější zrychlení nastává u Streamed řešení, kdy není použita tabulka výsledků.
 Velice mírné zrychlení můžeme vidět u Half-Streamed řešení, které ukládá jen reprezentanty skupiny.
-U dotazů G\_Q2$'$, G\_Q5$'$ a G\_Q7$'$ (bez agregačních funkcí) nastávají situace, kdy Half-Streamed řešení je pomalejší než Normal.
-A navíc u grafu Amazon0601 i G\_Q4$'$, kde stejná situace existuje pro dotazy s ag. funkcemi G\_Q4 a G\_Q5.
+U všech dotazů bez agregačních funkcí, kromě G\_Q4$'$/G\_Q5$'$, nastávají situace, kdy Half-Streamed řešení je pomalejší než Normal.
+U grafu Amazon0601 nastává stejná situace pro G\_Q3, G\_Q6 a pro každý graf G\_Q8.
 Situaci jsme neočekávali.
-Výsvětlujeme si ji následovně.
-Dané dotazy by měly vygenerovat malé množství skupin.
-Half-Streamed řešení používá při zpracování výsledku položku tabulky \verb+temporaryRow+, do které přesouvá pointr na pole výsleků.
+Vysvětlujeme si ji následovně.
+Half-Streamed řešení používá při zpracování výsledku položku tabulky \verb+temporaryRow+, do které přesouvá pointr na pole výsledků.
 Skrze danou položku pak následně přistupuje k výsledku při vkládání do mapy. 
 Na dané přesouvání se můžeme dívat jako na kopírovaní jedné proměnné do tabulky.
-Při úspěšném vložení nastane navíc překopírování výsleků do pravé tabulky.
+Při úspěšném vložení nastane navíc překopírování výsledků do pravé tabulky.
 Což odpovídá větší režii na zpracování výsledku než u Normal řešení.
 Proto vídíme pokles rychlosti a celkově jen mírné zrychlení u Half-Streamed řešení v jiných případech.
-Největší skok pak právě nastává v dotazech G\_Q3 a G\_Q6, kdy se ukládají dvě proměnné a navíc zde existuje vícero skupin.
+Největší skok pak právě nastává v dotazech G\_Q4/G\_Q4$'$ a G\_Q5/G\_Q5$'$, kdy se ukládají dvě proměnné.
 Tedy samotná řežie Normal řešení je značně pomalejší, protože musí ukládat vždy dvě proměnné, zatímco Half-Streamed jen přesouvá pointr.
 Zajímavé je, že dané situace nastávají u dotazů bez agregačních funkcí, přestože všechna řešení pro jejich reprezentaci používají stejné funkce a struktury (List/Bucket).
 Předpokládali bychom tedy stejnou situaci i na ostatních (větších) grafech.
@@ -660,12 +676,12 @@ Absenci jevu neumíme plně objasnit.
 
 Na největším grafu platí, že použité ukládání List je pomalejší než Bucket, kvůli indirekci navíc.
 Na menších grafech rozdíly ustupují a dokonce nastavají situace, kdy je List rychlejší. 
-Přesněji u dotazů G\_Q3 a G\_Q6.
+Přesněji u dotazů G\_Q4 a G\_Q5.
 Přehození rolí si u nich vysvětlujeme overheadem za množství vytvářených polí (tj. hodně alokací, málo přístupů), které se vyrovná použité indirekci.
-Na grafu Amazon0601, pak u  G\_Q3 a G\_Q6 dotazů je Streamed řešení pomalejší než Half-Streamed (List), protože také vytváří pole jako Bucket řešení (viz implementace TODO).
+Na grafu Amazon0601 u  G\_Q4 a G\_Q5 dotazů je Streamed řešení pomalejší než Half-Streamed (List), protože také vytváří pole jako Bucket řešení (viz implementace TODO).
 U dalších grafů je pak počet vytváření polí mnohonosábně menší než počet přístupů k nim.
 
-Můžeme říct, že vylepšená řešení pro single thread Group by jsou výhodnější z hlediska rychlosti vykonávání než řešení Normal. 
+Z výsledků můžeme vyvodit, že vylepšená řešení pro single thread Group by jsou výhodnější z hlediska rychlosti vykonávání než řešení Normal. 
 Nyní přejdeme k výsledkům paralelizace.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -677,6 +693,7 @@ LocalGroupByLocalTwoWayMerge řešení seskupuje lokálně a následně merguje 
 Toto Mergování si můžeme představit jako binární strom. Listy jsou výsledky vláken a vnitřní vrcholy jsou akce mergování.
 Výsledky paralelizování jsou zobrazeny na obrázcích \ref{figure.amazonGroupByPar}, \ref{figure.webberkstanGroupByPar} a \ref{figure.skitterGroupByPar}.
 Obrázky \ref{figure.amazonGroupByParNoAgg}, \ref{figure.webberkstanGroupByParNoAgg} a \ref{figure.skitterGroupByParNoAgg} obsahují výsledky dotazů bez agregačních funkcí.
+\bigskip
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonGroupByPar.pdf}\centering
@@ -712,7 +729,7 @@ Obrázky \ref{figure.amazonGroupByParNoAgg}, \ref{figure.webberkstanGroupByParNo
 \end{figure}
 
 Byli jsme překvapeni, že vylepšená řešení se mnohdy nevyrovnala původním řešením.
-Streamed řešení, ačkoliv bylo nejrychlejší v jednovláknovém běhu, tak zde se pouze vyrovnalo nejrychlejším Normal řešením a nebo bylo pomalejší.
+Streamed řešení, ačkoliv bylo nejrychlejší v jednovláknovém běhu, tak zde se pouze vyrovnalo Normal řešením a nebo bylo pomalejší.
 Danou situaci si vysvětlujeme synchronizací. 
 Prvni vrstva synchronizace nastává u přistupu k paralelní mapě a čtení/vložení záznamu.
 Po získání \verb+value+ z mapy následuje druhá vrstva, která obsahuje volání thread-safe funkcí pro výpočet agregovaných hodnot pro danou skupinu.
@@ -744,21 +761,26 @@ for (int i = 0; i < 100_000_000; i++)
 }
 \end{code}
 Ukázalo se, že pouhé vkládání náhodně generovaných prvků do paralelní mapy trvá až 5-ti násobek doby obyčejné mapy.
-Samostatné čtení náhodně generovaných hodnot, které existují v mapě, je o 9\% pomalejší.
-Nicméně, v porovnání s řešením Normal: Global (použivá stejný princip) je vidět zrychlení, protože nepouživá tabulku výsledků.
-Jediný bod, který si neumíme vysvětlit je na grafech \ref{figure.skitterGroupByPar} a \ref{figure.skitterGroupByParNoAgg} dotazy G\_Q4/G\_Q5 a obrázku \ref{figure.amazonGroupByPar} dotazy G\_Q3/G\_Q6 (dolní mez). 
-Streamed řešení je pomalejší, než Normal: Global.
-Všem řešením dominuje Normal: LocalGroupByLocalTwoWayMerge, které provádí vše lokálně a ujišťuje nás v předpokladu, že hlavní overhead je způsoben synchonizací.
+Samostatné čtení náhodně generovaných hodnot, které existují v mapě, je průměrně o 9\% pomalejší.
+Proto vidíme u Streamed řešení postupného vyrovnání pro dotazy G\_6/G\_6$'$ až G\_8/G\_8$'$, kde v G\_8/G\_8$'$ dochází k nejmenší tvorbě skupin a častému čtení.
+A obecné zpomalení u řešení používající paralelní mapu.
+Streamed řešení vůči jeho podobnému protějšku Normal: Global je místy pomalejší pozorujeme-li dolní hranice.
+Dochází k tomu na dvou grafech. 
+Grafu As-Skitter u dotazů  G\_3/G\_3$'$ a  G\_6/G\_6$'$ 
+Druhý graf je Amazon0601 na dotazech G\_4/G\_4$'$ a  G\_5/G\_5$'$.
+Myslíme si, že se jedná o specifické situace pro dané grafy a nedokážeme je plně zodpovědět, jelikož navzájem a pro graf WebBerkStan nenastávají.
+
+Můžeme zde aplikovat výsledky z single-thread řešení pro řešení Normal: Two-Step proti Half-Streamed: Two-Step.
+Half-Streamed řešení je zde opět pomalejší než Normal řešení nebo jsou vyrovnané.
+Dále zde opět vidíme zpomalení implementace List vůči Bucket, které jsme viděli u single-thread řešení.
+Situace při které je List rychlejší nastávala pro dotazy G\_Q4 a G\_Q5 na grafu Amazon0601 a WebBerkStan.
+Nyní nastává pouze pro graf Amazon0601 s řešením Normal: LocalGroupByLocalTwoWayMerge.
+Two-step (List) řešení při mergi překopírovává větší množství dat, proto u něj daný jev už nenastává. 
+
+Všem řešením dominuje Normal: LocalGroupByLocalTwoWayMerge, které provádí vše lokálně a ujišťuje nás v předpokladu, že hlavní overhead je způsoben synchronizací.
 Například dané řešení vůči Normal: Two-Step. 
 Je zde vidět overhead za použití paralelní mapy vůči mergování lokálně po dvojicích, jelikož samotný první krok je totožný pro obě řešení.
-Zpomalení Normal: Two-Step je ještě znatelnější pro dotazy G\_Q3/G\_Q3$'$ a G\_Q6/G\_Q6$'$, kdy se vytváří množství skupin.
-
-Dále zde opět vidíme zpomalení implementace List vůči Bucket.
-Rozdíly jsou znatelnější než u single thread řešení.
-Neočekávané výsledky nastaly u řešení Normal: Two-Step proti Half-Streamed: Two-Step.
-Half-Streamed řešení je pomalejší než Normal řešení nebo jsou vyrovnané.
-U single thread řešení jsme viděli, že daná situace nastává jen u určitých dotazů bez agregačních funkcí a na nejmenším grafu Amazon0601 i pro dotazy s nimi.
-Nyní nastává i u dotazů s ag. funkcemi.
+Zpomalení Normal: Two-Step je ještě znatelnější pro dotazy G\_Q4/G\_Q4$'$ a G\_Q5/G\_Q5$'$, kdy se vkládá množství skupin do paralelní mapy.
 
 Z výsledků usuzujeme, že vylepšená řešení pro náš případ paralelizace neposkytují z hlediska rychlosti vykonání znatelné výhody oproti stávajícím řešením.
 Pro budoucí práci by bylo vhodné udělat podrobnější testování pro rozličné počty použitých vláken a sledovat skalabilitu daných řešení.
@@ -767,6 +789,7 @@ Další možný budoucí výzkum může sledovat obecný problém rozdělení da
 Normal přistup rovnoměrně rozděluje množství výsledků pro každé vlákno.
 Vylepšená řešení pak závisí na vlastnostech prohledávání grafu a může způsobit značné nerovnoměrnosti počtu výsledků mezi vlákny.
 Situace je částečně řešena rozdělováním malých částí vrcholů k prohledání, ale nemůže zaručit stoprocentně rovnoměrné rozdělení.
+
 
 \bigskip
 \textit{Tímto jsme zakončili prezentaci výsledků. Všechna nasbíraná data použitá k tvorbě grafů je možné nalézt v příloze výsledků benchmarku (\ref{prilohy.grafyVysledky}).}
