@@ -743,15 +743,16 @@ Dictionary<int, int> map = new Dictionary<int, int>();
 ConcurrentDictionary<int, int> parMap = 
     new ConcurrentDictionary<int, int>();
 ...
-// Insert.
+// Insert test. Assuming the maps are empty.
 for (int i = 0; i < 1_000_000; i++)
 {
+    var val = ran.Next();
     // Based on the used map choose (1) or (2).
-    (1) if (!map.TryGetValue(i, out int value)) map.Add(i, i);
-    (2) var tmp = parMap.GetOrAdd(i, i);
+    (1) if (!map.TryGetValue(val, out int value)) map.Add(val, i);
+    (2) var tmp = parMap.GetOrAdd(val, i);
 }
 ...
-// Read.
+// Read test. Assuming the maps contain keys from 0 to 1_000_000.
 for (int i = 0; i < 100_000_000; i++)
 {
     var val = ran.Next(0, 1_000_000);
@@ -760,13 +761,32 @@ for (int i = 0; i < 100_000_000; i++)
     (2) var tmp = parMap.GetOrAdd(val, val);
 }
 \end{code}
-Ukázalo se, že pouhé vkládání náhodně generovaných prvků do paralelní mapy trvá až 5-ti násobek doby obyčejné mapy.
-Samostatné čtení náhodně generovaných hodnot, které existují v mapě, je průměrně o 9\% pomalejší.
-Proto vidíme u Streamed řešení postupného vyrovnání pro dotazy G\_6/G\_6$'$ až G\_8/G\_8$'$, kde v G\_8/G\_8$'$ dochází k nejmenší tvorbě skupin a častému čtení.
-A obecné zpomalení u řešení používající paralelní mapu.
-Streamed řešení vůči jeho podobnému protějšku Normal: Global je místy pomalejší pozorujeme-li dolní hranice.
-Dochází k tomu na dvou grafech. 
-Grafu As-Skitter u dotazů  G\_3/G\_3$'$ a  G\_6/G\_6$'$ 
+
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\mc{Test} & \mc{\textbf{Dictionary}} & \mc{\textbf{ConcurrentDictionary}} & \mc{\textbf{Poměr}} \\
+\midrule
+Insert 1000000 & 165 & 667 & 4,04 \\
+Insert 10000000  & 2476 & 11272 & 4,55 \\
+Read 100000000  & 19002 & 21516 & 1,13 \\
+\bottomrule
+\end{tabular}
+
+\caption{Výsledky testování map v milisekundách. Běh v jednom vlákně. Měření dle kódu výše. Generování prvků pomocí třídy Random se seedem 100100. Měřeno pomocí třídy Stopwatch. Výsledek zvolen jako průměr pěti měření. Test Insert $n$ provádí vkládání $n$ náhodně vygenerovaných prvků do prázdné mapy. Test Read $n$ provádí $n$ čtení z rozsahu 0 až 1000000. Poměr je roven podílu času paralelní mapy a mapy.}
+\label{tab.mapsInsert}
+\end{table}
+
+\clearpage
+
+Tabulka naměřených hodnot testování (tab.mapsInsert) ukazuje, že pouhé vkládání náhodně generovaných prvků do paralelní mapy trvá průměrně 4x déle.
+Samostatné čtení náhodně generovaných hodnot, které existují v mapě, je průměrně o 13\% pomalejší.
+Proto vidíme u Streamed řešení postupné vyrovnání pro dotazy G\_6/G\_6$'$ až G\_8/G\_8$'$, kde v G\_8/G\_8$'$ dochází k nejmenší tvorbě skupin a častému čtení.
+Obecné zpomalení je zřetelné u řešení používající paralelní mapu.
+Streamed řešení vůči jeho podobnému protějšku Normal: Global je místy pomalejší pozorujeme-li dolní hranice ve dvou grafech.
+První je graf As-Skitter u dotazů  G\_3/G\_3$'$ a  G\_6/G\_6$'$.
 Druhý graf je Amazon0601 na dotazech G\_4/G\_4$'$ a  G\_5/G\_5$'$.
 Myslíme si, že se jedná o specifické situace pro dané grafy a nedokážeme je plně zodpovědět, jelikož navzájem a pro graf WebBerkStan nenastávají.
 
@@ -784,12 +804,11 @@ Zpomalení Normal: Two-Step je ještě znatelnější pro dotazy G\_Q4/G\_Q4$'$ 
 
 Z výsledků usuzujeme, že vylepšená řešení pro náš případ paralelizace neposkytují z hlediska rychlosti vykonání znatelné výhody oproti stávajícím řešením.
 Pro budoucí práci by bylo vhodné udělat podrobnější testování pro rozličné počty použitých vláken a sledovat skalabilitu daných řešení.
-Zvýhodnění nastává pouze v případě single thread vykonávání u Streamed řešení, jež nepoužívá tabulku výsledků vyhledávání.
 Další možný budoucí výzkum může sledovat obecný problém rozdělení dat vláken během vyhledávání. 
 Normal přistup rovnoměrně rozděluje množství výsledků pro každé vlákno.
-Vylepšená řešení pak závisí na vlastnostech prohledávání grafu a může způsobit značné nerovnoměrnosti počtu výsledků mezi vlákny.
-Situace je částečně řešena rozdělováním malých částí vrcholů k prohledání, ale nemůže zaručit stoprocentně rovnoměrné rozdělení.
-
+Rozdělení práce vylepšených řešení závísí na počtu vyhledaných výsledků v každém vlákně. 
+Aby došlo k rovnoměrnému rozdělení práce tak se každému vláknu přidělují malé skupiny vrcholů k prohledání.
+Nicméně, dané řešení nemůže zaručit stoprocentně rovnoměrné rozdělení práce.
 
 \bigskip
 \textit{Tímto jsme zakončili prezentaci výsledků. Všechna nasbíraná data použitá k tvorbě grafů je možné nalézt v příloze výsledků benchmarku (\ref{prilohy.grafyVysledky}).}
