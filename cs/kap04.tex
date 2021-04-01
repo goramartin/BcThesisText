@@ -94,17 +94,18 @@ Soubor Nodes.txt:
 
 Posledním krokem přípravy dat pro experiment je vygenerování Properties vrcholů.
 Jsme si vědomi, že nejideálnější způsob testování je graf s reálnými daty. Nicméně, dané omezení jsme se rozhodli aplikovat kvůli problematickému hledání vhodných dat, které nevyžadují netriviální transformaci do vhodného vstupního formátu.
-Proto pro každý vrchol náhodně vygenerujeme hodnoty tří Properties. 
+Proto pro každý vrchol náhodně vygenerujeme hodnoty čtyř Properties. 
 \clearpage
 \begin{table}[!htb]
 \centering
-\begin{tabular}{lll}
+\begin{tabular}{llll}
 \toprule
 \mc{\textbf{Property}} & \mc{\textbf{Type}}  & \mc{\textbf{Popis}}\\
 \midrule
 PropOne     & integer &  \verb+Int32+ s rozsahem $[0; 100000]$ \\
 PropTwo & integer   & \verb+Int32+ s rozsahem $[$\verb+Int32.MinValue+; \verb+Int32.MaxValue+$]$ \\
 PropThree    & string &  délka $[2; 8]$ ASCII znaků s rozsahem $[33; 126]$ \\
+PropFour & integer   & \verb+Int32+ s rozsahem $[0; 1000]$ \\
 \bottomrule
 \end{tabular}
 
@@ -161,7 +162,8 @@ Aby nedocházelo k omylům při opakování experimentů, uvádíme útržek kó
     {
         new Int32Generator(0, 100_000, false),
         new Int32Generator(true),
-        new StringASCIIGenerator(2, 8, 33, 126)
+        new StringASCIIGenerator(2, 8, 33, 126),
+        new Int32Generator(0, 1_000, false)
     };
 \end{code}
 
