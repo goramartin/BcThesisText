@@ -1,3 +1,45 @@
 
 Prilohy namerenych dat:
 odamazat duplicitni zaznamy z Q1 a nechat jen to pouzite v datovych souborech + prepis te promene v nazvu
+
+Komentare k ABStromum a nekde tam je soubors ktery konci na cs.cs
+
+Analyza a implementace
+
+analyza je to ze nemam nic nakodeneho, ale poposuji reseni problemu ktere jsme resil
+implementace je pak ciste toho co jsem naimplementoval
+
+Analyza:
+
+zacit uvodem, chci rict co vlastne analyzuji
+
+Property Graph def
+
+PGQL language a co nam definuje plus podmnozina
+
+Hlavni obecny navrh
+
+Reperezentace grafu
+	elementy, usporadani na listech, jak se k nim bude dat pristoupit
+	vlastnosti a db
+	vstupni definice grafu, soubory atd
+	nacitani
+
+Parser
+	parse tree atd...
+
+Expression a agregaty
+
+Query objects
+
+Match
+	vzor, pattern atd...
+	vysledky
+	paralelizace
+Select
+
+Order by
+
+Group by
+
+Vylepseni...

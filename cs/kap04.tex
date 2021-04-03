@@ -4,7 +4,7 @@
 Aby bylo možné porovnat stávající řešení s nově navrženým řešením na poli rychlosti zpracovávání dotazů a ověřit naše předpoklady, podrobili jsme zmíněná řešení experimentu. 
 Vykonaný experiment proběhne na reálných grafech různé velikosti s uměle vygenerovanými vlastnostmi naležící vrcholům. 
 Nad danými grafy provedeme vybrané množství dotazů, které nám umožní sledovat a porovnat chování řešení v různých situacích.
-Experiment bude zakončen diskuzí nad výsledky. 
+Kapitolu zakončíme prezentací výsledků. 
 
 \section{Příprava dat}
 \label{expr.graphs}
@@ -736,11 +736,10 @@ Danou situaci si vysvětlujeme synchronizací.
 Prvni vrstva synchronizace nastává u přistupu k paralelní mapě a čtení/vložení záznamu.
 Po získání \verb+value+ z mapy následuje druhá vrstva, která obsahuje volání thread-safe funkcí pro výpočet agregovaných hodnot pro danou skupinu.
 Z obrázků \ref{figure.amazonGQ1Par}, \ref{figure.webberkstanGQ1Par} a \ref{figure.skitterGQ1Par} (Streamed řešení) jsme viděli cenu za synchronizaci na agregačních funkcích při přístupu osmi vláken.
-Pro představu pouhé režie paralelní mapy jsme otestovali overhead zvlášť čtení a vložení \verb+ConcurrentDictionary<int, int>+ vůči \verb+Dictionary<int,int>+ pro jedno vlákno.
+Pro představu pouhé režie paralelní mapy jsme otestovali overhead zvlášť čtení a vložení \verb+ConcurrentDictionary+ vůči \verb+Dictionary+ pro jedno vlákno.
 Následuje příklad kódu použitého při testu:
 \begin{code}
 Random ran = new Random(100100);
-Stopwatch timer = new Stopwatch();
 Dictionary<int, int> map = new Dictionary<int, int>();
 ConcurrentDictionary<int, int> parMap = 
     new ConcurrentDictionary<int, int>();
@@ -769,28 +768,65 @@ for (int i = 0; i < 100_000_000; i++)
 \centering
 \begin{tabular}{lrrr}
 \toprule
-\mc{Test} & \mc{\textbf{Dictionary}} & \mc{\textbf{ConcurrentDictionary}} & \mc{\textbf{Poměr}} \\
+\mc{Test} & \mc{\textbf{Dict}} & \mc{\textbf{ConDict}} & \mc{\textbf{ConDict/Dict}} \\
 \midrule
-Insert 1000000 & 165 & 667 & 4,04 \\
-Insert 10000000  & 2476 & 11272 & 4,55 \\
-Read 100000000  & 19002 & 21516 & 1,13 \\
+Insert $10^6$ & 165 & 667 & 4,04  \\
+Insert $10^7$  & 2476 & 11272 & 4,55 \\
+Read $10^8$  & 19002 & 21516 & 1,13  \\
 \bottomrule
 \end{tabular}
 
-\caption{Výsledky testování map v milisekundách. Běh v jednom vlákně. Měření dle kódu výše. Generování prvků pomocí třídy Random se seedem 100100. Měřeno pomocí třídy Stopwatch. Výsledek zvolen jako průměr pěti měření. Test Insert $n$ provádí vkládání $n$ náhodně vygenerovaných prvků do prázdné mapy. Test Read $n$ provádí $n$ čtení z rozsahu 0 až 1000000. Poměr je roven podílu času paralelní mapy a mapy.}
+\caption{Výsledky testování map v milisekundách. Běh v jednom vlákně. Měření dle kódu výše. Dict = Dictionary a ConDict = ConcurrentDictionary. Generování prvků pomocí třídy Random se seedem 100100. Měřeno pomocí třídy Stopwatch. Výsledek zvolen jako průměr pěti měření. Test Insert $n$ provádí vkládání $n$ náhodně vygenerovaných prvků do prázdné mapy. Test Read $n$ provádí $n$ čtení z rozsahu 0 až 1000000. Poměr je roven podílu času paralelní mapy a mapy.}
 \label{tab.mapsInsert}
 \end{table}
 
 \clearpage
 
-Tabulka naměřených hodnot testování (tab.mapsInsert) ukazuje, že pouhé vkládání náhodně generovaných prvků do paralelní mapy trvá průměrně 4x déle.
+Tabulka naměřených hodnot testování (\ref{tab.mapsInsert}) ukazuje, že pouhé vkládání náhodně generovaných prvků do paralelní mapy trvá průměrně 4x déle.
 Samostatné čtení náhodně generovaných hodnot, které existují v mapě, je průměrně o 13\% pomalejší.
-Proto vidíme u Streamed řešení postupné vyrovnání pro dotazy G\_6/G\_6$'$ až G\_8/G\_8$'$, kde v G\_8/G\_8$'$ dochází k nejmenší tvorbě skupin a častému čtení.
-Obecné zpomalení je zřetelné u řešení používající paralelní mapu.
-Streamed řešení vůči jeho podobnému protějšku Normal: Global je místy pomalejší pozorujeme-li dolní hranice ve dvou grafech.
+Provedli jsme další test. Test bude simulovat vkládání náhodných prvků do paralelní mapy osmi vlákny.
+Daná situace je velmi podobná naší situaci v Group by.
+
+\begin{code}
+ConcurrentDictionary<int, int> parMap = 
+    new ConcurrentDictionary<int, int>();
+...
+// Insert test. Assuming the maps are empty. (case Insert 10^6)
+Parallel.Invoke(
+() => Insert(parMap, 0, 125_000, new Random(100100)),
+() => Insert(parMap, 125_000, 250_000, new Random(100100)),
+...
+public static void Insert(ConcurrentDictionary<int, int> dict, 
+                          int start, int end, Random ran) {
+    for (int i = 0; i < (end - start); i++)
+        var v = dict.GetOrAdd(ran.Next(start, end), i); 
+}
+\end{code}
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\mc{Test} & \mc{\textbf{Dict (1 thread)}} & \mc{\textbf{ConDict (8 threads)}} & \mc{\textbf{ConDict/Dict}} \\
+\midrule
+Insert $10^6$ & 165 & 406 & 2,601  \\
+Insert $10^7$  & 2476 & 4714 & 1,903 \\
+\bottomrule
+\end{tabular}
+
+\caption{Výsledky testování map v milisekundách. Měřeno dle kódu výše. Dict = Dictionary a ConDict = ConcurrentDictionary. Dictionary vykoná práci v jednom vlákně. ConcurrentDictionary běží paralelně v osmi vláknech. Generování prvků pomocí třídy Random se seedem 100100. Měřeno pomocí třídy Stopwatch. Výsledek zvolen jako průměr pěti měření. Test Insert $n$ provádí vkládání $n$ náhodně vygenerovaných prvků do prázdné mapy. Poměr je roven podílu času paralelní mapy a mapy. Každé vlákno vkládá stejný počet náhodně generovaných prvků z určitého rozsahu.}
+\label{tab.mapsInsertParMap}
+\end{table}
+
+Z tabulky porovnání vkládání \ref{tab.mapsInsertParMap} vidíme, že samotná paralelizace je pro náš počet vkládání prvků pomalejší. 
+Tedy obecné zpomalení je zřetelné u řešení používající paralelní mapu.
+Streamed řešení vůči jeho protějšku Normal: Global je místy pomalejší. 
+Děje se tak ve dvou grafech.
 První je graf As-Skitter u dotazů  G\_3/G\_3$'$ a  G\_6/G\_6$'$.
 Druhý graf je Amazon0601 na dotazech G\_4/G\_4$'$ a  G\_5/G\_5$'$.
 Myslíme si, že se jedná o specifické situace pro dané grafy a nedokážeme je plně zodpovědět, jelikož navzájem a pro graf WebBerkStan nenastávají.
+Obecně pro dotazy G\_6/G\_6$'$ až G\_8/G\_8$'$ vidíme mírné zrychlení Streamed řešení, protože šetří drahou réžii za vytváření nových skupin.
+Pro Normal: Global nastává zpomalení, jelikož se při vkládání do mapy častěji vyvolá drahé porovnání klíčů pomocí Properties skrze tabulku výsledků. 
 
 Můžeme zde aplikovat výsledky z single-thread řešení pro řešení Normal: Two-Step proti Half-Streamed: Two-Step.
 Half-Streamed řešení je zde opět pomalejší než Normal řešení nebo jsou vyrovnané.
