@@ -26,42 +26,45 @@ Vytváří se nám závislosti, které budeme muset uvážit.
 
 Musíme uvážit, jak reprezentovat graf.
 Z části \ref{requirements} je hlavní faktor podmnožina jazyku PGQL pro Property grafy.
+Pro případy nejednoznačnosti označíme \verb+elType+ jako typ Property grafu a \verb+propType+ jako typ Property.
 
 \subsection{Elementy grafu a jejich typ}
 
-Musíme zvažovat reprezentaci elementů grafu a jejich typu.
+Musíme zvažovat reprezentaci elementů grafu a jejich \verb+elType+.
 V našem případě jsou elementy pouze vrcholy a orientované hrany.
-Typ definuje seznam Properties na elementu. 
+\verb+elType+ definuje seznam Properties na elementu. 
 Properties jsou také typované.
+Vrchol a hrana musí mít rozdílný \verb+elType+, ale samotné Properties se mohou opakovat pro oba druhy elementů.
 Každá hodnota Property musí být přístupná skrze daný element:
 
 \begin{itemize}
 
 \item Pokud držíme element grafu, musíme být schopni jej rozlišit od ostatních elementů.
 
-\item Pokud držíme element grafu, musíme být schopni přistoupit k jeho vlastnostem.
+\item Pokud držíme element grafu, musíme být schopni přistoupit k hodnotám jeho Properties.
 
 \end{itemize}
 
 \clearpage
 
 V naší představě je řešení následovné.
+Elementy budou třídy.
 Každý element grafu bude potomkem jednoho abstraktního předka a potomci si budou definovat svá specifika.
 Potomek bude vrchol a hrana.
-Předek si bude pamatovat unikátní IDs v celém grafu, abychom elementy dokázali rozlišit. 
-Předek navíc bude znát svůj typ. 
-Ideálně ukazatel na tabulku.
-Tabulka by reprezentovala typ a byla by společná všem elementům majících stejný typ.
-V tabulce by byl obsažen pouze seznam IDs, jejich pořadí a Properties v podobě polí s hodnotami.
+Předek si bude pamatovat unikátní \verb+ID+, abychom elementy dokázali rozlišit. 
+Předek navíc bude znát svůj \verb+elType+. 
+Bude se jednat o ukazatel na třídu.
+Daná třída by reprezentovala pouze jeden \verb+elType+ a bude společná všem elementům majících daný \verb+elType+.
+V třídě by byl obsažen seznam \verb+IDs+ elementů daného typu, jejich pořadí (např: dle vkládání do seznamu) a Properties v podobě polí s hodnotami.
 Properties by byly přístupné pomocí unikátního identifikátoru pro celý graf.
-Hodnoty Properties každého elementu by ležely na pozicích dle pořadí IDs.
-Nyní, pokud držíme element grafu, můžeme přistoupit k hodnotě Property skrze tabulku pomocí jeho ID.    
+Hodnoty Properties každého elementu by ležely na pozicích dle pořadí \verb+IDs+.
+Nyní, pokud držíme element grafu, můžeme přistoupit k hodnotě Property skrze tabulku pomocí jeho \verb+ID+.    
 
 \subsection{Struktury obsahující elementy}
 
-Nyní musíme analyzovat, jaké struktury by byly idální pro uchovávání elementů grafu.
+Nyní musíme analyzovat jaké struktury by byly idální pro uchovávání elementů grafu.
 Musíme brát v potaz, že propojení mezi vrcholy pomocí hran přímo ovlivňuje vyhledávání v části Match.
-V průběhu vyhledávání v určitý moment vždy vlastníme nějaký element grafu.
+V průběhu vyhledávání v určitý moment vždy držíme odkaz na nějaký element grafu.
 Na základě daného elementu musíme provést akci:
 
 \begin{itemize}
@@ -70,22 +73,24 @@ Na základě daného elementu musíme provést akci:
 
 \item Pokud držíme hranu, musíme být schopni přistoupit ke koncovému vrcholu. V průběhu hledání vždy vlastníme vrchol než přistoupíme k jeho hraně a následně k jejímu koncovému vrcholu. Tímto můžeme vyloučit nutnost, aby hrana znala informaci o svém původu.
 
-\item Pokud držíme element, chceme být schopni přistoupit k jeho sousedním elementů v obsajující struktuře. Například budeme chtít prohledávát graf jen z určeného množství vrcholů bez vytváření pomocných struktur.
+\item Pokud držíme element grafu, chceme být schopni přistoupit k jeho sousedním elementů v obsajující struktuře za předpokladu, že známe jeho typ (hrana, vrchol). 
 
 \end{itemize}
 
 K vyřešení daných problému v naší představě bychom použili tři pole.
 Pole vrcholů, pole out hran a in hran. 
-Zde by bylo vhodné rozšířit potomky hran na dva nové typy.
+Zde by bylo vhodné vytvořit nové potomky obecné hrany: out hrana a in hrana.
 Hrany by si pamatovali svůj koncový vrchol.
 Pro in hranu by to byl vrchol odkud vychází, aby bylo možné v moment držení vrcholu projít skrze ni na vrchol další.
 Každé pole tedy bude mít unikátní typ, který nám pomůže rozlišit k jaké situaci má dojít v průběhu prohledávání.
 Abstraktní předek všech elementů by si měl nově pamatovat i svou pozici v daných polích pro rychlý přístup k jeho sousedům.
+
 Zbývá vyřešit vztah hran a vrcholů.
 Řešení, které bychom chtěli zvolit, je mít hrany v polích seskupeny podle: vrcholů odkud vycházejí (pole out hran), vrcholů kam směřují (pole in hran).
 Vrchol by si pak pamatoval rozsah svých hran v příslušných polích. 
-Chceme-li procházet hrany vycházejích z vrcholu, stačí držet pole out hran a rozsah náležící vrcholu. Tedy dva indexy.
-Skrze indexy můžeme pak libovolně iterovat.
+Chceme-li procházet hrany vrcholu, stačí procházet pole out/in hran pomocí rozsahů uložených v daném vrcholu.
+Tedy čtyř indexů.
+Skrze indexy můžeme pak pole libovolně iterovat.
 
 Uvažovali jsme nad různými alternativami. 
 Mít jeden typ hrany obsahující všechny nutné informace.
@@ -100,46 +105,51 @@ Budeme očekávat dva druhy souborů.
 Soubory schémat typů elementů a jejich Properties.
 Datové soubory pak budou obsahovat konkrétní data elementů.
 
-Protože každý element má svůj typ, budeme mít na vstupu dva soubory schémat pro hrany a vrcholy.
-Schéma bude obsahovat informace o všech typech vyskytujících se v grafu.
-Pro typ je důležitý název a výčet Properties.
-Properties pak musí nést svůj název a typ.
-Vidíme, že se jedná jen o výčet (key, value) dvojic (např. (PropOne, integer)).
-V tomto případě se nám jeví nejvhodnější zvolit formát JSON.
-Typ bude reprezentovám JSON třídou. 
-Bude obsahovat položku Kind, která udává jméno typu.
+Protože každý element grafu má svůj \verb+elType+, budeme mít na vstupu dva soubory schémat pro hrany a vrcholy.
+Schéma bude obsahovat informace o všech \verb+elType+ a \verb+propType+ vyskytujících se v grafu.
+Pro \verb+elType+ je důležitý název a výčet Properties.
+Properties pak musí nést svůj název a \verb+propType+.
+Vidíme, že se jedná jen o výčet \verb+(name/value)+ dvojic (např. \verb+(PropertyOne, integer)+).
+V tomto případě se nám jeví nejvhodnější zvolit pro reprezentaci schémat formát JSON.
+\verb+elType+ bude reprezentován JSON objektem. 
+Bude obsahovat položku \verb+Kind+, jejíž hodnota udává jméno \verb+elType+.
 Za ní bude následovat výčet Properties.
-Properties budou reprezentovány přesně jako dvojice výše.
+Properties budou reprezentovány dvojicí \verb+(propName/propType)+.
 Záznamy pak budou obsaženy v JSON poli:
 \begin{code}
 Soubor schéma vrcholů:
 [    { "Kind": "BasicNode" }, 
-{ "Kind": "BasicNodeTwo", "PropOne": "integer" } ]
+     { "Kind": "BasicNodeTwo", "PropertyOne": "integer" } ]
 
-Soubor schéma hran:
+Soubor schéma hran:"
 [    { "Kind": "BasicEdge" }, 
-{ "Kind": "BasicEdgeTwo", "PropOne": "integer" } ]
+     { "Kind": "BasicEdgeTwo", "PropertyOne": "integer" } ]
 \end{code}
 
-Samotná data budou obsažena opět ve dvou separatních souborech.
-Každý řádek by reprezentoval jednu hranu/vrchol.
-V první řadě řádek musí obsahovat unikatní ID elementu a jeho typ. 
-Za typem by následoval seznam hodnot Properties v pořadí určených schématem.
-Pro hrany by existoval na řádku navíc záznam ID vrcholů, které spojuje.
+Samotná data budou obsažena opět ve dvou separatních souborech pro hrany a vrcholy.
+Každý řádek reprezentuje jednu hranu/vrchol.
+V první řadě řádek musí obsahovat unikatní \verb+ID+ elementu a jeho \verb+elType+. 
+Za \verb+elType+ následuje seznam hodnot Properties v pořadí určených schématem.
+Pro hrany existuje na řádku navíc záznam \verb+ID+ vrcholů, které spojuje.
 Oddělovače mezi daty jsou implementační detail.
 Pro výše zmíněné schéma by datové soubory mohly vypadat následovně:
 \begin{code}
 Soubor hran:
-ID TYPE FROMID TOID PROPERTIES // bez této hlavičky
+ID elType fromID toID Properties // bez této hlavičky
 50 BasicEdge 0 0 
 51 BasicEdgeTwo 0 1 44
 ...
 Soubor vrcholů:
-ID TYPE PROPERTIES // bez této hlavičky
+ID elType Properties // bez této hlavičky
 0 BasicNode
 1 BasicNodeTwo 42
 ...
 \end{code}
+
+Pro naše účely se jedná o dostačující formát a poskytuje nám jednoduché možnosti parsování.
+Pokud by docházelo v budoucnu k rozšířením, například více slovné Property nebo XML Property, musí dojít k úpravě daných formátů.
+
+
 
 \subsection{Načítání grafových dat}
 

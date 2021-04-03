@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  3 APR 2021 19:47
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  3 APR 2021 21:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -685,8 +685,14 @@ Kapitola 1.
 
  (./kap02.tex
 Kapitola 2.
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 2
+9.
+(/usr/share/texmf/tex/latex/lm/t1lmtt.fd
+File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 4
-0.
+2.
+
 (/usr/share/texmf/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 ) [5
@@ -695,13 +701,7 @@ File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 
 ] [6
 
-]
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
-14.
-
-(/usr/share/texmf/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-)) [7] [8]
+]) [7] [8]
 \openout2 = `kap03.aux'.
 
  (./kap03.tex
@@ -1074,7 +1074,7 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 176.
 Here is how much of TeX's memory you used:
  15853 strings out of 481239
  224423 string characters out of 5920376
- 476730 words of memory out of 5000000
+ 477730 words of memory out of 5000000
  30558 multiletter control sequences out of 15000+600000
  632847 words of font info for 94 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1092,7 +1092,7 @@ texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/
 lmri12.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf
 /fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10
 .pfb></usr/share/texmf/fonts/type1/public/lm/lmtt12.pfb>
-Output written on prace.pdf (47 pages, 1288584 bytes).
+Output written on prace.pdf (47 pages, 1290002 bytes).
 PDF statistics:
  1024 PDF objects out of 1200 (max. 8388607)
  825 compressed objects within 9 object streams
