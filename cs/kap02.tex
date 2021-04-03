@@ -56,7 +56,9 @@ Předek navíc bude znát svůj \verb+elType+.
 Bude se jednat o ukazatel na třídu.
 Daná třída by reprezentovala pouze jeden \verb+elType+ a bude společná všem elementům majících daný \verb+elType+.
 V třídě by byl obsažen seznam \verb+IDs+ elementů daného typu, jejich pořadí (např: dle vkládání do seznamu) a Properties v podobě polí s hodnotami.
-Properties by byly přístupné pomocí unikátního identifikátoru pro celý graf.
+Property musí být přístupná skrze mapu/slovník, protože může nastat situace, kdy daná Property na elementu neexistuje. 
+Pro náš případ nebudeme uvažovat situaci, kdy Property pro nějaký element nemá definovanou hodnotu.
+Properties tedy budou přístupné pomocí unikátního identifikátoru pro celý graf.
 Hodnoty Properties každého elementu by ležely na pozicích dle pořadí \verb+IDs+.
 Nyní, pokud držíme element grafu, můžeme přistoupit k hodnotě Property skrze tabulku pomocí jeho \verb+ID+.    
 
@@ -148,13 +150,6 @@ ID elType Properties // bez této hlavičky
 
 Pro naše účely se jedná o dostačující formát a poskytuje nám jednoduché možnosti parsování.
 Pokud by docházelo v budoucnu k rozšířením, například více slovné Property nebo XML Property, musí dojít k úpravě daných formátů.
-
-
-
-\subsection{Načítání grafových dat}
-
-
-
 
 \section{Parser}
 
