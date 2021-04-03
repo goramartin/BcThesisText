@@ -1,0 +1,47 @@
+\babel@toc {czech}{}
+\contentsline {chapter}{Úvod}{3}{chapter*.2}%
+\contentsline {chapter}{\numberline {1}Požadavky}{4}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Property graf}{4}{section.1.1}%
+\contentsline {section}{\numberline {1.2}PGQL}{4}{section.1.2}%
+\contentsline {chapter}{\numberline {2}Analýza implementace}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Obecný pohled na engine}{5}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Reprezentace grafu}{5}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Elementy grafu a jejich typ}{5}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Struktury obsahující elementy}{6}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Vstupní formát dat}{7}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Načítání vstupní dat}{7}{subsection.2.2.4}%
+\contentsline {section}{\numberline {2.3}Parser}{8}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Expressions a Aggregates}{8}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Reprezentace dotazu}{8}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Group by}{8}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Order by}{8}{section.2.7}%
+\contentsline {section}{\numberline {2.8}Návrh vylepšení}{8}{section.2.8}%
+\contentsline {chapter}{\numberline {3}Implementace}{9}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Experiment}{10}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Příprava dat}{10}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Transformace grafových dat}{11}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Generování Properties vrcholů}{11}{subsection.4.1.2}%
+\contentsline {section}{\numberline {4.2}Výběr dotazů}{13}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Dotazy Match}{13}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Dotazy Order by}{14}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}Dotazy Group by}{14}{subsection.4.2.3}%
+\contentsline {section}{\numberline {4.3}Metodika}{15}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Volitelné argumenty konstruktoru dotazu}{16}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Hardwarová specifikace}{16}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Příprava hardwaru}{17}{subsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.3.4}Překlad}{17}{subsection.4.3.4}%
+\contentsline {section}{\numberline {4.4}Výsledky}{18}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Match}{18}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Order by}{20}{subsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.4.3}Group by}{24}{subsection.4.4.3}%
+\contentsline {chapter}{Závěr}{36}{chapter*.3}%
+\contentsline {chapter}{Seznam použité literatury}{37}{chapter*.4}%
+\contentsline {chapter}{Seznam obr\'azk\r {u}}{38}{chapter*.5}%
+\contentsline {chapter}{Seznam tabulek}{40}{chapter*.6}%
+\contentsline {chapter}{Seznam použitých zkratek}{41}{chapter*.7}%
+\contentsline {chapter}{\numberline {A}Přílohy}{42}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Zdrojové kódy}{42}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Online Git repozitář}{42}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Použité grafy při experimentu}{42}{section.A.3}%
+\contentsline {section}{\numberline {A.4}Výsledky benchmarku pro jednotlivé grafy}{42}{section.A.4}%
+\contentsline {section}{\numberline {A.5}druha priloha}{43}{section.A.5}%
