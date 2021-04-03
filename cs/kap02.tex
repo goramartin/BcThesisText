@@ -93,18 +93,23 @@ Mít jeden typ hrany obsahující všechny nutné informace.
 Řešením by mohlo být vytvořit pole in/out hran pro každý vrchol. 
 Daný přístup nám případá výrazně náročnější z hlediska paměti, protože musíme vytvářet pole pro každý vrchol zvlášť. 
 
-\subsection{Vstupní formát dat}
+\subsection{Vstupní grafová data}
 
 Vstupní soubory musí obsahovat informace nutné pro Property graf.
+Budeme očekávat dva druhy souborů.
 Soubory schémat typů elementů a jejich Properties.
-Datové soubory pak obsahující konkrétní data elementů.
+Datové soubory pak budou obsahovat konkrétní data elementů.
 
 Protože každý element má svůj typ, budeme mít na vstupu dva soubory schémat pro hrany a vrcholy.
 Schéma bude obsahovat informace o všech typech vyskytujících se v grafu.
 Pro typ je důležitý název a výčet Properties.
 Properties pak musí nést svůj název a typ.
-Vidíme, že se jedná jen o výčet (key, value) dvojic. Například (PropOne, integer).
-V tomto případě zvolíme formát JSON.
+Vidíme, že se jedná jen o výčet (key, value) dvojic (např. (PropOne, integer)).
+V tomto případě se nám jeví nejvhodnější zvolit formát JSON.
+Typ bude reprezentovám JSON třídou. 
+Bude obsahovat položku Kind, která udává jméno typu.
+Za ní bude následovat výčet Properties.
+Properties budou reprezentovány přesně jako dvojice výše.
 Záznamy pak budou obsaženy v JSON poli:
 \begin{code}
 Soubor schéma vrcholů:
@@ -115,9 +120,6 @@ Soubor schéma hran:
 [    { "Kind": "BasicEdge" }, 
 { "Kind": "BasicEdgeTwo", "PropOne": "integer" } ]
 \end{code}
-Jeden typ je reprezentován jednou třídou JSON.
-Kind zde představuje jméno typu. 
-Properties obsahují název v položce key a typ Property je uložen v položce value.
 
 Samotná data budou obsažena opět ve dvou separatních souborech.
 Každý řádek by reprezentoval jednu hranu/vrchol.
@@ -128,18 +130,18 @@ Oddělovače mezi daty jsou implementační detail.
 Pro výše zmíněné schéma by datové soubory mohly vypadat následovně:
 \begin{code}
 Soubor hran:
-ID TYPE FROMID TOID PROPERTIES
+ID TYPE FROMID TOID PROPERTIES // bez této hlavičky
 50 BasicEdge 0 0 
 51 BasicEdgeTwo 0 1 44
 ...
 Soubor vrcholů:
-ID TYPE PROPERTIES
+ID TYPE PROPERTIES // bez této hlavičky
 0 BasicNode
 1 BasicNodeTwo 42
 ...
 \end{code}
 
-\subsection{Načítání vstupní dat}
+\subsection{Načítání grafových dat}
 
 
 

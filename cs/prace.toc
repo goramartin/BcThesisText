@@ -8,8 +8,8 @@
 \contentsline {section}{\numberline {2.2}Reprezentace grafu}{5}{section.2.2}%
 \contentsline {subsection}{\numberline {2.2.1}Elementy grafu a jejich typ}{5}{subsection.2.2.1}%
 \contentsline {subsection}{\numberline {2.2.2}Struktury obsahující elementy}{6}{subsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.2.3}Vstupní formát dat}{7}{subsection.2.2.3}%
-\contentsline {subsection}{\numberline {2.2.4}Načítání vstupní dat}{7}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.3}Vstupní grafová data}{7}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Načítání grafových dat}{8}{subsection.2.2.4}%
 \contentsline {section}{\numberline {2.3}Parser}{8}{section.2.3}%
 \contentsline {section}{\numberline {2.4}Expressions a Aggregates}{8}{section.2.4}%
 \contentsline {section}{\numberline {2.5}Reprezentace dotazu}{8}{section.2.5}%
