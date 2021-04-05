@@ -1,5 +1,5 @@
 \chapter{Závěr}
-\addcontentsline{toc}{chapter}{Závěr}
+%\addcontentsline{toc}{chapter}{Závěr}
 
 Tady ma byt text
 
@@ -15,7 +15,7 @@ Navíc díky kompletnosti dat lze data optimálněji zpracovávat a použít vě
 Například při třídění jsme použili základní algoritmu Merge sort, který není možný aplikovat při třídění v průběhu vyhledávání.  
 Rozdělení práce vylepšených řešení závísí na počtu vyhledaných výsledků v každém vlákně.
 Mohou nastávát případy, kdy jedno vlákno má více výsledků ke zpracování než ostatní. 
-Daný problém jsme se našem řešení prohledávání snažili vyřešit pomocí přidělování malých skupin vrcholů vláknum.
+Daný problém jsme se v našem řešení prohledávání snažili vyřešit pomocí přidělování malých skupin vrcholů vláknum.
 Vlákno po prohledání daných vrcholů zažádalo o další.
 Nicméně, dané řešení nemůže zaručit stoprocentně rovnoměrné rozdělení práce.
 Bylo by vhodné prozkoumat, jak daná situace ovlivňuje naše řešení.
@@ -26,4 +26,5 @@ Samotné rozdělení přihrádek jsme pro řetězce zpracovali pouze s předpokl
 V budoucí práci je možné zkoumat rozdělování i pro složitější znakové sady.
 
 V paralelních Group by řešeních by bylo vhodné prozkoumat podrobněji skalabilitu daných řešení pro rozličné počty vláken.
-Pokud možno, také možnosti jiných paralelních map. 
+Pokud možno, také možnosti jiných paralelních map.
+ 

@@ -1,6 +1,6 @@
 
 
-\chapter{Analýza implementace}
+\chapter{Analýza}
 
 V této kapitole se pokusíme analyzovat možná řešení výstavby dotazovacího enginu a jeho úpravy, tak abychom splnili námi kladené požadavky společně se zadáním práce.
 Analýza bude probíhat v několika krocích.
@@ -12,20 +12,27 @@ Součástí této části bude analýza algoritmů Order by a Group by pro dané
 \section{Obecný pohled na engine}
 
 V naší představě je dotazovací engine určen pro práci nad grafem, který je celý obsažen v paměti, včetně vlastností elementů grafu.
-Graf bude načten v definovém formátu a následně na něm budou vykonávány dotazy. 
-Při obecném pohledu na engine jsme lokalizovali hlavní bloky výstavby.
-Jsou to tři bloky: reprezentace grafu, parser a reprezentace dotazu.
+Graf bude načten v definovém formátu a následně na něm budou vykonávány dotazy.
+V momentě načtění graf bude pouze statický, tedy nebude docházet k žádným změnám.
+Nad grafem se pak vykoná uživatelsky definovaný dotaz.
+Dané omezení jsme zvolili, protože hlavním cílem je testovat pouze části Group by a Order by.
+Vytvořit reálnou grafovou databázi by zabralo netriviální časové období.
 
-Reprezentace grafu určuje pohled na načtený graf v paměti a určuje formát objektů, nad kterými bude vykonáván dotaz.
-Parser načítá uživatelký dotaz do interní reprezentace. 
-Na základě reprezentace se vytváří struktury dotazu a definuje se exekuční plán. 
+Při obecném pohledu na engine jsme lokalizovali hlavní bloky; výstavby, které musíme uvážit.
+Jsou to: reprezentace grafu, parsování uživatelského dotazu, výrazy (expressions) a dotaz/vykonání dotazu.
+Graf nám bude simulovat grafovou databázi. 
+Samotně pak určuje formát objektů, nad kterými je vykonán uživatelský dotaz.
+Při parsování se načítá uživatelký dotaz do interní reprezentace.
+Expressions slouží k výpočtu hodnot z uživatelsky zadaných výrazů.
+Například v části order by x.PropOne, musíme vědět, jak reprezentovat výraz x.PropOne a získat jeho hodnotu. 
+Na základě interní reprezentace se musí vytvořit struktury dotazu a definovat exekuční plán. 
 Z obecných úkonů částí vidíme, že se nejedná o stand-alone části.
 Vytváří se nám závislosti, které budeme muset uvážit.
 
 \section{Reprezentace grafu}
 
 Musíme uvážit, jak reprezentovat graf.
-Z části \ref{requirements} je hlavní faktor podmnožina jazyku PGQL pro Property grafy.
+Z části \ref{requirements} jsou hlavními faktory námi zvolená podmnožina jazyku PGQL a že se jedná o Property graf.
 Pro případy nejednoznačnosti označíme \verb+elType+ jako typ elementu v Property grafu a \verb+propType+ jako typ Property.
 
 \subsection{Elementy grafu a jejich typ}
@@ -45,8 +52,6 @@ Každá hodnota Property musí být přístupná skrze daný element:
 
 \end{itemize}
 
-\clearpage
-
 V naší představě je řešení následovné.
 Elementy budou třídy.
 Každý element grafu bude potomkem jednoho abstraktního předka a potomci si budou definovat svá specifika.
@@ -61,6 +66,7 @@ Pro náš případ nebudeme uvažovat situaci, kdy Property pro nějaký element
 Properties tedy budou přístupné pomocí unikátního identifikátoru pro celý graf.
 Hodnoty Properties každého elementu by ležely na pozicích dle pořadí \verb+IDs+.
 Nyní, pokud držíme element grafu, můžeme přistoupit k hodnotě Property skrze tabulku pomocí jeho \verb+ID+.    
+Samotný přistup pak může být realizován například generickou funkcí. 
 
 \subsection{Struktury obsahující elementy}
 
@@ -75,7 +81,7 @@ Na základě daného elementu musíme provést akci:
 
 \item Pokud držíme hranu, musíme být schopni přistoupit ke koncovému vrcholu. V průběhu hledání vždy vlastníme vrchol než přistoupíme k jeho hraně a následně k jejímu koncovému vrcholu. Tímto můžeme vyloučit nutnost, aby hrana znala informaci o svém původu.
 
-\item Pokud držíme element grafu, chceme být schopni přistoupit k jeho sousedním elementů v obsajující struktuře za předpokladu, že známe jeho typ (hrana, vrchol). 
+\item Pokud držíme element grafu, chceme být schopni přistoupit k jeho sousedním elementů v obsajující struktuře za předpokladu, že víme, jestli se jedná o hranu nebo vrchol. 
 
 \end{itemize}
 
@@ -127,6 +133,11 @@ Soubor schéma hran:"
 [    { "Kind": "BasicEdge" }, 
      { "Kind": "BasicEdgeTwo", "PropertyOne": "integer" } ]
 \end{code}
+Jako určující \verb+propTypes+ pro náš případ enginu bychom chtěli zvolit dva druhy.
+První by byla číselná hodnota značená integer (32-bit integer).
+Další by představoval řetězec značený string.
+Práce s řetězci je obecný problém a existuje mnoho znakových sad, proto bychom chtěli zvolit vstupní řetězce pouze se znaky ASCII.  
+Dané dva druhy představují základní typy použitých v komerčních sférách.
 
 Samotná data budou obsažena opět ve dvou separatních souborech pro hrany a vrcholy.
 Každý řádek reprezentuje jednu hranu/vrchol.
@@ -134,6 +145,9 @@ V první řadě řádek musí obsahovat unikatní \verb+ID+ elementu a jeho \ver
 Za \verb+elType+ následuje seznam hodnot Properties v pořadí určených schématem.
 Pro hrany existuje na řádku navíc záznam \verb+ID+ vrcholů, které spojuje.
 Oddělovače mezi daty jsou implementační detail.
+Pro naše účely se jedná o dostačující formát a poskytuje nám jednoduché možnosti parsování.
+Pokud by docházelo v budoucnu k rozšířením, například více slovné Property nebo XML Property, musí dojít k úpravě daných formátů.
+
 Pro výše zmíněné schéma by datové soubory mohly vypadat následovně:
 \begin{code}
 Soubor hran:
@@ -148,12 +162,106 @@ ID elType Properties // bez této hlavičky
 ...
 \end{code}
 
-Pro naše účely se jedná o dostačující formát a poskytuje nám jednoduché možnosti parsování.
-Pokud by docházelo v budoucnu k rozšířením, například více slovné Property nebo XML Property, musí dojít k úpravě daných formátů.
+\section{Parsování uživatelského dotazu}
 
-\section{Parser}
+Máme rozmyšlenou reprezentaci grafu.
+Nyní musíme analyzovat způsob získání informací z uživatelem zadaného dotazu.
+Uživatelský dotaz se pohybuje v rozsahu definovaném v sekci PGQL \ref{req.pgql}.
+Nicméně, je zde nutné přemýšlet i nad možnými rozšířeními.
+Proto se budeme snažit držet základních principů object oriented programming a volit vhodné návrhové vzory.
 
-\section{Expressions a Aggregates}
+K načtení uživatelského dotazu se nám jeví jako nejvhodnější způsob použít techniky známé z překladačů programovacích jazyků.
+Budeme vycházet ze základních principů knihy o překladačích \citep{dragoonBook}.
+V prvním kroku dojde k lexikální analýze uživatelsky zadaného řetězce.
+Dojde k vytvoření tokenů.
+V druhém kroku dojde k syntaktické a semantické analýze tokenů.
+Metodou top-down parsing \citep[str. 217]{dragoonBook} se vytvoří stromová struktura reprezentující daný dotaz.
+Poslední krok provede vytvoření tříd reprezentující dotaz pomocí iterace stromové struktury.
+Iterace a sběr dat ze stromové struktury budou implementovány návrhovým vzorem Visitor \citep[str. 331]{patterns}.
+V naši představě bychom chtěli vygenerovat stromovou strukturu pro každou hlavní část dotazu (Match, Select, Order by a Group by).
+Nyní bychom mohli sestavit Visitor pro každou část separatně a vyřadit tak nutnost jednoho globálnáho Visitoru.
+Dané postupy nám umožní jednoduše pracovat s naší podmnožinou jazyka PGQL.
+
+
+\subsection{Match a proměnné}
+
+Každá hlavní část dotazu po sesbírání informací pomocí Visitoru vygeneruje určité struktury.
+Pro Match se přímočaře naskytuje reprezentovat posloupnosti vrcholů a hran pomocí polí.
+Pole bude obsahovat třídy.
+Třída si musí pamatovat jakou proměnou reprezentuje, \verb+elType+ pokud je definován a jde-li o hranu (in/out/any) nebo vrchol.
+Jedná se o všechny nutné informace, které můžeme následně využít k vytvoření vzoru prohledávání grafu.
+Všimout si musíme faktu, že Match část definuje proměnné ve zbytku dotazu.
+Vyvstává problém nutnosti vytvořit mapu/slovník přistupných proměnných pro zbytek dotazu.
+Proměnným pak můžeme přiřadit \verb+ID+ dle pořadí výskytu v Match části.
+
+\subsection{Select, Order/Group by}
+
+Ostatní části Group by, Order by a Select obsahují výrazy proměnných (např: order by x), přístup k Properties proměnných (např: select x.PropOne) nebo volání agregačních funkcí (\verb+min+, \verb+max+, \verb+avg+, \verb+sum+ a \verb+count+).
+Várazy se však musí evaluovat za běhu programu.
+Dalším problémem je, že dané výrazy mají různorodé návratové hodnoty.
+Výraz x (\verb+ID+ vrcholu) lze chápat jako integer.
+Váraz x.PropOne má návratovou hodnotu dle \verb+propType+, který je definovám ve vstupním schématu.
+Agregační funkce \verb+min+, \verb+max+ mají návratovou hodnotu definovanou na základě jejich vstupních argumentů.
+Například \verb+min(x.StringProp)+ očekává, že návratová hodnota bude řetězec.
+Funkce \verb+sum+ a \verb+count+ by měli ideálně vracet formát, který by předešel přetečení.
+U \verb+avg+ se očekává hodnota s desetinnou částkou.  
+V budoucnu však může dojít k rozšířením a vyvstanou složitější výrazy, např. infixová notace x.PropOne + y.PropOne.
+Problém nám usnadňuje fakt, že Properties nesoucí stejné jméno mají stejný \verb+propType+ (sekce \ref{req.pgql}).
+Pokud ne, je nutné určit vhodnou návratovou hodnotu.
+Navíc musíme brát v potaz, že daný výraz se nemusí vyhodnotit, například absence Property na vrcholu.
+Proto jsme byli nuceni vymyslet systém výrazů (expressions).
+
+\subsection{Expressions}
+
+Systém vytváření a vyhodnocování výrazů za běhu je složitý problém.
+Omezíme se pouze na případy: přístup k proměnné, přístup k hodnotě Property proměnné a agregační funkce (\verb+min+, \verb+max+, \verb+avg+, \verb+sum+ a \verb+count+).
+Základní myšlenka je reprezentovat výraz pomocí stromové struktury. 
+Každý vrchol stromové struktury bude reprezentovat určitou akci.
+Vrcholy budou výše vypsané výrazy. 
+Na struktuře bude existovat metoda pro vyhodnocení.
+Její návratová hodnota bude dvojice úspěch vyhodnocení + vypočtená hodnota. 
+Dané struktury musí být read-only, protože se budou využívat v paralelním prostřední.
+Metody by se mohli libovolně dodávat při nutnosti použití nových struktur. 
+Následuje ukázka možného kódu pro přístup k \verb+ID+ proměnné v jazyce C\#:
+\begin{code}
+// Base classes
+abstract class Expression { }
+abstract class ExpressionReturnValue<T>: Expression {
+  public abstract bool TryEvaluate(Element[] elms, out T retVal); 
+}
+
+abstract class VariableAccess<T>: ExpressionReturnValue<T> {
+     readonly int accessedVariableID; 
+}
+
+class VariableIDAccess: VariableAccess<int> {
+  public override bool TryEvaluate(Element[] elms, out int retVal)
+    {
+       returnValue = elms[accessedVariableID].ID;
+       return true;
+    }
+}
+\end{code}
+Třída \verb+VariableAccess+ nám poskytuje abstrakci pro přístup k proměnné.
+Položka \verb+accessedVariableID+ určuje k jaké proměnné se má přistoupit.
+Zde předpokládáme, že pole Element[ ] obsahuje proměnné přesně v pořadí, jak se vyskytly v části Match.
+Případ přístupu k Property by mohl vypadat následovně:
+\begin{code}
+class VariablePropertyAccess<T>: VariableAccess<T> {
+  reaonly int accessedPropertyID; 
+  public override bool TryEvaluate(Element[] elms, out T retVal)
+    {
+       return = 
+          elms[accessedVariableID].
+          GetPropertyValue<T>(accessedPropertyID, out retVal);
+    }
+}
+\end{code}
+Zde dojde k volání metody na elementu grafu, který přistoupí k třidě reprezentující jeho \verb+elType+.
+Třída pak na základě existence Property vrátí hodnotu nebo neuspěje.
+Timto dokážeme vyřešit základní definované problémy.
+
+Zbává uvažovat, jakým způsobem reprezentovat agregační funkce.
 
 \section{Reprezentace dotazu}
 
