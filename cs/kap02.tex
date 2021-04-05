@@ -140,6 +140,7 @@ Práce s řetězci je obecný problém a existuje mnoho znakových sad, proto by
 Dané dva druhy představují základní typy použitých v komerčních sférách.
 
 Samotná data budou obsažena opět ve dvou separatních souborech pro hrany a vrcholy.
+Chtěli bychom reprezentovat konkrétní data pomocí jednoduchého .csv souboru.
 Každý řádek reprezentuje jednu hranu/vrchol.
 V první řadě řádek musí obsahovat unikatní \verb+ID+ elementu a jeho \verb+elType+. 
 Za \verb+elType+ následuje seznam hodnot Properties v pořadí určených schématem.
@@ -192,7 +193,7 @@ Třída si musí pamatovat jakou proměnou reprezentuje, \verb+elType+ pokud je 
 Jedná se o všechny nutné informace, které můžeme následně využít k vytvoření vzoru prohledávání grafu.
 Všimout si musíme faktu, že Match část definuje proměnné ve zbytku dotazu.
 Vyvstává problém nutnosti vytvořit mapu/slovník přistupných proměnných pro zbytek dotazu.
-Proměnným pak můžeme přiřadit \verb+ID+ dle pořadí výskytu v Match části.
+Proměnným pak můžeme přiřadit \verb+ID+.
 
 \subsection{Select, Order/Group by}
 
@@ -204,7 +205,7 @@ Váraz x.PropOne má návratovou hodnotu dle \verb+propType+, který je definov�
 Agregační funkce \verb+min+, \verb+max+ mají návratovou hodnotu definovanou na základě jejich vstupních argumentů.
 Například \verb+min(x.StringProp)+ očekává, že návratová hodnota bude řetězec.
 Funkce \verb+sum+ a \verb+count+ by měli ideálně vracet formát, který by předešel přetečení.
-U \verb+avg+ se očekává hodnota s desetinnou částkou.  
+U \verb+avg+ se očekává hodnota s desetinnou čárkou.  
 V budoucnu však může dojít k rozšířením a vyvstanou složitější výrazy, např. infixová notace x.PropOne + y.PropOne.
 Problém nám usnadňuje fakt, že Properties nesoucí stejné jméno mají stejný \verb+propType+ (sekce \ref{req.pgql}).
 Pokud ne, je nutné určit vhodnou návratovou hodnotu.
@@ -213,8 +214,9 @@ Proto jsme byli nuceni vymyslet systém výrazů (expressions).
 
 \subsection{Expressions}
 
-Systém vytváření a vyhodnocování výrazů za běhu je složitý problém.
+Systém vytváření a vyhodnocování výrazů efektivně za běhu je obecně složitý problém.
 Omezíme se pouze na případy: přístup k proměnné, přístup k hodnotě Property proměnné a agregační funkce (\verb+min+, \verb+max+, \verb+avg+, \verb+sum+ a \verb+count+).
+
 Základní myšlenka je reprezentovat výraz pomocí stromové struktury. 
 Každý vrchol stromové struktury bude reprezentovat určitou akci.
 Vrcholy budou výše vypsané výrazy. 
@@ -235,26 +237,23 @@ abstract class VariableAccess<T>: ExpressionReturnValue<T> {
 }
 
 class VariableIDAccess: VariableAccess<int> {
-  public override bool TryEvaluate(Element[] elms, out int retVal)
-    {
-       returnValue = elms[accessedVariableID].ID;
-       return true;
-    }
-}
+  public override bool TryEvaluate(Element[] elms, out int retVal) {
+     returnValue = elms[accessedVariableID].ID;
+     return true; }}
 \end{code}
 Třída \verb+VariableAccess+ nám poskytuje abstrakci pro přístup k proměnné.
 Položka \verb+accessedVariableID+ určuje k jaké proměnné se má přistoupit.
-Zde předpokládáme, že pole Element[ ] obsahuje proměnné přesně v pořadí, jak se vyskytly v části Match.
+Zde předpokládáme, že pole \verb+Element[]+ obsahuje proměnné přesně v pořadí, jak se vyskytly v části Match.
+Tedy pokud je roven Match (x) -> (y), tak jeden výsledek hledání by bylo pole obsahující dva elementy x a y.
+Jedná se pouze o ilustrační příklad. 
 Případ přístupu k Property by mohl vypadat následovně:
 \begin{code}
 class VariablePropertyAccess<T>: VariableAccess<T> {
   reaonly int accessedPropertyID; 
-  public override bool TryEvaluate(Element[] elms, out T retVal)
-    {
-       return = 
-          elms[accessedVariableID].
-          GetPropertyValue<T>(accessedPropertyID, out retVal);
-    }
+  public override bool TryEvaluate(Element[] elms, out T retVal) {
+    return elms[accessedVariableID].
+               GetPropertyValue<T>(accessedPropertyID, out retVal);
+  }
 }
 \end{code}
 Zde dojde k volání metody na elementu grafu, který přistoupí k třidě reprezentující jeho \verb+elType+.
@@ -262,6 +261,57 @@ Třída pak na základě existence Property vrátí hodnotu nebo neuspěje.
 Timto dokážeme vyřešit základní definované problémy.
 
 Zbává uvažovat, jakým způsobem reprezentovat agregační funkce.
+Agregační funkce představují několik problémů.
+Funkce je vypočtená pouze pro skupiny. 
+Skupiny jsou vytvářeny v části Group by.
+Jejich návratové hodnoty jsou finální pouze po dokončení Group by. 
+Vstupem funkcí je expression.
+Argument, dle kterého se aktualizuje agregovaná hodnota, je nutný znát pouze v době vykonání Group by.
+Dle naši představy je ideální vytvořit dva separátní koncepty.
+První koncept bude zahrnovat výpočet hodnot argumentu společně s logikou agregační funkce.
+Koncept bude reprezentován třídou, která vlastní stromovou strukturu dle předchozího příkladu.
+Zároveň bude obsahovat logiku počítané funkce.
+Například logika funkce \verb+min+ je porovnat dvě hodnoty a vybrat menší.
+Na vstupu dané funkce pak bude úložiště hodnoty dané skupiny.
+Všechny počítané agregační funkce zadané uživatelem označíme pomocí \verb+ID+.
+Druhý koncept představuje nový potomek třídy expression.
+Daný potomek si pamatuje \verb+ID+ přistupované agregační funkce a na vstupu očekává strukturu reprezentující skupinu.
+K hodnotě počítané agregace přistoupíme pomocí její \verb+ID+.
+Následuje ukázka prvního konceptu:
+\begin{code}
+abstract class Aggregation { }
+abstract class Aggregation<T>: Aggregation {
+  public ExpressionReturnValue<T> expr; // Argument of the agg. func.
+  public abstract void Apply(ValueStorage storage, Element[] elms);
+}
+
+public class Sum<T>: Aggregation<T>{
+  public override void Apply(ValueStorage storage, Element[] elms) {
+    if (expr.TryEvaluate(elms, out T retVal)) {
+      storage.value += retVal;
+    }
+  }
+}
+\end{code}
+Zde vidíme položku \verb+expr+, která reprezentuje vstupní expression agregační funkce.
+Funkce \verb+Apply+ je logikou funkce. 
+Vidíme funkci \verb+Sum+. 
+Logikou je přičtení vypočítané hodnoty do poskytnutého úložište, pokud dojde k úspěšné evaluaci výrazu.
+
+Následuje ukázka druhého konceptu:
+\begin{code}
+class GroupAggValueAccess<T>: ExpressionReturnValue<T> {
+  reaonly int accessedAggregationFuncID; 
+  public override bool TryEvaluate(Group group, out T retVal) {
+    retVal = group.GetAggValue<T>(accessedAggregationFuncID);
+    return true;
+  }
+}
+\end{code}
+\verb+accessedAggregationFuncID+ je \verb+ID+ vypočítané agregační funkce.
+Hodnota funkce se vrací pomocí \verb+GetAggValue<T>+.
+Tímto jsme vyřešeli problémy parsování a reprezentace výrazů pro náš engine.
+Nyní přistoupíme k problémům vykonávání a reprezentace dotazu.
 
 \section{Reprezentace dotazu}
 
