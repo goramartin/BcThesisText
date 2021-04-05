@@ -467,7 +467,7 @@ Jak vidíme na obrázcích, řešení se přibližuje rychlosti řešení Normal
 Problém by nastal, pokud by množství hodnot odpovídalo počtu nalezených výsledků. 
 V tomto případě bychom vytvářeli zbytečný overhead za režii pole.
 Dle našich předpokladů se ukázalo, že třídění podle \verb+ID+ (O\_Q1 a O\_Q2) vůči Properties (O\_Q3 a O\_Q4) vede ke znatelnému overheadu.
-Je to způsobeno nutným přístupem k databázi, při kterém se ověřuje, jestli daná vlastnost existuje na daném elementu a následném čtení hodnoty ze struktury obsahující ji.
+Je to způsobeno nutným přístupem k databázi, při kterém se ověřuje, jestli daná Property existuje na daném elementu a následném čtení hodnoty ze struktury obsahující ji.
 
 Paralelní zpracování aplikuje použité verze $(a, b)$-stromů ze zpracování pro jedno vlákno. 
 Half-Streamed řešení obsahuje lokální tabulku a indexační strom pro každé běžící vlákno. 
@@ -842,12 +842,6 @@ Je zde vidět overhead za použití paralelní mapy vůči mergování lokálně
 Zpomalení Normal: Two-Step je ještě znatelnější pro dotazy G\_Q4/G\_Q4$'$ a G\_Q5/G\_Q5$'$, kdy se vkládá množství skupin do paralelní mapy.
 
 Z výsledků usuzujeme, že vylepšená řešení pro náš případ paralelizace neposkytují z hlediska rychlosti vykonání znatelné výhody oproti stávajícím řešením.
-Pro budoucí práci by bylo vhodné udělat podrobnější testování pro rozličné počty použitých vláken a sledovat skalabilitu daných řešení.
-Další možný budoucí výzkum může sledovat obecný problém rozdělení dat vláken během vyhledávání. 
-Normal přistup rovnoměrně rozděluje množství výsledků pro každé vlákno.
-Rozdělení práce vylepšených řešení závísí na počtu vyhledaných výsledků v každém vlákně. 
-Aby došlo k rovnoměrnému rozdělení práce tak se každému vláknu přidělují malé skupiny vrcholů k prohledání.
-Nicméně, dané řešení nemůže zaručit stoprocentně rovnoměrné rozdělení práce.
 
 \bigskip
-\textit{Tímto jsme zakončili prezentaci výsledků. Všechna nasbíraná data použitá k tvorbě grafů je možné nalézt v příloze výsledků benchmarku (\ref{prilohy.grafyVysledky}).}
+\textit{Tímto jsme zakončili prezentaci výsledků. Všechna nasbíraná data použitá k tvorbě grafů je možné nalézt v příloze výsledků benchmarku (\ref{prilohy.grafyVysledky}).} 

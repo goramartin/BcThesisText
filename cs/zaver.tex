@@ -1,4 +1,29 @@
-\chapter*{Závěr}
+\chapter{Závěr}
 \addcontentsline{toc}{chapter}{Závěr}
 
 Tady ma byt text
+
+\section{Budoucí výzkum}
+
+Hlavní náplní budoucí práce může být testování daných řešení na grafech s reálnými Properties.
+V našem testování jsme sice volili reálne grafy, ale jejich Properties jsme uměle vygenerovali.
+
+Další budoucí výzkum může sledovat obecný problém rozdělení dat při paralelizaci vylepšených řešení. 
+Normal přistup má vždy všechna data připravená v paměti a při zpracování je rovnoměrně rozděluje mezi vlákny.
+Vlákna tedy mají vždy stejný počet výsledků pro zpracování.
+Navíc díky kompletnosti dat lze data optimálněji zpracovávat a použít větší množství obecných algoritmů.
+Například při třídění jsme použili základní algoritmu Merge sort, který není možný aplikovat při třídění v průběhu vyhledávání.  
+Rozdělení práce vylepšených řešení závísí na počtu vyhledaných výsledků v každém vlákně.
+Mohou nastávát případy, kdy jedno vlákno má více výsledků ke zpracování než ostatní. 
+Daný problém jsme se našem řešení prohledávání snažili vyřešit pomocí přidělování malých skupin vrcholů vláknum.
+Vlákno po prohledání daných vrcholů zažádalo o další.
+Nicméně, dané řešení nemůže zaručit stoprocentně rovnoměrné rozdělení práce.
+Bylo by vhodné prozkoumat, jak daná situace ovlivňuje naše řešení.
+
+U Order by řešení jsme viděli značné zrychlení při třídění pomocí Properties v paralelizovaných řešeních.
+Bylo by vhodné prozkoumat možnosti vytvoření globálních statistik pro každou Property a podrobněji zjistit možnosti rozdělení rozsahů přihrádek.
+Samotné rozdělení přihrádek jsme pro řetězce zpracovali pouze s předpokladem, že se jedná o ASCII znaky.
+V budoucí práci je možné zkoumat rozdělování i pro složitější znakové sady.
+
+V paralelních Group by řešeních by bylo vhodné prozkoumat podrobněji skalabilitu daných řešení pro rozličné počty vláken.
+Pokud možno, také možnosti jiných paralelních map. 
