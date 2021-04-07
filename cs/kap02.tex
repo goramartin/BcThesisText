@@ -339,17 +339,62 @@ class ExpressionIntegerAdd: ExpressionAdd<int>{
 \end{code}
 
 Tímto jsme vyřešeli problémy parsování a reprezentace expressions pro náš engine.
-Nyní přistoupíme k problémům vykonávání a reprezentace dotazu.
+Nyní přistoupíme k problémům vykonávání dotazu.
 
-\section{Reprezentace dotazu}
+\clearpage
+
+\section{Vykonání dotazu}
+
+Máme připravené obecné podklady.
+Víme jak reprezentovat graf a jak budeme získávat informace z uživatelem zadaného dotazu.
+Dotaz bude vykonán nad naší reprezentací grafu.
+Abychom splnili zadání, tak Group/Order by musí být vykonány po dokončení vyhledávání vzoru.
+Vylepšená řešení budou dané části vykonávat v průběhu vyhledávání.
+V ideálním případě chceme dosáhnout toho, aby dotazovací engine poskytoval dva módy.
+Mód zde reprezentuje způsob vykonání dotazu.
+Uživatel enginu si při spuštění vybere chtěný mód.
+Tudíž, módy musí v programu koexistovat.
+V této části analyzujeme obecný model vykonání, který posléze v sekci \ref{anal.improvement} upravíme, aby vykonával Group/Order by v průběhu hledání.
+
+Při zkoumání vlastností hlavních částí PGQL (Match, Select, ...) jsme si uvědomili jejich separaci logiky z hlediska vykonávání dotazu.
+Match prohledává graf a produkuje výsledky. 
+Select výsledky vypisuje. 
+Order/Group by třídí/seskupuje vyprodukované výsledky.
+Filtrace výsledků je provádě v části Where a Having.
+Tedy dané části se mohou vyvíjet nezávisle na sobě a následně propojit dle priorit.
+Priority jsou (od největší):
+\begin{code}
+      Match -> Where -> Group by -> Having -> Order by -> Select 
+\end{code}
+Match vyprodukuje výsledky, Where je profiltruje, Group by je seskupí, Having opět profiltruje, následně jsou setříděny a jako poslední krok se provede výpis uživateli.
+Propojení pak tvoří primitivní exekuční plán.
+Při podrobnějším zkoumání jsme zjistili, že dané schéma značně připomíná návrhový vzor Pipes and Filters \citep[str. 53]{patterns2}.
+Ačkoliv v naší práci použitá podmnožina PGQL neobsahuje Having a Where, jsme si vědomi provázanosti částí Match/Where a Group by/Having.
+Pokud by byli v budoucnu doimplementovány, tak mohou být propojeny pro docílení lepší výkonnosti. 
+
+Poznatky jsme se rozhodli aplikovat v našem návrhu.
+Dotaz bude reprezentován třídou, která poskytne uživateli jednoduchý interface.
+Interně bude třída obsahovat řetězec tříd, tj. exekuční plán.
+Každá z těchto tříd obsahuje logiku a informace důležité pro výše zmiňované části dotazu.
+Vykonání proběhne postupně dle priority.
+Po dokončení zpracování se výsledky předají třídě další.    
 
 
+\begin{figure}[!htp]
+\includegraphics[width=\linewidth]{../img/classtest.pdf}\centering
+\caption{Doba vykonání dotazů Group by pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 32373599.}
+\label{figure.amazonGroupByPareerere}
+\end{figure}
 
+\textbf{QQQ}
 
+\subsection{Tabulka výsledků}
 
+\subsection{Match a vyhledání vzoru}
 
-\section{Group by}
+\subsection{Group by}
 
-\section{Order by}
+\subsection{Order by}
 
 \section{Návrh vylepšení}
+\label{anal.improvement}
