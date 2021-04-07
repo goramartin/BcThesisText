@@ -200,13 +200,13 @@ Proměnným pak můžeme přiřadit \verb+ID+.
 \subsection{Select, Order/Group by}
 
 Ostatní části Group by, Order by a Select obsahují výrazy proměnných (např: order by x), přístup k Properties proměnných (např: select x.PropOne) nebo volání agregačních funkcí (\verb+min+, \verb+max+, \verb+avg+, \verb+sum+ a \verb+count+).
+Proměnné zde představují elementy grafu.
 Várazy se však musí evaluovat za běhu programu.
-Dalším problémem je, že dané výrazy mají různorodé návratové hodnoty.
+Dalším problémem je, že výrazy mají různorodé návratové hodnoty.
 Výraz x (\verb+ID+ vrcholu) lze chápat jako integer.
 Váraz x.PropOne má návratovou hodnotu dle \verb+propType+, který je definovám ve vstupním schématu.
 Agregační funkce \verb+min+, \verb+max+ mají návratovou hodnotu definovanou na základě jejich vstupních argumentů.
-Například \verb+min(x.StringProp)+ očekává, že návratová hodnota bude řetězec.
-Funkce \verb+sum+ a \verb+count+ by měli ideálně vracet formát, který by předešel přetečení.
+Funkce \verb+sum+ a \verb+count+ by měli ideálně pracovat s typem, který by předešel přetečení.
 U \verb+avg+ se očekává hodnota s desetinnou čárkou.  
 V budoucnu však může dojít k rozšířením a vyvstanou složitější výrazy, například infixová notace x.PropOne + y.PropOne nebo zmiňované porovnání z Where/Having části.
 Problém nám usnadňuje fakt, že Properties nesoucí stejné jméno mají stejný \verb+propType+ (sekce \ref{req.pgql}).
@@ -294,7 +294,6 @@ class GroupAggValueAccess<T>: ExpressionReturnValue<T> {
 \verb+Group+ reprezentuje výsledky jedné skupiny.
 \verb+accessedAggregationFuncID+ je \verb+ID+ vypočítané agregační funkce.
 Hodnota funkce se vrací pomocí \verb+GetAggValue<T>+.
-
 Následuje ukázka prvního konceptu:
 \begin{code}
 abstract class Aggregation { }
@@ -316,15 +315,15 @@ Funkce \verb+Apply+ je logikou funkce.
 Vidíme funkci \verb+Sum+. 
 Logikou je přičtení vypočítané hodnoty do poskytnutého úložište, pokud dojde k úspěšné evaluaci výrazu.
 
-Pomocí našeho návrhu pak můžeme vyřešit i budoucí rozšířešení jako třeba aritmetické operátory nebo porovnání.
+Pomocí našeho návrhu pak můžeme vyřešit i budoucí rozšířešení, jako třeba aritmetické operátory nebo porovnání.
 Třídy pro binární sčítání mohou vypadat takto:
 \begin{code}
-class ExpressionAdd<T>: ExpressionReturnValue<T> {
+class ExpressionBinOperation<T>: ExpressionReturnValue<T> {
   public ExpressionReturnValue<T> expr1;
   public ExpressionReturnValue<T> expr2;
 }
 
-class ExpressionIntegerAdd: ExpressionAdd<int>{
+class ExpressionIntegerAdd: ExpressionBinOperation<int>{
   public override bool TryEvaluate(Element[] elms, out int retVal) {
     if (expr1.TryEvaluate(elms, out int expr1Val) &&
         expr2.TryEvaluate(elms, out int expr2Val)) {
@@ -373,20 +372,16 @@ Ačkoliv v naší práci použitá podmnožina PGQL neobsahuje Having a Where, j
 Pokud by byli v budoucnu doimplementovány, tak mohou být propojeny pro docílení lepší výkonnosti. 
 
 Poznatky jsme se rozhodli aplikovat v našem návrhu.
-Dotaz bude reprezentován třídou, která poskytne uživateli jednoduchý interface.
-Interně bude třída obsahovat řetězec tříd, tj. exekuční plán.
-Každá z těchto tříd obsahuje logiku a informace důležité pro výše zmiňované části dotazu.
-Vykonání proběhne postupně dle priority.
-Po dokončení zpracování se výsledky předají třídě další.    
-
+Části dotazu budou reprezentovány třídami (obrázek \ref{figure.diaQueryObjects}), které si implementují interně svou logiku.
+Třídy budou zřetězeny dle priority výše (obrázek xxx), tj. tvoří se exekuční plán z uživatelského dotazu.
+Vykonání je zobrazeno na obrázku zzz.
 
 \begin{figure}[!htp]
-\includegraphics[width=\linewidth]{../img/classtest.pdf}\centering
-\caption{Doba vykonání dotazů Group by pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 32373599.}
-\label{figure.amazonGroupByPareerere}
+\includegraphics[width=\linewidth]{../img/diaQueryObjects.pdf}\centering
+\caption{AAA}
+\label{figure.diaQueryObjects}
 \end{figure}
 
-\textbf{QQQ}
 
 \subsection{Tabulka výsledků}
 
