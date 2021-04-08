@@ -184,10 +184,11 @@ Nyní bychom mohli sestavit Visitor pro každou část separatně a vyřadit tak
 Dané postupy nám pak umožní jednoduše pracovat s naší podmnožinou jazyka PGQL.
 
 
-\subsection{Match a proměnné}
+\subsection{Match a proměnné} \label{anal.mathcandvar}
 
 Každá hlavní část dotazu po sesbírání informací pomocí Visitoru vygeneruje určité struktury.
 Pro Match se přímočaře naskytuje reprezentovat posloupnosti vrcholů a hran pomocí polí.
+Každá posloupnost oddělená čárkou bude obsažena v samostatném poli.
 Pole bude obsahovat třídy.
 Třída si musí pamatovat jakou proměnou reprezentuje, \verb+elType+ pokud je definován a jde-li o hranu (in/out/any) nebo vrchol.
 Jedná se o všechny nutné informace, které můžeme následně využít k vytvoření vzoru prohledávání grafu.
@@ -389,6 +390,8 @@ Při vykonání se provede rekurzivní voláni pro vyhodnocení objektů v polo�
 \label{figure.diaQueryObjects}
 \end{figure}
 
+\clearpage
+
 \begin{figure}[!htp]
 \includegraphics{../img/diaQueryObjectsCon.pdf}\centering
 \caption{Propojení objektů pomocí položky \texttt{next} pro dotaz select x match (x) order by x.}
@@ -401,17 +404,122 @@ Při vykonání se provede rekurzivní voláni pro vyhodnocení objektů v polo�
 \label{figure.diaQueryObjectsCall}
 \end{figure}
 
-\subsection{Tabulka výsledků}
+Poslední věc nutnou ošetřit je způsob paralelizace dotazu.
+Paralelizaci dotazu budou provádět objekty pouze interně.
+Tímto zaručíme nezávislost objektů a nebudeme nutni vytvářet závislosti mezi objekty.
+Při analýze jednotlivých částí budeme vycházet z předpokladu, že existuje \texttt{ThreadPool} vláken.
+Do \texttt{ThreadPool} budeme zařazovat úkony k vykonání (\texttt{Tasks}).
 
-Prozatím jsme předpokládali předávání obecného objektu výsledků mezi částmi.
+\subsection{Tabulka výsledků} \label{anal.tables}
 
+Mezi částmi dochází k předávání výsledků.
+Výsledky musí mít definovaný formát, aby každá část dokázala správně provádět svou logiku.
+V části Match dochází ke generování výsledků.
+V obecném předpokladu budeme výsledky ukládat do tabulky.
+Jeden řádek tabulky bude reprezentovat jeden výsledek hledání.
+Abychom mohli vhodně pracovat s daty v tabulce a omezili přesouvání dat ve sloupečních (např. třídění), tak budeme pracovat s proxy třídami reprezentující jeden řádek.
+Nyní musíme rozhodnout, jaké informace do tabulky uložíme.
+Máme dvě možnosti.
+První varianta v části Match vypočte hodnoty všech výrazů z ostatních částí.
+Všechny hodnoty jednoho výrazu budou obsaženy v samostatném sloupečku tabulky.
+Tato varianta nám nepřišla vhodná, protože by část Match musela znát informace o všech ostatních částech.
+Navíc výrazy nemusí být totožné v částech navzájem.
+Tedy se vytváří nutnost vytvářet sloupečky hodnot v moment, kdy se nevyužijí a tím se navyšuje spotřeba paměti.
 
+Příkladem může být dotaz: 
+\begin{code}
+select x.P1, ..., x.Pn match (x) -> (y) order by y.P1, ..., y.Pm 
+\end{code}
 
-\subsection{Match a vyhledání vzoru}
+Zde vidíme množství výrazů.
+Pokud bychom aplikovali první variantu, tak v Match části musíme vygenerovat $m + n$ sloupců hodnot.
+Z tohoto důvodu chceme zvolit jinou variantu.
+Do tabulky budeme ukládat elementy grafu.
+Sloupeček tabulky bude reprezentovat jednu proměnnou z dotazu Match.
+Tedy tabulka má počet sloupečku rovný počtu unikátních proměnných. 
+Pro stejný dotaz vytvoříme pouze dva sloupečky.
+Abychom zamezili stejnému problému i z opačné strany, tj. mnoho proměnných a málo výrazů, tak budeme ukládat pouze proměnné, ke kterým se přistupuje v ostatních částech.
+Tímto jsme vyřešili paměťový problém, ale nastal problém výkonnosti.
+Vyvstává totiž nutnost vypočítávat hodnoty výrazů znova i když jsme je už v minulosti počítali (např. při třídění se několikrát porovnává stejný výsledek s jinými).
+V tento moment jsme se rozhodli jít cestou méně paměťové náročnosti na úkor výkonnosti.
+
+\bigskip
+\textit{Definovali jsme obecně způsob vykonání a formát výsledků. Nyní přejdeme k analýze jednotlivých částí dotazu. V analýze jsme se rozhodli vychenat část Select, protože není podstatná pro naši práci.}
+
+\subsection{Match a prohledávání grafu}
+
+Match část má za úkol najít všechny podgrafy odpovídající zadanému vzoru.
+Dle naší podmnožiny PGQL se jedná o podgrafy homomorfní (to do poznamka).
+Protože se jedná o obecně složitý problém a cílem této práce není navrhnout algoritmus pro vyhledávání vzoru, tak jsme se rozhodli inspirovat a použít obecný postup k řešení daného problému. 
+Mezi základní postupy vyhledávání vzoru patří prohledávání do šířky (BFS) a prohledávání do hloubky (DFS) \citep[kap. 4]{graphAlg}. 
+Na základě 1. a 2. kapitoly článku \citet{asyncPGX} jsme vybrali algoritmus DFS, jelikož obsahuje menší množství mezivýsledů v průběhu hledání.
+K aplikaci algoritmu musíme vytvořit strukturu (vzor) představující hledaný podgraf.
+Z každého vrcholu v grafu musí být spuštěno DFS.
+Při DFS se bude kontrolovat, jestli průchod odpovídá hledanému vzoru.
+Pokud dojde k nalezení podgrafu, výsledek bude uložen způsobem z sekce \ref{anal.tables}.
+V sekci \ref{anal.mathcandvar} jsme uvedli, že výsledky parsování Match části budou pole tříd obsahující informace o proměnných.
+Dané informace nám nyní budou sloužit k vytvoření DFS stromu.
+V prvním kroku propojíme posloupnosti obsahující stejné proměnné.
+Tímto vytvoříme souvislé komponety.
+Souvislá komponenta představuje hledaný vzor.
+Dotaz níže obsahuje dvě posloupnosti propojené proměnnou x.
+\begin{code}
+select x match (x) -> (y), (x) -> (q)
+\end{code}
+Neobsahují-li stejné proměnné, jedná se o seperátní komponenty.
+V takovém případě se můžeme dívat na dotaz (viz níže), jako na skalární součin proměnných x a y.
+\begin{code}
+select x, y match (x), (y)
+\end{code}
+Vyhledávání separátních komponent vyřešíme následovně.
+V momentě, kdy nalezneme podgraf odpovídající jedné komponentě, tak se spustí DFS vyhledávání pro komponentu další.
+Teprve až projdeme všechny komponenty, výsledek se uloží do tabulky.
+Zbavíme se tak nutnosti uchovávat mezivýsledky a následnému tvoření skalárního součinu.
+
+Nyní přistoupíme k analýze paralelizace hledání.
+Zvolili jsme jeden ze základních způsobů.
+Budeme paralelizovat prohledávání ze startovních vrcholů.
+Vyhledávání bude reprezentováno objektem (\texttt{Matcher}).
+\texttt{Matcher} vlastní strukturu hledaného podgrafu (\texttt{Pattern}).
+Každé vlákno bude vlastnit lokálně svůj \texttt{Matcher}, \texttt{Pattern} a svou tabulku výsledků.
+Všechna vlákna budou sdílet thread-safe objekt, který přiděluje části vrcholů grafu (\texttt{VertexDistributor}).
+Vlákno vždy zažádá \texttt{VertexDistributor} o určitý počet vrcholů, ze kterých spustí lokálně prohledávání a výsledky uloží do své tabulky.
+Nikdy nenastave situace, kdy dva vlákna mají stejný startovní vrchol.
+Po vyčerpání všech vrcholů grafu prohledávání končí.
+Rozložení objektů mezi vlákny je zobrazeno na obrázku \ref{figure.diaQueryObjectsMatchPar}. 
+
+\begin{figure}[!htp]
+\includegraphics{../img/diaQueryObjectsMatchPar.pdf}\centering
+\caption{Diagram paralelizace prohledávání grafu.}
+\label{figure.diaQueryObjectsMatchPar}
+\end{figure}
+
+\texttt{VertexDistributor} je zde velice důležitý.
+Musí rozdělovat malé části vrcholů.
+Kdyby rozděloval velké části vrcholů může se stát, že některá vlákna budou mít mnohem více práce.
+Je to protože reálné grafy nemají obecně rovnoměrné rozložení hran.
+Jedno vlákno by mohlo dostat vrholy nacházející se v oblasti s množstvím hran, zatímco jiné vlákno by procházelo řídkou oblastí.
+Jelikož se rychle vyčerpaly startovní vrcholy, tak vlákno z řídké oblasti ukončí svou práci mnohem dříve něž vlákno první.
+Nyní se musí čekat na dokončení práce prvního vlákna.
+
+Poslední část analýzy je nutnost vyřešit mergování výsledků jednotlivých vláken.
+Kdybychom ponechali výsledky bez úpravy, tak nedokážeme rovnoměrně rozdělit práci mezi vlákna v paralelních řešeních Order/Group by.
+Cílem je vytvořit jednu tabulku obsahující všechny výsledky.
+K vyhnutí překopírovávání všech výsledků vláken využijeme následující princip.
+Sloupeček tabulky bude tvořen polem polí fixní délky.
+V jazyce C\# \texttt{List<Element[FixedArraySize]>}.
+V kroku mergování nyní pouze překopírujeme odkazy na pole místo samotných výsledků.
+Avšak, pořád nám zůstává nutnost překopírovat výsledky posledních polí sloupečků, která jsou nezaplněná.
+Volbou vhodné hodnoty \texttt{FixedArraySize} se bude překopírovávat pouze malé množství výsledků.
+Konkrétní hodnota je z vlastností konkrétního grafu a počtu nalezených výsledků.
+Pro naše učely během implementace zkusíme zvolit prvně $n/\log_2 n$ ($n = $ \#výsledků hledání) pro single-thread a pro paralelní zpracování $(n/\log_2 n)/\#threads$.
+$log_2 n$ odpovídá počtu přealokování při plnění dynamického pole $n$ položkami.    
 
 \subsection{Group by}
 
 \subsection{Order by}
+
+
 
 \section{Návrh vylepšení}
 \label{anal.improvement}
