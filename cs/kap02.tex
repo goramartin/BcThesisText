@@ -128,7 +128,6 @@ Záznamy pak budou obsaženy v JSON poli:
 Soubor schéma vrcholů:
 [    { "Kind": "BasicNode" }, 
      { "Kind": "BasicNodeTwo", "PropertyOne": "integer" } ]
-
 Soubor schéma hran:"
 [    { "Kind": "BasicEdge" }, 
      { "Kind": "BasicEdgeTwo", "PropertyOne": "integer" } ]
@@ -226,6 +225,7 @@ Na struktuře bude existovat metoda pro vyhodnocení.
 Její návratová hodnota bude dvojice úspěch vyhodnocení + vypočtená hodnota. 
 Dané struktury musí být read-only, protože se budou využívat v paralelním prostřední.
 Metody by se mohli libovolně dodávat při nutnosti použití nových struktur. 
+
 Následuje ukázka možného kódu v jazyce C\#:
 \begin{code}
 // Base classes
@@ -238,6 +238,7 @@ abstract class VariableAccess<T>: ExpressionReturnValue<T> {
      readonly int accessedVariableID; 
 }
 \end{code}
+\clearpage 
 Třída reprezentující přístup k \verb+ID+ proměnné:
 \begin{code}
 class VariableIDAccess: VariableAccess<int> {
@@ -252,6 +253,7 @@ Položka \verb+accessedVariableID+ určuje k jaké proměnné se má přistoupit
 Zde předpokládáme, že pole \verb+Element[]+ obsahuje proměnné přesně v pořadí, jak se vyskytly v části Match.
 Tedy pokud je roven Match (x) -> (y), tak jeden výsledek hledání by bylo pole obsahující dva elementy x a y.
 Jedná se pouze o ilustrační příklad. 
+
 Případ přístupu k Property by mohl vypadat následovně:
 \begin{code}
 class VariablePropertyAccess<T>: VariableAccess<T> {
@@ -283,6 +285,7 @@ Všechny počítané agregační funkce zadané uživatelem označíme pomocí \
 Druhý koncept představuje nový potomek třídy expression.
 Daný potomek si pamatuje \verb+ID+ přistupované agregační funkce a na vstupu očekává strukturu reprezentující skupinu.
 K hodnotě počítané agregace přistoupíme pomocí její \verb+ID+.
+
 Následuje ukázka druhého konceptu:
 \begin{code}
 class GroupAggValueAccess<T>: ExpressionReturnValue<T> {
@@ -294,6 +297,7 @@ class GroupAggValueAccess<T>: ExpressionReturnValue<T> {
 \verb+Group+ reprezentuje výsledky jedné skupiny.
 \verb+accessedAggregationFuncID+ je \verb+ID+ vypočítané agregační funkce.
 Hodnota funkce se vrací pomocí \verb+GetAggValue<T>+.
+
 Následuje ukázka prvního konceptu:
 \begin{code}
 abstract class Aggregation { }
@@ -314,8 +318,8 @@ Zde vidíme položku \verb+expr+, která reprezentuje vstupní expression agrega
 Funkce \verb+Apply+ je logikou funkce. 
 Vidíme funkci \verb+Sum+. 
 Logikou je přičtení vypočítané hodnoty do poskytnutého úložište, pokud dojde k úspěšné evaluaci výrazu.
-
 Pomocí našeho návrhu pak můžeme vyřešit i budoucí rozšířešení, jako třeba aritmetické operátory nebo porovnání.
+
 Třídy pro binární sčítání mohou vypadat takto:
 \begin{code}
 class ExpressionBinOperation<T>: ExpressionReturnValue<T> {
@@ -359,9 +363,10 @@ Při zkoumání vlastností hlavních částí PGQL (Match, Select, ...) jsme si
 Match prohledává graf a produkuje výsledky. 
 Select výsledky vypisuje. 
 Order/Group by třídí/seskupuje vyprodukované výsledky.
-Filtrace výsledků je provádě v části Where a Having.
+Filtrace výsledků je prováděna v části Where a Having.
 Tedy dané části se mohou vyvíjet nezávisle na sobě a následně propojit dle priorit.
-Priority jsou (od největší):
+
+Priority (zleva největší):
 \begin{code}
       Match -> Where -> Group by -> Having -> Order by -> Select 
 \end{code}
@@ -372,18 +377,35 @@ Ačkoliv v naší práci použitá podmnožina PGQL neobsahuje Having a Where, j
 Pokud by byli v budoucnu doimplementovány, tak mohou být propojeny pro docílení lepší výkonnosti. 
 
 Poznatky jsme se rozhodli aplikovat v našem návrhu.
-Části dotazu budou reprezentovány třídami (obrázek \ref{figure.diaQueryObjects}), které si implementují interně svou logiku.
-Třídy budou zřetězeny dle priority výše (obrázek xxx), tj. tvoří se exekuční plán z uživatelského dotazu.
-Vykonání je zobrazeno na obrázku zzz.
+Každá část dotazu bude reprezentována objektem (obrázek \ref{figure.diaQueryObjects}).
+Metoda \verb+Compute+ implementuje logiku objektu.
+Propojení se realizuje pomocí položky \verb+next+.
+Dle uživatelského dotazu se vytvoří objekty a propojí dle priorit výše (obrázek \ref{figure.diaQueryObjectsCon}).
+Při vykonání se provede rekurzivní voláni pro vyhodnocení objektů v položce \verb+next+ (obrázek \ref{figure.diaQueryObjectsCall}). 
 
 \begin{figure}[!htp]
-\includegraphics[width=\linewidth]{../img/diaQueryObjects.pdf}\centering
-\caption{AAA}
+\includegraphics{../img/diaQueryObjects.pdf}\centering
+\caption{UML class diagram objektů představující části dotazu.}
 \label{figure.diaQueryObjects}
 \end{figure}
 
+\begin{figure}[!htp]
+\includegraphics{../img/diaQueryObjectsCon.pdf}\centering
+\caption{Propojení objektů pomocí položky \texttt{next} pro dotaz select x match (x) order by x.}
+\label{figure.diaQueryObjectsCon}
+\end{figure}
+
+\begin{figure}[!htp]
+\includegraphics{../img/diaQueryObjectsCall.pdf}\centering
+\caption{UML activity diagram rekurzivního volání metody \texttt{Compute} pro dotaz select x match (x) order by x.}
+\label{figure.diaQueryObjectsCall}
+\end{figure}
 
 \subsection{Tabulka výsledků}
+
+Prozatím jsme předpokládali předávání obecného objektu výsledků mezi částmi.
+
+
 
 \subsection{Match a vyhledání vzoru}
 
