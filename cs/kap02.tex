@@ -486,6 +486,7 @@ Všechna vlákna budou sdílet thread-safe objekt, který přiděluje části vr
 Vlákno vždy zažádá \texttt{VertexDistributor} o určitý počet vrcholů, ze kterých spustí lokálně prohledávání a výsledky uloží do své tabulky.
 Nikdy nenastave situace, kdy dva vlákna mají stejný startovní vrchol.
 Po vyčerpání všech vrcholů grafu prohledávání končí.
+V Single-thread řešení jsou přiděleny všechny vrcholy najednou danému vláknu. 
 Rozložení objektů mezi vlákny je zobrazeno na obrázku \ref{figure.diaQueryObjectsMatchPar}. 
 
 \begin{figure}[!htp]
