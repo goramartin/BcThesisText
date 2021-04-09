@@ -2,8 +2,9 @@
 
 \chapter{Analýza}
 
-V této kapitole se pokusíme analyzovat možná řešení výstavby dotazovacího enginu a jeho úpravy, tak abychom splnili námi kladené požadavky společně se zadáním práce.
-Analýza bude probíhat v několika krocích.
+V této kapitole se pokusíme analyzovat problémy výstavby a úpravy dotazovacího enginu dle zadání práce.
+Zároveň poskytneme možná řešení daných problémů.
+Budeme zde postupovat v několika krocích. 
 Začneme obecným návrhem dotazovacího enginu a projdeme hlavní koncepty pro implementaci.
 V druhém kroku zvážíme kroky vykonávání dotazů a postup výběru řešení částí Order by a Group by, které se budou vykonávat po dokončení vyhledávání dotazu.
 V třetím kroku provedeme analýzu úprav pro agregaci v průběhu vyhledávání. 
@@ -18,7 +19,7 @@ Nad grafem se pak vykoná uživatelsky definovaný dotaz.
 Dané omezení jsme zvolili, protože hlavním cílem je testovat pouze části Group by a Order by.
 Vytvořit reálnou grafovou databázi by zabralo netriviální časové období.
 
-Při obecném pohledu na engine jsme lokalizovali hlavní bloky; výstavby, které musíme uvážit.
+Při obecném pohledu na engine jsme lokalizovali hlavní bloky výstavby, které musíme uvážit.
 Jsou to: reprezentace grafu, parsování uživatelského dotazu, výrazy (expressions) a dotaz/vykonání dotazu.
 Graf nám bude simulovat grafovou databázi. 
 Samotně pak určuje formát objektů, nad kterými je vykonán uživatelský dotaz.
@@ -32,6 +33,7 @@ Vytváří se nám závislosti, které budeme muset uvážit.
 \section{Reprezentace grafu}
 
 Musíme uvážit, jak reprezentovat graf.
+Graf bude simulovat grafovou databázi.
 Z části \ref{requirements} jsou hlavními faktory námi zvolená podmnožina jazyku PGQL a že se jedná o Property graf.
 Pro případy nejednoznačnosti označíme \verb+elType+ jako typ elementu v Property grafu a \verb+propType+ jako typ Property.
 
@@ -162,10 +164,12 @@ ID elType Properties // bez této hlavičky
 ...
 \end{code}
 
+\textit{Analyzovali a navrhli jsme způsob reprezentace grafu společně s formátem datových souborů.
+Samotné načítání je už implementační detail.
+Nyní musíme analyzovat způsob získání informací z uživatelem zadaného dotazu. }
+
 \section{Parsování uživatelského dotazu}
 
-Máme rozmyšlenou reprezentaci grafu.
-Nyní musíme analyzovat způsob získání informací z uživatelem zadaného dotazu.
 Uživatelský dotaz se pohybuje v rozsahu definovaném v sekci PGQL \ref{req.pgql}.
 Nicméně, je zde nutné přemýšlet i nad možnými rozšířeními.
 Například může dojít k přidaní částí Where a Having spolu s nutností porovnávání (Where x.PropOne $>= 10$).
@@ -181,7 +185,7 @@ Poslední krok provede vytvoření tříd reprezentující dotaz pomocí iterace
 Iterace a sběr dat ze stromové struktury budou implementovány návrhovým vzorem Visitor \citep[str. 331]{patterns}.
 V naši představě bychom chtěli vygenerovat stromovou strukturu pro každou hlavní část dotazu (Match, Select, Order by a Group by).
 Nyní bychom mohli sestavit Visitor pro každou část separatně a vyřadit tak nutnost jednoho globálnáho Visitoru.
-Dané postupy nám pak umožní jednoduše pracovat s naší podmnožinou jazyka PGQL.
+Dané postupy nám pak umožní jednoduše pracovat s naší podmnožinou jazyka PGQL (sekce \ref{req.pgql}).
 
 
 \subsection{Match a proměnné} \label{anal.mathcandvar}
@@ -209,7 +213,7 @@ Agregační funkce \verb+min+, \verb+max+ mají návratovou hodnotu definovanou 
 Funkce \verb+sum+ a \verb+count+ by měli ideálně pracovat s typem, který by předešel přetečení.
 U \verb+avg+ se očekává hodnota s desetinnou čárkou.  
 V budoucnu však může dojít k rozšířením a vyvstanou složitější výrazy, například infixová notace x.PropOne + y.PropOne nebo zmiňované porovnání z Where/Having části.
-Problém nám usnadňuje fakt, že Properties nesoucí stejné jméno mají stejný \verb+propType+ (sekce \ref{req.pgql}).
+Problém nám usnadňuje fakt, že Properties nesoucí stejné jméno mají stejný \verb+propType+.
 Pokud ne, je nutné určit vhodnou návratovou hodnotu.
 Navíc musíme brát v potaz, že daný výraz se nemusí vyhodnotit, například absence Property na vrcholu.
 Proto jsme byli nuceni vymyslet systém výrazů (expressions).
@@ -342,8 +346,10 @@ class ExpressionIntegerAdd: ExpressionBinOperation<int>{
 }
 \end{code}
 
-Tímto jsme vyřešeli problémy parsování a reprezentace expressions pro náš engine.
-Nyní přistoupíme k problémům vykonávání dotazu.
+\textit{Tímto jsme vyřešeli problémy parsování a reprezentace expressions pro náš engine.
+Kód je pouze ilustrační a není finální.
+Použili jsme jej, protože poskytoval lepší možnosti vysvětlení konceptu než obrázek.
+Nyní přistoupíme k problémům vykonávání dotazu.}
 
 \clearpage
 
@@ -360,7 +366,7 @@ Uživatel enginu si při spuštění vybere chtěný mód.
 Tudíž, módy musí v programu koexistovat.
 V této části analyzujeme obecný model vykonání, který posléze v sekci \ref{anal.improvement} upravíme, aby vykonával Group/Order by v průběhu hledání.
 
-Při zkoumání vlastností hlavních částí PGQL (Match, Select, ...) jsme si uvědomili jejich separaci logiky z hlediska vykonávání dotazu.
+Při zkoumání vlastností hlavních částí PGQL (sekce \ref{req.pgql}) jsme si uvědomili jejich separaci logiky z hlediska vykonávání dotazu.
 Match prohledává graf a produkuje výsledky. 
 Select výsledky vypisuje. 
 Order/Group by třídí/seskupuje vyprodukované výsledky.
@@ -369,12 +375,12 @@ Tedy dané části se mohou vyvíjet nezávisle na sobě a následně propojit d
 
 Priority (zleva největší):
 \begin{code}
-      Match -> Where -> Group by -> Having -> Order by -> Select 
+      Match > Where > Group by > Having > Order by > Select 
 \end{code}
 Match vyprodukuje výsledky, Where je profiltruje, Group by je seskupí, Having opět profiltruje, následně jsou setříděny a jako poslední krok se provede výpis uživateli.
 Propojení pak tvoří primitivní exekuční plán.
 Při podrobnějším zkoumání jsme zjistili, že dané schéma značně připomíná návrhový vzor Pipes and Filters \citep[str. 53]{patterns2}.
-Ačkoliv v naší práci použitá podmnožina PGQL neobsahuje Having a Where, jsme si vědomi provázanosti částí Match/Where a Group by/Having.
+Ačkoliv v naší práci použitá podmnožina PGQL (sekce \ref{req.pgql}) neobsahuje Having a Where, jsme si vědomi provázanosti částí Match/Where a Group by/Having.
 Pokud by byli v budoucnu doimplementovány, tak mohou být propojeny pro docílení lepší výkonnosti. 
 
 Poznatky jsme se rozhodli aplikovat v našem návrhu.
@@ -382,6 +388,8 @@ Každá část dotazu bude reprezentována objektem (obrázek \ref{figure.diaQue
 Metoda \verb+Compute+ implementuje logiku objektu.
 Propojení se realizuje pomocí položky \verb+next+.
 Dle uživatelského dotazu se vytvoří objekty a propojí dle priorit výše (obrázek \ref{figure.diaQueryObjectsCon}).
+Propojejí bude realizováno od nejmenší po největší, protože práce s nejvyšší prioritou je vykonána první a po dokončení její práce ji už nepotřebujeme.
+Tedy můžeme uvólnit její zdroje.
 Při vykonání se provede rekurzivní voláni pro vyhodnocení objektů v položce \verb+next+ (obrázek \ref{figure.diaQueryObjectsCall}). 
 
 \begin{figure}[!htp]
@@ -404,31 +412,43 @@ Při vykonání se provede rekurzivní voláni pro vyhodnocení objektů v polo�
 \label{figure.diaQueryObjectsCall}
 \end{figure}
 
+\subsection{Paralelizace vykonání dotazu}
+
 Poslední věc nutnou ošetřit je způsob paralelizace dotazu.
-Paralelizaci dotazu budou provádět objekty pouze interně.
-Tímto zaručíme nezávislost objektů a nebudeme nutni vytvářet závislosti mezi objekty.
+Existuje několik možností.
+Paralelizace bude provedena pouze interně pro každy objekt nebo dojde k vypracování složitějšího modelu.
+V naší představě bychom volili první variantu.
+Pomocí ní zaručíme nezávislost objektů a nebudeme nutni vytvářet závislosti mezi objekty.
 Při analýze jednotlivých částí budeme vycházet z předpokladu, že existuje \texttt{ThreadPool} vláken.
 Do \texttt{ThreadPool} budeme zařazovat úkony k vykonání (\texttt{Tasks}).
 
-\subsection{Tabulka výsledků} \label{anal.tables}
+\subsection{Formát výsledků} \label{anal.tables}
 
 Mezi částmi dochází k předávání výsledků.
 Výsledky musí mít definovaný formát, aby každá část dokázala správně provádět svou logiku.
-V části Match dochází ke generování výsledků.
-V obecném předpokladu budeme výsledky ukládat do tabulky.
+V části Match dochází ke generování obecných výsledků.
+V části Group by dojde k vytvoření skupin a výpočtů agregačních funkcí.
+Pokud je v uživatelském dotazu zahrnuto Group by, tak zbylé části musí očekávat jiný formát výsledků.
+Daný formát musí obsahovat skupiny a výsledné hodnoty agregačních funkcí.
+
+Obecné výsledky hledání budeme ukládat do tabulky.
 Jeden řádek tabulky bude reprezentovat jeden výsledek hledání.
-Abychom mohli vhodně pracovat s daty v tabulce a omezili přesouvání dat ve sloupečních (např. třídění), tak budeme pracovat s proxy třídami reprezentující jeden řádek.
 Nyní musíme rozhodnout, jaké informace do tabulky uložíme.
-Máme dvě možnosti.
-První varianta v části Match vypočte hodnoty všech výrazů z ostatních částí.
-Všechny hodnoty jednoho výrazu budou obsaženy v samostatném sloupečku tabulky.
-Tato varianta nám nepřišla vhodná, protože by část Match musela znát informace o všech ostatních částech.
-Navíc výrazy nemusí být totožné v částech navzájem.
-Tedy se vytváří nutnost vytvářet sloupečky hodnot v moment, kdy se nevyužijí a tím se navyšuje spotřeba paměti.
+V části Match se pracuje s elementy grafu.
+Jeden výsledek hledání obsahuje seznam elementů, které odpovídají vzoru.
+Máme dvě možnosti, jak daný výsledek zpracovat.
+První varianta v části Match při jeho nalezení vypočte hodnoty všech výrazů obsažených ve zbytku dotazu.
+Sloupeček představuje hodnoty jednoho výrazu.
+Tato varianta nám nepřišla vhodná, protože by objekt Match musel znát informace o výrazech v celém dotazu.
+Navíc výrazy v částech mohou být rozdílné.
+Tedy se vytváří nutnost vytvářet sloupečky hodnot v moment, kdy se nepotřebují a tím se navyšuje spotřeba paměti.
+
+\clearpage
 
 Příkladem může být dotaz: 
 \begin{code}
-select x.P1, ..., x.Pn match (x) -> (y) order by y.P1, ..., y.Pm 
+select x.P1, ..., x.Pn match (x) -> (y) order by y.P1, ..., y.Pm  
+n, m belongs to N and n, m > 1
 \end{code}
 
 Zde vidíme množství výrazů.
@@ -438,49 +458,111 @@ Do tabulky budeme ukládat elementy grafu.
 Sloupeček tabulky bude reprezentovat jednu proměnnou z dotazu Match.
 Tedy tabulka má počet sloupečku rovný počtu unikátních proměnných. 
 Pro stejný dotaz vytvoříme pouze dva sloupečky.
-Abychom zamezili stejnému problému i z opačné strany, tj. mnoho proměnných a málo výrazů, tak budeme ukládat pouze proměnné, ke kterým se přistupuje v ostatních částech.
+Abychom zamezili stejnému problému i z opačné strany (tj. mnoho proměnných a málo výrazů), tak budeme ukládat pouze proměnné, ke kterým se přistupuje v ostatních částech.
 Tímto jsme vyřešili paměťový problém, ale nastal problém výkonnosti.
-Vyvstává totiž nutnost vypočítávat hodnoty výrazů znova i když jsme je už v minulosti počítali (např. při třídění se několikrát porovnává stejný výsledek s jinými).
-V tento moment jsme se rozhodli jít cestou méně paměťové náročnosti na úkor výkonnosti.
+Vyvstává totiž nutnost vypočítávat hodnoty výrazů znova, přestože jsme je už v minulosti počítali (např. při třídění se několikrát porovnává stejný výsledek s jinými).
+Problém se dá částečně řešit cachováním výsledků, ale ten ponecháme na analůzu zbylých částí.
+V tento moment jsme se rozhodli jít cestou menší paměťové náročnosti na úkor výkonnosti.
+
+Ať už budeme pracovat první nebo druhou variantou, musíme být schopni pracovat s řádky tabulky.
+Order by řádky musí setřídit a Group by je seskupit.
+Přesouvání řádku o více sloupcích je drahé.
+Pro docílení efektivní práce s řádky budeme řádek reprezentovat proxy třídou.
+Třída poskytne metody pro přístup k řádku a jeho hodnot ve sloupečcích.
+Nesmí mít složité položky, aby bylo levné ji přesouvat.
+V ideálním případě si bude pamatovat číslo řádku a odkaz na tabulku.
+Nyní při Order by stačí pouze třídit proxy třídy. 
+
+Pro výsledky Group by použijeme upravený princip.
+Výsledky budou pravděpodovně zpracovány pomocí mapy/slovníku (C\# Dictionary).
+Proxy třída nyní musí znát odkaz na klíč a hodnotu pro daný klíč.  
 
 \bigskip
-\textit{Definovali jsme obecně způsob vykonání a formát výsledků. Nyní přejdeme k analýze jednotlivých částí dotazu. V analýze jsme se rozhodli vychenat část Select, protože není podstatná pro naši práci.}
+\textit{Analyzovali a navrhli jsme obecně způsob vykonání dotazu společně s formátem předávaných výsledků mezi částmi. 
+Nyní přejdeme k analýze jednotlivých částí dotazu. 
+V analýze jsme se rozhodli vychenat část Select, protože není podstatná pro naši práci.}
 
-\subsection{Match a prohledávání grafu}
+\section{Match a prohledávání grafu}
 
-Match část má za úkol najít všechny podgrafy odpovídající zadanému vzoru.
-Dle naší podmnožiny PGQL se jedná o podgrafy homomorfní (to do poznamka).
-Protože se jedná o obecně složitý problém a cílem této práce není navrhnout algoritmus pro vyhledávání vzoru, tak jsme se rozhodli inspirovat a použít obecný postup k řešení daného problému. 
+Match část má za úkol najít všechny podgrafy v grafu odpovídající zadanému vzoru.
+Vlastnosti hledání jsou definované jazykem PGQL (sekce \ref{req.pgql}).
+Vzor se vždy skládá z posloupnosti vrcholů a hran.
+Na každý prvek posloupnosti se můžeme dívat jako na placeholder nějakého elementu grafu.
+
+Vlastnosti hledání:
+\begin{itemize}
+
+\item Výsledky hledání jsou podgrafy homomorfní se zadaným vzorem.
+\item Hrana se může opakovat několikrát v rámci jednoho vzoru.
+\item Proměnná hrany ve vzoru se může použít pouze jednou.
+\item Dvě rozdílné proměnné mohou obsahovat stejný element.
+\item Shodnost elementů se ověřuje pouze na opakující se proměnné.
+
+\end{itemize}
+
+\subsection{BFS vs DFS}
+
+Hledání podgrafu v grafu je obecně složitý problém. 
+Cílem této práce není navrhnout algoritmus pro vyhledávání vzoru, proto jsme se rozhodli inspirovat a použít obecný postup k řešení daného problému.
 Mezi základní postupy vyhledávání vzoru patří prohledávání do šířky (BFS) a prohledávání do hloubky (DFS) \citep[kap. 4]{graphAlg}. 
-Na základě 1. a 2. kapitoly článku \citet{asyncPGX} jsme vybrali algoritmus DFS, jelikož obsahuje menší množství mezivýsledů v průběhu hledání.
+Na základě 1. a 2. kapitoly článku \citet{asyncPGX} jsme vybrali algoritmus DFS, jelikož v průběhu prohledávání generuje menší množství mezivýsledů.
+To je dáno chováním BFS. 
+BFS v každém kroku musí prozkoumat všechny sousedy políček z předešlého kroku.
+Toho se docílí vložením nových sousedů do fronty (obecná struktura \texttt{queue} first in first out).
+Fronta se tak rychle zvětšuje.
+DFS naopak potřebuje znát sousedy pouze aktuálně prohledávaných vrcholů.
+
+\subsection{Hledaný vzor}
+
 K aplikaci algoritmu musíme vytvořit strukturu (vzor) představující hledaný podgraf.
-Z každého vrcholu v grafu musí být spuštěno DFS.
-Při DFS se bude kontrolovat, jestli průchod odpovídá hledanému vzoru.
-Pokud dojde k nalezení podgrafu, výsledek bude uložen způsobem z sekce \ref{anal.tables}.
-V sekci \ref{anal.mathcandvar} jsme uvedli, že výsledky parsování Match části budou pole tříd obsahující informace o proměnných.
-Dané informace nám nyní budou sloužit k vytvoření DFS stromu.
-V prvním kroku propojíme posloupnosti obsahující stejné proměnné.
-Tímto vytvoříme souvislé komponety.
-Souvislá komponenta představuje hledaný vzor.
-Dotaz níže obsahuje dvě posloupnosti propojené proměnnou x.
+V sekci \ref{anal.mathcandvar} jsme uvedli, že posloupnosti oddělené čárkou budou reprezentovány jako pole tříd obsahující informace o proměnných.
+Jedno pole je ekvivalentní jedné posloupnosti.
+Pro zřetelnost budeme hovořit o jednom poli jako o řetězci.
+
+Příklad dotazu se dvěma řetězci:
 \begin{code}
-select x match (x) -> (y), (x) -> (q)
+match (x) -> (y), (x) -> (q)
 \end{code}
-Neobsahují-li stejné proměnné, jedná se o seperátní komponenty.
-V takovém případě se můžeme dívat na dotaz (viz níže), jako na skalární součin proměnných x a y.
+
+Řetězce nám nyní budou sloužit k vytvoření vzoru.
+Abychom mohli efektivně hledat daný vzor, potřebujeme z řetězců vytvořit souvislé komponenty.
+Souvislé komponenty vytvoříme propojením řetězců pomocí opakujících se proměnných.
+Tedy dva řetězce jsou propojeny právě tehdy, obsahují-li stejnou proměnnou. 
+Propojením všech takových řetězců vytvoříme souvislé komponenty.
+Souvislá komponenta představuje hledaný vzor.
+Problém vyvstane, pokud nám vzniknou dvě separátní komponenty z jednoho dotazu.
+Tento případ nastene právě tehdy, když pro dvě komponenty neexistuje proměnná, která by je propojila.
+V takovém případě se můžeme dívat na dotaz, jako na skalární součin výsledků hledání dvou komponent.
+Stejný princip aplikujeme, pokud existuje vícero separátních komponent.
+
+Příklad dotazu separátních komponent:
 \begin{code}
 select x, y match (x), (y)
 \end{code}
+
+\subsection{Průběh hledání}
+
+K nalezení všech podgrafů v grafu pořebujeme z každého vrcholu spustit DFS.
+Při DFS se bude kontrolovat, jestli průchod odpovídá hledanému vzoru.
+Pokud dojde k nalezení podgrafu, tak výsledek bude uložen způsobem z sekce \ref{anal.tables}.
+
 Vyhledávání separátních komponent vyřešíme následovně.
 V momentě, kdy nalezneme podgraf odpovídající jedné komponentě, tak se spustí DFS vyhledávání pro komponentu další.
 Teprve až projdeme všechny komponenty, výsledek se uloží do tabulky.
+V tuto chvíli budeme vlastnit finální výsledek hledáná, který můžeme uložit do tabulky.
 Zbavíme se tak nutnosti uchovávat mezivýsledky a následnému tvoření skalárního součinu.
 
+\subsection{Paralelizace hledání}
+
 Nyní přistoupíme k analýze paralelizace hledání.
-Zvolili jsme jeden ze základních způsobů.
+V paralelním řešení chceme použít co nejmenší počet synchronizačních primitiv.
+Ukládání výsledků do společné struktury by způsobilo značny overhead za synchronizaci.
+V ideálním případě bude probíhat hledání lokálně, následně pak dojde k efektivnímu mergi.
+
+Jako řešení jsme zvolili jeden ze základních způsobů.
 Budeme paralelizovat prohledávání ze startovních vrcholů.
 Vyhledávání bude reprezentováno objektem (\texttt{Matcher}).
-\texttt{Matcher} vlastní strukturu hledaného podgrafu (\texttt{Pattern}).
+\texttt{Matcher} vlastní strukturu reprezentující hledaný vzor (\texttt{Pattern}).
 Každé vlákno bude vlastnit lokálně svůj \texttt{Matcher}, \texttt{Pattern} a svou tabulku výsledků.
 Všechna vlákna budou sdílet thread-safe objekt, který přiděluje části vrcholů grafu (\texttt{VertexDistributor}).
 Vlákno vždy zažádá \texttt{VertexDistributor} o určitý počet vrcholů, ze kterých spustí lokálně prohledávání a výsledky uloží do své tabulky.
@@ -503,7 +585,9 @@ Jedno vlákno by mohlo dostat vrholy nacházející se v oblasti s množstvím h
 Jelikož se rychle vyčerpaly startovní vrcholy, tak vlákno z řídké oblasti ukončí svou práci mnohem dříve něž vlákno první.
 Nyní se musí čekat na dokončení práce prvního vlákna.
 
-Poslední část analýzy je nutnost vyřešit mergování výsledků jednotlivých vláken.
+\subsection{Merge výsledků hledání}
+
+Po dokončení hledání je nutno vyřešit mergování výsledků jednotlivých vláken.
 Kdybychom ponechali výsledky bez úpravy, tak nedokážeme rovnoměrně rozdělit práci mezi vlákna v paralelních řešeních Order/Group by.
 Cílem je vytvořit jednu tabulku obsahující všechny výsledky.
 K vyhnutí překopírovávání všech výsledků vláken využijeme následující princip.
@@ -512,13 +596,17 @@ V jazyce C\# \texttt{List<Element[FixedArraySize]>}.
 V kroku mergování nyní pouze překopírujeme odkazy na pole místo samotných výsledků.
 Avšak, pořád nám zůstává nutnost překopírovat výsledky posledních polí sloupečků, která jsou nezaplněná.
 Volbou vhodné hodnoty \texttt{FixedArraySize} se bude překopírovávat pouze malé množství výsledků.
-Konkrétní hodnota je z vlastností konkrétního grafu a počtu nalezených výsledků.
+Konkrétní volba hodnoty je heuristická a vyplývá z vlastností grafu a počtu nalezených výsledků.
 Pro naše učely během implementace zkusíme zvolit prvně $n/\log_2 n$ ($n = $ \#výsledků hledání) pro single-thread a pro paralelní zpracování $(n/\log_2 n)/\#threads$.
-$log_2 n$ odpovídá počtu přealokování při plnění dynamického pole $n$ položkami.    
+$log_2 n$ odpovídá počtu přealokování při plnění dynamického pole $n$ položkami.
+Mergování bude probíhat opět paralelně.
+Nabízí se dva způsoby.
+Vlákno merguje pouze jeden sloupeček nebo dojde k dvoucestnému mergi výsledků vláken.
+Nyní je obtížné odhadnou správné řešení a proto jej ponecháme na dobu implementace.    
 
-\subsection{Group by}
+\section{Group by}
 
-\subsection{Order by}
+\section{Order by}
 
 
 
