@@ -164,6 +164,7 @@ ID elType Properties // bez této hlavičky
 ...
 \end{code}
 
+\bigskip
 \textit{Analyzovali a navrhli jsme způsob reprezentace grafu společně s formátem datových souborů.
 Samotné načítání je už implementační detail.
 Nyní musíme analyzovat způsob získání informací z uživatelem zadaného dotazu. }
@@ -346,6 +347,7 @@ class ExpressionIntegerAdd: ExpressionBinOperation<int>{
 }
 \end{code}
 
+\bigskip
 \textit{Tímto jsme vyřešeli problémy parsování a reprezentace expressions pro náš engine.
 Kód je pouze ilustrační a není finální.
 Použili jsme jej, protože poskytoval lepší možnosti vysvětlení konceptu než obrázek.
@@ -572,7 +574,6 @@ Po vyčerpání všech vrcholů grafu prohledávání končí.
 V Single-thread řešení jsou přiděleny všechny vrcholy najednou danému vláknu. 
 Rozložení objektů mezi vlákny je zobrazeno na obrázku \ref{figure.diaQueryObjectsMatchPar}. 
 
-
 \texttt{VertexDistributor} je zde velice důležitý.
 Musí rozdělovat malé části vrcholů.
 Kdyby rozděloval velké části vrcholů může se stát, že některá vlákna budou mít mnohem více práce.
@@ -606,8 +607,11 @@ Nyní je obtížné odhadnou správné řešení a proto jej ponecháme na dobu 
 \label{figure.diaQueryObjectsMatchPar}
 \end{figure}
 
-\textit{Zbývá nám vyřešit fungování částí Group by a Order by. 
-Je nutné si uvědomit, že dané části představují referenční řešení pro budoucí vylepšení, které zpracuje výsledky v průběhu prohledávání grafu.}
+\bigskip
+\textit{Zbývá nám analyzovat a navrhnout Group by a Order by.
+Je nutné si uvědomit potřebu analýzy daných částí.
+Analýza nám pomůže pochopit jejich fungování, což nám umožní je lépe porovnat s vylepšenými řešeními. 
+Zároveň také tvoří odrazový můstek pro návrh vylepšených řešení.}
 
 \section{Order by}
 
@@ -679,7 +683,7 @@ Vymysleli jsme optimalizace porovnání.
 Doteď jsme však předpokládali, že porovnání probíhá v jednom vlákně.
 Druhá optimalizace funguje i v paralelním prostřední.
 Avšak první optimalizace vytváří problém.
-V prvním případě dochází k uchovávání výsledků lokálních pro vlákno.
+V prvním případě dochází k uchovávání výsledků lokálních pro vlákno a existence sdíleného úložiště by vytvořilo race condition.
 Problém se dá vyřešit například tak, že každé vlákno bude vlastnit svoje objekty s cachí výsledků.
 V průběhu implementace budeme muset najít vhodnou techniku ukládání, aby došlo ke zrychlení třídění.
 
