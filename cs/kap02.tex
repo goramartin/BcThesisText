@@ -30,7 +30,7 @@ Na základě interní reprezentace se musí vytvořit struktury dotazu a definov
 Z obecných úkonů částí vidíme, že se nejedná o stand-alone části.
 Vytváří se nám závislosti, které budeme muset uvážit.
 
-\section{Reprezentace grafu}
+\section{Reprezentace grafu} \label{anal.grafrep}
 
 Musíme uvážit, jak reprezentovat graf.
 Graf bude simulovat grafovou databázi.
@@ -609,12 +609,85 @@ Nyní je obtížné odhadnou správné řešení a proto jej ponecháme na dobu 
 \textit{Zbývá nám vyřešit fungování částí Group by a Order by. 
 Je nutné si uvědomit, že dané části představují referenční řešení pro budoucí vylepšení, které zpracuje výsledky v průběhu prohledávání grafu.}
 
-\section{Group by}
-
-
-
-
 \section{Order by}
+
+Order by si klade za cíl setřídit vyhledané výsledky z části Match pomocí zadaných klíčů.
+Pořadí klíčů určuje pořadí porovnání.
+Výsledky se porovnávají zleva doprava.
+To znamená, pokud jsou dva klíče stejné, postoupí se k porovnání s klíčem dalším.
+Rovnost dvou výsledků nastává právě tehdy, když mají stejné hodnoty pro všechny klíče. 
+Pro klíč se také definuje, jestli má třídění probíhat v rostoucím nebo klesajícím pořadí.
+Defaultní pořadí je chápáno jako rostoucí. 
+
+\subsection{Výběr algoritmů a paralelizace}
+
+Existuje mnoho algoritmů pro třídění.
+Chtěli bychom zvolit již prozkoumané a zároveň běžně používané třídící algoritmy.
+Mezi náš výběr padli Merge sort nebo Quick sort.
+Jsou ideální volba, protože pro ně již existuje paralelní verze.
+Při implementaci chceme ideálně použít již existující knihovny nebo implementace. 
+
+\subsection{Quick sort vs Merge sort}
+
+Uvedeme krátké porovnání na základě 3. kapitoly průvodce algoritmů \citep{labyrint}. 
+Merge sort má časovou složitost $ \Theta(n\log n) $ i v nejhorším případě, zatímco Quick sort stejné složitosti dociluje pouze v průměrném případě.
+V nejhorším případě má $\Theta(n^2)$.
+Merge sort potřebuje $\Theta(n)$ pomocné paměti a je to stabilní třídící algoritmus.
+Quick sort pouze $\Theta(\log n)$, ale nejedná se stabilní třídění.
+K implementaci stabilního Quick sortu je potřeba $\Theta(n)$ pomocné paměti.
+
+\subsection{Třídění pomocí indexů}
+
+Hlavním problémem Order by je třídění tabulky výsledků.
+V sekci \ref{anal.tables} jsme definovali formát výsledků a navrhli proxy třídy pro výpočet výrazů.
+Setřídit tabulku v našem smyslu znamená setřídit řádky pomocí klíčů zadaných uživatelem.
+Pro zjištění shodnosti dvou řádků musíme vypočítat hodnoty jejich klíčů pomocí výrazů a následně je porovnat.
+Přesouvání řádků v tabulce, která má více než jeden sloupec, by představovalo značné zpomalení.
+Uvedli jsme, že výrazy pro řádky dostanou na vstupu proxy třídu řádků.
+Proxy třída se v naší představě získá voláním funkce indexeru na tabulce výsledků.
+Daný princip nám umožní vytvořit pole indexů v rozsahu počtu řádek tabulky.
+Indexy budou setříděny namísto pravých řádků vybraným algoritmem a při porovnání dojde k získání proxy tříd a výpočtu výrazů.
+Přistup nám umožní vyřadit přesouvání řádků, ale zase potřebujeme lineární pamět na pole indexů.
+
+\subsection{Optimalizace porovnání Property hodnot}
+
+Třídění obvykle představuje opakované porovnání jednoho prvku s ostatními v řadě za sebou.
+Pro pokaždé takové porovnání v řadě počítáme stejnou hodnotu výrazu opakovaně.
+Porovnání pomocí \texttt{ID} pouze přistupuje k položce elementu grafu.
+Problém nastane, když budeme porovnávat pomocí Property.
+V takovém případě musíme přistoupit k tabulce \texttt{elType} (sekce \ref{anal.grafrep}), zjistit existenci přistupované property a následně přistoupit k její hodnotě.
+Danou situaci můžeme vyřešit částečně cachování výsledků výrazů.
+Budeme si pamatovat poslední porovnané řádky a jejich hodnoty.
+Pokud dojde k porovnání řádků pro který byl výraz již vypočítán, tak použijeme zachovanou hodnotu.
+
+\subsection{\#Vrcholů << \#Hran}
+
+Dalši možná optimalizace porovnání může nastat v případě, pokud pro dotaz nad grafem platí \#Vrcholů $<<$ \#Hran.
+Daná vlastnost může mít za následek, že porovnávané řádky budou obsahovat často obsahovat stejné elementy pro dotazy typu:
+\begin{code}
+select x.PropOne match (x) -> (y) order by x.PropOne;
+\end{code}
+V takovém dotazu by hledání mělo vygenerovat několik výsledků se stejným elementem v proměnné x.
+Počet takových výsledků zde odpovídá počtu hran vrcholů x.
+Abychom předešli opakovanému porovnávání hodnot Property stejných elementů, tak než přistoupíme k výpočtu výrazů porovnáme \texttt{ID} přistupovaných elementů.
+Tedy využijeme dvou optimalizací.
+Budeme si cachovat poslední výsledky výrazů a navíc omezíme porovnání výsledků se stejnými elementy.
+
+\subsection{Optimalizace vs paralelismus}
+
+Vymysleli jsme optimalizace porovnání.
+Doteď jsme však předpokládali, že porovnání probíhá v jednom vlákně.
+Druhá optimalizace funguje i v paralelním prostřední.
+Avšak první optimalizace vytváří problém.
+V prvním případě dochází k uchovávání výsledků lokálních pro vlákno.
+Problém se dá vyřešit například tak, že každé vlákno bude vlastnit svoje objekty s cachí výsledků.
+V průběhu implementace budeme muset najít vhodnou techniku ukládání, aby došlo ke zrychlení třídění.
+
+\section{Group by} {anal.tables}
+
+
+
+
 
 
 \section{Návrh vylepšení}
