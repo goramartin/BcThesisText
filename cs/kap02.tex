@@ -463,19 +463,20 @@ Tímto jsme vyřešili paměťový problém, ale nastal problém výkonnosti.
 Vyvstává totiž nutnost vypočítávat hodnoty výrazů znova, přestože jsme je už v minulosti počítali (např. při třídění se několikrát porovnává stejný výsledek s jinými).
 Problém se dá částečně řešit cachováním výsledků, ale ten ponecháme na analůzu zbylých částí.
 V tento moment jsme se rozhodli jít cestou menší paměťové náročnosti na úkor výkonnosti.
+Pro výsledky Group by můžeme opět v představě volit tabulku.
+Jediný rozdíl bude, že řádek zde bude reprezentovat jednu skupinu (opět uložené elementy grafu) společně s vypočtenými hodnotami agregačních funkcí.
 
-Ať už budeme pracovat první nebo druhou variantou, musíme být schopni pracovat s řádky tabulky.
-Order by řádky musí setřídit a Group by je seskupit.
+\subsection{Proxy třída jako řádek tabulky}
+
+Musíme být schopni pracovat s řádky tabulek.
+Pomocí řádků v tabulce se musí vyhodnotit výrazy v částech Group/Order by a Select.
+Vstupním argumentem expression by měl být pouze jeden řádek.
 Přesouvání řádku o více sloupcích je drahé.
 Pro docílení efektivní práce s řádky budeme řádek reprezentovat proxy třídou.
-Třída poskytne metody pro přístup k řádku a jeho hodnot ve sloupečcích.
-Nesmí mít složité položky, aby bylo levné ji přesouvat.
-V ideálním případě si bude pamatovat číslo řádku a odkaz na tabulku.
-Nyní při Order by stačí pouze třídit proxy třídy. 
-
-Pro výsledky Group by použijeme upravený princip.
-Výsledky budou pravděpodovně zpracovány pomocí mapy/slovníku (C\# Dictionary).
-Proxy třída nyní musí znát odkaz na klíč a hodnotu pro daný klíč.  
+Proxy třída bude návratová hodnota funkce indexeru tabulky (\texttt{ResultTable[i]}, kde \texttt{i} je index řádku).
+Třída poskytne metody pro přístup k elementům nebo výsledkům agr. funkcí ve sloupečcích pro daný řádek tabulky.
+V ideálním případě si bude pamatovat pouze index reprezentujícího řádku a odkaz na tabulku.
+Nyní pokud budeme chtít vyhodnotit výraz pro $i$-tý řádek tabulky, tak zavoláním indexeru dostaneme proxy třídu a tu použijeme k vyhodnocení výrazu.
 
 \bigskip
 \textit{Analyzovali a navrhli jsme obecně způsob vykonání dotazu společně s formátem předávaných výsledků mezi částmi. 
@@ -571,11 +572,6 @@ Po vyčerpání všech vrcholů grafu prohledávání končí.
 V Single-thread řešení jsou přiděleny všechny vrcholy najednou danému vláknu. 
 Rozložení objektů mezi vlákny je zobrazeno na obrázku \ref{figure.diaQueryObjectsMatchPar}. 
 
-\begin{figure}[!htp]
-\includegraphics{../img/diaQueryObjectsMatchPar.pdf}\centering
-\caption{Diagram paralelizace prohledávání grafu.}
-\label{figure.diaQueryObjectsMatchPar}
-\end{figure}
 
 \texttt{VertexDistributor} je zde velice důležitý.
 Musí rozdělovat malé části vrcholů.
@@ -604,10 +600,21 @@ Nabízí se dva způsoby.
 Vlákno merguje pouze jeden sloupeček nebo dojde k dvoucestnému mergi výsledků vláken.
 Nyní je obtížné odhadnou správné řešení a proto jej ponecháme na dobu implementace.    
 
+\begin{figure}[!htp]
+\includegraphics{../img/diaQueryObjectsMatchPar.pdf}\centering
+\caption{Diagram paralelizace prohledávání grafu.}
+\label{figure.diaQueryObjectsMatchPar}
+\end{figure}
+
+\textit{Zbývá nám vyřešit fungování částí Group by a Order by. 
+Je nutné si uvědomit, že dané části představují referenční řešení pro budoucí vylepšení, které zpracuje výsledky v průběhu prohledávání grafu.}
+
 \section{Group by}
 
-\section{Order by}
 
+
+
+\section{Order by}
 
 
 \section{Návrh vylepšení}
