@@ -547,7 +547,7 @@ select x, y match (x), (y)
 
 K nalezení všech podgrafů v grafu pořebujeme z každého vrcholu spustit DFS.
 Při DFS se bude kontrolovat, jestli průchod odpovídá hledanému vzoru.
-Prochzení vždy začíná vrcholem, následně přístupem k hranám daného vrcholu a pak koncovému vrcholu hrany. 
+Procházení vždy začíná vrcholem, následně přístupem k hranám daného vrcholu a pak koncovému vrcholu hrany. 
 K procházení grafu máme navrhnutou strukturu z sekce reprezentace grafu \ref{anal.grafrep}.
 Pokud dojde k nalezení podgrafu, tak výsledek bude uložen způsobem z sekce \ref{anal.tables}.
 
@@ -665,7 +665,7 @@ Třídění obvykle představuje opakované porovnání jednoho prvku s ostatní
 Pro pokaždé takové porovnání v řadě počítáme stejnou hodnotu výrazu opakovaně.
 Porovnání pomocí \texttt{ID} pouze přistupuje k položce elementu grafu.
 Problém nastane, když budeme porovnávat pomocí Property.
-V takovém případě musíme přistoupit k tabulce \texttt{elType} (sekce \ref{anal.grafrep}), zjistit existenci přistupované property a následně přistoupit k její hodnotě.
+V takovém případě musíme přistoupit k tabulce \texttt{elType} (sekce \ref{anal.grafrep}), zjistit existenci přistupované Property a následně přistoupit k její hodnotě.
 Danou situaci můžeme vyřešit částečně cachování výsledků výrazů.
 Budeme si pamatovat poslední porovnané řádky a jejich hodnoty.
 Pokud dojde k porovnání řádků pro který byl výraz již vypočítán, tak použijeme zachovanou hodnotu.
@@ -683,13 +683,14 @@ Abychom předešli opakovanému porovnávání hodnot Property stejných element
 Tedy využijeme dvou optimalizací.
 Budeme si cachovat poslední výsledky výrazů a navíc omezíme porovnání výsledků se stejnými elementy.
 
-\subsection{Optimalizace vs paralelismus}
+\subsection{Optimalizace v paralelním prostření}
 
 Vymysleli jsme optimalizace porovnání.
 Doteď jsme však předpokládali, že porovnání probíhá v jednom vlákně.
-Druhá optimalizace funguje i v paralelním prostřední.
+Druhá optimalizace funguje i v paralelním prostřední, protože se jedná pouze o čtení statických hodnot.
 Avšak první optimalizace vytváří problém.
 V prvním případě dochází k uchovávání výsledků lokálních pro vlákno a existence sdíleného úložiště by vytvořilo race condition.
+Vlákna by se snažila číst a ukládat výsledky ze sdíleného úložiště a docházelo by k nedefinovanému chování.
 Problém se dá vyřešit například tak, že každé vlákno bude vlastnit svoje objekty s cachí výsledků.
 V průběhu implementace budeme muset najít vhodnou techniku ukládání, aby došlo ke zrychlení třídění.
 

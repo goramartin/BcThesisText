@@ -5,10 +5,20 @@ Tady ma byt text
 
 \section{Budoucí výzkum}
 
-Hlavní náplní budoucí práce může být testování daných řešení na grafech s reálnými Properties.
+
+\begin{enumerate}
+
+
+\item Rozšíření enginu o možnost zadat Order by a Group by společně.
+Agregování v průběhu hledání se dá rozdělit na dvě hlavní části.
+V první části lze navrhnout řešení pro dotazy, které obsahují třídění pouze podle klíčů skupin.
+V druhé části je nutné vyřešit problém třídění pomocí výsledků agregačních funkcí.
+Zde je největší problém fakt, že výsledky agregačních funkcí jsou známy pouze po dokončení Group by.
+
+\item Testování daných řešení na grafech s reálnými Properties.
 V našem testování jsme sice volili reálne grafy, ale jejich Properties jsme uměle vygenerovali.
 
-Další budoucí výzkum může sledovat obecný problém rozdělení dat při paralelizaci vylepšených řešení. 
+\item Sledování obecného problému rozdělení dat při paralelizaci vylepšených řešení. 
 Normal přistup má vždy všechna data připravená v paměti a při zpracování je rovnoměrně rozděluje mezi vlákny.
 Vlákna tedy mají vždy stejný počet výsledků pro zpracování.
 Navíc díky kompletnosti dat lze data optimálněji zpracovávat a použít větší množství obecných algoritmů.
@@ -20,11 +30,12 @@ Vlákno po prohledání daných vrcholů zažádalo o další.
 Nicméně, dané řešení nemůže zaručit stoprocentně rovnoměrné rozdělení práce.
 Bylo by vhodné prozkoumat, jak daná situace ovlivňuje naše řešení.
 
-U Order by řešení jsme viděli značné zrychlení při třídění pomocí Properties v paralelizovaných řešeních.
+\item U Order by řešení jsme viděli značné zrychlení při třídění pomocí Properties v paralelizovaných řešeních.
 Bylo by vhodné prozkoumat možnosti vytvoření globálních statistik pro každou Property a podrobněji zjistit možnosti rozdělení rozsahů přihrádek.
 Samotné rozdělení přihrádek jsme pro řetězce zpracovali pouze s předpokladem, že se jedná o ASCII znaky.
 V budoucí práci je možné zkoumat rozdělování i pro složitější znakové sady.
 
-V paralelních Group by řešeních by bylo vhodné prozkoumat podrobněji skalabilitu daných řešení pro rozličné počty vláken.
+\item V paralelních Group by řešeních by bylo vhodné prozkoumat podrobněji skalabilitu daných řešení pro rozličné počty vláken.
 Pokud možno, také možnosti jiných paralelních map.
  
+\end{enumerate}
