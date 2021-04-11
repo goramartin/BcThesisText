@@ -547,6 +547,8 @@ select x, y match (x), (y)
 
 K nalezení všech podgrafů v grafu pořebujeme z každého vrcholu spustit DFS.
 Při DFS se bude kontrolovat, jestli průchod odpovídá hledanému vzoru.
+Prochzení vždy začíná vrcholem, následně přístupem k hranám daného vrcholu a pak koncovému vrcholu hrany. 
+K procházení grafu máme navrhnutou strukturu z sekce reprezentace grafu \ref{anal.grafrep}.
 Pokud dojde k nalezení podgrafu, tak výsledek bude uložen způsobem z sekce \ref{anal.tables}.
 
 Vyhledávání separátních komponent vyřešíme následovně.
@@ -639,6 +641,9 @@ V nejhorším případě má $\Theta(n^2)$.
 Merge sort potřebuje $\Theta(n)$ pomocné paměti a je to stabilní třídící algoritmus.
 Quick sort pouze $\Theta(\log n)$, ale nejedná se stabilní třídění.
 K implementaci stabilního Quick sortu je potřeba $\Theta(n)$ pomocné paměti.
+Quick sort značně závisí na výběru pivota.
+V našem případě bude obtížné ho volit správně, protože nedokážeme říci nic o rozložení tříděných dat.
+Z tohoto důvodu bychom volili raději Merge sort.  
 
 \subsection{Třídění pomocí indexů}
 
@@ -652,6 +657,7 @@ Proxy třída se v naší představě získá voláním funkce indexeru na tabul
 Daný princip nám umožní vytvořit pole indexů v rozsahu počtu řádek tabulky.
 Indexy budou setříděny namísto pravých řádků vybraným algoritmem a při porovnání dojde k získání proxy tříd a výpočtu výrazů.
 Přistup nám umožní vyřadit přesouvání řádků, ale zase potřebujeme lineární pamět na pole indexů.
+Po dokončení třídění se pole použije jako indexační struktura.
 
 \subsection{Optimalizace porovnání Property hodnot}
 
@@ -664,7 +670,7 @@ Danou situaci můžeme vyřešit částečně cachování výsledků výrazů.
 Budeme si pamatovat poslední porovnané řádky a jejich hodnoty.
 Pokud dojde k porovnání řádků pro který byl výraz již vypočítán, tak použijeme zachovanou hodnotu.
 
-\subsection{\#Vrcholů << \#Hran}
+\subsection{Optimalizace porovnání stejných elementů}
 
 Dalši možná optimalizace porovnání může nastat v případě, pokud pro dotaz nad grafem platí \#Vrcholů $<<$ \#Hran.
 Daná vlastnost může mít za následek, že porovnávané řádky budou obsahovat často obsahovat stejné elementy pro dotazy typu:
@@ -687,7 +693,9 @@ V prvním případě dochází k uchovávání výsledků lokálních pro vlákn
 Problém se dá vyřešit například tak, že každé vlákno bude vlastnit svoje objekty s cachí výsledků.
 V průběhu implementace budeme muset najít vhodnou techniku ukládání, aby došlo ke zrychlení třídění.
 
-\section{Group by} {anal.tables}
+\section{Group by}
+
+
 
 
 
