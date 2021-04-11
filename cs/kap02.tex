@@ -765,7 +765,7 @@ Po celou dobude budeme pracovat s tabulkou výsledků Match části.
 Pro vykonání Group by se nám nabízí několik možností.
 První možnost je řádky tabulky setřídit a následně při iteraci výtvářet skupiny a počítat agregační funkce.
 Myslíme, že možnost přináší zbytečný overhead za porovnání při třídění, protože pro každé porovnání musíme vypočítat hodnotu výrazu.
-Z tohoto důvodu chceme využít strukturu, která bude interně použivát hashovací tabulku (mapa/slovník).
+Z tohoto důvodu chceme využít strukturu, která bude interně použivát hashovací tabulku (C++ \texttt{std::map<Key, Value>} nebo C\#  \texttt{Dictionary<Key, Value>}).
 Záznam v tabulce bude dvojice \texttt{key/value}. 
 \texttt{key} je zde index do tabulky výsledků z Match části (nikoliv proxy třída).
 Chceme ukládat pouze index abychom ušetřili paměť za pointr na tabulku.
@@ -792,16 +792,109 @@ Nastávají pro něj stejné problémy v paralelním prostředí.
 
 \subsection{Paralelní zpracování}
 
+Pro paralelní zpracování jsme vymysleli několik přístupů: \textbf{Global}, \textbf{Two-step} a \textbf{Local + 2-way merge} (všechny budou schopny pracovat s úložišti Bucket i List).
+Každý z nich začíná rozdělením tabulky výsledků Match na ekvivalentní části.
+To si můžeme dovolit, neboť máme tabulku obsahující všechny výsledky hledání.
+Každé vlákno dostane danou část ke zpracování.
+Tím zaručíme rovnoměrnost práce mezi vlákny.
+Samotná práce vláken pak zavisí na zvoleném přístupu.
+
+\subsection{Thread-safe agregační funkce}
+
+Ještě než přistoupíme k řešením, je důležité si uvědomit nutnost vytvořit thread-safe verzi objektů implementující logiku agregačních funkcí.
+Pro každou funkci bude existovat ekvivalent thread-safe \texttt{Apply} metody.
+Samotně pak vyvstává nutnost implementovat thread-safe metody pro mergování výsledků agregačních funkcí.
+Problém vyřešeníme přidáním metod do objektů zpravující logiku agregačních funkcí, protože při mergi stále musíme vědět, jak s výsledky správně zacházet.
+Pro úpravu logiky agr. funkcí na thread-safe verze volíme tyto varianty:
+
+\begin{itemize}
+
+\item \texttt{Min/Max:} princip Compare and Exchange. V moment porovnání mohlo dojít ke změně hodnoty v úložišti.
+Musíme znovu provést porovnání.  
+
+\item \texttt{Sum/Count:} tyto metody implementují pouze přičítání. 
+V ideálním případě chceme použít atomické operace přičtění.
+ 
+\item \texttt{Avg:} tuto funkci lze implementovat iterativně. 
+Budeme si ukládat součet zpracovaných výsledků a jejich počet.
+Finální hodnota pak bude podíl součtu a počtu hodnot.
+Tímto můžeme implementovat thread-safe funkci s pomocí atomických operací, jako funkce \texttt{Sum/Count}.
+\end{itemize}
 
 \subsection{Global Group by}
 
+Všechna vlákna budou provádět ekvivalent single-thread seskupování pomocí thread-safe paralelní mapy/slovníku.
+Skupiny se vytváření globálně.
+Všimněme si k nutnosti dvojité synchronizace.
+Prvě musí dojít k synchronizaci vytváření záznamů v mapě.
+Druhý krok synchronizace je nutný při zpracování agregačních funkcí.
+Paralelní mapa nám vyřadí race-condition při vytváření nových záznamů skupin.
+V moment zpracování agregačních funkcí musí dojít k volání thread-safe verzí.
+Výhoda této metody je, že nedochází k mergi, tj. po dokončení práce vlákny jsou výsledky finální.
+
+Bucket reprezentace úložiště má zde značnou výhodu vůči List.
+List musí dynamicky rozšiřovat tabulku svých výsledků.
+Místo abychom použili dvojí synchronizace jako u Bucket, tak zde bude nutné představit ještě třetí krok synchronizace.
+Při přístupu do tabulky je nutné kontrolovat, jestli se nemusí rozšířit.
+V ten moment se musí zabránit přístupu ostatních vláken a teprve pak rozšířit tabulku.
+To se dá implementovat například semaforem povolující vstup určitému počtu vláken.
+Vlákno na přístup se pokusí projít skrze semafor, pokud je mu vstup zabráňěn dochází k rozšiřování tabulky.
+Vlákno v moment nutnosti rozšíření zablokuje vstup přes semafor.
+Postup s List může být však značně pomalý a proto budeme uvažovat, jestli přístup raději implementovat pouze pro Bucket.
+
+\begin{figure}[!htp]
+\includegraphics{../img/diaGlobalGr.pdf}\centering
+\caption{Diagram paralelizace Global Group by.}
+\label{figure.diaGlobalGr}
+\end{figure}
 
 \subsection{Two-step Group by}
 
+Tento přístup probíhá ve dvou krocích. 
+V prvník kroku pro každé vlákno běží kompletně identický ekvivalent single thread řešení.
+Druhý krok nastave v moment dokončení této práce.
+Místo aby vlákno ukončilo běh, tak provede merge svých výsledků do thread-safe paralelní mapy.
+Tento přístup kombinuje single-thread řešení společně s přístupem Global.
+V druhém kroku platí vše, co jsme zmínili u Global řešení.
+Mínus je, že zde musí docházek mergování, ale v prvním kroku se využívají metody, které nemusí řešit synchoronizaci. 
+Problematická část je zde mergování výsledků s List úložištěm výsledků agregačních funkcí.
+První fáze nepedstavuje problém. 
+V druhá představuje problém jako Global řešení.
+Můžeme zkusit implementovat stejné řešení jako u Global pomocí semaforu.
+
+\begin{figure}[!htp]
+\includegraphics{../img/diaTwoGr.pdf}\centering
+\caption{Diagram paralelizace Two-step Group by. Local part provádí ekvivalent single thread řešení. V Merge části dochází k mergování výsledků vláken pomocí paralelní mapy.}
+\label{figure.diaTwoGr}
+\end{figure}
+
 \subsection{Local + 2-way merge Group by}
+
+Přístup nepoužívá thread-safe metody ani paralelní mapu.
+Opět rozdělíme přístup na dvě části.
+V prvník kroku pro každé vlákno běží identický ekvivalent single thread řešení.
+Po dokončení se spustí dvoucestný merge na výsledky vláken.
+Mergování bude připomínat binární strom.
+Listy představují lokální seskupování vláken.
+Vnitřní vrcholy stromu představují mergování výsledků.
+Hlavní výhody byly už zmíněny.
+Používají se metody bez synchronizace.
+
+\begin{figure}[!htp]
+\includegraphics{../img/diaLocalGr.pdf}\centering
+\caption{Diagram paralelizace Local + 2-way merge Group by pro 4 vlákna.}
+\label{figure.diaLocalGr}
+\end{figure}
 
 \subsection{Paralelizace Single group Group by}
 
+K paralelizaci Single group Group by se nám poskytuje využít jíž zmíněných principů.
+Konkrétně zde mají využítí všechny tři.
+Mergování všech výsledků do jednoho úložiště výsledků agregačních funkcí z principu Global.
+Problémem tohoto přístupu je synchronizace mnoha vláken na jednom místě.
+Ideálnější je využít lokálního zpracování zbylých dvou metod.
+K rozhodnutí, které finálně použít použijeme fakt, že počet výsledků k mergování je roven počtu vláken.
+V takovém případě nebudeme implementovat paralelní mergování, ale pouze jedno vybrané vlákno provede sjednocení výsledků.
 
 \section{Návrh vylepšení}
 \label{anal.improvement}
