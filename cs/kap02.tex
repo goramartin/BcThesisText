@@ -219,7 +219,7 @@ Pokud ne, je nutné určit vhodnou návratovou hodnotu.
 Navíc musíme brát v potaz, že daný výraz se nemusí vyhodnotit, například absence Property na vrcholu.
 Proto jsme byli nuceni vymyslet systém výrazů (expressions).
 
-\subsection{Expressions}
+\subsection{Expressions} \label{anal.expressions}
 
 Systém vytváření a vyhodnocování výrazů efektivně za běhu je obecně složitý problém.
 Omezíme se pouze na případy: přístup k proměnné, přístup k hodnotě Property proměnné a agregační funkce (\verb+min+, \verb+max+, \verb+avg+, \verb+sum+ a \verb+count+).
@@ -624,6 +624,8 @@ To znamená, pokud jsou dva klíče stejné, postoupí se k porovnání s klíč
 Rovnost dvou výsledků nastává právě tehdy, když mají stejné hodnoty pro všechny klíče. 
 Pro klíč se také definuje, jestli má třídění probíhat v rostoucím nebo klesajícím pořadí.
 Defaultní pořadí je chápáno jako rostoucí. 
+Potřebujeme určit, jakým způsobem budou výsledky hledání setříděny.
+Musíme vybrat algoritmus a následně navrhnout způsob efektivního třídění tabulky výsledků.
 
 \subsection{Výběr algoritmů a paralelizace}
 
@@ -659,7 +661,7 @@ Indexy budou setříděny namísto pravých řádků vybraným algoritmem a při
 Přistup nám umožní vyřadit přesouvání řádků, ale zase potřebujeme lineární pamět na pole indexů.
 Po dokončení třídění se pole použije jako indexační struktura.
 
-\subsection{Optimalizace porovnání Property hodnot}
+\subsection{Optimalizace porovnání Property hodnot} \label{anal.order.opt1}
 
 Třídění obvykle představuje opakované porovnání jednoho prvku s ostatními v řadě za sebou.
 Pro pokaždé takové porovnání v řadě počítáme stejnou hodnotu výrazu opakovaně.
@@ -696,11 +698,109 @@ V průběhu implementace budeme muset najít vhodnou techniku ukládání, aby d
 
 \section{Group by}
 
+Group by seskupuje výsledky hledání podle uživatelem zadaných klíčů.
+Dva výslekdy patří do stejné skupiny právě tehdy, když se shodují ve všech hodnotách klíčů.
+Musíme být schopni vypočítat agregační funkce pro skupiny.
+K tomu již máme navržené způsoby z sekce Expressions (\ref{anal.expressions}).
+Zbývá nám vymyslet způsob ukládání mezivýsledku a algoritmy k vykonání.
+
+\subsection{Módy Group by}
+
+Group by představuje dle našeho pohledu dva módy vykonání.
+První mód obsahuje v dotazu část Group by a libovolné množství agregačních funkcí.
+Dojde k vytvoření skupin a výpočtu výsledků funkcí pro každou skupinu.
+Tento mód budeme označovat \textbf{Group by}.
+Druhý mód nemá v dotazu část Group by, ale pouze agregační funkce v ostatních částech.
+Zde automaticky dochází k předpokladu, že všechny výsledky patří do stejné skupiny.
+Tedy je vytvořena pouze jedna skupina a pro ni se vypočtou hodnoty agregačních funkcí.
+Mód nazveme \textbf{Single group Group by}.
 
 
+\subsection{Úložiště mezivýsledků agregačních funkcí}
+
+V sekci Expressions (\ref{anal.expressions}) jsme navrhli objekt, který obsahuje logiku výpočtu funkce a na vstupu dostává úložiště výsledku.
+Očekává se, že pro každou skupinu bude existovat úložiště.
+Úložiště musí obsahovat prostor pro výsledky všech počítaných funkcí.
+Vymysleli jsme dva způsoby:
+
+\begin{itemize}
+
+\item \textbf{Bucket} - každá skupina bude vlastnit pole objektů. 
+Pole bude mít délku rovnou počtu počítaných agregačních funkcí.
+Objekty představují úložiště výsledků funkcí.
+
+\item \textbf{List} - výsledky všech skupin jsou uchovávány v dvoudimenzionálním poli, tj. primitivní tabulce.
+Sloupeček představuje výsledky jedné agregační funkce.
+Jedné skupině pak přináleží řádek.
+Každé skipině bude přidělen index řádku.
+Nyní pokud budeme chtít výsledky funkcí skipiny, stačí přistoupit skrze přidělený index ke chtěnému výsledku.
+\end{itemize}
+
+Následuje ukázka možné implementace v jazyce C\#:
+\begin{code}
+Bucket:
+BucketResult[] groupAggFuncResults; 
+class BucketResult {}
+class BucketResult<T>: BucketResult { T value; }
+
+List:
+ListResults groupsAggFuncResults;
+// are accessed via tableIndex.
+class ListResults { ListHolder[] holders; }
+class ListHolder {}
+class ListHolder<T> : ListHolder { List<T> values }
+\end{code}
+
+První způsob je náročnější na paměť oproti druhému způsobu, neboť je zde nutnost vytvářet objekty a pole pro každou skipinu.
+Avšak, v druhém způsobu jsme nuceni přistupovat k výsledkům pomocí indirekce.
+Výhoda Bucket spočívá v jeho jednoduchém přemisťování (chápeme-li pole jako referenci) a izolaci od ostatních výsledků skupin.
+V takovém případě jsme schopni přesouvat výsledky skupiny aniž bychom museli kopírovat jejich hodnoty.
+Předpokládáme, že bucket bude výhodnější pro paralelní zpracování díky izolaci od ostatních výsledků, jelikož počet skupin není dopředu znám.
+V List budeme muset dynamicky rozšiřovat pole.
+Při rozšíření nastane race condition, který budeme muset ošetřit.
+
+\subsection{Single thread zpracování}
+
+Po celou dobude budeme pracovat s tabulkou výsledků Match části.
+Pro vykonání Group by se nám nabízí několik možností.
+První možnost je řádky tabulky setřídit a následně při iteraci výtvářet skupiny a počítat agregační funkce.
+Myslíme, že možnost přináší zbytečný overhead za porovnání při třídění, protože pro každé porovnání musíme vypočítat hodnotu výrazu.
+Z tohoto důvodu chceme využít strukturu, která bude interně použivát hashovací tabulku (mapa/slovník).
+Záznam v tabulce bude dvojice \texttt{key/value}. 
+\texttt{key} je zde index do tabulky výsledků z Match části (nikoliv proxy třída).
+Chceme ukládat pouze index abychom ušetřili paměť za pointr na tabulku.
+Porovnání vyvolá získání proxy třídy a následné evaluaci hodnot výrazů.
+\texttt{value} obsahuje strukturu pro výsledky agregačních funkcí.
+Pro Bucket to bude pole objektů a pro List to bude index do tabulky výsledků agregačních funkcí.
+Pro výsledek bude vypočítáná hash na základě hodnot klíču a vložena do hashovací tabulky.
+Pokud už je obsažen v tabulce, tak se pouze pro získanou \texttt{value} (pole nebo index) aktualizují hodnoty výsledků agregačních funkcí.
+V opačném případě bude vložen nový záznam s novou \texttt{value}.
+Pro Single group Group by stačí pouze iterovat skrze tabulku a počítat agregační funkce.
+
+\subsection{Optimalizace při výpočtu hash hodnoty}
+
+Minulý přístup nám nabízí jednu optimalizaci k ušetření opakovaného výpočtu hodnoty výrazu klíčů.
+Hashovací tabulka při vložení dvojice v prvním kroku vypočte hodnoty klíčů a vypočte jejich hash.
+Výsledek se vloží do patřičné přihrádky.
+Pokud nastala kolize, tak se prvky musí porovnat.
+Při tomto porovnání se opět musí vypočíst hodnoty výrazů vkládané dvojice.
+Zde mužeme využít chvíle výpočtu hash hodnoty.
+Budeme cachovat hodnoty výrazů a následně je znovu použít při porovnání.
+Nicméně, pravděpodobně budeme nutni vytvořit závislost mezi objektem počítajícím hash hodnotu a objektem provádějícím porovnání.
+Stejný princip jsme použili při optimalizaci porovnání v sekci \ref{anal.order.opt1}.
+Nastávají pro něj stejné problémy v paralelním prostředí.
+
+\subsection{Paralelní zpracování}
 
 
+\subsection{Global Group by}
 
+
+\subsection{Two-step Group by}
+
+\subsection{Local + 2-way merge Group by}
+
+\subsection{Paralelizace Single group Group by}
 
 
 \section{Návrh vylepšení}
