@@ -1,0 +1,39 @@
+\babel@toc {czech}{}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces UML class diagram objektů představující části dotazu.}}{12}{figure.2.1}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Propojení objektů pomocí položky \texttt {next} pro dotaz select x match (x) order by x.}}{13}{figure.2.2}%
+\contentsline {figure}{\numberline {2.3}{\ignorespaces UML activity diagram rekurzivního volání metody \texttt {Compute} pro dotaz select x match (x) order by x.}}{13}{figure.2.3}%
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Diagram paralelizace prohledávání grafu.}}{17}{figure.2.4}%
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Diagram paralelizace Global Group by.}}{24}{figure.2.5}%
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Diagram paralelizace Two-step Group by. Local part provádí ekvivalent single thread řešení. V Merge části dochází k mergování výsledků vláken pomocí paralelní mapy.}}{24}{figure.2.6}%
+\contentsline {figure}{\numberline {2.7}{\ignorespaces Diagram paralelizace Local + 2-way merge Group by pro 4 vlákna.}}{25}{figure.2.7}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Doba vykonání dotazů Match pro graf Amazon0601 (sekce \ref {tab.grafBase}). Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 32373599.}}{35}{figure.4.1}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Doba vykonání dotazů Match pro graf WebBerkStan (sekce \ref {tab.grafBase}). Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 222498869.}}{36}{figure.4.2}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Doba vykonání dotazů Match pro graf As-Skitter (sekce \ref {tab.grafBase}). Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 453674558.}}{36}{figure.4.3}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Doba vykonání dotazů Order by pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh v jednom vláknu. Počet tříděných výsledků je 32373599.}}{38}{figure.4.4}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Doba vykonání dotazů Order by pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh v jednom vláknu. Počet tříděných výsledků je 222498869.}}{38}{figure.4.5}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Doba vykonání dotazů Order by pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh osmi vláken. Počet tříděných výsledků je 222498869.}}{40}{figure.4.6}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Doba vykonání dotazů Order by pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh osmi vláken. Počet tříděných výsledků je 222498869.}}{40}{figure.4.7}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 32373599.}}{41}{figure.4.8}%
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 32373599.}}{41}{figure.4.9}%
+\contentsline {figure}{\numberline {4.10}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 222498869.}}{41}{figure.4.10}%
+\contentsline {figure}{\numberline {4.11}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 222498869.}}{41}{figure.4.11}%
+\contentsline {figure}{\numberline {4.12}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf As-Skitter (sekce \ref {tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 453674558.}}{42}{figure.4.12}%
+\contentsline {figure}{\numberline {4.13}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf As-Skitter (sekce \ref {tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 453674558.}}{42}{figure.4.13}%
+\contentsline {figure}{\numberline {4.14}{\ignorespaces Doba vykonání dotazů Group by pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 32373599.}}{43}{figure.4.14}%
+\contentsline {figure}{\numberline {4.15}{\ignorespaces Doba vykonání dotazů Group by bez agr. funkcí pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 32373599.}}{43}{figure.4.15}%
+\contentsline {figure}{\numberline {4.16}{\ignorespaces Doba vykonání dotazů Group by pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 222498869.}}{44}{figure.4.16}%
+\contentsline {figure}{\numberline {4.17}{\ignorespaces Doba vykonání dotazů Group by bez agr. funkcí pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 222498869.}}{44}{figure.4.17}%
+\contentsline {figure}{\numberline {4.18}{\ignorespaces Doba vykonání dotazů Group by pro graf As-Skitter (sekce \ref {tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 453674558.}}{45}{figure.4.18}%
+\contentsline {figure}{\numberline {4.19}{\ignorespaces Doba vykonání dotazů Group by bez agr. funkcí pro graf As-Skitter (sekce \ref {tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 453674558.}}{45}{figure.4.19}%
+\contentsline {figure}{\numberline {4.20}{\ignorespaces Doba vykonání dotazů Group by pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 32373599.}}{47}{figure.4.20}%
+\contentsline {figure}{\numberline {4.21}{\ignorespaces Doba vykonání dotazů Group by bez agr. funkcí pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 32373599.}}{47}{figure.4.21}%
+\contentsline {figure}{\numberline {4.22}{\ignorespaces Doba vykonání dotazů Group by pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 222498869.}}{48}{figure.4.22}%
+\contentsline {figure}{\numberline {4.23}{\ignorespaces Doba vykonání dotazů Group by bez agr. funkcí pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 222498869.}}{48}{figure.4.23}%
+\contentsline {figure}{\numberline {4.24}{\ignorespaces Doba vykonání dotazů Group by pro graf As-Skitter (sekce \ref {tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 453674558.}}{49}{figure.4.24}%
+\contentsline {figure}{\numberline {4.25}{\ignorespaces Doba vykonání dotazů Group by bez agr. funkcí pro graf As-Skitter (sekce \ref {tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 453674558.}}{49}{figure.4.25}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
