@@ -3,7 +3,7 @@ Obecne
 Prilohy namerenych dat:
 odamazat duplicitni zaznamy z Q1 a nechat jen to pouzite v datovych souborech + prepis te promene v nazvu
 
-Komentare k ABStromum a nekde tam je soubors ktery konci na cs.cs
+Prilohy benchmarku trees vs arrays
 
 ------------------------------
 
@@ -14,23 +14,20 @@ implementace je pak ciste toho co jsem naimplementoval
 
 Analyza:
 
-Tabulkz vysledku
+	Vylepseni:
 
-Match
-	vzor, pattern atd...
-	vysledky
-	paralelizace
-Select
+	Obecne začátek
+	Co je cilem
+	Z ceho vychazime 
+	Obecné problemy
+	postup pri vytvareni	
 
-Order by
+	Match
 
-Group by
+	Order by 
 
-Vylepseni...
+	Group by 
 
 ------------------------------
 
-Zaver
-
-doplnit future work o rozsireni na dvojici group a order by dohromady
 

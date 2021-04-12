@@ -855,6 +855,8 @@ Vlákno v moment nutnosti rozšíření zablokuje vstup přes semafor.
 Postup s List může být však značně pomalý a proto budeme uvažovat, jestli přístup raději implementovat pouze pro Bucket.
 Global Group by je znázorněn na obrázku \ref{figure.diaGlobalGr}.
 
+
+
 \subsection{Two-step Group by}
 
 Tento přístup probíhá ve dvou krocích. 
@@ -913,15 +915,20 @@ Daná analýza a návrh nám poskytnou odrazový můstek při analýze úprav pr
 
 \begin{figure}[!htp]
 \includegraphics{../img/diaTwoGr.pdf}\centering
-\caption{Diagram paralelizace Two-step Group by. Local part provádí ekvivalent single thread řešení. V Merge části dochází k mergování výsledků vláken pomocí paralelní mapy.}
+\caption{Diagram paralelizace Two-step Group by.}
 \label{figure.diaTwoGr}
 \end{figure}
+
+\clearpage
 
 \begin{figure}[!htp]
 \includegraphics{../img/diaLocalGr.pdf}\centering
 \caption{Diagram paralelizace Local + 2-way merge Group by pro 4 vlákna.}
 \label{figure.diaLocalGr}
 \end{figure}
+
+
+
 
 
 \section{Úprava enginu}
