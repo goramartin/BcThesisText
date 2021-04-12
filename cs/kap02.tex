@@ -674,8 +674,8 @@ Pokud dojde k porovnání řádků pro který byl výraz již vypočítán, tak 
 
 \subsection{Optimalizace porovnání stejných elementů}
 
-Dalši možná optimalizace porovnání může nastat v případě, pokud pro dotaz nad grafem platí \#Vrcholů $<<$ \#Hran.
-Daná vlastnost může mít za následek, že porovnávané řádky budou obsahovat často obsahovat stejné elementy pro dotazy typu:
+Dalši možná optimalizace porovnání může nastat v případě, pokud pro použitý graf platí \#Vrcholů $<<$ \#Hran.
+Daná vlastnost může mít za následek, že porovnávané řádky budou často obsahovat stejné elementy pro dotazy typu:
 \begin{code}
 select x.PropOne match (x) -> (y) order by x.PropOne;
 \end{code}
@@ -733,7 +733,7 @@ Objekty představují úložiště výsledků funkcí.
 Sloupeček představuje výsledky jedné agregační funkce.
 Jedné skupině pak přináleží řádek.
 Každé skipině bude přidělen index řádku.
-Nyní pokud budeme chtít výsledky funkcí skipiny, stačí přistoupit skrze přidělený index ke chtěnému výsledku.
+Nyní pokud budeme chtít výsledky funkcí skupiny, stačí přistoupit skrze přidělený index ke chtěnému výsledku.
 \end{itemize}
 
 Následuje ukázka možné implementace v jazyce C\#:
@@ -745,7 +745,6 @@ class BucketResult<T>: BucketResult { T value; }
 
 List:
 ListResults groupsAggFuncResults;
-// are accessed via tableIndex.
 class ListResults { ListHolder[] holders; }
 class ListHolder {}
 class ListHolder<T> : ListHolder { List<T> values }
@@ -758,6 +757,18 @@ V takovém případě jsme schopni přesouvat výsledky skupiny aniž bychom mus
 Předpokládáme, že bucket bude výhodnější pro paralelní zpracování díky izolaci od ostatních výsledků, jelikož počet skupin není dopředu znám.
 V List budeme muset dynamicky rozšiřovat pole.
 Při rozšíření nastane race condition, který budeme muset ošetřit.
+
+\subsection{Logika agregačních funkcí}
+
+Ještě než přistoupíme k výběru zpracování musíme analyzovat logiku agregačních funkcí.
+Logika pak ovlivňuje co a jak se bude ukládat v úložišti výsledků.
+
+\begin{itemize}
+\item \texttt{Min/Max:} výsledek funkce je minimum/maximum pro skupinu. Při výpočtu dojde k porovnání a následnému uložení hodnoty.
+V objektu výsledku musíme znát aktuální minimum/maximum a jestli byla hodnota již nastavena.
+\item \texttt{Count/Sum:} výsledek je počet výsledků/suma výsledků. Při výpočtu musíme přičítat hodnotu k hodnotě v úložišti.
+\item \texttt{Avg:} výsledek je aritmetický průměr. Chtěli bychom volit inkrementální metodu. Budeme si ukládat počet výsledků a sumu hodnot. Jako finální krok dojde k vypočtení podílu hodnot.
+\end{itemize}
 
 \subsection{Single thread zpracování}
 
@@ -793,6 +804,7 @@ Nastávají pro něj stejné problémy v paralelním prostředí.
 \subsection{Paralelní zpracování}
 
 Pro paralelní zpracování jsme vymysleli několik přístupů: \textbf{Global}, \textbf{Two-step} a \textbf{Local + 2-way merge} (všechny budou schopny pracovat s úložišti Bucket i List).
+Chceme zvolit několik řešení, abychom byli schopni lépe porovnat vylepšená řešení.
 Každý z nich začíná rozdělením tabulky výsledků Match na ekvivalentní části.
 To si můžeme dovolit, neboť máme tabulku obsahující všechny výsledky hledání.
 Každé vlákno dostane danou část ke zpracování.
@@ -818,14 +830,14 @@ V ideálním případě chceme použít atomické operace přičtění.
 \item \texttt{Avg:} tuto funkci lze implementovat iterativně. 
 Budeme si ukládat součet zpracovaných výsledků a jejich počet.
 Finální hodnota pak bude podíl součtu a počtu hodnot.
-Tímto můžeme implementovat thread-safe funkci s pomocí atomických operací, jako funkce \texttt{Sum/Count}.
+Tímto můžeme implementovat thread-safe funkci pomocí atomických operací, jako u funkcí \texttt{Sum/Count}.
 \end{itemize}
 
 \subsection{Global Group by}
 
 Všechna vlákna budou provádět ekvivalent single-thread seskupování pomocí thread-safe paralelní mapy/slovníku.
 Skupiny se vytváření globálně.
-Všimněme si k nutnosti dvojité synchronizace.
+Všimněme si nutnosti dvojité synchronizace.
 Prvě musí dojít k synchronizaci vytváření záznamů v mapě.
 Druhý krok synchronizace je nutný při zpracování agregačních funkcí.
 Paralelní mapa nám vyřadí race-condition při vytváření nových záznamů skupin.
@@ -837,16 +849,11 @@ List musí dynamicky rozšiřovat tabulku svých výsledků.
 Místo abychom použili dvojí synchronizace jako u Bucket, tak zde bude nutné představit ještě třetí krok synchronizace.
 Při přístupu do tabulky je nutné kontrolovat, jestli se nemusí rozšířit.
 V ten moment se musí zabránit přístupu ostatních vláken a teprve pak rozšířit tabulku.
-To se dá implementovat například semaforem povolující vstup určitému počtu vláken.
-Vlákno na přístup se pokusí projít skrze semafor, pokud je mu vstup zabráňěn dochází k rozšiřování tabulky.
+To se dá implementovat například semaforem omezující pohyb vláken v kritické sekci.
+Vlákno se na přístup pokusí projít skrze semafor, pokud je mu vstup zabráněn tak dochází k rozšiřování tabulky.
 Vlákno v moment nutnosti rozšíření zablokuje vstup přes semafor.
 Postup s List může být však značně pomalý a proto budeme uvažovat, jestli přístup raději implementovat pouze pro Bucket.
-
-\begin{figure}[!htp]
-\includegraphics{../img/diaGlobalGr.pdf}\centering
-\caption{Diagram paralelizace Global Group by.}
-\label{figure.diaGlobalGr}
-\end{figure}
+Global Group by je znázorněn na obrázku \ref{figure.diaGlobalGr}.
 
 \subsection{Two-step Group by}
 
@@ -856,17 +863,12 @@ Druhý krok nastave v moment dokončení této práce.
 Místo aby vlákno ukončilo běh, tak provede merge svých výsledků do thread-safe paralelní mapy.
 Tento přístup kombinuje single-thread řešení společně s přístupem Global.
 V druhém kroku platí vše, co jsme zmínili u Global řešení.
-Mínus je, že zde musí docházek mergování, ale v prvním kroku se využívají metody, které nemusí řešit synchoronizaci. 
+Mínus je, že zde musí docházet mergování, ale v prvním kroku se využívají metody, které nemusí řešit synchoronizaci. 
 Problematická část je zde mergování výsledků s List úložištěm výsledků agregačních funkcí.
-První fáze nepedstavuje problém. 
-V druhá představuje problém jako Global řešení.
+První fáze nepředstavuje problém. 
+Druhá představuje problém jako u Global řešení.
 Můžeme zkusit implementovat stejné řešení jako u Global pomocí semaforu.
-
-\begin{figure}[!htp]
-\includegraphics{../img/diaTwoGr.pdf}\centering
-\caption{Diagram paralelizace Two-step Group by. Local part provádí ekvivalent single thread řešení. V Merge části dochází k mergování výsledků vláken pomocí paralelní mapy.}
-\label{figure.diaTwoGr}
-\end{figure}
+Two-step Group by je znázorněn na obrázku \ref{figure.diaTwoGr}.
 
 \subsection{Local + 2-way merge Group by}
 
@@ -877,14 +879,12 @@ Po dokončení se spustí dvoucestný merge na výsledky vláken.
 Mergování bude připomínat binární strom.
 Listy představují lokální seskupování vláken.
 Vnitřní vrcholy stromu představují mergování výsledků.
+Finální výsledek je vytvořen v kořeni.
+U mergování využijeme paralelního zpracování.
+Při mergi vždy jedno vlákno ukončí běh, druhé z dvojice provede merge a postoupí ke kořeni. 
 Hlavní výhody byly už zmíněny.
 Používají se metody bez synchronizace.
-
-\begin{figure}[!htp]
-\includegraphics{../img/diaLocalGr.pdf}\centering
-\caption{Diagram paralelizace Local + 2-way merge Group by pro 4 vlákna.}
-\label{figure.diaLocalGr}
-\end{figure}
+Přístup je znázorněn na obrázku \ref{figure.diaLocalGr}.
 
 \subsection{Paralelizace Single group Group by}
 
@@ -893,13 +893,37 @@ Konkrétně zde mají využítí všechny tři.
 Mergování všech výsledků do jednoho úložiště výsledků agregačních funkcí z principu Global.
 Problémem tohoto přístupu je synchronizace mnoha vláken na jednom místě.
 Ideálnější je využít lokálního zpracování zbylých dvou metod.
-K rozhodnutí, které finálně použít použijeme fakt, že počet výsledků k mergování je roven počtu vláken.
-V takovém případě nebudeme implementovat paralelní mergování, ale pouze jedno vybrané vlákno provede sjednocení výsledků.
+Opět řešení rozdělíme na dva kroky. 
+V prvním kroku každé vlákno provádí ekvivalent single thread řešení bez vytváření skupin, tj. počítá pouze agregační funkce pro jednu skupinu.
+Výsledky se následně musí mergovat.
+K rozhodnutí, které řešení finálně použít použijeme fakt, že počet výsledků k mergování je roven počtu vláken.
+V takovém případě nebudeme implementovat paralelní mergování, ale pouze jedno vybrané vlákno provede sjednocení všech výsledků.
 
 \bigskip
 \textit{ Analyzovali jsme a navrhli řešení vykonání částí Match, Group by a Order by.
 Daná analýza a návrh nám poskytnou odrazový můstek při analýze úprav pro vykonání částí Group by a Order by v průběhu hledání.
 }
+\clearpage
+
+\begin{figure}[!htp]
+\includegraphics{../img/diaGlobalGr.pdf}\centering
+\caption{Diagram paralelizace Global Group by.}
+\label{figure.diaGlobalGr}
+\end{figure}
+
+\begin{figure}[!htp]
+\includegraphics{../img/diaTwoGr.pdf}\centering
+\caption{Diagram paralelizace Two-step Group by. Local part provádí ekvivalent single thread řešení. V Merge části dochází k mergování výsledků vláken pomocí paralelní mapy.}
+\label{figure.diaTwoGr}
+\end{figure}
+
+\begin{figure}[!htp]
+\includegraphics{../img/diaLocalGr.pdf}\centering
+\caption{Diagram paralelizace Local + 2-way merge Group by pro 4 vlákna.}
+\label{figure.diaLocalGr}
+\end{figure}
+
+
 
 \section{Vylepšení částí Group/Order by}
 
