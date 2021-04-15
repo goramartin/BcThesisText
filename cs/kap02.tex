@@ -35,22 +35,22 @@ Vytváří se nám závislosti, které budeme muset uvážit.
 Musíme uvážit, jak reprezentovat graf.
 Graf bude simulovat grafovou databázi.
 Z části \ref{requirements} jsou hlavními faktory námi zvolená podmnožina jazyku PGQL a že se jedná o Property graf.
-Pro případy nejednoznačnosti označíme \verb+elType+ jako typ elementu v Property grafu a \verb+propType+ jako typ Property.
+Pro případy nejednoznačnosti označíme \verb+elType+ jako typ elementu v Property grafu a \verb+propType+ jako typ vlastnosti.
 
 \subsection{Elementy grafu a jejich typ}
 
 Musíme zvažovat reprezentaci elementů grafu a jejich \verb+elType+.
 V našem případě jsou elementy pouze vrcholy a orientované hrany.
-\verb+elType+ definuje seznam Properties na elementu. 
-Properties jsou také typované.
-Vrchol a hrana musí mít rozdílný \verb+elType+, ale samotné Properties se mohou opakovat pro oba druhy elementů.
-Každá hodnota Property musí být přístupná skrze daný element:
+\verb+elType+ definuje seznam vlastností na elementu. 
+Vlastnosti jsou také typované.
+Vrchol a hrana musí mít rozdílný \verb+elType+, ale samotné vlastnosti se mohou opakovat pro oba druhy elementů.
+Každá hodnota vlastnosti musí být přístupná skrze daný element:
 
 \begin{itemize}
 
 \item Pokud držíme element grafu, musíme být schopni jej rozlišit od ostatních elementů.
 
-\item Pokud držíme element grafu, musíme být schopni přistoupit k hodnotám jeho Properties.
+\item Pokud držíme element grafu, musíme být schopni přistoupit k hodnotám jeho vlastností.
 
 \end{itemize}
 
@@ -62,12 +62,12 @@ Předek si bude pamatovat unikátní \verb+ID+, abychom elementy dokázali rozli
 Předek navíc bude znát svůj \verb+elType+. 
 Bude se jednat o ukazatel na třídu.
 Daná třída by reprezentovala pouze jeden \verb+elType+ a bude společná všem elementům majících daný \verb+elType+.
-V třídě by byl obsažen seznam \verb+IDs+ elementů daného typu, jejich pořadí (např: dle vkládání do seznamu) a Properties v podobě polí s hodnotami.
-Property musí být přístupná skrze mapu/slovník, protože může nastat situace, kdy daná Property na elementu neexistuje. 
-Pro náš případ nebudeme uvažovat situaci, kdy Property pro nějaký element nemá definovanou hodnotu.
-Properties tedy budou přístupné pomocí unikátního identifikátoru pro celý graf.
-Hodnoty Properties každého elementu by ležely na pozicích dle pořadí \verb+IDs+.
-Nyní, pokud držíme element grafu, můžeme přistoupit k hodnotě Property skrze tabulku pomocí jeho \verb+ID+.    
+V třídě by byl obsažen seznam \verb+IDs+ elementů daného typu, jejich pořadí (např: dle vkládání do seznamu) a vlastností v podobě polí s hodnotami.
+Vlastnost musí být přístupná skrze mapu/slovník, protože může nastat situace, kdy daná vlastnost na elementu neexistuje. 
+Pro náš případ nebudeme uvažovat situaci, kdy vlastnost pro nějaký element nemá definovanou hodnotu.
+Vlastnosti tedy budou přístupné pomocí unikátního identifikátoru pro celý graf.
+Hodnoty vlastností každého elementu by ležely na pozicích dle pořadí \verb+IDs+.
+Nyní, pokud držíme element grafu, můžeme přistoupit k hodnotě vlastnosti skrze tabulku pomocí jeho \verb+ID+.    
 Samotný přistup pak může být realizován například generickou funkcí. 
 
 \subsection{Struktury obsahující elementy}
@@ -108,23 +108,24 @@ Mít jeden typ hrany obsahující všechny nutné informace.
 Řešením by mohlo být vytvořit pole in/out hran pro každý vrchol. 
 Daný přístup nám případá výrazně náročnější z hlediska paměti, protože musíme vytvářet pole pro každý vrchol zvlášť. 
 
-\subsection{Vstupní grafová data}
+\subsection{Návrh vstupních grafových dat}
 
 Vstupní soubory musí obsahovat informace nutné pro Property graf.
 Budeme očekávat dva druhy souborů.
-Soubory schémat typů elementů a jejich Properties.
+Soubory schémat typů elementů a jejich vlastností.
 Datové soubory pak budou obsahovat konkrétní data elementů.
+(Jedná se o návrh a finální specifikaci uvedeme v rámci implementace.)
 
 Protože každý element grafu má svůj \verb+elType+, budeme mít na vstupu dva soubory schémat pro hrany a vrcholy.
 Schéma bude obsahovat informace o všech \verb+elType+ a \verb+propType+ vyskytujících se v grafu.
-Pro \verb+elType+ je důležitý název a výčet Properties.
-Properties pak musí nést svůj název a \verb+propType+.
+Pro \verb+elType+ je důležitý název a výčet vlastností.
+Vlastnosti pak musí nést svůj název a \verb+propType+.
 Vidíme, že se jedná jen o výčet \verb+(name/value)+ dvojic (např. \verb+(PropertyOne, integer)+).
 V tomto případě se nám jeví nejvhodnější zvolit pro reprezentaci schémat formát JSON.
 \verb+elType+ bude reprezentován JSON objektem. 
 Bude obsahovat položku \verb+Kind+, jejíž hodnota udává jméno \verb+elType+.
-Za ní bude následovat výčet Properties.
-Properties budou reprezentovány dvojicí \verb+(propName/propType)+.
+Za ní bude následovat výčet vlastností.
+Vlastnosti budou reprezentovány dvojicí \verb+(propName/propType)+.
 Záznamy pak budou obsaženy v JSON poli:
 \begin{code}
 Soubor schéma vrcholů:
@@ -144,11 +145,11 @@ Samotná data budou obsažena opět ve dvou separatních souborech pro hrany a v
 Chtěli bychom reprezentovat konkrétní data pomocí jednoduchého .csv souboru.
 Každý řádek reprezentuje jednu hranu/vrchol.
 V první řadě řádek musí obsahovat unikatní \verb+ID+ elementu a jeho \verb+elType+. 
-Za \verb+elType+ následuje seznam hodnot Properties v pořadí určených schématem.
+Za \verb+elType+ následuje seznam hodnot vlastností v pořadí určených schématem.
 Pro hrany existuje na řádku navíc záznam \verb+ID+ vrcholů, které spojuje.
 Oddělovače mezi daty jsou implementační detail.
 Pro naše účely se jedná o dostačující formát a poskytuje nám jednoduché možnosti parsování.
-Pokud by docházelo v budoucnu k rozšířením, například více slovné Property nebo XML Property, musí dojít k úpravě daných formátů.
+Pokud by docházelo v budoucnu k rozšířením, například více slovné vlastnosti nebo XML vlastnosti, musí dojít k úpravě daných formátů.
 
 Pro výše zmíněné schéma by datové soubory mohly vypadat následovně:
 \begin{code}
@@ -204,7 +205,7 @@ Proměnným pak můžeme přiřadit \verb+ID+.
 
 \subsection{Select, Order/Group by}
 
-Ostatní části Group by, Order by a Select obsahují výrazy proměnných (např: order by x), přístup k Properties proměnných (např: select x.PropOne) nebo volání agregačních funkcí (\verb+min+, \verb+max+, \verb+avg+, \verb+sum+ a \verb+count+).
+Ostatní části Group by, Order by a Select obsahují výrazy proměnných (např: order by x), přístup k vlastnostem proměnných (např: select x.PropOne) nebo volání agregačních funkcí (\verb+min+, \verb+max+, \verb+avg+, \verb+sum+ a \verb+count+).
 Proměnné zde představují elementy grafu.
 Várazy se však musí evaluovat za běhu programu.
 Dalším problémem je, že výrazy mají různorodé návratové hodnoty.
@@ -214,15 +215,15 @@ Agregační funkce \verb+min+, \verb+max+ mají návratovou hodnotu definovanou 
 Funkce \verb+sum+ a \verb+count+ by měli ideálně pracovat s typem, který by předešel přetečení.
 U \verb+avg+ se očekává hodnota s desetinnou čárkou.  
 V budoucnu však může dojít k rozšířením a vyvstanou složitější výrazy, například infixová notace x.PropOne + y.PropOne nebo zmiňované porovnání z Where/Having části.
-Problém nám usnadňuje fakt, že Properties nesoucí stejné jméno mají stejný \verb+propType+.
+Problém nám usnadňuje fakt, že vlastnosti nesoucí stejné jméno mají stejný \verb+propType+.
 Pokud ne, je nutné určit vhodnou návratovou hodnotu.
-Navíc musíme brát v potaz, že daný výraz se nemusí vyhodnotit, například absence Property na vrcholu.
+Navíc musíme brát v potaz, že daný výraz se nemusí vyhodnotit, například absence vlastnost na vrcholu.
 Proto jsme byli nuceni vymyslet systém výrazů (expressions).
 
 \subsection{Expressions} \label{anal.expressions}
 
 Systém vytváření a vyhodnocování výrazů efektivně za běhu je obecně složitý problém.
-Omezíme se pouze na případy: přístup k proměnné, přístup k hodnotě Property proměnné a agregační funkce (\verb+min+, \verb+max+, \verb+avg+, \verb+sum+ a \verb+count+).
+Omezíme se pouze na případy: přístup k proměnné, přístup k hodnotě vlastnosti proměnné a agregační funkce (\verb+min+, \verb+max+, \verb+avg+, \verb+sum+ a \verb+count+).
 
 Základní myšlenka je reprezentovat výraz pomocí stromové struktury. 
 Každý vrchol stromové struktury bude reprezentovat určitou akci.
@@ -234,17 +235,14 @@ Metody by se mohli libovolně dodávat při nutnosti použití nových struktur.
 
 Následuje ukázka možného kódu v jazyce C\#:
 \begin{code}
-// Base classes
+// Základní rodičovské třídy
 abstract class Expression { }
 abstract class ExpressionReturnValue<T>: Expression {
   public abstract bool TryEvaluate(Element[] elms, out T retVal); 
 }
-
 abstract class VariableAccess<T>: ExpressionReturnValue<T> {
-     readonly int accessedVariableID; 
-}
+     readonly int accessedVariableID; }
 \end{code}
-\clearpage 
 Třída reprezentující přístup k \verb+ID+ proměnné:
 \begin{code}
 class VariableIDAccess: VariableAccess<int> {
@@ -260,7 +258,7 @@ Zde předpokládáme, že pole \verb+Element[]+ obsahuje proměnné přesně v p
 Tedy pokud je roven Match (x) -> (y), tak jeden výsledek hledání by bylo pole obsahující dva elementy x a y.
 Jedná se pouze o ilustrační příklad. 
 
-Případ přístupu k Property by mohl vypadat následovně:
+Případ přístupu k vlasnosti by mohl vypadat následovně:
 \begin{code}
 class VariablePropertyAccess<T>: VariableAccess<T> {
   reaonly int accessedPropertyID; 
@@ -271,7 +269,7 @@ class VariablePropertyAccess<T>: VariableAccess<T> {
 }
 \end{code}
 Zde dojde k volání metody na elementu grafu, který přistoupí k třidě reprezentující jeho \verb+elType+.
-Třída pak na základě existence Property vrátí hodnotu nebo neuspěje.
+Třída pak na základě existence vlastnosti vrátí hodnotu nebo neuspěje.
 Timto dokážeme vyřešit základní definované problémy.
 
 Zbává uvažovat, jakým způsobem reprezentovat agregační funkce.
@@ -346,6 +344,9 @@ class ExpressionIntegerAdd: ExpressionBinOperation<int>{
   }
 }
 \end{code}
+Zde \texttt{ExpressionIntegerAdd} rozšiřuje obecný binární operátor a určuje návratovou hodnotu výrazu.
+V těle funkce \texttt{TryEvaluate} dojde k pokusu o vyhodnocení dvou podvýrazů.
+Při úspěchu dojde k vypočtení finální hodnoty a v opačném případě dojde k selhání vyhodnocení. 
 
 \bigskip
 \textit{Tímto jsme vyřešeli problémy parsování a reprezentace expressions pro náš engine.
@@ -511,7 +512,7 @@ Mezi základní postupy vyhledávání vzoru patří prohledávání do šířky
 Na základě 1. a 2. kapitoly článku \citet{asyncPGX} jsme vybrali algoritmus DFS, jelikož v průběhu prohledávání generuje menší množství mezivýsledů.
 To je dáno chováním BFS. 
 BFS v každém kroku musí prozkoumat všechny sousedy políček z předešlého kroku.
-Toho se docílí vložením nových sousedů do fronty (obecná struktura \texttt{queue} first in first out).
+Toho se docílí vložením nových sousedů do fronty (obecná struktura \texttt{queue} FIFO).
 Fronta se tak rychle zvětšuje.
 DFS naopak potřebuje znát sousedy pouze aktuálně prohledávaných vrcholů.
 
@@ -661,13 +662,13 @@ Indexy budou setříděny namísto pravých řádků vybraným algoritmem a při
 Přistup nám umožní vyřadit přesouvání řádků, ale zase potřebujeme lineární pamět na pole indexů.
 Po dokončení třídění se pole použije jako indexační struktura.
 
-\subsection{Optimalizace porovnání Property hodnot} \label{anal.order.opt1}
+\subsection{Optimalizace porovnání vlastností hodnot} \label{anal.order.opt1}
 
 Třídění obvykle představuje opakované porovnání jednoho prvku s ostatními v řadě za sebou.
 Pro pokaždé takové porovnání v řadě počítáme stejnou hodnotu výrazu opakovaně.
 Porovnání pomocí \texttt{ID} pouze přistupuje k položce elementu grafu.
-Problém nastane, když budeme porovnávat pomocí Property.
-V takovém případě musíme přistoupit k tabulce \texttt{elType} (sekce \ref{anal.grafrep}), zjistit existenci přistupované Property a následně přistoupit k její hodnotě.
+Problém nastane, když budeme porovnávat pomocí vlasnosti.
+V takovém případě musíme přistoupit k tabulce \texttt{elType} (sekce \ref{anal.grafrep}), zjistit existenci přistupované vlastnosti a následně přistoupit k její hodnotě.
 Danou situaci můžeme vyřešit částečně cachování výsledků výrazů.
 Budeme si pamatovat poslední porovnané řádky a jejich hodnoty.
 Pokud dojde k porovnání řádků pro který byl výraz již vypočítán, tak použijeme zachovanou hodnotu.
@@ -681,7 +682,7 @@ select x.PropOne match (x) -> (y) order by x.PropOne;
 \end{code}
 V takovém dotazu by hledání mělo vygenerovat několik výsledků se stejným elementem v proměnné x.
 Počet takových výsledků zde odpovídá počtu hran vrcholů x.
-Abychom předešli opakovanému porovnávání hodnot Property stejných elementů, tak než přistoupíme k výpočtu výrazů porovnáme \texttt{ID} přistupovaných elementů.
+Abychom předešli opakovanému porovnávání hodnot vlastností stejných elementů, tak než přistoupíme k výpočtu výrazů porovnáme \texttt{ID} přistupovaných elementů.
 Tedy využijeme dvou optimalizací.
 Budeme si cachovat poslední výsledky výrazů a navíc omezíme porovnání výsledků se stejnými elementy.
 
@@ -736,17 +737,23 @@ Každé skipině bude přidělen index řádku.
 Nyní pokud budeme chtít výsledky funkcí skupiny, stačí přistoupit skrze přidělený index ke chtěnému výsledku.
 \end{itemize}
 
-Následuje ukázka možné implementace v jazyce C\#:
+Následuje ukázka možné implementace dle popisu výše v jazyce C\#:
 \begin{code}
 Bucket:
+\\ Pole výsledků ag. funkcí.
 BucketResult[] groupAggFuncResults; 
-class BucketResult {}
+\\ Objekt úložiště. 
+class BucketResult {} 
+\\ Objekt definující typ ukládané hodnoty.
 class BucketResult<T>: BucketResult { T value; }
 
 List:
 ListResults groupsAggFuncResults;
+\\ Objekt primitivní tabulky výsledků ag. funkcí.
 class ListResults { ListHolder[] holders; }
+\\ Objekt jednoho sloupečku tabulky.
 class ListHolder {}
+\\ Objekt definující typ sloupečku.
 class ListHolder<T> : ListHolder { List<T> values }
 \end{code}
 
@@ -775,45 +782,47 @@ V objektu výsledku musíme znát aktuální minimum/maximum a jestli byla hodno
 Po celou dobude budeme pracovat s tabulkou výsledků Match části.
 Pro vykonání Group by se nám nabízí několik možností.
 První možnost je řádky tabulky setřídit a následně při iteraci výtvářet skupiny a počítat agregační funkce.
-Myslíme, že možnost přináší zbytečný overhead za porovnání při třídění, protože pro každé porovnání musíme vypočítat hodnotu výrazu.
-Z tohoto důvodu chceme využít strukturu, která bude interně použivát hashovací tabulku (C++ \texttt{std::map<Key, Value>} nebo C\#  \texttt{Dictionary<Key, Value>}).
+Myslíme, že možnost přináší zbytečnou režii za porovnání při třídění, protože pro každé porovnání musíme vypočítat hodnotu výrazu.
+Z tohoto důvodu chceme využít strukturu, která bude interně použivát hašovací tabulku (C++ \texttt{std::map<Key, Value>} nebo C\#  \texttt{Dictionary<Key, Value>}).
 Záznam v tabulce bude dvojice \texttt{key/value}. 
 \texttt{key} je zde index do tabulky výsledků z Match části (nikoliv proxy třída).
 Chceme ukládat pouze index abychom ušetřili paměť za pointr na tabulku.
 Porovnání vyvolá získání proxy třídy a následné evaluaci hodnot výrazů.
 \texttt{value} obsahuje strukturu pro výsledky agregačních funkcí.
 Pro Bucket to bude pole objektů a pro List to bude index do tabulky výsledků agregačních funkcí.
-Pro výsledek bude vypočítáná hash na základě hodnot klíču a vložena do hashovací tabulky.
+Pro výsledek bude vypočítáná haš na základě hodnot klíču a vložena do hašovací tabulky.
 Pokud už je obsažen v tabulce, tak se pouze pro získanou \texttt{value} (pole nebo index) aktualizují hodnoty výsledků agregačních funkcí.
 V opačném případě bude vložen nový záznam s novou \texttt{value}.
 Pro Single group Group by stačí pouze iterovat skrze tabulku a počítat agregační funkce.
 
-\subsection{Optimalizace při výpočtu hash hodnoty}
+\subsection{Optimalizace při výpočtu haš hodnoty}
 
 Minulý přístup nám nabízí jednu optimalizaci k ušetření opakovaného výpočtu hodnoty výrazu klíčů.
-Hashovací tabulka při vložení dvojice v prvním kroku vypočte hodnoty klíčů a vypočte jejich hash.
+Hašovací tabulka při vložení dvojice v prvním kroku vypočte hodnoty klíčů a vypočte jejich haš.
 Výsledek se vloží do patřičné přihrádky.
 Pokud nastala kolize, tak se prvky musí porovnat.
 Při tomto porovnání se opět musí vypočíst hodnoty výrazů vkládané dvojice.
-Zde mužeme využít chvíle výpočtu hash hodnoty.
+Zde mužeme využít chvíle výpočtu haš hodnoty.
 Budeme cachovat hodnoty výrazů a následně je znovu použít při porovnání.
-Nicméně, pravděpodobně budeme nutni vytvořit závislost mezi objektem počítajícím hash hodnotu a objektem provádějícím porovnání.
+Nicméně, pravděpodobně budeme nutni vytvořit závislost mezi objektem počítajícím haš hodnotu a objektem provádějícím porovnání.
 Stejný princip jsme použili při optimalizaci porovnání v sekci \ref{anal.order.opt1}.
-Nastávají pro něj stejné problémy v paralelním prostředí.
+Nastávají pro něj také stejné problémy v paralelním prostředí.
 
 \subsection{Paralelní zpracování}
 
-Pro paralelní zpracování jsme vymysleli několik přístupů: \textbf{Global}, \textbf{Two-step} a \textbf{Local + 2-way merge} (všechny budou schopny pracovat s úložišti Bucket i List).
-Chceme zvolit několik řešení, abychom byli schopni lépe porovnat vylepšená řešení.
+Chceme zvolit několik řešení s rozdílnou úrovní synchronizace, protože nevíme, které bude dosahovat nejrychlejších výsledků.
+Navíc nám větší počet řešení umožní lépe porovnat vylepšená řešení.
+Pro paralelní zpracování jsme vymysleli tři přístupy: \textbf{Global}, \textbf{Two-step} a \textbf{Local + dvoucestný merge} (všechny budou schopny pracovat s úložišti Bucket i List).
 Každý z nich začíná rozdělením tabulky výsledků Match na ekvivalentní části.
 To si můžeme dovolit, neboť máme tabulku obsahující všechny výsledky hledání.
 Každé vlákno dostane danou část ke zpracování.
 Tím zaručíme rovnoměrnost práce mezi vlákny.
 Samotná práce vláken pak zavisí na zvoleném přístupu.
+Specifika vykonání jsou popsána v následujících sekcích.
 
 \subsection{Thread-safe agregační funkce}
 
-Ještě než přistoupíme k řešením, je důležité si uvědomit nutnost vytvořit thread-safe verzi objektů implementující logiku agregačních funkcí.
+Ještě než přistoupíme k popisu jednotlivých řešení, je důležité si uvědomit nutnost vytvořit thread-safe verzi objektů implementující logiku agregačních funkcí.
 Pro každou funkci bude existovat ekvivalent thread-safe \texttt{Apply} metody.
 Samotně pak vyvstává nutnost implementovat thread-safe metody pro mergování výsledků agregačních funkcí.
 Problém vyřešeníme přidáním metod do objektů zpravující logiku agregačních funkcí, protože při mergi stále musíme vědět, jak s výsledky správně zacházet.
@@ -850,29 +859,28 @@ Místo abychom použili dvojí synchronizace jako u Bucket, tak zde bude nutné 
 Při přístupu do tabulky je nutné kontrolovat, jestli se nemusí rozšířit.
 V ten moment se musí zabránit přístupu ostatních vláken a teprve pak rozšířit tabulku.
 To se dá implementovat například semaforem omezující pohyb vláken v kritické sekci.
-Vlákno se na přístup pokusí projít skrze semafor, pokud je mu vstup zabráněn tak dochází k rozšiřování tabulky.
 Vlákno v moment nutnosti rozšíření zablokuje vstup přes semafor.
+Vlákno se na přístup pokusí projít skrze semafor, pokud je mu vstup zabráněn tak dochází k rozšiřování tabulky.
+V opačném případě aktualizuje výslednou hodnotu agregační funkce.
 Postup s List může být však značně pomalý a proto budeme uvažovat, jestli přístup raději implementovat pouze pro Bucket.
 Global Group by je znázorněn na obrázku \ref{figure.diaGlobalGr}.
 
-
-
 \subsection{Two-step Group by}
 
-Tento přístup probíhá ve dvou krocích. 
-V prvník kroku pro každé vlákno běží kompletně identický ekvivalent single thread řešení.
-Druhý krok nastave v moment dokončení této práce.
+Tento přístup probíhá ve dvou krocích.
+Lokální část nasledovaná globální částí. 
+V lokální části pro každé vlákno běží kompletně identický ekvivalent single thread řešení.
+Globální část nastane v moment dokončení této práce.
 Místo aby vlákno ukončilo běh, tak provede merge svých výsledků do thread-safe paralelní mapy.
 Tento přístup kombinuje single-thread řešení společně s přístupem Global.
-V druhém kroku platí vše, co jsme zmínili u Global řešení.
 Mínus je, že zde musí docházet mergování, ale v prvním kroku se využívají metody, které nemusí řešit synchoronizaci. 
 Problematická část je zde mergování výsledků s List úložištěm výsledků agregačních funkcí.
 První fáze nepředstavuje problém. 
-Druhá představuje problém jako u Global řešení.
+Druhá představuje problém jako u Global řešení, tedy platí vše, co jsme pro něj zmínili.
 Můžeme zkusit implementovat stejné řešení jako u Global pomocí semaforu.
 Two-step Group by je znázorněn na obrázku \ref{figure.diaTwoGr}.
 
-\subsection{Local + 2-way merge Group by}
+\subsection{Local + dvoucestný merge Group by}
 
 Přístup nepoužívá thread-safe metody ani paralelní mapu.
 Opět rozdělíme přístup na dvě části.
@@ -886,6 +894,7 @@ U mergování využijeme paralelního zpracování.
 Při mergi vždy jedno vlákno ukončí běh, druhé z dvojice provede merge a postoupí ke kořeni. 
 Hlavní výhody byly už zmíněny.
 Používají se metody bez synchronizace.
+Nevýhoda řešení je, že vlákna musejí čekat při mergi na dokončení práce druhého vlákna a teprve až pak může dojít k mergi.
 Přístup je znázorněn na obrázku \ref{figure.diaLocalGr}.
 
 \subsection{Paralelizace Single group Group by}
@@ -923,12 +932,11 @@ Daná analýza a návrh nám poskytnou odrazový můstek při analýze úprav pr
 
 \begin{figure}[!htp]
 \includegraphics{../img/diaLocalGr.pdf}\centering
-\caption{Diagram paralelizace Local + 2-way merge Group by pro 4 vlákna.}
+\caption{Diagram paralelizace Local + dvoucestný merge Group by pro 4 vlákna.}
 \label{figure.diaLocalGr}
 \end{figure}
 
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \section{Úprava enginu}
