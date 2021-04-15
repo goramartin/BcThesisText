@@ -458,19 +458,19 @@ Proto uvádíme výsledky a analýzu dotazů Match zvlášť, aby bylo možné s
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonMatch.pdf}\centering
-\caption{Doba vykonání dotazů Match pro graf Amazon0601 (sekce \ref{tab.grafBase}). Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 32373599.}
+\caption{Doba vykonání dotazů Match pro graf Amazon0601 (sekce \ref{tab.grafBase}). Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 32 373 599.}
 \label{figure.amazonMatch}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanMatch.pdf}\centering
-\caption{Doba vykonání dotazů Match pro graf WebBerkStan (sekce \ref{tab.grafBase}). Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 222498869.}
+\caption{Doba vykonání dotazů Match pro graf WebBerkStan (sekce \ref{tab.grafBase}). Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 222 498 869.}
 \label{figure.webberkstanMatch}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/skitterMatch.pdf}\centering
-\caption{Doba vykonání dotazů Match pro graf As-Skitter (sekce \ref{tab.grafBase}). Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 453674558.}
+\caption{Doba vykonání dotazů Match pro graf As-Skitter (sekce \ref{tab.grafBase}). Jedno vlákno vůči osmi vláknům. Počet nalezených výsledků je 453 674 558.}
 \label{figure.skitterMatch}
 \end{figure}
 
@@ -485,7 +485,7 @@ Pro představu, každá proměnná (element grafu) je uložena do vlastního slo
 Nicméně, díky ukládání do polí fixní délky nastává nutnost pouze zarovnat poslední nezaplněná pole, zbytek práce mergování je jen přesunutí několika pointrů na pole. 
 Tento proces je paralelizovaný pouze přes sloupečky, tedy v dotazu M\_Q2 mergování beží pouze v jednom vlákně a proto obsahuje nejvyšší skok rychlosti mezi dotazem před a dotazem po. 
 Obecně vidíme, že ukládání výsledků nepřináší až tak velkou přítež na dobu vykonávání jako paměťovou, kdy všechny výsledky jsou uloženy v paměti. 
-Například, všechny dotazy na grafu As-Skitter (obrázek \ref{figure.skitterMatch}), vygenerují 453674558 výsledků, což představuje na x64 platformě 3.629 GB pro jeden sloupeček.
+Například, všechny dotazy na grafu As-Skitter (obrázek \ref{figure.skitterMatch}), vygenerují 453674558 výsledků, což představuje na x64 platformě 3,629 GB pro jeden sloupeček.
 Zmíněné poznatky použijeme při analýze experimentů pro Group/Order by.
 
 \subsection{Order by}
@@ -508,13 +508,13 @@ Jak vidíme na obrázcích, řešení se přibližuje rychlosti řešení Normal
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonOrderByST.pdf}\centering
-\caption{Doba vykonání dotazů Order by pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet tříděných výsledků je 32373599.}
+\caption{Doba vykonání dotazů Order by pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet tříděných výsledků je 32 373 599.}
 \label{figure.amazonOrderST}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanOrderByST.pdf}\centering
-\caption{Doba vykonání dotazů Order by pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet tříděných výsledků je 222498869.}
+\caption{Doba vykonání dotazů Order by pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet tříděných výsledků je 222 498 869.}
 \label{figure.webberkstanOrderST}
 \end{figure}
 
@@ -558,13 +558,13 @@ Zrychlení nastává pouze u paralelizace řešení při dostatečně náhodném
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonOrderByPar.pdf}\centering
-\caption{Doba vykonání dotazů Order by pro graf Amazon0601 (sekce \ref{tab.grafBase}).  Běh osmi vláken. Počet tříděných výsledků je 222498869.}
+\caption{Doba vykonání dotazů Order by pro graf Amazon0601 (sekce \ref{tab.grafBase}).  Běh osmi vláken. Počet tříděných výsledků je 32 373 599.}
 \label{figure.amazonOrderPar}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanOrderByPar.pdf}\centering
-\caption{Doba vykonání dotazů Order by pro graf WebBerkStan (sekce \ref{tab.grafBase}).  Běh osmi vláken. Počet tříděných výsledků je 222498869.}
+\caption{Doba vykonání dotazů Order by pro graf WebBerkStan (sekce \ref{tab.grafBase}).  Běh osmi vláken. Počet tříděných výsledků je 222 498 869.}
 \label{figure.webberkstanOrderPar}
 \end{figure}
 
@@ -598,13 +598,13 @@ Po levé straně je běh v jednom vlákně a na pravé straně běh osmi vláken
     \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=0.9\textwidth]{../img/amazonGroupByQ1ST.pdf} % first figure itself
-        \caption{Doba vykonání dotazu G\_Q1 pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 32373599.}
+        \caption{Doba vykonání dotazu G\_Q1 pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 32 373 599.}
         \label{figure.amazonGQ1ST}
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=0.9\textwidth]{../img/amazonGroupByQ1Par.pdf} % second figure itself
-        \caption{Doba vykonání dotazu G\_Q1 pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 32373599.}
+        \caption{Doba vykonání dotazu G\_Q1 pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 32 373 599.}
         \label{figure.amazonGQ1Par}
     \end{minipage}
 \end{figure}
@@ -614,13 +614,13 @@ Po levé straně je běh v jednom vlákně a na pravé straně běh osmi vláken
     \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=0.9\textwidth]{../img/webberkstanGroupByQ1ST.pdf} % first figure itself
-        \caption{Doba vykonání dotazu G\_Q1 pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 222498869.}
+        \caption{Doba vykonání dotazu G\_Q1 pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 222 498 869.}
         \label{figure.webberkstanGQ1ST}
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=0.9\textwidth]{../img/webberkstanGroupByQ1Par.pdf} % second figure itself
-        \caption{Doba vykonání dotazu G\_Q1 pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 222498869.}
+        \caption{Doba vykonání dotazu G\_Q1 pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 222 498 869.}
         \label{figure.webberkstanGQ1Par}
     \end{minipage}
 \end{figure}
@@ -632,13 +632,13 @@ Po levé straně je běh v jednom vlákně a na pravé straně běh osmi vláken
     \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=0.9\textwidth]{../img/skitterGroupByQ1ST.pdf} % first figure itself
-        \caption{Doba vykonání dotazu G\_Q1 pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 453674558.}
+        \caption{Doba vykonání dotazu G\_Q1 pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 453 674 558.}
         \label{figure.skitterGQ1ST}
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=0.9\textwidth]{../img/skitterGroupByQ1Par.pdf} % second figure itself
-        \caption{Doba vykonání dotazu G\_Q1 pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 453674558.}
+        \caption{Doba vykonání dotazu G\_Q1 pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 453 674 558.}
         \label{figure.skitterGQ1Par}
     \end{minipage}
 \end{figure}
@@ -676,35 +676,35 @@ class ListHolder<T> : ListHolder { List<T> values }
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonGroupByST.pdf}\centering
-\caption{Doba vykonání dotazů Group by pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 32373599.}
+\caption{Doba vykonání dotazů Group by pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 32 373 599.}
 \label{figure.amazonGroupByST}
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonGroupBySTNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 32373599.}
+\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 32 373 599.}
 \label{figure.amazonGroupBySTNoAgg}
 \end{figure}
 
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanGroupByST.pdf}\centering
-\caption{Doba vykonání dotazů Group by pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 222498869.}
+\caption{Doba vykonání dotazů Group by pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 222 498 869.}
 \label{figure.webberkstanGroupByST}
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanGroupBySTNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 222498869.}
+\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 222 498 869.}
 \label{figure.webberkstanGroupBySTNoAgg}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/skitterGroupByST.pdf}\centering
-\caption{Doba vykonání dotazů Group by pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 453674558.}
+\caption{Doba vykonání dotazů Group by pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 453 674 558.}
 \label{figure.skitterGroupByST}
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/skitterGroupBySTNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 453674558.}
+\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh v jednom vláknu. Počet seskupovaných výsledků je 453 674 558.}
 \label{figure.skitterGroupBySTNoAgg}
 \end{figure}
 
@@ -756,34 +756,34 @@ Obrázky \ref{figure.amazonGroupByParNoAgg}, \ref{figure.webberkstanGroupByParNo
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonGroupByPar.pdf}\centering
-\caption{Doba vykonání dotazů Group by pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 32373599.}
+\caption{Doba vykonání dotazů Group by pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 32 373 599.}
 \label{figure.amazonGroupByPar}
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonGroupByParNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 32373599.}
+\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 32 373 599.}
 \label{figure.amazonGroupByParNoAgg}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanGroupByPar.pdf}\centering
-\caption{Doba vykonání dotazů Group by pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 222498869.}
+\caption{Doba vykonání dotazů Group by pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 222 498 869.}
 \label{figure.webberkstanGroupByPar}
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanGroupByParNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 222498869.}
+\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 222 498 869.}
 \label{figure.webberkstanGroupByParNoAgg}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/skitterGroupByPar.pdf}\centering
-\caption{Doba vykonání dotazů Group by pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 453674558.}
+\caption{Doba vykonání dotazů Group by pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 453 674 558.}
 \label{figure.skitterGroupByPar}
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/skitterGroupByParNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 453674558.}
+\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh osmi vláken. Počet seskupovaných výsledků je 453 674 558.}
 \label{figure.skitterGroupByParNoAgg}
 \end{figure}
 
@@ -828,8 +828,8 @@ for (int i = 0; i < 100_000_000; i++)
 \mc{Test} & \mc{\textbf{Dict}} & \mc{\textbf{ConDict}} & \mc{\textbf{ConDict/Dict}} \\
 \midrule
 Insert $10^6$ & 165 & 667 & 4,04  \\
-Insert $10^7$  & 2476 & 11272 & 4,55 \\
-Read $10^8$  & 19002 & 21516 & 1,13  \\
+Insert $10^7$  & 2476 & 11 272 & 4,55 \\
+Read $10^8$  & 19 002 & 21 516 & 1,13  \\
 \bottomrule
 \end{tabular}
 
