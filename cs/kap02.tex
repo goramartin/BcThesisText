@@ -356,7 +356,7 @@ Nyní přistoupíme k problémům vykonávání dotazu.}
 
 \clearpage
 
-\section{Vykonání dotazu}
+\section{Vykonání dotazu} \label{anal.vykonanidotazu}
 
 Máme připravené obecné podklady.
 Víme jak reprezentovat graf a jak budeme získávat informace z uživatelem zadaného dotazu.
@@ -486,7 +486,7 @@ Nyní pokud budeme chtít vyhodnotit výraz pro $i$-tý řádek tabulky, tak zav
 Nyní přejdeme k analýze jednotlivých částí dotazu. 
 V analýze jsme se rozhodli vychenat část Select, protože není podstatná pro naši práci.}
 
-\section{Match a prohledávání grafu}
+\section{Match a prohledávání grafu} \label{anal.match}
 
 Match část má za úkol najít všechny podgrafy v grafu odpovídající zadanému vzoru.
 Vlastnosti hledání jsou definované jazykem PGQL (sekce \ref{req.pgql}).
@@ -911,7 +911,8 @@ K rozhodnutí, které řešení finálně použít použijeme fakt, že počet v
 V takovém případě nebudeme implementovat paralelní mergování, ale pouze jedno vybrané vlákno provede sjednocení všech výsledků.
 
 \bigskip
-\textit{ Analyzovali jsme a navrhli řešení vykonání částí Match, Group by a Order by.
+\textit{Analyzovali jsme a navrhli řešení vykonání částí Match, Group by a Order by.
+Tímto jsme dokončili analýzu a návrh dotazovacího enginu.
 Daná analýza a návrh nám poskytnou odrazový můstek při analýze úprav pro vykonání částí Group by a Order by v průběhu hledání.
 }
 \clearpage
@@ -938,10 +939,100 @@ Daná analýza a návrh nám poskytnou odrazový můstek při analýze úprav pr
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 \section{Úprava enginu}
 
+Cílem úprav je poskytnout enginu schopnost provádět části Group by a Order by v průběhu prohledávání grafu části Match.
+Obecně to znamená, že v moment nalezení jednoho výsledku jej musíme okamžitě zpracovat.
+Pro Order by to znamená výsledek správně zatřídit do již setříděné posloupnosti výsledků.
+Pro Group by to znamená výsledek přidat do správné skupiny nebo pro něj skupinu vytvořit, navíc musíme pro něj zpracovat agregační funkce. 
+Čili, výsledky v průběhu hledání nebudeme ukládat do tabulky, která se po nalezení všech výsledků předá k dalšímu zpracování.
+Namísto toho navrhneme postup, jak docílit zpracování výsledků v průběhu hledání.
+Postupy ověříme vůči stávajícím řešením v kapitole Experiment \ref{expr} z hlediska doby vykonání.
+V ideálním případě docílíme zrychlení nebo pouze vyrovnání vůči řešením vykonávající Order by a Group by po dokončení hledání.
+Z hlediska implementace to také znamená naprogramovat vylepšení tak, abychom byli schopni jednoduše přepínat mezi způsobem vykonání dotazu. 
+V prvním kroku úprav musíme získat obecný pohled na pozměněné vykonání dotazu.
+Následně v dalších krocích budeme navrhovat části dotazu konkrétněji.
 
+\clearpage
 
+\subsection{Pohled na pozměněné vykonání dotazu}
+
+Analýzu začneme opět obecným pohledem na dotaz. 
+Budeme vycházet z sekce \ref{anal.vykonanidotazu}.
+V dané sekci jsme si definovali prioritu částí dotazu.
+Priorita určovala pořadí vykonání:
+\begin{code}
+Match > Where > Group by > Having > Order by > Select
+\end{code}
+Nejvyšší priorita se nachází nalevo a nejnižší napravo.
+Pro naše potřeby úprav budeme nyní uvažovat pouze části Match, Group by, Order by a Select.
+Match část vygeneruje výsledek a ten předá k zatřídění části Order by nebo k seskupení části Group by.
+Po zpracování se opět pokračuje v prohledávání grafu dokud se nenajde další výsledek a ten se zase předá další části.
+Můžeme si všimnout značné podobnosti s předchozím návrhem. 
+Jediný rozdíl je ten, že místo předání všech výsledku najednou další části se předá výsledek pouze jeden.
+Na Match část se můžeme dívat jako na kontinuální generátor výsledků. 
+V momentě nalezení se výsledek pošle dálší části.
+
+\subsection{Order/Group by část jako bariéra}
+
+Problematická sekce návrhu je část Select.
+Pokud dotaz neobsahuje další části, pak v době nalezení výsledku jej stačí pouze vypsat.
+Nicméně, pokud je v dotazu obsažen Group by nebo Order by, pak se výsledky mohou vypsat až po dokončení třídění nebo seskupování.
+Tedy dané dvě části nám tvoří bariéru, skrze kterou nemůže posílat výsledky dále.
+Jelikož máme navrhnout pouze vykonání částí Order by a Group by, tak budeme uvažovat pro Match a Select stejný návrh, jako v minulých sekcích.
+Tedy dotaz bude tvořen původní částí Select propojenou s části Match.
+Část Match pak propojíme s částmi Order/Group by a upravíme tak, aby jim byla schopna předávat jeden výsledek v moment jeho nalezení.  
+
+\subsection{Změna objektů reprezentující části Order/Group by}
+
+Dotaz obsahující části Select, Match a Order/Group by bude reprezentovám opět řetězcem.
+Select a Match budou tvořit propojení objetků na základě UML diagramů \ref{figure.diaQueryObjects} a \ref{figure.diaQueryObjectsCon}.
+Reprezentanty částí Order by a Group by budou nyní nové objekty (obrázek \ref{figure.diaStreamedResultProcessor}).
+Budou si implementovat logiku zpracování jednoho výsledku v metodě \texttt{ProcessResult}.
+Objekt zároveň obsahuje finální výsledky dotazu, proto potřebujeme metodu \texttt{RetrieveResults} na jejich získání.
+
+\begin{figure}[!htp]
+\includegraphics{../img/diaStreamedResultProcessor.pdf}\centering
+\caption{UML class diagram nových objektů reprezentující části Group by a Order by.}
+\label{figure.diaStreamedResultProcessor}
+\end{figure}
+
+\subsection{Propojení nových objektů s objektem Match}
+
+Vytvořili jsme nové objekty a nyní je musíme propojit s objektem Match.
+Objekty budou propojeny pomocí dvou úrovní.
+První úroveň bude přímé spojení s objektem Match a druhá úroveň bude propojení vyhledávání a zpracování výsledku.
+V této sekci popíšeme pouze první úroveň.
+Vysvětlení druhé úrovně ponecháme na další sekci.
+Abychom realizovali první úroveň, tak musíme upravit objekt Match.
+Objekt Match rozšíříme o chápání logiky nových objektů (obrázek \ref{figure.diaStreamedQueryObjects}).
+Stávající objekt Match jsme v naši představě pouze rozšířili a nevytvářeli kompletně nový objekt, protože propojení s Select objektem je realizováno stále původním způsobem.
+Finální propojení objektů je pak znázorněno na obrázku \ref{figure.diaStreamedQueryObjectsCon}.
+
+\begin{figure}[!htp]
+\includegraphics{../img/diaStreamedQueryObjects.pdf}\centering
+\caption{UML class diagram rozšířeného objektu Match. Objekt nyní drží přímý odkaz na \texttt{ResultProcessor} a zároveň implementuje původní logiku objektu.}
+\label{figure.diaStreamedQueryObjects}
+\end{figure}
+
+\begin{figure}[!htp]
+\includegraphics{../img/diaStreamedQueryObjectsCon.pdf}\centering
+\caption{Diagram objektů upraveného vykonání představující části dotazu select x match (x) order by x. Plná šipka znázorňuje původní propojení a tečkovaná šipka představuje nové nové propojení.}
+\label{figure.diaStreamedQueryObjectsCon}
+\end{figure}
+
+Ještě než přistoupíme k druhé úrovni propojení zmíníme způsob volání funkcí \texttt{Compute}.
+Prvě se zavolá na části Select, ta rekurzivně zavolá metodu na části Match a ta spustí vyhledávání.
+Část Match prohledává graf a výsledky předává části Order/Group by. 
+Po dokončení prohledávání volaná metoda \texttt{Compute} na objektu Match získá zpracované výsledky z další části pomocí volání metody \texttt{RetrieveResults}.
+Výsledky se tímto předají části Select k vypsání uživateli. 
+Tímto jsme dokončili popis první úrovně propojení.
+Nyní přistoupíme k druhé úrovni.
+
+\subsection{Propojení vyhledávání a zpracování výsledku}
+
+První úroveň propojení pouze popisuje propojení objektů a komunikaci během vykonání dotazu.
+Musíme ještě navrhnout způsob předávání výsledků částem Order/Group by v průběhu hledání.
+U návrhu budeme vycházet přímo z původního návrhu z sekce \ref{anal.match}.
 
 \label{anal.improvement}
