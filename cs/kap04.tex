@@ -10,6 +10,12 @@ Kapitolu zakončíme prezentací výsledků.
 \label{expr.graphs}
 
 Pro náš experiment jsme použili tři orientované grafy z databáze SNAP\footnote{\citet{snapnets}}.
+Grafy jsme primárně vybírali na základě počtu nalezených výsledků z testovaného dotazu Match části (sekce \ref{expr.matchDotazy}).
+Počet vygenerovaných výsledku je zobrazen v sekci výsledků \ref{matchResults}.
+Cíl byl nalézt grafy které vygenerují počet výsledků v řádech $10^7$ až $10^8$, abychom mohli sledovat chování řešení při zpracování velkého množství dat.
+Výsledky v řádu $10^9$ bychom měli problém zpracovat na testovaném hardwaru (sekce \ref{expr.hw}), kvůli nedostatku paměti.
+Samotná databáze SNAP nám poskytla datový formát, který jsme byli schopni jednoduše transformovat na náš vstupní datový formát.
+
 
 \begin{table}[!htb]
 \centering
@@ -17,9 +23,9 @@ Pro náš experiment jsme použili tři orientované grafy z databáze SNAP\foot
 \toprule
 \mc{} & \mc{\textbf{\#Vrcholů}} & \mc{\textbf{\#Hran}} \\
 \midrule
-Amazon0601     & 403394 & 3387388 \\
-WebBerkStan & 685230   & 7600595 \\
-As-Skitter    & 1696415   & 11095298 \\
+Amazon0601     & 403 394 & 3 387 388 \\
+WebBerkStan & 685 230 & 7 600 595 \\
+As-Skitter    & 1 696 415 & 11 095 298 \\
 \bottomrule
 \end{tabular}
 
@@ -29,7 +35,7 @@ As-Skitter    & 1696415   & 11095298 \\
 
 \begin{itemize}
 
-\item \textbf{Amazon0601:} Jedná se o graf vytvořený procházením webových stránek Amazonu na základě featury „Customers Who Bought This Item Also Bought“ ze dne 1.6.2003. V grafu existuje hrana z $i$ do $j$, pokud je produkt $i$ často zakoupen s produktem $j$.
+\item \textbf{Amazon0601:} Jedná se o graf vytvořený procházením webových stránek Amazonu na základě funkce „Customers Who Bought This Item Also Bought“ ze dne 1.6.2003. V grafu existuje hrana z $i$ do $j$, pokud je produkt $i$ často zakoupen s produktem $j$.
 
 \item \textbf{WebBerkStan:} Graf popisuje odkazy webových stránek domén \url{https://www.stanford.edu/} a \url{https://www.berkeley.edu/}. Vrcholem je webová stránka a hrana představuje hypertextový odkaz mezi stránkami.
 
@@ -37,7 +43,7 @@ As-Skitter    & 1696415   & 11095298 \\
 
 \end{itemize}
 
-Samotné grafy obsahují pouze seznam hran. Abychom mohli dané grafy využít, bylo nutné je transformovat a vygenerovat k nim Properties na vrcholech. 
+Samotné grafy obsahují pouze seznam hran. Abychom mohli dané grafy využít, bylo nutné je transformovat a vygenerovat k nim vlastnosti na vrcholech. 
 Při příkladu transformace budeme vycházet z následující ukázky hlavičky (graf Amazon0601):
 
 \begin{code}
@@ -54,11 +60,11 @@ Při příkladu transformace budeme vycházet z následující ukázky hlavičky
 
 \subsection{Transformace grafových dat}
 
-Výstupem transformace budou soubory popisující schéma vrcholů/hran NodeTypes.txt/EdgeTypes.txt a datové soubory vrcholů/hran Nodes.txt/Edges.txt.
+Výstupem transformace budou soubory popisující schéma vrcholů/hran \textit{NodeTypes.txt}/\textit{EdgeTypes.txt} a datové soubory vrcholů/hran \textit{Nodes.txt}/\textit{Edges.txt}.
 V našem případě graf bude obsahovat pouze jeden typ hrany a jeden typ vrcholu. 
 Dané omezení pouze snižuje počet nalezených výsledků, což není určující pro náš experiment. 
 
-Ukázka zvoleného schématu pro Nodes.txt/Edges.txt:
+Ukázka zvoleného schématu pro \textit{Nodes.txt}/\textit{Edges.txt}:
 \begin{code}
 Soubor EdgeTypes.txt:
 [
@@ -72,10 +78,21 @@ Soubor NodeTypes.txt:
 
 \end{code}
 
-Generování souborů Edges.txt/Nodes.txt provádí program, který je obsahem přílohy zdrojových kódů \ref{prilohy.kod} v souboru GrapDataBuilder.cs.
-Výstupní soubor Edges.txt bude obsahovat hrany v rostoucím pořadí dle položky \verb+FromNodeId+ z originálního souboru s přidělenými \verb+IDs+ od hodnoty \verb+ID+ posledního vrcholu v souboru Nodes.txt.
-Samotný soubor Nodes.txt obsahuje setřiděné vrcholy podle \verb+ID+ v rostoucím pořadí. Je nutné zmínit, že setřídění dat podle \verb+ID+ není nežádoucí, jelikož nezaručuje nic o seskupení vrcholů v daném grafu.
-Pro připomenutí zmíníme, že prvni sloupeček v datových souborech Edges.txt a Nodes.txt odpovídá unikátnímu \verb+ID+ v rámci celého grafu.
+Soubory obsahují datové schéma v JSON formátu definovaném v sekci (to do). 
+Soubor \textit{EdgeTypes.txt} definuje jeden druh hrany \texttt{BasicEdge} bez vlastností.
+Soubor \textit{NodeTypes.txt} definuje jeden druh vrcholu \texttt{BasicNode} bez vlastností.
+
+Generování souborů \textit{Nodes.txt}/\textit{Edges.txt} provádí program, který je obsahem přílohy zdrojových kódů \ref{prilohy.kod} v souboru \textit{GrapDataBuilder.cs}.
+Výstupní soubor \textit{Edges.txt} bude obsahovat hrany v rostoucím pořadí dle položky \verb+FromNodeId+ z originálního souboru s přidělenými \verb+IDs+ od hodnoty \verb+ID+ posledního vrcholu v souboru \textit{Nodes.txt}.
+Samotný soubor \textit{Nodes.txt} obsahuje setřiděné vrcholy podle \verb+ID+ v rostoucím pořadí. Je nutné zmínit, že setřídění dat podle \verb+ID+ není nežádoucí, jelikož nezaručuje nic o seskupení vrcholů v daném grafu.
+Pro připomenutí zmíníme, že prvni sloupeček v datových souborech \textit{Edges.txt} a Nodes.txt odpovídá unikátnímu \verb+ID+ v rámci celého grafu.
+Výsledný soubor \textit{Nodes.txt} definuje vrcholy grafu. Řádek představuje jeden vrchol.
+Soubor má dva sloupečky. 
+První obsahuje \verb+ID+ vrcholů a druhý obsahuje název typu.
+Soubor \textit{Edges.txt} je ekvivalentní, ale obsahuje \verb+ID+ hran a jejich typ.
+Zároveň pak obsahuje dva sloupečky navíc, které definují směr hrany.
+První sloupeček udává \verb+ID+ počátečního vrcholu a druhý sloupeček určuje \verb+ID+ koncového vrcholu.
+Formát je přesněji definovám v sekci (to do).
 
 Následuje ukázka výstupních souborů transformace pro graf Amazon0601:  
 \begin{code}
@@ -90,59 +107,73 @@ Soubor Nodes.txt:
 ...
 \end{code}
 
-\subsection{Generování Properties vrcholů}
+\subsection{Generování vlastností vrcholů}
 
-Posledním krokem přípravy dat pro experiment je vygenerování Properties vrcholů.
-Jsme si vědomi, že nejideálnější způsob testování je graf s reálnými daty. Nicméně, dané omezení jsme se rozhodli aplikovat kvůli problematickému hledání vhodných dat, které nevyžadují netriviální transformaci do vhodného vstupního formátu.
-Proto pro každý vrchol náhodně vygenerujeme hodnoty čtyř Properties. 
-\clearpage
+Posledním krokem přípravy dat pro experiment je vygenerování vlastnosti vrcholů.
+Rozhodli jsme se pro generování vlastních hodnot.
+Budeme mít tak lepší znalost použitých dat.
+Znalost využijeme k vhodnějšímu otestování vybraných případů.
+Navíc, dané omezení jsme se rozhodli aplikovat kvůli problematickému hledání vhodných dat, které nevyžadují netriviální transformaci do vhodného vstupního formátu.
+Proto pro každý vrchol náhodně vygenerujeme hodnoty čtyř vlastností. 
 \begin{table}[!htb]
 \centering
 \begin{tabular}{llll}
 \toprule
-\mc{\textbf{Property}} & \mc{\textbf{Type}}  & \mc{\textbf{Popis}}\\
+\mc{\textbf{Vlastnost}} & \mc{\textbf{Typ}}  & \mc{\textbf{Popis}}\\
 \midrule
-PropOne     & integer &  \verb+Int32+ s rozsahem $[0; 100000]$ \\
+PropOne     & integer &  \verb+Int32+ s rozsahem $[0; 100$ $000]$ \\
 PropTwo & integer   & \verb+Int32+ s rozsahem $[$\verb+Int32.MinValue+; \verb+Int32.MaxValue+$]$ \\
 PropThree    & string &  délka $[2; 8]$ ASCII znaků s rozsahem $[33; 126]$ \\
 PropFour & integer   & \verb+Int32+ s rozsahem $[0; 1000]$ \\
 \bottomrule
 \end{tabular}
 
-\caption{Generované Properties vrcholů}
+\caption{Generované vlastností vrcholů}
 \label{tab.grafProps}
 \end{table}
 
 \begin{itemize}
 
-\item \textbf{PropTwo} hodnoty jsou rovněž generováný střídavě kladně a záporně, aby nastal rovnoměrný počet záporných a kladných hodnot.
+\item \textbf{PropOne} hodnoty jsou generovány pouze v rozsahu $[0; 100$ $000]$. Neobsahují negativní hodnoty.
+
+\item \textbf{PropTwo} hodnoty jsou generováný střídavě kladně a záporně, aby nastal rovnoměrný počet záporných a kladných hodnot.
 
 \item \textbf{PropThree} hodnoty jsou pouze ASCII znaky z rozsahu $[33; 126]$. Dané omezení výplývá z vlastností dotazovacího enginu, aby bylo možné bez obtíží načíst datový soubor.
 
+\item \textbf{PropFour} hodnoty jsou generovány pouze v rozsahu $[0; 1000]$. Neobsahují negativní hodnoty.
+
 \end{itemize}
 
-Na základě tabulky generovaných Properties \ref{tab.grafProps} následuje ukázka upraveného souboru schématu pro vrcholy:
+Vlastnosti \textbf{PropOne}, \textbf{PropTwo} a \textbf{PropFour} jsme vybrali primárně k otestování části Group by.
+Použijeme je jako klíč Group by.
+Tímto omezíme počet vytvářených skupin během zpracování.
+Maximální počet skupin pro vlastnosti \textbf{PropOne} a \textbf{PropFour} bude dán jejich horní hranicí intervalu rozsahu hodnot.
+Vlastnost \textbf{PropTwo} omezí počet skupin na počet vrcholů v grafu.
+\textbf{PropThree} využijeme v části Order by, abychom mohli sledovat rozdílnost třídění řetězců vůči číselným hodnotám.
+
+
+Na základě tabulky generovaných vlastností \ref{tab.grafProps} následuje ukázka upraveného souboru JSON schématu pro vrcholy:
 \begin{code}
 Soubor NodeTypes.txt:
-[
-{ 
+[{ 
 "Kind": "BasicNode",
 "PropOne": "integer",
 "PropTwo": "integer",
 "PropThree": "string", 
 "PropFour": "integer"
-}
-]
+}]
 \end{code}
 
-Výsledné hodnoty Properties do souborů Edges.txt/Nodes.txt jsou vygenerovány pomocí programu, který používá generátor náhodných čísel. Program je obsažen v příloze zdrojových kódů \ref{prilohy.kod} v souboru PropertyGenerator.cs.
-Pro každý graf bylo použité jiné \verb+Seed+ pro inicializaci náhodného generátoru. Samotná \verb+Seeds+ byla vygenerována rovněž náhodně.
+Výsledné hodnoty vlastností do souborů \textit{Edges.txt}/\textit{Nodes.txt} jsou vygenerovány pomocí programu, který používá generátor náhodných čísel. 
+Program je obsažen v příloze zdrojových kódů \ref{prilohy.kod} v souboru \textit{PropertyGenerator.cs}.
+K inicializaci generátoru náhodných čísel pro každý graf jsme použili různé hodnoty. 
+Zvolené inicializační hodnoty byly vygenerovány rovněž náhodně.
 
 \begin{table}[!htb]
 \centering
 \begin{tabular}{lr}
 \toprule
-\mc{} & \mc{\textbf{Seed}} \\
+\mc{} & \mc{\textbf{Inicializační hodnota}} \\
 \midrule
 Amazon0601     & 429185 \\
 WebBerkStan &  20022 \\
@@ -156,7 +187,6 @@ As-Skitter    & 82 \\
 
 Program generuje hodnoty definované ve statické položce \verb+propGenerators+ a zachovává jejich pořadí ve výsledném datovém souboru.
 Aby nedocházelo k omylům při opakování experimentů, uvádíme útržek kódu použité inicializace položky dle tabulky generovaných vlastností \ref{tab.grafProps} pro všechny tři grafy:
-\clearpage
 
 \begin{code}
     static PropGenerator[] propGenerators = new PropGenerator[]
@@ -168,17 +198,17 @@ Aby nedocházelo k omylům při opakování experimentů, uvádíme útržek kó
     };
 \end{code}
 
-
-Timto jsme dokončili poslední nutný krok k vygenerování platných vstupních dat pro dotazovací engine. Použité grafy k transformaci a výsledné datové soubory jsou obsahem přílohy grafů pro experiment \ref{prilohy.grafy}
+Timto jsme dokončili poslední nutný krok k vygenerování platných vstupních dat pro dotazovací engine. 
+Výsledné datové soubory jsou obsahem přílohy grafů pro experiment \ref{prilohy.grafy}
 
 \section{Výběr dotazů}
 \label{expr.dotazy}
 
 Dotazy použité při experimentu dělíme do tří kategorií a to Match, Order by a Group by.
 Pro připomenutí zmíníme, že proměnné použité v jiných částech než Match způsobují ukládání daných proměnných do tabulky.
-Přidělené zkratky dotazům budou uváděný ve výsledcích experimentu namísto celých dotazů. 
+Přidělené zkratky dotazům budou uváděny ve výsledcích experimentu namísto celých dotazů. 
 
-\subsection{Dotazy Match}
+\subsection{Dotazy Match} \label{expr.matchDotazy}
 
 Každý dotaz provádí vyhledáváním vzoru v grafu.
 Níže zmíněné dotazy nám při experimentu pomohou oddělit čas agregací od času stráveném vyhledáváním vzoru.
@@ -211,8 +241,6 @@ M\_Q4 & select x, y, z match (x) -> (y) -> (z); \\
 \item M\_Q4 testuje vyhledávání společně s ukládáním proměnné x, y a z do tabulky výsledků.
 \end{itemize}
 
-\clearpage
-
 \subsection{Dotazy Order by}
 
 \begin{table}[!htb]
@@ -235,7 +263,7 @@ O\_Q4 & select x.PropThree match (x) -> (y) -> (z) order by x.PropThree \\
 \begin{itemize}
 
 \item O\_Q1 testuje třídění podle \verb+ID+ vrcholů y. 
-\item O\_Q2 přidává do kontextu O\_Q1 overhead za porovnávání a ukládání další proměnné.
+\item O\_Q2 přidává do kontextu O\_Q1 režii za porovnávání a ukládání další proměnné.
 \item O\_Q3 testuje třídění náhodně vygenerovaných hodnot Int32 (viz \ref{tab.grafProps}).
 \item O\_Q4 testuje třídění náhodně vygenerovaných řetězců (viz \ref{tab.grafProps}).
 
@@ -269,26 +297,46 @@ G\_Q8 & select min(x.PropOne), avg(x.PropOne) $M$ group by x.PropFour;\\
 Pro výpočet agregačních funkcí jsme zvolili funkce \verb+min+ a \verb+avg+, protože představují netriviální práci narozdíl od funkcí \verb+sum+/\verb+count+ (jedno přičtení proměnné).
 Funkce \verb+min+ porovná a prohodí výsledek. 
 Thread-safe verze používá mechanismus \verb+CompareExchange+. 
-Funkce \verb+avg+ provádí dva přičtení proměnné. 
+Funkce \verb+avg+ provádí dvě přičtení proměnné. 
 Thread-safe verze používá atomická přičtení. 
 Otestujeme i samotné seskupování na dotazech G\_Q2 až G\_Q8. 
 V dotazech nahradíme Select část prvním klíčem Group by. 
-Dané dotazy značíme symbolem $'$ (např. G\_Q2$')$.
+Dané dotazy značíme symbolem $'$ (např. G\_Q7$'$ select x.PropOne match (x) -> (y) -> (z) group by x.PropOne).
+
+V dotazech je nutné si uvědomit, co znamenají klíče v části Group by.
+Klíče mají svůj rozsah.
+Hodnoty klíčů jsou uloženy ve vrcholech.
+Pokud by každý vrchol měl unikátní hodnotu klíče, pak počet vytvářených skupin v části Group by je shora omezen počtem vrcholů v grafu.
+To se děje pro dotazy G\_Q2, G\_Q3 a G\_Q6.
+Zvolíme-li dva takové klíče za klíče Group by, pak maximální počet skupin je shora omezen skalárním součinem jejich rozsahů.
+To nastává pro dotazy  G\_Q4 a G\_Q5.
+Posledním případem jsou klíče vlastností \textbf{PropOne} a \textbf{PropFour}.
+Dané vlastnosti obsahují hodnoty dle tabulky rozsahů \ref{tab.grafProps}.
+Pro testované grafy platí, že počet vrcholů (tabulka \ref{tab.grafBase}) je vždy větší než rozsah hodnot vlastností.
+Odtud vyplává, že při generování vlastností vrcholů v minule sekci určite nastala situace, při které dva vrcholy obsahují stejnou hodnotu.
+Tímto jsme dokázali shora omezit počet skupin v dotazech G\_Q7 a G\_Q8 maximální hodnotou intervalu rozsahu hodnot vlastností.
+
+Další nutnou znalostí je způsob paralelizace prohledávání grafu (sekce \ref{anal.matchPar}).
+Každé vlákno provádí prohledávání grafu z určité části vrcholů v grafu.
+Platí, že každé vlákno neprovede prohledávání ze stejného vrcholu jako vlákno jiné.
+Tedy vrcholy x jsou unikátní pro každé vlákno, taktéž hodnoty jejich vlastností.
+Při paralelizaci se provádí paralelní merge do globální struktury.
+V dotazech G\_Q3 a G\_Q6 pak vlákna při mergi vytvářejí vždy nové záznamy v dané struktuře, jelikož výsledky vláken jsou vždy rozdílné.  
+To nám umožní sledovat situaci, kdy vlákna vytvářejí navzájem rozdílné záznamy.
+
+Obecně dotazy G\_Q4/G\_Q5, G\_Q6, G\_Q7 a G\_Q8 nám umožní otestovat chování řešení při snižování počtu vytvářených skupin.
+Pro G\_Q3 a G\_Q6 bude navíc vidět režie za porovnání Property vůči \verb+ID+.
 
 \begin{itemize}
 
 \item G\_Q1 testuje single group Group by. Vše je agregováno pouze do jedné skupiny. 
 \item G\_Q2 a G\_Q3  testuje vytváření skupin podle \verb+ID+ vrcholů. Rozdíl mezi nimi je ten, že proměnná x je při paralelním zpracování přístupná pouze jednomu vláknu za celý běh vyhledávání. Maximální počet skupin je ze shora omezen počtem vrcholů v grafu.
-\item G\_Q4 a G\_Q5 přidávájí overhead za ukládání a zpracovávání (hash + compare) další proměnné. Počet skupin je ze shora omezen počtem hran v grafu. Tyto dotazy obsahují nejvíce skupin mezi zbylými dotazy.
+\item G\_Q4 a G\_Q5 přidávájí režii za ukládání a zpracovávání (hash + compare) další proměnné. Počet skupin je ze shora omezen počtem hran v grafu. Tyto dotazy obsahují nejvíce skupin mezi zbylými dotazy.
 \item G\_Q6 testuje vytváření skupin náhodně vygenerovaných hodnot z celého rozsahu \verb+Int32+ (viz \ref{tab.grafProps}). Počet skupin je ze shora omezen počtem vrcholů v grafu.
 \item G\_Q7 testuje vytváření skupin náhodně vygenerovaných hodnot z rozsahu $[0; 100000]$ \verb+Int32+ (viz \ref{tab.grafProps}). Dojde k rozprostření několika stejných hodnot v grafu. Maximální počet skupin je 100000.
 \item G\_Q8  testuje vytváření skupin náhodně vygenerovaných hodnot z rozsahu $[0; 1000]$ \verb+Int32+ (viz \ref{tab.grafProps}). Dojde k rozprostření mnoha stejných hodnot v grafu. Maximální počet skupin je 1000.
 
 \end{itemize}
-
-Dotazy G\_Q4/G\_Q5, G\_Q6, G\_Q7 a G\_Q8 nám umožní sledovat chování řešení při snižování počtu vytvářených skupin.
-Pro G\_Q4 a G\_Q6 bude vidět overhead za porovnání Property vůči \verb+ID+.
-
 
 \section{Metodika}
 
@@ -301,18 +349,15 @@ To není možné u paralelního testování, protože vlákna běží v nativní
 Následuje ukázka hlavní smyčky benchmarku:
 
 \begin{code}
-...
- WarmUp(...);
-...
+WarmUp(...);
 double[] times = new double[repetitions];
-for (int i = 0; i < repetitions; i++)
-{
+for (int i = 0; i < repetitions; i++) {
     CleanGC(); 
     var q = Query.Create(..., false); 
     timer.Restart();
 
     q.Compute();
-
+    
     timer.Stop();
     times[i] = timer.ElapsedMilliseconds;
     ...
@@ -334,13 +379,26 @@ static void CleanGC()
 }
 \end{code}
 
-K měření uplynulé doby  jsme použili nativní třídu C\# \verb+Stopwatch+, protože náš hardware a operační systém podporuje high-resolution performance counter.
-Pro interpretaci výsledků jsme zvolili medián naměřených hodnot, který je doprovázen minimem a maximem.
+\subsection{Měření uběhlého času}
 
+Protože benchmark je implementovám v jazyce C\# \citep{microsoft}, rozhodli jsme se využít nativních možností.
+V jazyce C\# existují dvě hlavní metody meření a to pomocí třídy \texttt{Stopwatch} nebo volání metody \texttt{Process.TotalProcessorTime}.
+První možnost je závíslá na instanci.
+Meří uběhlý čas mezi voláním metod \texttt{Start} a \texttt{Stop} pro instanci bez ohledu v jakém vlákně byly metody volány.
+Měření probíhá pomocí počítání taktů časovače v podkladovém mechanismu hardwaru.
+Pokud hardware a operační systém podporují časovač s vysokým rozlišením, pak je využit tento.
+V opačném případě je využit pouze systémový časovač. 
+
+Druhá možnost měří dobu stravenou procesorem při zpracování procesu.
+Tato doba obsahuje čas zpracování aplikační části společně s časem stráveným v jádru operačního systému.
+Tudíž doba obsahuje pouze čas běhu procesoru a nezapočítává dobu čekání vláken v paralelních řešeních.
+
+Rozhodli jsme se využít první variantu, protože lépe odráží reálný běh programu.
+Navíc, náš hardware a operační systém umožňují využití časovače s vysokým rozlišením.
 
 \subsection{Volitelné argumenty konstruktoru dotazu}
 
-Pro měření argumenty \verb+FixedArraySize+ a \verb+VerticesPerThread+ jsme volili následovně:
+Pro měření argumenty \verb+FixedArraySize+ a \verb+VerticesPerThread+ (sekce to do) jsme volili následovně:
 
 \begin{table}[!htb]
 \centering
@@ -348,9 +406,9 @@ Pro měření argumenty \verb+FixedArraySize+ a \verb+VerticesPerThread+ jsme vo
 \toprule
 \mc{} & \mc{\textbf{FixedArraySize}} & \mc{\textbf{VerticesPerThread}} \\
 \midrule
-Amazon0601 &  4194304 & 512 \\
-WebBerkStan & 4194304 & 512 \\
-As-Skitter & 8388608 & 1024\\
+Amazon0601 &  4 194 304 & 512 \\
+WebBerkStan & 4 194 304 & 512 \\
+As-Skitter & 8 388 608 & 1024\\
 \bottomrule
 \end{tabular}
 
@@ -358,11 +416,10 @@ As-Skitter & 8388608 & 1024\\
 \label{tab.args}
 \end{table}
 
-FixedArraySize udává fixní velikost polí v tabulce použité pro ukládání výsledků (tj. sloupeček je pole polí).
-VerticesPerThread určuje počet přidělovaných vrcholů k prohledání v průběhu paralelní Match části. 
-Dané argumenty se nám nejvíce osvědčili v průběhu vývoje dotazovacího enginu. Vyhledávání vzoru na nich docilovalo nejrychlejších výsledků.
+Dané argumenty se nám nejvíce osvědčili v průběhu vývoje dotazovacího enginu. 
+Vyhledávání vzoru na nich dosahovalo nejrychlejších výsledků.
 
-\subsection{Hardwarová specifikace}
+\subsection{Hardwarová specifikace} \label{expr.hw}
 
 Všechny testy proběhly na notebooku Lenovo ThinkPad E14 Gen. 2 verze 20T6000MCK s operačním systémem Windows 10 x64.
 \begin{itemize} 
@@ -373,7 +430,7 @@ Všechny testy proběhly na notebooku Lenovo ThinkPad E14 Gen. 2 verze 20T6000MC
 
 \subsection{Příprava hardwaru}
 
-Každému testování předcházel studený reboot systému a odpojení od internetu. 
+Každému testování předcházel studený restart systému a odpojení od internetu. 
 V průběhu testování neběžel žádný klientský proces kromě benchmarku a nativních systémových procesů. 
 Rovněž, použitý notebook byl napájen po celou dobu testování.
 
@@ -463,11 +520,10 @@ Jak vidíme na obrázcích, řešení se přibližuje rychlosti řešení Normal
 
 \clearpage
 
-
 Problém by nastal, pokud by množství hodnot odpovídalo počtu nalezených výsledků. 
-V tomto případě bychom vytvářeli zbytečný overhead za režii pole.
-Dle našich předpokladů se ukázalo, že třídění podle \verb+ID+ (O\_Q1 a O\_Q2) vůči Properties (O\_Q3 a O\_Q4) vede ke znatelnému overheadu.
-Je to způsobeno nutným přístupem k databázi, při kterém se ověřuje, jestli daná Property existuje na daném elementu a následném čtení hodnoty ze struktury obsahující ji.
+V tomto případě bychom vytvářeli zbytečnou režii za vzniklá pole.
+Dle našich předpokladů se ukázalo, že třídění podle \verb+ID+ (O\_Q1 a O\_Q2) vůči vlastnostem (O\_Q3 a O\_Q4) vede ke znatelnému zpomalení.
+Je to způsobeno nutným přístupem k databázi, při kterém se ověřuje, jestli daná vlastnost existuje na daném elementu a následném čtení hodnoty ze struktury obsahující ji.
 
 Paralelní zpracování aplikuje použité verze $(a, b)$-stromů ze zpracování pro jedno vlákno. 
 Half-Streamed řešení obsahuje lokální tabulku a indexační strom pro každé běžící vlákno. 
@@ -481,13 +537,13 @@ Při porovnávání je nutné mít na paměti, že lokálně bežící části p
 Nyní budeme prezetovat výsledky paralelizace (obrázky \ref{figure.amazonOrderPar} a \ref{figure.webberkstanOrderPar}).
 Pro dotazy O\_Q1 a O\_Q2 vidíme u Streamed řešení mnohonásobný rozdíl vůči ostatním řešením, protože přihrádky jsou rozděleny na základě rozsahu typu klíče (např. pro O\_Q3 $[$\verb+Int32.MinValue+; \verb+Int32.MaxValue+$]$).
 Avšak, hodnoty třídění spadají do rozsahu \verb+ID+ vrcholů grafu, což představuje rozsah $\approx [0; \#vrcholů]$. 
-Hodnota třídění spadá vždy do jedné přihrádky a výsledná doba je rovna době single thread řešení s overheadem za přistupovaný zámek.
+Hodnota třídění spadá vždy do jedné přihrádky a výsledná doba je rovna době single thread řešení s režií za přistupovaný zámek.
 Pro O\_Q1 je to zpomalení o $[20,51; 21]$\% a pro O\_Q2 $[17,64; 18,9]$\%.
 U dotazů O\_Q3 a O\_Q4 je tříděno pomocí hodnot vygenerovaných náhodně spadající do celého rozsahu typu klíče a zde Streamed řešení předčilo všechna ostatní. 
-Pro budoucí rozšíření by bylo nutné zvážit vytvoření statistik rozsahů jednotlivých Properties, aby bylo možné lépe vytvořit rozdělení přihrádek.
+Pro budoucí rozšíření by bylo nutné zvážit vytvoření statistik rozsahů jednotlivých vlasnotní, aby bylo možné lépe vytvořit rozdělení přihrádek.
 
 Half-Streamed řešení se přibližuje Normal řešení v prvních dvou dotazech a překonává jej ve třetím i čtvrtém dotazu pro řešení používající ABTreeValueAccumulator.
-U třetího a čtvrtého dotazu se porovnává pomocí Properties. V single thread zpracovávání jsme viděli overhead za dané porovnání.
+U třetího a čtvrtého dotazu se porovnává pomocí vlastností. V single thread zpracovávání jsme viděli režii za dané porovnání.
 V druhém kroku u daného Half-Streamed řešení dochází k mergování pouze akumulovaných skupin, což rapidně sníží počet porovnávání při mergi a odtud výhoda oproti Normal Merge sort řešení. 
 To samé platí u Streamed řešení, protože počáteční rozhašování způsobí vkládání do mnohonásobně menší skupiny výsledků. 
 Celá situace je navíc umocněna zmíněným cachovaním porovnávaných hodnot. 
@@ -680,7 +736,7 @@ Absenci jevu neumíme plně objasnit.
 Na největším grafu platí, že použité ukládání List je pomalejší než Bucket, kvůli indirekci navíc.
 Na menších grafech rozdíly ustupují a dokonce nastavají situace, kdy je List rychlejší. 
 Přesněji u dotazů G\_Q4 a G\_Q5.
-Přehození rolí si u nich vysvětlujeme overheadem za množství vytvářených polí (tj. hodně alokací, málo přístupů), které se vyrovná použité indirekci.
+Přehození rolí si u nich vysvětlujeme režií za množství vytvářených polí (tj. hodně alokací, málo přístupů), které se vyrovná použité indirekci.
 Na grafu Amazon0601 u  G\_Q4 a G\_Q5 dotazů je Streamed řešení pomalejší než Half-Streamed (List), protože také vytváří pole jako Bucket řešení (viz implementace TODO).
 U dalších grafů je pak počet vytváření polí mnohonosábně menší než počet přístupů k nim.
 
@@ -737,7 +793,7 @@ Danou situaci si vysvětlujeme synchronizací.
 Prvni vrstva synchronizace nastává u přistupu k paralelní mapě a čtení/vložení záznamu.
 Po získání \verb+value+ z mapy následuje druhá vrstva, která obsahuje volání thread-safe funkcí pro výpočet agregovaných hodnot pro danou skupinu.
 Z obrázků \ref{figure.amazonGQ1Par}, \ref{figure.webberkstanGQ1Par} a \ref{figure.skitterGQ1Par} (Streamed řešení) jsme viděli cenu za synchronizaci na agregačních funkcích při přístupu osmi vláken.
-Pro představu pouhé režie paralelní mapy jsme otestovali overhead zvlášť čtení a vložení \verb+ConcurrentDictionary+ vůči \verb+Dictionary+ pro jedno vlákno.
+Pro představu pouhé režie paralelní mapy jsme otestovali režii zvlášť čtení a vložení \verb+ConcurrentDictionary+ vůči \verb+Dictionary+ pro jedno vlákno.
 Následuje příklad kódu použitého při testu:
 \begin{code}
 Random ran = new Random(100100);
@@ -827,18 +883,18 @@ První je graf As-Skitter u dotazů  G\_3/G\_3$'$ a  G\_6/G\_6$'$.
 Druhý graf je Amazon0601 na dotazech G\_4/G\_4$'$ a  G\_5/G\_5$'$.
 Myslíme si, že se jedná o specifické situace pro dané grafy a nedokážeme je plně zodpovědět, jelikož navzájem a pro graf WebBerkStan nenastávají.
 Obecně pro dotazy G\_6/G\_6$'$ až G\_8/G\_8$'$ vidíme mírné zrychlení Streamed řešení, protože šetří drahou réžii za vytváření nových skupin.
-Pro Normal: Global nastává zpomalení, jelikož se při vkládání do mapy častěji vyvolá drahé porovnání klíčů pomocí Properties skrze tabulku výsledků. 
+Pro Normal: Global nastává zpomalení, jelikož se při vkládání do mapy častěji vyvolá drahé porovnání klíčů pomocí vlastností skrze tabulku výsledků. 
 
-Můžeme zde aplikovat výsledky z single-thread řešení pro řešení Normal: Two-Step proti Half-Streamed: Two-Step.
+Můžeme zde aplikovat výsledky z single thread řešení pro řešení Normal: Two-Step proti Half-Streamed: Two-Step.
 Half-Streamed řešení je zde opět pomalejší než Normal řešení nebo jsou vyrovnané.
-Dále zde opět vidíme zpomalení implementace List vůči Bucket, které jsme viděli u single-thread řešení.
+Dále zde opět vidíme zpomalení implementace List vůči Bucket, které jsme viděli u single thread řešení.
 Situace při které je List rychlejší nastávala pro dotazy G\_Q4 a G\_Q5 na grafu Amazon0601 a WebBerkStan.
 Nyní nastává pouze pro graf Amazon0601 s řešením Normal: LocalGroupByLocalTwoWayMerge.
 Two-step (List) řešení při mergi překopírovává větší množství dat, proto u něj daný jev už nenastává. 
 
-Všem řešením dominuje Normal: LocalGroupByLocalTwoWayMerge, které provádí vše lokálně a ujišťuje nás v předpokladu, že hlavní overhead je způsoben synchronizací.
+Všem řešením dominuje Normal: LocalGroupByLocalTwoWayMerge, které provádí vše lokálně a ujišťuje nás v předpokladu, že hlavní důvod zpomalení je synchronizace.
 Například dané řešení vůči Normal: Two-Step. 
-Je zde vidět overhead za použití paralelní mapy vůči mergování lokálně po dvojicích, jelikož samotný první krok je totožný pro obě řešení.
+Je zde vidět režie za použití paralelní mapy vůči mergování lokálně po dvojicích, jelikož samotný první krok je totožný pro obě řešení.
 Zpomalení Normal: Two-Step je ještě znatelnější pro dotazy G\_Q4/G\_Q4$'$ a G\_Q5/G\_Q5$'$, kdy se vkládá množství skupin do paralelní mapy.
 
 Z výsledků usuzujeme, že vylepšená řešení pro náš případ paralelizace neposkytují z hlediska rychlosti vykonání znatelné výhody oproti stávajícím řešením.

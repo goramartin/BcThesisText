@@ -557,11 +557,11 @@ Teprve až projdeme všechny komponenty, výsledek se uloží do tabulky.
 V tuto chvíli budeme vlastnit finální výsledek hledáná, který můžeme uložit do tabulky.
 Zbavíme se tak nutnosti uchovávat mezivýsledky a následnému tvoření skalárního součinu.
 
-\subsection{Paralelizace hledání}
+\subsection{Paralelizace hledání} \label{anal.matchPar}
 
 Nyní přistoupíme k analýze paralelizace hledání.
 V paralelním řešení chceme použít co nejmenší počet synchronizačních primitiv.
-Ukládání výsledků do společné struktury by způsobilo značny overhead za synchronizaci.
+Ukládání výsledků do společné struktury by způsobilo značnou režii za synchronizaci.
 V ideálním případě bude probíhat hledání lokálně, následně pak dojde k efektivnímu mergi.
 
 Jako řešení jsme zvolili jeden ze základních způsobů.
