@@ -325,7 +325,7 @@ V dotazech G\_Q3 a G\_Q6 pak vlákna při mergi vytvářejí vždy nové záznam
 To nám umožní sledovat situaci, kdy vlákna vytvářejí navzájem rozdílné záznamy.
 
 Obecně dotazy G\_Q4/G\_Q5, G\_Q6, G\_Q7 a G\_Q8 nám umožní otestovat chování řešení při snižování počtu vytvářených skupin.
-Pro G\_Q3 a G\_Q6 bude navíc vidět režie za porovnání Property vůči \verb+ID+.
+Pro G\_Q3 a G\_Q6 bude navíc vidět režie za porovnání vlastnoti vůči \verb+ID+.
 
 \begin{itemize}
 
@@ -333,7 +333,7 @@ Pro G\_Q3 a G\_Q6 bude navíc vidět režie za porovnání Property vůči \verb
 \item G\_Q2 a G\_Q3  testuje vytváření skupin podle \verb+ID+ vrcholů. Rozdíl mezi nimi je ten, že proměnná x je při paralelním zpracování přístupná pouze jednomu vláknu za celý běh vyhledávání. Maximální počet skupin je ze shora omezen počtem vrcholů v grafu.
 \item G\_Q4 a G\_Q5 přidávájí režii za ukládání a zpracovávání (hash + compare) další proměnné. Počet skupin je ze shora omezen počtem hran v grafu. Tyto dotazy obsahují nejvíce skupin mezi zbylými dotazy.
 \item G\_Q6 testuje vytváření skupin náhodně vygenerovaných hodnot z celého rozsahu \verb+Int32+ (viz \ref{tab.grafProps}). Počet skupin je ze shora omezen počtem vrcholů v grafu.
-\item G\_Q7 testuje vytváření skupin náhodně vygenerovaných hodnot z rozsahu $[0; 100000]$ \verb+Int32+ (viz \ref{tab.grafProps}). Dojde k rozprostření několika stejných hodnot v grafu. Maximální počet skupin je 100000.
+\item G\_Q7 testuje vytváření skupin náhodně vygenerovaných hodnot z rozsahu $[0; 100$ $000]$ \verb+Int32+ (viz \ref{tab.grafProps}). Dojde k rozprostření několika stejných hodnot v grafu. Maximální počet skupin je 100 000.
 \item G\_Q8  testuje vytváření skupin náhodně vygenerovaných hodnot z rozsahu $[0; 1000]$ \verb+Int32+ (viz \ref{tab.grafProps}). Dojde k rozprostření mnoha stejných hodnot v grafu. Maximální počet skupin je 1000.
 
 \end{itemize}
