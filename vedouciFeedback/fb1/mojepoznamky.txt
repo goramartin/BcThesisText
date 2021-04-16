@@ -1,5 +1,9 @@
 Co nesmim zapomenout?
 
+Experiment >
+
+A.3 odkaz na prilohu je spravne
+
 Ty error baru match jsou spravne, jsou jen tak male kvůli meritka.
 Meritko je na tisice, ale ty odchylky jsou v ramci desitek.
 
