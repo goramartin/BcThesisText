@@ -555,7 +555,7 @@ Pokud dojde k nalezení podgrafu, tak výsledek bude uložen způsobem z sekce \
 Vyhledávání separátních komponent vyřešíme následovně.
 V momentě, kdy nalezneme podgraf odpovídající jedné komponentě, tak se spustí DFS vyhledávání pro komponentu další.
 Teprve až projdeme všechny komponenty, výsledek se uloží do tabulky.
-V tuto chvíli budeme vlastnit finální výsledek hledáná, který můžeme uložit do tabulky.
+V tuto chvíli budeme vlastnit finální výsledek hledání, který můžeme uložit do tabulky.
 Zbavíme se tak nutnosti uchovávat mezivýsledky a následnému tvoření skalárního součinu.
 
 \subsection{Paralelizace hledání} \label{anal.matchPar}
@@ -574,7 +574,7 @@ Všechna vlákna budou sdílet thread-safe objekt, který přiděluje části vr
 Vlákno vždy zažádá \texttt{VertexDistributor} o určitý počet vrcholů, ze kterých spustí lokálně prohledávání a výsledky uloží do své tabulky.
 Nikdy nenastave situace, kdy dva vlákna mají stejný startovní vrchol.
 Po vyčerpání všech vrcholů grafu prohledávání končí.
-V Single-thread řešení jsou přiděleny všechny vrcholy najednou danému vláknu. 
+V jednovláknovém řešení jsou přiděleny všechny vrcholy najednou danému vláknu. 
 Rozložení objektů mezi vlákny je zobrazeno na obrázku \ref{figure.diaQueryObjectsMatchPar}. 
 
 \texttt{VertexDistributor} je zde velice důležitý.
@@ -585,7 +585,7 @@ Jedno vlákno by mohlo dostat vrholy nacházející se v oblasti s množstvím h
 Jelikož se rychle vyčerpaly startovní vrcholy, tak vlákno z řídké oblasti ukončí svou práci mnohem dříve něž vlákno první.
 Nyní se musí čekat na dokončení práce prvního vlákna.
 
-\subsection{Merge výsledků hledání}
+\subsection{Slévání výsledků hledání}
 
 Po dokončení hledání je nutno vyřešit mergování výsledků jednotlivých vláken.
 Kdybychom ponechali výsledky bez úpravy, tak nedokážeme rovnoměrně rozdělit práci mezi vlákna v paralelních řešeních Order/Group by.
@@ -597,7 +597,7 @@ V kroku mergování nyní pouze překopírujeme odkazy na pole místo samotných
 Avšak, pořád nám zůstává nutnost překopírovat výsledky posledních polí sloupečků, která jsou nezaplněná.
 Volbou vhodné hodnoty \texttt{FixedArraySize} se bude překopírovávat pouze malé množství výsledků.
 Konkrétní volba hodnoty je heuristická a vyplývá z vlastností grafu a počtu nalezených výsledků.
-Pro naše učely během implementace zkusíme zvolit prvně $n/\log_2 n$ ($n = $ \#výsledků hledání) pro single-thread a pro paralelní zpracování $(n/\log_2 n)/\#threads$.
+Pro naše učely během implementace zkusíme zvolit prvně $n/\log_2 n$ ($n = $ \#výsledků hledání) pro jednovláknové a pro paralelní zpracování $(n/\log_2 n)/\#threads$.
 $log_2 n$ odpovídá počtu přealokování při plnění dynamického pole $n$ položkami.
 Mergování bude probíhat opět paralelně.
 Nabízí se dva způsoby.
@@ -777,7 +777,7 @@ V objektu výsledku musíme znát aktuální minimum/maximum a jestli byla hodno
 \item \texttt{Avg:} výsledek je aritmetický průměr. Chtěli bychom volit inkrementální metodu. Budeme si ukládat počet výsledků a sumu hodnot. Jako finální krok dojde k vypočtení podílu hodnot.
 \end{itemize}
 
-\subsection{Single thread zpracování}
+\subsection{Jednovláknové zpracování}
 
 Po celou dobude budeme pracovat s tabulkou výsledků Match části.
 Pro vykonání Group by se nám nabízí několik možností.
@@ -812,7 +812,7 @@ Nastávají pro něj také stejné problémy v paralelním prostředí.
 
 Chceme zvolit několik řešení s rozdílnou úrovní synchronizace, protože nevíme, které bude dosahovat nejrychlejších výsledků.
 Navíc nám větší počet řešení umožní lépe porovnat vylepšená řešení.
-Pro paralelní zpracování jsme vymysleli tři přístupy: \textbf{Global}, \textbf{Two-step} a \textbf{Local + dvoucestný merge} (všechny budou schopny pracovat s úložišti Bucket i List).
+Pro paralelní zpracování jsme vymysleli tři přístupy: \textbf{Global}, \textbf{Two-step} a \textbf{Local + dvoucestné slévání} (všechny budou schopny pracovat s úložišti Bucket i List).
 Každý z nich začíná rozdělením tabulky výsledků Match na ekvivalentní části.
 To si můžeme dovolit, neboť máme tabulku obsahující všechny výsledky hledání.
 Každé vlákno dostane danou část ke zpracování.
@@ -844,7 +844,7 @@ Tímto můžeme implementovat thread-safe funkci pomocí atomických operací, j
 
 \subsection{Global Group by}
 
-Všechna vlákna budou provádět ekvivalent single-thread seskupování pomocí thread-safe paralelní mapy/slovníku.
+Všechna vlákna budou provádět ekvivalent jednovláknového zpracování pomocí thread-safe paralelní mapy/slovníku.
 Skupiny se vytváření globálně.
 Všimněme si nutnosti dvojité synchronizace.
 Prvě musí dojít k synchronizaci vytváření záznamů v mapě.
@@ -869,10 +869,10 @@ Global Group by je znázorněn na obrázku \ref{figure.diaGlobalGr}.
 
 Tento přístup probíhá ve dvou krocích.
 Lokální část nasledovaná globální částí. 
-V lokální části pro každé vlákno běží kompletně identický ekvivalent single thread řešení.
+V lokální části pro každé vlákno běží kompletně identický ekvivalent jednovláknového zpracování.
 Globální část nastane v moment dokončení této práce.
-Místo aby vlákno ukončilo běh, tak provede merge svých výsledků do thread-safe paralelní mapy.
-Tento přístup kombinuje single-thread řešení společně s přístupem Global.
+Místo aby vlákno ukončilo běh, tak provede slévání svých výsledků do thread-safe paralelní mapy.
+Tento přístup kombinuje jednovláknové řešení společně s přístupem Global.
 Mínus je, že zde musí docházet mergování, ale v prvním kroku se využívají metody, které nemusí řešit synchoronizaci. 
 Problematická část je zde mergování výsledků s List úložištěm výsledků agregačních funkcí.
 První fáze nepředstavuje problém. 
@@ -880,18 +880,18 @@ Druhá představuje problém jako u Global řešení, tedy platí vše, co jsme 
 Můžeme zkusit implementovat stejné řešení jako u Global pomocí semaforu.
 Two-step Group by je znázorněn na obrázku \ref{figure.diaTwoGr}.
 
-\subsection{Local + dvoucestný merge Group by}
+\subsection{Local + dvoucestné slévání Group by}
 
 Přístup nepoužívá thread-safe metody ani paralelní mapu.
 Opět rozdělíme přístup na dvě části.
-V prvník kroku pro každé vlákno běží identický ekvivalent single thread řešení.
-Po dokončení se spustí dvoucestný merge na výsledky vláken.
+V prvník kroku pro každé vlákno běží identický ekvivalent jednovláknového zpracování.
+Po dokončení se spustí dvoucestný slévání na výsledky vláken.
 Mergování bude připomínat binární strom.
 Listy představují lokální seskupování vláken.
 Vnitřní vrcholy stromu představují mergování výsledků.
 Finální výsledek je vytvořen v kořeni.
 U mergování využijeme paralelního zpracování.
-Při mergi vždy jedno vlákno ukončí běh, druhé z dvojice provede merge a postoupí ke kořeni. 
+Při mergi vždy jedno vlákno ukončí běh, druhé z dvojice provede slévání a postoupí ke kořeni. 
 Hlavní výhody byly už zmíněny.
 Používají se metody bez synchronizace.
 Nevýhoda řešení je, že vlákna musejí čekat při mergi na dokončení práce druhého vlákna a teprve až pak může dojít k mergi.
@@ -905,7 +905,7 @@ Mergování všech výsledků do jednoho úložiště výsledků agregačních f
 Problémem tohoto přístupu je synchronizace mnoha vláken na jednom místě.
 Ideálnější je využít lokálního zpracování zbylých dvou metod.
 Opět řešení rozdělíme na dva kroky. 
-V prvním kroku každé vlákno provádí ekvivalent single thread řešení bez vytváření skupin, tj. počítá pouze agregační funkce pro jednu skupinu.
+V prvním kroku každé vlákno provádí ekvivalent jednovláknového zpracování bez vytváření skupin, tj. počítá pouze agregační funkce pro jednu skupinu.
 Výsledky se následně musí mergovat.
 K rozhodnutí, které řešení finálně použít použijeme fakt, že počet výsledků k mergování je roven počtu vláken.
 V takovém případě nebudeme implementovat paralelní mergování, ale pouze jedno vybrané vlákno provede sjednocení všech výsledků.
@@ -933,7 +933,7 @@ Daná analýza a návrh nám poskytnou odrazový můstek při analýze úprav pr
 
 \begin{figure}[!htp]
 \includegraphics{../img/diaLocalGr.pdf}\centering
-\caption{Diagram paralelizace Local + dvoucestný merge Group by pro 4 vlákna.}
+\caption{Diagram paralelizace Local + dvoucestné slévání Group by pro 4 vlákna.}
 \label{figure.diaLocalGr}
 \end{figure}
 
@@ -945,33 +945,39 @@ Cílem úprav je poskytnout enginu schopnost provádět části Group by a Order
 Obecně to znamená, že v moment nalezení jednoho výsledku jej musíme okamžitě zpracovat.
 Pro Order by to znamená výsledek správně zatřídit do již setříděné posloupnosti výsledků.
 Pro Group by to znamená výsledek přidat do správné skupiny nebo pro něj skupinu vytvořit, navíc musíme pro něj zpracovat agregační funkce. 
-Čili, výsledky v průběhu hledání nebudeme ukládat do tabulky, která se po nalezení všech výsledků předá k dalšímu zpracování.
-Namísto toho navrhneme postup, jak docílit zpracování výsledků v průběhu hledání.
+Čili, výsledky v průběhu hledání Match části nebudeme ukládat do tabulky, která se po nalezení všech výsledků předá k dalšímu zpracování.
+Namísto toho navrhneme postup, kterým docílíme zpracování výsledků v moment jeho nalezení.
 Postupy ověříme vůči stávajícím řešením v kapitole Experiment \ref{expr} z hlediska doby vykonání.
 V ideálním případě docílíme zrychlení nebo pouze vyrovnání vůči řešením vykonávající Order by a Group by po dokončení hledání.
-Z hlediska implementace to také znamená naprogramovat vylepšení tak, abychom byli schopni jednoduše přepínat mezi způsobem vykonání dotazu. 
-V prvním kroku úprav musíme získat obecný pohled na pozměněné vykonání dotazu.
+Z hlediska implementace to také znamená naprogramovat vylepšení tak, abychom byli schopni jednoduše přepínat mezi způsobem vykonání dotazu.
+Řešení tedy musí fungovat nezávisle na sobě. 
+V prvním kroku úprav musíme získat obecný pohled na pozměněný způsob vykonání dotazu.
 Následně v dalších krocích budeme navrhovat části dotazu konkrétněji.
 
 \clearpage
 
-\subsection{Pohled na pozměněné vykonání dotazu}
+\subsection{Pohled na pozměněný způsob vykonání dotazu}
 
-Analýzu začneme opět obecným pohledem na dotaz. 
+V následujicích sekcích popíše náš obecný pohled na zpracování dotazu.
 Budeme vycházet z sekce \ref{anal.vykonanidotazu}.
 V dané sekci jsme si definovali prioritu částí dotazu.
 Priorita určovala pořadí vykonání:
 \begin{code}
 Match > Where > Group by > Having > Order by > Select
 \end{code}
+Match se provedl jako první.
+Následně se nalezené výsledky předávali dalším částem ve směru klesající priority.
 Nejvyšší priorita se nachází nalevo a nejnižší napravo.
 Pro naše potřeby úprav budeme nyní uvažovat pouze části Match, Group by, Order by a Select.
-Match část vygeneruje výsledek a ten předá k zatřídění části Order by nebo k seskupení části Group by.
-Po zpracování se opět pokračuje v prohledávání grafu dokud se nenajde další výsledek a ten se zase předá další části.
+Opět budeme o částech uvažovat jako o separátních objektech.
+Potřebujeme, aby Match část v moment nalezení výsledku jej předala k zatřídění části Order by nebo k seskupení části Group by.
+Po zatřídění/seskupení se opět pokračuje v prohledávání grafu, dokud se nenajde další výsledek a ten se zase předá k dalšímu zpracování.
 Můžeme si všimnout značné podobnosti s předchozím návrhem. 
 Jediný rozdíl je ten, že místo předání všech výsledku najednou další části se předá výsledek pouze jeden.
 Na Match část se můžeme dívat jako na kontinuální generátor výsledků. 
-V momentě nalezení se výsledek pošle dálší části.
+V momentě nalezení se výsledek pošle dálším částem.
+Zbylé části pak pouze čekají na moment příchozího výsledku.
+Finální výsledky budou uchovány v objektech částí Group by nebo Order by. 
 
 \subsection{Order/Group by část jako bariéra}
 
@@ -985,11 +991,16 @@ Tedy dotaz bude tvořen původní částí Select propojenou s části Match.
 
 \subsection{Změna objektů reprezentující části Order/Group by}
 
-Dotaz obsahující části Select, Match a Order/Group by bude reprezentovám opět řetězcem.
-Select a Match budou tvořit propojení objetků na základě UML diagramů \ref{figure.diaQueryObjects} a \ref{figure.diaQueryObjectsCon}.
+Řekli jsme, že budeme opět považovat části dotazu za separátní objekty.
+Vytvoříme nové objekty částí Group/Order by reprezentující nový způsob zpracování.
+Abychom byli schopni pracovat souběžně i s původními objekty, tak potřebujeme upravit objekt Match, protože musí chápat nový způsob zpracování. 
 Reprezentanty částí Order by a Group by budou nyní nové objekty (obrázek \ref{figure.diaStreamedResultProcessor}).
 Budou si implementovat logiku zpracování jednoho výsledku v metodě \texttt{ProcessResult}.
 Objekt zároveň obsahuje finální výsledky dotazu, proto potřebujeme metodu \texttt{RetrieveResults} na jejich získání.
+
+Dotaz bude reprezentován opět řetězcem jako před úpravou zpracování.
+Select a Match budou tvořit propojení objetků na základě UML diagramů \ref{figure.diaQueryObjects} a \ref{figure.diaQueryObjectsCon}.
+Propojení obejktu Match s novými objekty Group by a Order by navrhneme v dalších částech.
 
 \begin{figure}[!htp]
 \includegraphics{../img/diaStreamedResultProcessor.pdf}\centering
@@ -1000,11 +1011,13 @@ Objekt zároveň obsahuje finální výsledky dotazu, proto potřebujeme metodu 
 \subsection{Propojení nových objektů s objektem Match}
 
 Vytvořili jsme nové objekty a nyní je musíme propojit s objektem Match.
-Objekty budou propojeny pomocí dvou úrovní.
-První úroveň bude přímé spojení s objektem Match a druhá úroveň bude propojení vyhledávání a zpracování výsledku.
-V této sekci popíšeme pouze první úroveň.
-Vysvětlení druhé úrovně ponecháme na další sekci.
-Abychom realizovali první úroveň, tak musíme upravit objekt Match.
+Objekty budou propojeny na dvou úrovních.
+První úroveň bude přímé spojení nových objektů s objektem Match a druhá úroveň bude propojení vyhledávání a zpracování výsledku.
+
+\subsection{První úroveň propojení}
+
+Pro realizaci první úrovně propojení, tj. objekt Match drží odkaz na objekt Group/Order by.
+Abychom realizovali tuto úroveň, tak musíme upravit objekt Match.
 Objekt Match rozšíříme o chápání logiky nových objektů (obrázek \ref{figure.diaStreamedQueryObjects}).
 Stávající objekt Match jsme v naši představě pouze rozšířili a nevytvářeli kompletně nový objekt, protože propojení s Select objektem je realizováno stále původním způsobem.
 Finální propojení objektů je pak znázorněno na obrázku \ref{figure.diaStreamedQueryObjectsCon}.
@@ -1022,7 +1035,7 @@ Finální propojení objektů je pak znázorněno na obrázku \ref{figure.diaStr
 \end{figure}
 
 Ještě než přistoupíme k druhé úrovni propojení zmíníme způsob volání funkcí \texttt{Compute}.
-Prvě se zavolá na části Select, ta rekurzivně zavolá metodu na části Match a ta spustí vyhledávání.
+Ta se prvě zavolá na části Select, ta rekurzivně zavolá metodu na části Match a ta spustí vyhledávání.
 Část Match prohledává graf a výsledky předává části Order/Group by. 
 Po dokončení prohledávání volaná metoda \texttt{Compute} na objektu Match získá zpracované výsledky z další části pomocí volání metody \texttt{RetrieveResults}.
 Výsledky se tímto předají části Select k vypsání uživateli. 

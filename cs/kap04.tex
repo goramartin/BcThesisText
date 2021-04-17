@@ -12,7 +12,7 @@ Kapitolu zakončíme prezentací výsledků.
 Pro náš experiment jsme použili tři orientované grafy z databáze SNAP \citep{snapnets}.
 Grafy jsme primárně vybírali na základě počtu nalezených výsledků z testovaného dotazu Match části (sekce \ref{expr.matchDotazy}).
 Počet vygenerovaných výsledku je zobrazen v sekci výsledků \ref{matchResults}.
-Cíl byl nalézt grafy které vygenerují počet výsledků v řádech $10^7$ až $10^8$, abychom mohli sledovat chování řešení při zpracování velkého množství dat.
+Cíl byl nalézt grafy, které vygenerují počet výsledků v řádech $10^7$ až $10^8$, abychom mohli sledovat chování řešení při zpracování velkého množství dat.
 Zároveň jsme vybrali grafy pro které platí, že mají minimálně dojnásobný počet výsledků vůči již vybraným grafům, což nám umožní sledovat chování řešení při zvyšování počtu zpracovaných výsledků.
 Výsledky v řádu $10^9$ bychom měli problém zpracovat na testovaném hardwaru (sekce \ref{expr.hw}), kvůli nedostatku paměti.
 Samotná databáze SNAP nám poskytla datový formát, který jsme byli schopni jednoduše transformovat na náš vstupní datový formát.
@@ -147,11 +147,9 @@ PropFour & integer   & \verb+Int32+ s rozsahem $[0; 1000]$ \\
 Vlastnosti \textbf{PropOne}, \textbf{PropTwo} a \textbf{PropFour} jsme vybrali primárně k otestování části Group by.
 Použijeme je jako klíč Group by.
 Tímto omezíme počet vytvářených skupin během zpracování.
-Maximální počet skupin pro vlastnosti \textbf{PropOne} a \textbf{PropFour} bude dán jejich horní hranicí intervalu rozsahu hodnot.
-Vlastnost \textbf{PropTwo} omezí počet skupin na počet vrcholů v grafu.
+Detailnější vysvětlení je podáno v následující sekci výběru dotazů Group by \ref{expr.groupDotazy}.
 \textbf{PropThree} využijeme v části Order by, abychom mohli sledovat rozdílnost třídění řetězců vůči číselným hodnotám.
-
-
+\clearpage
 Na základě tabulky generovaných vlastností \ref{tab.grafProps} následuje ukázka upraveného souboru JSON schématu pro vrcholy:
 \begin{code}
 Soubor NodeTypes.txt:
@@ -270,7 +268,7 @@ O\_Q4 & select x.PropThree match (x) -> (y) -> (z) order by x.PropThree \\
 \end{itemize}
 
 
-\subsection{Dotazy Group by}
+\subsection{Dotazy Group by} \label{expr.groupDotazy}
 
 \begin{table}[!htb]
 \centering
@@ -303,9 +301,9 @@ Otestujeme i samotné seskupování na dotazech G\_Q2 až G\_Q8.
 V dotazech nahradíme Select část prvním klíčem Group by. 
 Dané dotazy značíme symbolem $'$ (např. G\_Q7$'$ select x.PropOne match (x) -> (y) -> (z) group by x.PropOne).
 
-V dotazech je nutné si uvědomit, co znamenají klíče v části Group by.
-Klíče mají svůj rozsah.
-Hodnoty klíčů jsou uloženy ve vrcholech.
+U vybraných dotazů je nutné si uvědomit, co znamenají klíče v části Group by.
+Každý klíč má svůj rozsah hodnot.
+Konkrétní hodnoty klíčů jsou uloženy v našem případě ve vrcholech.
 Pokud by každý vrchol měl unikátní hodnotu klíče, pak počet vytvářených skupin v části Group by je shora omezen počtem vrcholů v grafu.
 To se děje pro dotazy G\_Q2, G\_Q3 a G\_Q6.
 Zvolíme-li dva takové klíče za klíče Group by, pak maximální počet skupin je shora omezen skalárním součinem jejich rozsahů.
@@ -319,7 +317,7 @@ Tímto jsme dokázali shora omezit počet skupin v dotazech G\_Q7 a G\_Q8 horní
 Další nutnou znalostí je způsob paralelizace prohledávání grafu (sekce \ref{anal.matchPar}).
 Každé vlákno provádí prohledávání grafu z určité části vrcholů v grafu.
 Platí, že každé vlákno neprovede prohledávání ze stejného vrcholu jako vlákno jiné.
-Tedy vrcholy v proměnné x jsou unikátní pro každé vlákno, taktéž hodnoty jejich vlastností.
+Tedy vrcholy představující proměnnou x jsou unikátní pro každé vlákno, taktéž hodnoty jejich vlastností.
 Při paralelizaci se provádí paralelní slévání výsledků do globální struktury.
 V dotazech G\_Q3 a G\_Q6 pak vlákna při slévání výsledků vytvářejí vždy nové záznamy v dané struktuře, jelikož výsledky vláken jsou vždy rozdílné.  
 To nám umožní sledovat situaci, kdy vlákna vytvářejí navzájem rozdílné záznamy.
@@ -383,15 +381,15 @@ static void CleanGC()
 
 \subsection{Měření uběhlého času}
 
-Protože benchmark je implementovám v jazyce C\# \citep{microsoft}, rozhodli jsme se využít nativních možností.
-V jazyce C\# existují dvě hlavní metody meření a to pomocí třídy \texttt{Stopwatch} nebo volání metody \texttt{Process.TotalProcessorTime}.
+Protože benchmark je implementovám v jazyce C\# \citep{microsoft}, rozhodli jsme se využít nativních možností měření uběhlé doby.
+V jazyce C\# existují dvě hlavní metody meření a to pomocí třídy \texttt{Stopwatch} nebo přísup k vlasnotsti \texttt{Process.TotalProcessorTime}.
 První možnost je závíslá na instanci.
-Meří uběhlý čas mezi voláním metod \texttt{Start} a \texttt{Stop} pro instanci bez ohledu v jakém vlákně byly metody volány.
+Meří uběhlý čas mezi voláním metod \texttt{Start} a \texttt{Stop} na instanci bez ohledu v jakém vlákně byly metody volány.
 Měření probíhá pomocí počítání taktů časovače v podkladovém mechanismu hardwaru.
 Pokud hardware a operační systém podporují časovač s vysokým rozlišením, pak je využit tento.
 V opačném případě je využit pouze systémový časovač. 
 
-Druhá možnost měří dobu strávenou procesorem, který vykováná proces aplikace.
+Druhá možnost měří dobu strávenou vykonáváním procesu aplikace procesorem.
 Tato doba obsahuje čas zpracování aplikační části společně s časem stráveným v jádru operačního systému.
 Tudíž doba obsahuje pouze čas běhu procesoru a nezapočítává dobu nečinnosti vláken v paralelních řešeních (např. čekání na zámek).
 
@@ -445,13 +443,12 @@ Benchmark společně s dotazovacím enginem a potřebnými knihovnami byl přelo
 \section{Výsledky}
 
 V této sekci prezentujeme naměřená data pro všechny tři grafy (\ref{expr.graphs}), které jsme podrobili dotazům z sekce \ref{expr.dotazy}.
-
 U grafů Group/Order by se držíme značení odpovídající z kapitoly implementace.
 Značení se skládá ze tří částí.
 Prvních dvě jsou obsaženy vždy a poslední je použit popuze v paralelní části Group by.
 Značení výpadá následovně:
 \begin{code}
-(Mód enginu):  (Název řešení) (způsob ukládání výsledků u Group by)?
+[Mód enginu]:  [Název řešení] [způsob ukládání výsledků u Group by]
 \end{code}
 
 Pokud řešení obsahuje kombinaci módů, pak řešení pro dané módy jsou totožná.
@@ -602,7 +599,7 @@ Výše jsme zmínili základní princip Streamed řešení.
 Rozsah hodnot prvního klíče třídění se rozdělí na rovnoměrné části a pro každý takový rozsah existuje přihrádka přístupná pomocí zámku.
 Vlákno v moment nalezení výsledku přistupuje k přihrádce pomocí zámku a vloží do ní daný výsledek.
 Při implementaci řešení jsme se omezili pouze na celý rozsah hodnot C\# typu vlastnosti.
-To znamená, že pokud vlastnost má typ integer (v C\# Int32), ačkoliv hodnoty vlastnosti v grafu mohou být v rozsahu $[0; 100]$, tak rozdělení přihrádek se vytváření z celého rozsahu C\# typu.
+To znamená, že pokud vlastnost má typ integer (v C\# Int32), ačkoliv hodnoty vlastnosti v grafu mohou být v rozsahu $[0; 100]$, tak rozdělení přihrádek se vytvářejí z celého rozsahu C\# typu.
 Tedy přihrádky se vytvářejí rozdělením rozsahu $[$\verb+Int32.MinValue+; \verb+Int32.MaxValue+$]$ a nikoliv $[0; 100]$.
 To má za následek při třídění pomocí vlastnosti s rozsahem hodnot v grafu $[0; 100]$, že vlákna budou přistupovat v nejhorším případě k pouze jedné přihrádce.
 Vlákna pak budou vždy čekat na úvólnění jednoho zámku.
@@ -708,7 +705,7 @@ Jestli by pomocí předalokování nastalo zrychlení, které by předčilo ře�
 
 \subsection{Group by}
 
-\subsubsection{Obecné shrnutí Single group Group by}
+\subsubsection{Obecné shrnutí Single group Group by řešení}
 
 Analýzu výsledků dotazu G\_Q1 uvádíme samostatně, protože testuje pouze agregační funkce a nikoliv seskupování.
 Daný mód Group by předpokládá, že všechny výsledky patří do stejné skupiny a tedy nedochází k seskupování ale pouze k výpočtu agregačních funkcí.
@@ -770,7 +767,7 @@ Obě řešení výsledky neukládají.
     \end{minipage}
 \end{figure}
 
-\subsubsection{Výsledky Single group Group by}
+\subsubsection{Výsledky Single group Group by zpracování}
 
 Na obrázcích \ref{figure.amazonGQ1ST} až \ref{figure.skitterGQ1Par} lze vidět značnou konzistenci mezi výsledky testování při nárustu počtu výsledků vyhledávání.
 Half-Streamed a Streamed řešení zde neukládá výsledky vyhledávání do tabulky, ale pouze na aktuální výsledek aplikuje agregační funkce a následně jej zahodí.
@@ -780,7 +777,7 @@ To platí pro běh jednoho vlákna i běhu osmi vláken.
 Problem představuje paralelní Streamed řešení, jelikož k jednomu výsledku přistupuje osm vláken najednou, což způsobuje značné zpomalení kvůli nutné synchronizaci při výpočtu funkcí \verb+min+ a \verb+avg+. 
 Zrychlení je zde pouze v rozsahu $[1,81; 2,64]$-krát, zatímco u zbylých řešení je $[3,67; 4,61]$-krát.
 
-\subsubsection{Obecné shrnutí jednovláknového Group by}
+\subsubsection{Obecné shrnutí jednovláknových řešení}
 
 Než postoupíme dál připomeneme hlavní rozdíly řešení a značení u zobrazených grafů. 
 Každé řešení používá k Group by mapu (\verb+Dictionary<key, value>+).
@@ -792,7 +789,7 @@ Objevující se značení Bucket a List určuje způsob ukládání výsledků a
 Podrobnější vysvětlení je v kapitole Analýzy \ref{anal.groupby.uloziste}.
 
 
-\subsubsection{Výsledky jednovláknového Group by}
+\subsubsection{Výsledky jednovláknového zpracování}
 
 Na obrázcích \ref{figure.amazonGroupByST}, \ref{figure.webberkstanGroupByST} a \ref{figure.skitterGroupByST} vidíme výsledky Group by pro běh v jednom vlákně.
 Výsledky na obrázcích \ref{figure.amazonGroupBySTNoAgg}, \ref{figure.webberkstanGroupBySTNoAgg} a \ref{figure.skitterGroupBySTNoAgg} představují dotazy bez agregačních funkcí v části Select.
@@ -872,7 +869,7 @@ Nyní přejdeme k výsledkům paralelizace.
 
 \clearpage
 
-\subsubsection{Obecné shrnutí paralelního Group by}
+\subsubsection{Obecné shrnutí paralelních řešení}
 
 Paralelní řešení používají doposud zmíněná značení.
 Global řešení seskupuje výsledky globálně pomocí paralelní mapy (\verb+ConcurrentDictionary+).
@@ -882,7 +879,7 @@ Toto slévání si můžeme představit jako binární strom. Listy jsou výsled
 Výsledky paralelizování jsou zobrazeny na obrázcích \ref{figure.amazonGroupByPar}, \ref{figure.webberkstanGroupByPar} a \ref{figure.skitterGroupByPar}.
 Obrázky \ref{figure.amazonGroupByParNoAgg}, \ref{figure.webberkstanGroupByParNoAgg} a \ref{figure.skitterGroupByParNoAgg} obsahují výsledky dotazů bez agregačních funkcí.
 
-\subsubsection{Výsledky paralelního Group by}
+\subsubsection{Výsledky paralelního zpracování}
 
 Byli jsme překvapeni, že vylepšená řešení se mnohdy nevyrovnala původním řešením.
 Streamed řešení, ačkoliv bylo nejrychlejší v jednovláknovém běhu, tak zde se pouze vyrovnalo Normal řešením a nebo bylo pomalejší.
@@ -946,7 +943,7 @@ Generování prvků pomocí třídy Random s inicializační hodnotou 100100.
 Měřeno pomocí třídy Stopwatch. 
 Výsledek byl zvolen jako průměr pěti měření. 
 Test Insert $n$ provádí vkládání $n$ náhodně vygenerovaných prvků do prázdné mapy. 
-Test Read $n$ provádí $n$ čtení z rozsahu 0 až 1000000. Poměr je roven podílu času paralelní mapy a mapy.
+Test Read $n$ provádí $n$ čtení z rozsahu 0 až 1 000 000. Poměr je roven podílu času paralelní mapy a mapy.
 
 Tabulka naměřených hodnot testování (\ref{tab.mapsInsert}) ukazuje, že pouhé vkládání náhodně generovaných prvků do paralelní mapy trvá průměrně 4x déle.
 Samostatné čtení náhodně generovaných hodnot, které existují v mapě, je průměrně o 13\% pomalejší.
@@ -981,7 +978,7 @@ public static void Insert(ConcurrentDictionary<int, int> dict,
 \centering
 \begin{tabular}{lrrr}
 \toprule
-\mc{Test} & \mc{\textbf{Dict (1 thread)}} & \mc{\textbf{ConDict (8 threads)}} & \mc{\textbf{ConDict/Dict}} \\
+\mc{Test} & \mc{\textbf{Dict (1 vlákno)}} & \mc{\textbf{ConDict (8 vláken)}} & \mc{\textbf{ConDict/Dict}} \\
 \midrule
 Insert $10^6$ & 165 & 406 & 2,601  \\
 Insert $10^7$  & 2476 & 4714 & 1,903 \\
