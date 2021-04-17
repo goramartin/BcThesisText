@@ -910,12 +910,6 @@ Výsledky se následně musí mergovat.
 K rozhodnutí, které řešení finálně použít použijeme fakt, že počet výsledků k mergování je roven počtu vláken.
 V takovém případě nebudeme implementovat paralelní mergování, ale pouze jedno vybrané vlákno provede sjednocení všech výsledků.
 
-\bigskip
-\textit{Analyzovali jsme a navrhli řešení vykonání částí Match, Group by a Order by.
-Tímto jsme dokončili analýzu a návrh dotazovacího enginu.
-Daná analýza a návrh nám poskytnou odrazový můstek při analýze úprav pro vykonání částí Group by a Order by v průběhu hledání.
-}
-\clearpage
 
 \begin{figure}[!htp]
 \includegraphics{../img/diaGlobalGr.pdf}\centering
@@ -937,9 +931,14 @@ Daná analýza a návrh nám poskytnou odrazový můstek při analýze úprav pr
 \label{figure.diaLocalGr}
 \end{figure}
 
+\bigskip
+\textit{Analyzovali jsme a navrhli řešení vykonání částí Match, Group by a Order by.
+Tímto jsme dokončili analýzu a návrh dotazovacího enginu.
+Daná analýza a návrh nám poskytnou odrazový můstek při analýze úprav pro vykonání částí Group by a Order by v průběhu hledání.
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Úprava enginu}
+\section{Úprava enginu} \label{anal.improvement}
 
 Cílem úprav je poskytnout enginu schopnost provádět části Group by a Order by v průběhu prohledávání grafu části Match.
 Obecně to znamená, že v moment nalezení jednoho výsledku jej musíme okamžitě zpracovat.
@@ -953,8 +952,6 @@ Z hlediska implementace to také znamená naprogramovat vylepšení tak, abychom
 Řešení tedy musí fungovat nezávisle na sobě. 
 V prvním kroku úprav musíme získat obecný pohled na pozměněný způsob vykonání dotazu.
 Následně v dalších krocích budeme navrhovat části dotazu konkrétněji.
-
-\clearpage
 
 \subsection{Pohled na pozměněný způsob vykonání dotazu}
 
@@ -1014,9 +1011,9 @@ Vytvořili jsme nové objekty a nyní je musíme propojit s objektem Match.
 Objekty budou propojeny na dvou úrovních.
 První úroveň bude přímé spojení nových objektů s objektem Match a druhá úroveň bude propojení vyhledávání a zpracování výsledku.
 
-\subsection{První úroveň propojení}
+\subsubsection{Přímé spojení objektů}
 
-Pro realizaci první úrovně propojení, tj. objekt Match drží odkaz na objekt Group/Order by.
+Popíšeme realizaci první úrovně propojení, tj. objekt Match drží odkaz na objekt Group/Order by.
 Abychom realizovali tuto úroveň, tak musíme upravit objekt Match.
 Objekt Match rozšíříme o chápání logiky nových objektů (obrázek \ref{figure.diaStreamedQueryObjects}).
 Stávající objekt Match jsme v naši představě pouze rozšířili a nevytvářeli kompletně nový objekt, protože propojení s Select objektem je realizováno stále původním způsobem.
@@ -1034,18 +1031,41 @@ Finální propojení objektů je pak znázorněno na obrázku \ref{figure.diaStr
 \label{figure.diaStreamedQueryObjectsCon}
 \end{figure}
 
-Ještě než přistoupíme k druhé úrovni propojení zmíníme způsob volání funkcí \texttt{Compute}.
-Ta se prvě zavolá na části Select, ta rekurzivně zavolá metodu na části Match a ta spustí vyhledávání.
-Část Match prohledává graf a výsledky předává části Order/Group by. 
+
+\subsubsection{Propojení vyhledávání a zpracování výsledku}
+
+Musíme ještě navrhnout způsob předávání výsledků částem Order/Group by v průběhu hledání.
+Způsob musí být použitelný pro paralelní zpracování, proto budeme rovnou přemýšlet nad paralelním řešením.
+V naši představě budeme vycházet přímo z původního návrhu z sekce \ref{anal.match}.
+Definovali jsme si, že každé vlákno vlastní lokálně strukturu vzoru \texttt{Pattern}, objekt vyhledávání \texttt{Matcher} a tabulku výsledků.
+Finální výsledky ukládá do tabulky a po dokončení hledání dojde k slévání tabulek.
+Zde upravíme část, kdy dochází k ukládání výsledků do tabulky.
+Vlákno bude držet odkaz na objekt Group/Order by a v moment nalezení výsledek předá pomocí volání metody \texttt{ProcessResult}.
+Metoda výsledek zpracuje a po návratu z metody se pokračuje ve vyhledávání.
+To se opakuje dokud prohledávání neskončí.
+
+Zpracování dotazu bude finálně vypadat následovně.
+Na řetězci objektů se zavolá metoda \texttt{Compute}.
+První objekt v řetězci je Select.
+Select rekurzivně zavolá metodu na části Match a ta spustí vyhledávání.
+Část Match prohledává graf a výsledky předává části Order/Group by pomocí metody \texttt{ProcessResult}.
 Po dokončení prohledávání volaná metoda \texttt{Compute} na objektu Match získá zpracované výsledky z další části pomocí volání metody \texttt{RetrieveResults}.
 Výsledky se tímto předají části Select k vypsání uživateli. 
-Tímto jsme dokončili popis první úrovně propojení.
-Nyní přistoupíme k druhé úrovni.
 
-\subsection{Propojení vyhledávání a zpracování výsledku}
+\subsection{Alternativní řešení}
 
-První úroveň propojení pouze popisuje propojení objektů a komunikaci během vykonání dotazu.
-Musíme ještě navrhnout způsob předávání výsledků částem Order/Group by v průběhu hledání.
-U návrhu budeme vycházet přímo z původního návrhu z sekce \ref{anal.match}.
+Při výberu tohoto řešení jsme uvažovali ještě nad možností, ve které by vlákna vyhledávání pouze předávali pouze do fronty.
+Další část by pouze zpracovávala výsledky z fronty.
+Myslíme, že tohle řešení by bylo neefektivní v našem případě, protože by muselo docházet k synchronizaci fronty, tj. problém producent a spotřebitel.
+V našem řešení jsme synchronizaci při předávání výsledků zcela vynechali.
 
-\label{anal.improvement}
+\bigskip
+\textit{Navrhli jsme základní pohled na zpracování výsledků v průběhu vyhledávání.
+Vytvořili jsme nové objekty částí Order by a Group by.
+Propojili jsme původní objekty s novými a nyní přejdeme k analýze a návrhu samotných způsobů vykonání Order by a Group by.}
+
+\subsection{Obecný návrh vykonání Order/Group by}
+
+\subsubsection{Návrh Half-Streamed}
+
+\subsubsection{Návrh Streamed}
