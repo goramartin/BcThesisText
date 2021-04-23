@@ -1254,16 +1254,42 @@ Při každém přistupu k tabulce by došlo k získání zámku, následnému vy
 \subsubsection{Nový přístup ukládání výsledků}
 
 Úložiště hodnot agregačních funkcí budou pořád totožná.
-Místo ukládaní výsledků do tabulky budeme výsledky použivat rovnou jako klíče paralelní mapy.
-Tímto vyřešíme problém synchronizace tabulky.
-Také jsme vyřešili požadavek omezení ukládaní pouze na reprezentanty skupin.
-Pokud výsledek byl úspěšně vložen do paralelní mapy, tak je považován za uložený.
-V opačném případě jej použijeme pouze k aktualizaci hodnot agregačních funkcí a můžeme jej zahodit.
-Jak jsme ale dříve zmínili, výsledek hledání je pole proměnných a to náleží struktuře vzoru..
-Musíme tedy vytvořit nové pole a výsledek překopírovat.
-Nové pole nemusíme vytvářet pokaždé. 
-Stačí si pouze pamatovat, jestli použitá kopie byla vložena do paralelní mapy.
-Pokud ano, vytvoříme pole nové, jinak pro další výsledek pouze přepíšeme jeho vnítřní hodnoty.
+Místo ukládaní výsledků do tabulky vypočteme konkrétní hodnoty klíčů Group by.
+Hodnoty uložíme do pole, které následně použijeme jako klíč paralelní mapy.  
+Samotné pole elementů použijeme pouze k výpočtu hodnot klíčů a k aktualizaci hodnot agregačních funkcí.
+Následně jej zahodíme.
+Paralelní mapa bude ve výsledku obsahovat pole hodnot klíčů a pole hodnot agregačních funkcí.
+Samotné hodnoty klíčů jsou v moment vytvoření statické, tedy nikdy nedojde ke změně hodnot klíče.
+Vlákna mohou jednoduše vyvolat porovnání klíčů bez nutnosti synchronizace.
+
+Ačkoliv se může zdát, že vytvářením mnoha malých polí povede k značné paměťové zátěži.
+Musíme si uvědomit, že budeme uchovávat pouze ta pole, která byla vložena do paralelní mapy.
+Obecně předpokládáme, že počet finálních skupin je mnohonásobně menší než počet výsledků hledání.
+Tedy bude zde existovat pouze malá množina polí.
+Otázka může být, proč jsme nezvolili daný postup i u ostatních řešení.
+V původním řešení jsme drželi všechny výsledky v paměti a vytváření dalších polí spolu s překopírovávání výsledků by ještě víc vytížil paměťovou spotřebu.
+V \textbf{Half-Streamed} řešení jsme způsob nepoužili, protože výsledky vláken se vytvářeli lokálně.
+Kdyby každé vlákno našlo kompletně stejné skupiny, pak by existovala totožná pole pro všechna vlákna.
+
+Další otázka je proč jsme se rozhodli uchovávat hodnoty výrazů a ne elementy grafu.
+Hlavní příčina ukládání elementů jsme popsali v sekci návrhu tabulky výsledků hledání \ref{anal.tables}.
+Tento problém zde odpadá, protože ukládáme malé množství výsledků.
+Navíc, v ostatních částech dotazu se mohou vyskytnout pouze výrazy klíčů Group by a agregační funkce.
+Tedy v moment výpočtu daných výrazů a agregačních funkcí jsme získali všechny možné hodnoty, ke kterým se může přístoupit v jiných částech dotazu. 
+
+\subsubsection{Sloučení pole klíčů a pole úložiště ag. funkcí}
+
+Nabízí se zde malá optimalizace za předpokladu, že budeme používat Bucket úložiště agregačních funkcí.
+Bucket úložiště je pole hodnot.
+Můžeme zde propojit pole hodnot klíčů a pole hodnot úložiště, protože oba pole pouze obsahují konkrétní hodnoty a logika zpracování agrgačních funkcí je obsažena v objektu mimo úložiště.
+Finálně bude existovat pouze jedno pole, ve kterém prvních $n$ hodnot představuje hodnoty klíčů a zbytek hodnot je považován za výsledky agregačních funkcí.
+Tímto dokážeme zmenšit počet vytvářených polí.
+Protože vycházíme z principu Global Group by \ref{anal.groupby.global}, tak je zde problémem úložiště List.
+Rozdholi jsme dané řešení neimplementovat.
+
+\bigskip
+\textit{Analyzovali jsme a navrhli úpravu řešení Group by a Single group Group by. 
+Nyní přejdeme k úpravě Order by.}
 
 
 \section{Úprava Order by}
