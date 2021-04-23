@@ -1277,7 +1277,7 @@ Tento problém zde odpadá, protože ukládáme malé množství výsledků.
 Navíc, v ostatních částech dotazu se mohou vyskytnout pouze výrazy klíčů Group by a agregační funkce.
 Tedy v moment výpočtu daných výrazů a agregačních funkcí jsme získali všechny možné hodnoty, ke kterým se může přístoupit v jiných částech dotazu. 
 
-\subsubsection{Sloučení pole klíčů a pole úložiště ag. funkcí}
+\subsubsection{Sloučení pole klíčů a pole úložiště agregačních funkcí}
 
 Nabízí se zde malá optimalizace za předpokladu, že budeme používat Bucket úložiště agregačních funkcí.
 Bucket úložiště je pole hodnot.
@@ -1285,11 +1285,186 @@ Můžeme zde propojit pole hodnot klíčů a pole hodnot úložiště, protože 
 Finálně bude existovat pouze jedno pole, ve kterém prvních $n$ hodnot představuje hodnoty klíčů a zbytek hodnot je považován za výsledky agregačních funkcí.
 Tímto dokážeme zmenšit počet vytvářených polí.
 Protože vycházíme z principu Global Group by \ref{anal.groupby.global}, tak je zde problémem úložiště List.
-Rozdholi jsme dané řešení neimplementovat.
+Rozhodli jsme dané řešení neimplementovat.
 
 \bigskip
 \textit{Analyzovali jsme a navrhli úpravu řešení Group by a Single group Group by. 
 Nyní přejdeme k úpravě Order by.}
 
-
 \section{Úprava Order by}
+
+Cílem Order by je setřídit výsledky hledání.
+V původním řešení jsme měli značnou výhodu, protože v moment začátku třídění jsme vlastnili všechny výsledky hledání (tj. kompletní tabulka výsledků).
+Místo třídění samotných řádků tabulky jsme třídili pole indexů.
+Na pole indexů pak stačilo aplikovat zákládní třídíci algoritmus.
+Nyní nevlastníme všechny výsledky.
+Výsledky jsou generovány a zpracovávány postupně.
+V následujících sekcích navrhneme způsob zpracování Order by v průběhu hledání.
+
+\subsection{Obecný princip zpracování}
+
+V naši představě zpracování budeme udržovat setříděnou posloupnost výsledků hledání.
+Při nalezení výsledku výsledek zatřídíme do již setříděné posloupnosti.
+Obecně jsme se rozhodli použít následující princip.
+Bude existovat totožná tabulka výsledků hledání jako v původním řešení společně s indexační strukturou tabulky, protože opět nechceme přesouvat řádky tabulky.
+Indexační struktura bude opět obsahovat indexy řádků v tabulce.
+Výsledek Order by pak bude tabulka výsledku s indexační strukturou.
+
+Výsledek hledání v moment nalezejí je vložen na nový řádek tabulky výsledků.
+Následně je index nového řádku tabulky zatříděn do indexační struktury.
+Z tohoto principu budeme vycházet v našem návrhu.
+Nejdříve budeme analyzovat způsob jednovlákonvého zpracování a následně jednotlivé módy paralelního zpracování.
+
+\subsection{Jednovláknové zpracování} \label{anal.ordeby.single}
+
+Určili jsme, že tabulka výsledků je totožná s původní.
+Výsledek je vložen na nový řádek tabulky a index je zatříděn do indexační struktury.
+Potřebujeme jen navrhnout způsob zatřídění indexu do indexační struktury.
+Uvažovali jsme nad dvěma základními přístupy.
+První kombinuje pole indexů s binárním vyhledáváním.
+Druhý přistup využívá vyhledávací stromy.
+Přistupy popíšeme a následně provedeme malý experiment.
+
+\subsubsection{Pole indexů + binární vyhledávání}
+
+Myšlenka přístupu je udržovat setříděné pole indexů. 
+V moment nalezení výsledku je využito binární vyhledávání \citep[str. 26]{labyrint} k nalezení vhodného místa vložení do pole.
+Prvek je vložen do pole.
+Pokud se na místě nacházel již nějaký prvek, prvek je posunut doprava.
+Jedná se vlastně o algoritmus Insert sort (třídění vkládáním).
+Jediným rozdílem je, že k nalezení místa vložení se používá binární vyhledávání.
+Problém zde představuje posouvání prvků v poli.
+Předpokládáme-li, že prvky posouváme napravo, tak v nejhorším případě vložením na začátek pole posuneme všechny prvky.
+V naši představě bychom chtěli problém řešit rozmístěním mezer mezi prvky v poli.
+Mezerou zde rozumíme prázdný záznam, tj. neobsahuje žádný index tabulky výsledků.
+Při posouvání prvků pak stačí posouvat prvky do první mezery.
+Řešení však naskýtá spoustu otázek.
+Například neznáme ideální počet mezer mezi prvky a nevíme jak optimálně navrhnout binární vyhledávání na takovém poli.
+Navíc, zvyšováním počtu mezer se pole značně zvětšuje, tj. roste paměťová složitost.
+
+\subsubsection{Vyhledávací stromy}
+
+Druhý přístup využívá vyhledávací stromy \citep[str. 177]{labyrint}.
+Chtěli bychom využít základní druhy vyhledávacích stromů jako binární vyhledávací stromy nebo $(a, b)$-stromy.
+Výhoda $(a, b)$-stromů je ta, že každý vrchol stromu obsahuje až $b$ klíčů, zatímco binární vyhledávací stromy drží pouze jeden klíč ve vrcholu.
+Ideálně v průběhu implementace budeme chtít využít již stávajících knihoven.
+
+\subsubsection{Experiment}
+
+K porovnání dvou přístupů jsme se rozhodli provést jednoduchý experiment.
+Cílem testu je otestovat rychlost vkládání prvků do vybraných datových struktur.
+Experiment jsme naprogramovali v jazyce C\#.
+Kód je součástí příloh \ref{prilohy.benchtreevsarray}.
+Kód jsme přeložili pro platformu Windows 10 x64 cílící na .Net Framework 4.8.
+Samotný hardware testovacího stroje je rozepsán v sekci metodiky \ref{expr.hw}.
+K otestování jsme vybrali dvě nativní struktury C\#:
+\begin{enumerate}
+\item \texttt{List}: reprezentuje případ zatřiďování do pole binárním vyhledáváním.
+\item \texttt{SortedSet}: reprezentuje případ binárního vyhledávacího stromu.
+\end{enumerate}
+Struktury jsme zaplnili $n$ náhodně generovanými prvky.
+Prvky byly generovány nativní třídou \texttt{Random} s inicializační hodnotou 100100 v rozsahu hodnot $[10$ $000; Int32.MaxInt - 10$ $000]$.
+Struktury byly setříděny.
+Následně jsme do struktur vkládali $m$ náhodně generovaných prvků (totožnou třídou \texttt{Random}) z dvou různých rozsahů:
+\begin{enumerate}
+\item Rozsah $[0; 10$ $000]$ a je označen $front$. 
+Umožní nám vkládat prvky na začátek setříděné posloupnosti. 
+Sledujeme nejhorší případ pro pole, kdy dochází k posouvání všech prvků doprava.
+\item Rozsah $[10$ $000; Int32.MaxInt - 10$ $000]$ a je označen $random$.
+Umožní nám sledovat vkládání prvků do náhodných pozic struktury.
+\end{enumerate}
+Měřili uběhlou dobu pomocí třídy \texttt{Stopwatch}.
+Měření jsme opakovali desetkrát pro každý rozsah a vybrali průměr hodnot.
+Při každém opakování byly struktura znovu sestavena.
+Parametry $n$ a $m$ jsme volili tak, abychom byli schopni sledovat chování při zvyšování počtu vložených a vkládaných prvků. 
+
+\subsubsection{Výsledky}
+
+Výsledky se nacházejí v tabulce \ref{tab.orderbyexpr1}.
+Z tabulky vidíme, že vkládání prvků do pole pomocí binárního vyhledávání značně zaostává, proto jsme se rozhodli upustit od myšlenky pole s mezerami.
+Na základě výsledků jsme se rozhodli naimplementovat $(a, 2a)$-strom dle přednášky Datových struktur I \citep{dataLecture}.
+$(a, 2a)$-strom jsme porovnali vůči \texttt{SortedSet} při stejných testech, ale pouze pro nejvýšší řády počtu prvků stavby a vkládání.
+Výsledky jsou zobrazeny v tabulce \ref{tab.orderbyexpr2}.
+Z tabulky vidíme, že při vkládání prvků je rychlejší $(a, 2a)$-strom.
+Pro finální rozhodnutí, kterou strukturu zvolíme k zatřiďování, jsme rozhodli provést poslední experiment.
+Tentokrát budeme měřit první část vkládání $n$ prvků do prázdné struktury (test je označen \texttt{Build}).
+Výsledky jsou v tabulce \ref{tab.orderbyexpr3}.
+Vidíme, že v experimentu je rychlejší \texttt{SortedSet}.
+Sitauci si vysvětlujeme režií za operaci vložení do $(a, 2a)$-stromu, kdy dochází k častému překopírovávání prvků v moment vytváření nového vrcholu.
+Nicméně, v průběhu experimentu jsme sledovali paměťové vytížení procesu pomocí nativního programu Windows 10 \texttt{Task Manager}.
+Ukázalo se, že v průběhu testu \texttt{SortedSet} dosahovalo využití paměti $6,8$GB, zatímco $(a, 2a)$-strom pouze $2,1$GB.
+Daný jev je způsoben vytvářením nové třídy pro každý vložený prvek do struktury \texttt{SortedSet}.
+\textbf{Finálně jsme se rozhodli zatřiďování realizovat pomocí (a, 2a)-stromu.}
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{lD{.}{,}{1.4}D{.}{,}{1.4}D{.}{,}{2.4}D{.}{,}{1.4}D{.}{,}{3.4}D{.}{,}{1.4}}
+\toprule
+\mc{} & \multicolumn{2}{c}{$n=10^6$} & \multicolumn{2}{c}{$n=10^7$} & \multicolumn{2}{c}{$n=10^8$} \\
+\mc{} & \mc{\texttt{List}} & \mc{\texttt{SSet}} & \mc{\texttt{List}} & \mc{\texttt{SSet}} & \mc{\texttt{List}} & \mc{\texttt{SSet}} \\
+\midrule
+\textit{random} $m=10^2$   & 0.0335  & 0.0001  &  0.4642  & 0.0001   &   4.327   &  0.0001        \\
+\textit{random} $m=10^3$   & 0.3312  & 0.002   &  4.470  & 0.0011   &  44.148  &  0.0016    \\
+\textit{random} $m=10^4$   & 3.1092  & 0.006   & 43.999 &   0.0117   & 440.254  &  0.0155    \\
+\textit{front} $m=10^2$    & 0.883   & 0.0001  &  0.879  & 0.0001   &   8.673  &   0.0001     \\
+\textit{front} $m=10^3$    & 0.8729  & 0.0001  &  8.793  & 0.001    &  87.396  &  0.001    \\
+\textit{front} $m=10^4$    & 9.6823  & 0.0049  & 87.856 &   0.0119   & 885.589  &  0.0117   \\
+\bottomrule
+\multicolumn{4}{l}{\footnotesize \textit{Pozn:}
+\texttt{SSet} = \texttt{SortedSet}}
+\end{tabular}
+\caption{Výsledky testu vkládání v sekundách \texttt{List} vůči \texttt{SortedSet}.}
+\label{tab.orderbyexpr1}
+\end{table}
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{lD{.}{,}{1.4}D{.}{,}{1.4}}
+\toprule
+\mc{} & \multicolumn{2}{c}{$n=10^8$} \\
+\mc{} & \mc{\texttt{SortedSet}} & \mc{\texttt{$(128, 256)$-strom}} \\
+\midrule
+\textit{random} $m=10^4$   &  0.0155  & 0.014   \\
+\textit{random} $m=10^5$   &  3.992  & 1.338   \\
+\textit{front} $m=10^4$    & 0.0117  & 0.002  \\
+\textit{front} $m=10^5$    & 1.483  & 0.483  \\
+\bottomrule
+\end{tabular}
+\caption{Výsledky testu vkládání v sekundách \texttt{SortedSet} vůči $(128, 256)$-strom.}
+\label{tab.orderbyexpr2}
+\end{table}
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{lrr}
+\toprule
+\mc{} & \mc{\texttt{SortedSet}} & \mc{\texttt{$(128, 256)$-strom}} \\
+\midrule
+\textit{Build} $n=10^8$   &  59,890  & 101,421   \\
+\bottomrule
+\end{tabular}
+\caption{Výsledky testu stavby struktur v sekundách \texttt{SortedSet} vůči $(128, 256)$-strom.}
+\label{tab.orderbyexpr3}
+\end{table}
+
+\subsection{Ukládání prvků v (a, 2a)-stromu}
+
+V minulé sekci jsme rozhodli, že zatřiďování nalezených prvků hledání provedeme pomocí $(a, 2a)$-stromu.
+Musíme definovat chování, kdy nějaké dva prvky sdílí stejnou hodnotu třídění.
+Předpokládejme, že ve stromě existuje index s určitou hodnotou klíče.
+Prohledávání nalezne výsledek a uloží jej do tabulky a následně index řádku vloží k zatřídění do stromu.
+V takovém případě dva indexy se budou jevit jako shodné.
+Avšak, stále potřebuje mít indexy setříděné, čili v moment shodnosti klíčů třídění budeme třídit prvky pomocí samotných hodnot indexů.
+
+Nyní jsme si uvědomili jednu možnou optimalizaci.
+Optimalizace bude fungovat v případech, kdy se hodnoty třídění často opakují.
+Každý záznam ve stromě bude obsahovat pole.
+Pokud vkládáme prvek, který ještě není ve stromě, tak prvek vložíme do stromu a vytvoříme pro něj pole.
+Pokud vkládáme prvek, který už se nachází ve stromě, tak prvek pouze vložíme do příslušného pole.
+Tímto způsobem omezíme počet prvků ve stromě a tím i počet porovnání.
+
+Pro shrnutí jsme ustanovili, že v průběhu implementace vytvoříme dva řešení jednovláknového zpracování.
+První bude využívat prostý $(a,2a)$-stromu (značení \textbf{ABTree}).
+Druhé bude využívat optimalizovaný strom (značení \textbf{ABTreeAcccumulator}).
+
+\subsection{Paralelizace}
