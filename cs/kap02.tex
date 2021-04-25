@@ -138,7 +138,7 @@ Soubor schéma hran:"
 Jako určující \verb+propTypes+ pro náš případ enginu bychom chtěli zvolit dva druhy.
 První by byla číselná hodnota značená integer (32-bit integer).
 Další by představoval řetězec značený string.
-Práce s řetězci je obecný problém a existuje mnoho znakových sad, proto bychom chtěli zvolit vstupní řetězce pouze se znaky ASCII.  
+Práce s řetězci je obecný problém a existuje mnoho znakových sad, proto bychom chtěli zvolit vstupní řetězce pouze se základní znaky ASCII.  
 Dané dva druhy představují základní typy použitých v komerčních sférách.
 
 Samotná data budou obsažena opět ve dvou separatních souborech pro hrany a vrcholy.
@@ -1369,7 +1369,7 @@ K otestování jsme vybrali dvě nativní struktury C\#:
 \item \texttt{SortedSet}: reprezentuje případ binárního vyhledávacího stromu.
 \end{enumerate}
 Struktury jsme zaplnili $n$ náhodně generovanými prvky.
-Prvky byly generovány nativní třídou \texttt{Random} s inicializační hodnotou 100100 v rozsahu hodnot $[10$ $000; Int32.MaxInt - 10$ $000]$.
+Prvky byly generovány nativní třídou \texttt{Random} s inicializační hodnotou 100100 v rozsahu hodnot $[10$ $000; $\texttt{Int32.MaxInt}$ - 10$ $000]$.
 Struktury byly setříděny.
 Následně jsme do struktur vkládali $m$ náhodně generovaných prvků (totožnou třídou \texttt{Random}) z dvou různých rozsahů:
 
@@ -1377,7 +1377,7 @@ Následně jsme do struktur vkládali $m$ náhodně generovaných prvků (totož
 \item Rozsah $[0; 10$ $000]$ a je označen $front$. 
 Umožní nám vkládat prvky na začátek setříděné posloupnosti. 
 Sledujeme nejhorší případ pro pole, kdy dochází k posouvání všech prvků doprava.
-\item Rozsah $[10$ $000; Int32.MaxInt - 10$ $000]$ a je označen $random$.
+\item Rozsah $[10$ $000;$ \texttt{Int32.MaxInt}$ - 10$ $000]$ a je označen $random$.
 Umožní nám sledovat vkládání prvků do náhodných pozic struktury.
 \end{enumerate}
 Měřili jsme pouze část vkládání $m$ prvků do struktur pomocí třídy \texttt{Stopwatch}.
@@ -1428,7 +1428,7 @@ Výsledky jsou v tabulce \ref{tab.orderbyexpr3}.
 Vidíme, že v experimentu je rychlejší \texttt{SortedSet}.
 Sitauci si vysvětlujeme režií za operaci vložení do $(a, 2a)$-stromu, kdy dochází k častému překopírovávání prvků v moment vytváření nového vrcholu.
 Nicméně, v průběhu experimentu jsme sledovali paměťové vytížení procesu pomocí nativního programu Windows 10 \texttt{Task Manager}.
-Ukázalo se, že v průběhu testu \texttt{SortedSet} dosahovalo využití paměti $6,8$GB, zatímco $(a, 2a)$-strom pouze $2,1$GB.
+Ukázalo se, že v průběhu testu \texttt{SortedSet} dosahovalo využití paměti $6,8$\,GB, zatímco $(a, 2a)$-strom pouze $2,1$\,GB.
 Daný jev je způsoben vytvářením nové třídy pro každý vložený prvek do struktury \texttt{SortedSet}.
 \textbf{Finálně jsme se rozhodli zatřiďování realizovat pomocí (a, 2a)-stromu.}
 
@@ -1488,6 +1488,7 @@ Pro shrnutí jsme ustanovili, že v průběhu implementace vytvoříme dva řeš
 První bude využívat prostý $(128, 256)$-stromu (značení \textbf{ABTree}).
 Druhé bude využívat optimalizovaný strom (značení \textbf{ABTreeAcccumulator}).
 
+\bigskip
 \textit{Nyní navrhneme způsob paralelizace tříděn pro naše módy zpracování.
 V průběhu návrhu se budeme snažit využít jíž získané informace z předchozí sekce.}
 
@@ -1524,15 +1525,17 @@ V moment implementace enginu typ vlastnosti je definovám konkrétním typem pro
 Pro jazyk C\# číselná hodnota může být typ \texttt{Int32} a řetězec typ \texttt{string}.
 Dané typy mají své rozsahy hodnot.
 Například pro \texttt{Int32} je rozsah hodnot $[$\texttt{Int32.MinValue}; \texttt{Int32.MaxValue}$]$.
-Rozsah typu \textbf{prvního} klíče rozsekáme na části obsahující stejný počet prvků. 
+Rozsahem hodnot zde míníme uzavřený interval na množině celých čísel.
+Interval budeme označovat anglickým značením, tj. $[a; b]$ pro uzavřený, kde $a$ a $b$ jsou celá čísla a $a\leq b$.
+Rozsah typu \textbf{prvního} klíče rozsekáme na části obsahující ideálně shodný počet prvků. 
 Nyní každé přihrádce přiřadíme jednu část rozsahu. 
 Přihrádky tedy budou tvořit ostré uspořádání.
+
 Dále bude existovat objekt sdílený všemi vlákny, který pro každý zatřiďováný výsledek určí přihrádku na základě jeho hodnoty prvního klíče.
 Tedy vlákno při zatřiďování přistoupí k sdílenému objektu.
 Ten na základě hodnoty prvního klíče výsledku určí jeho přihrádku.
 Vlákno uzamkne zámek dané přihrádky, následně vloží výsledek hledání do tabulky a index nového řádku uloží do indexačního stomu.
 Zámek se po zatřídění odemkne a vlákno pokračuje v prohledávání grafu.
-
 Jsme si vědomi, že rozdělování celého rozsahu typu programovacího jazyka není ideální, protože nám nic neříká o konkrétních hodnotách vlasností v grafu.
 Nicméně, daný postup chceme vyzkoušet, protože se dané hodnoty dají jednoduše pro graf vygenerovat.
 Pokud bychom zjistili, že daný přístup je dostatečně rychlý, tak bylo vhodné v budoucích rozšířeních zvážit vytvoření statistik rozsahu konkrétních hodnot vlastností.
@@ -1551,14 +1554,14 @@ Nejdříve si definuje formálně základní zmíněná označení:
 
 \item $p_i$ je přihrádka $i$, kde $i=0, 1, 2 ..., |P|-1$.
 
-\item $t$ je počet vláken prohledávající graf, kde $t\geq2$, $t\leq64$ a $t$ je sudé.
+\item $t$ je počet vláken prohledávající graf, kde $t\geq2$, $t\leq64$ a $t$ je mocnina dvou.
 
-\item $R=\{n\in N_0 \wedge n\geq1| 0, 1, 2, ..., n\}$ je množina rozsahu hodnot typu klíče třídění.
+\item $R=[a; b]$, kde $a$ a $b$ jsou celá čísla a $a\leq b$, je uzavřený interval rozsahu hodnot typu klíče třídění.
 
-\item $R_i\subset R $, kde $i=0, 1, 2, ..., |P|-1$ jsou části rozsahu hodnot klíče třídění.
-
-\item $|R_i|$ je počet hodnot v části rozsahu. Platí $|R_i|=|R_j|$ pro všechna $i, j=0, 1, 2, ..., |P|-1$. 
-Dále $\forall x \in R_i$ a $\forall y \in R_j$ platí $x<y$ pro všechna $i, j=0, 1, 2 ..., |P|-1$, kde $i<j$.
+\item $R_i$ je uzavřený podinterval intervalu $R$, kde $i=0, 1, 2, ..., |P|-1$.
+Přihrádce $p_i$ náleží podinterval $R_i$.
+Mějme podintervaly $R_i=[a_i; b_i]$ $a_i\leq b_i$ a $R_j=[a_j; b_j]$ $a_j\leq b_j$, pak $\forall i$ a $\forall j$, takové že $i<j$ a $i\neq j$ platí $a_i<a_j$, $b_i<a_j$, $a_i<b_j$ a $b_i<b_j$.
+Uvažujeme, že každý podinterval má alespoň jeden prvek, tedy $R$ obsahuje dostatek prvků.
 
 \end{itemize}
 
@@ -1584,66 +1587,82 @@ V jiných jazycích lze aplikovat podobný přístup.
 
 \subsubsection{Rozdělování typu Int32}
 
-Nejdíve vytvoříme rozsah $R=[$0; $n$].
-Následně dle něj vytvoříme rozdělení přihrádek.
+Nejdíve vytvoříme rozsah $R=[$0; $n$] pomocí úpravy rozsahu hodnot typu \texttt{Int32}.
+Následně dle upraveného rozsahu vytvoříme rozdělení přihrádek.
 Finálně pak sestavíme konkrétní rozsah náležící přihrádce.
-\texttt{Int32} je 32-bitový typ s rozsahem $I=[$\texttt{Int32.MinValue}; \texttt{Int32.MaxValue}$]$, což zde znamená $I=[$-2 147 483 648; 2 147 483 647].
+\texttt{Int32} je 32-bitový typ s rozsahem $I=[$\texttt{Int32.MinValue}; \texttt{Int32.MaxValue}$]$.
 Označme \texttt{Int32.MinValue} jako $I_{min}$ a \texttt{Int32.MaxValue} jako $I_{max}$.
-Abychom vytvořili námi chtěný rozsah $R=[$0; $n$], tak přičteme ke každé hodnotě rozsahu $I$ kladnou hodnotu \texttt{Int32.MinValue}.
+Abychom vytvořili rozsah $R=[$0; $n$], tak přičteme ke každé hodnotě rozsahu $I$ kladnou hodnotu $I_{min}$.
 Hodnotu označme $I_{+min}$.
-Tímto vytvoříme rozsah $R=[0$; 4 294 967 295] a maximální hodnotu tohoto intervalu označme $R_{max}$.
+Tímto vytvoříme rozsah $R=[0$; $I_{min}+I_{max}$$]=[0$; 4 294 967 295] a maximální hodnotu tohoto intervalu označme $R_{max}$.
 Z tohoto rozsahu nyní jednoduše určíme velikosti částí k rozdělení původního rozsahu $I$.
-Velikost částí je $d=R_{max}/t^2$, za předpokladu, že máme $t$ vláken. 
-Tedy každá přihrádka, až na jednu, bude obsahovat právě $d$ hodnot.
-Jedna zbylá přihrádka bude mít $d+1$, protože dělíme liché číslo sudým.
+Počet hodnot v intervalu je $R_{max}+1$.
+Velikost podintervalů je $d=(R_{max}+1)/t^2$, za předpokladu, že máme $t$ vláken.
+Operací / rozumíme celočíselné dělení. 
+Tedy každá přihrádka bude obsahovat právě $d$ hodnot, protože $R_{max}+1$ je dělitelné námi definovanými $t^2$.
 Nyní zbývá určit jak budou vypadat samotné rozsahy přihrádek.
-Pro každou přihrádku $p_i$ je rozsah $R_i=[i \cdot d; d+(i \cdot d)-1]$, což odpovídá $I_i=[I_{min}+(i \cdot d); I_{min}+d+(i \cdot d)-1]$
-Poslední přihrádka pak bude mít horní mez +1.
+Pro každou přihrádku $p_i$ je rozsah $R_i=[i \cdot d; d+(i \cdot d)-1]$, což odpovídá $I_i=[I_{min}+(i \cdot d); I_{min}+d+(i \cdot d)-1]$.
+Operací $\cdot$ rozumíme celočíselné násobení.
 
-K nalezení indexu $i$ správné přihrádky nyní stačí použít dělení.
+K nalezení indexu $i$ správné přihrádky nyní stačí použít celočíselné dělení.
 Předpokládejme, že nalezený výsledek má hodnotu prvního klíče třídění $k$.
 Pomyslná nula je zde hodnota $I_{+min}$.
 Pokud je $k \leq 0$, pak index přihrádky je $i=(I_{+min}-(-k))/d$.
 V opačném případě je $i=(I_{+min}+k)/d$.
-Pokud $i=t^2$, pak volíme přihrádku $p_{|P|-1}$
 
 \subsubsection{Rozdělování typu string}
 
 Nyní musíme rozdělit rozsah typu \texttt{string}.
-Pracujeme pouze se znaky ASCII [0; 127].
-Abychom byli schopni definovat nějaký vhodný rozsah, rozhodli jsme se provádět porovnání ordinální.
+Pracujeme pouze se základními znaky ASCII, ordinální hodnoty jsou v rozsahu [0; 127].
+Ordinální hodnotu jednoho znaku pak budeme značit $[x]$, kde $x$ je ordinální hodnota znaku, zároveň $x\leq 127$ a $x\geq 0$.
+Pokud budeme mluvit o hodnotě znaku, tak máme namysli ordinální hodnotu znaku.
+Dále budeme postupovat jako v minulé sekci.
+
+Abychom byli schopni definovat nějaký vhodný rozsah $R$ jako v předchozí sekci, rozhodli jsme se provádět porovnání ordinální.
 Při porovnávání znaků budeme tedy uvažovat pouze jejich ordinální hodnoty a ne abecední pořadí.
-ASCII v hotnotách [0; 31] a [127] obsahuje znaky, které se nevykreslují.
-Proto budeme považovat za adekvátní práci pouze s $128-33=95$ znaky, čili rozsah hodnot typu je $K=[$32; 126].
-K získání rozsahu $R=[$0; $n$] odečteme hodnotu 32 od každé hodnoty rozsahu $K$.
-Výsledný rozsah je  $R=[$0; 94]
-Znak s hodnotou 32 budeme tedy chápat jako pomyslnou nulu, označme ji $Space$.
-Kdybychom vytvářeli přihrádky na základě prvního znaku, tak bychom měli problém rozdělit rozsah pro větší počty vláken.
+Znaky [0; 31] a [127] jsou řídící kódy, které se nevykreslují.
+Proto budeme považovat za adekvátní práci pouze s $128-33=95$ znaky, čili rozsah hodnot je $K=[$32; 126].
+K získání rozsahu $R=[$0; $n$] odečteme hodnotu znaku [32] od každé hodnoty rozsahu $K$.
+Výsledný rozsah je  $K'=[$0; 94].
+Znak [32] budeme tedy chápat jako pomyslnou nulu.
+Kdybychom vytvářeli přihrádky na základě jednoho znaku, tj. aktuální $K'$, tak bychom měli problém rozdělit rozsah pro větší počty vláken.
 Proto jsme se rozhodli vytvořit rozsah na základě ordinálních hodnot dvou prvních znaků.
-Což vlastně vytváří skalární součin $R \times R$.
-Od každého zpracovaného znaku odečteme hodnotu $Space$.
-Pokud znak chybí, přiřadíme jim hodnotu 0.
+Vytváříme vlastně pomyslný skalární součin $K' \times K'$.
 Uvažujeme tedy rozsah $R=[$0; $95^2-1]$, protože máme 95 znaků a děláme skalární součin.
-Hodnoty jsou ale stále číslovány od 0, tedy $-1$.
+Hodnoty znaků jsou ale stále číslovány od 0, tedy $-1$.
+Označme počet hodnot v rozsahu jako $R_{max}=95^2$.
 
 Nyní můžeme postupovat stejným způsobem jako v minulé sekci.
 Velikost částí je $d=R_{max}/t^2$.
 Přihrádka $p_i$ má rozsah $R_i=[d \cdot i; d+(d \cdot i)-1]$.
-Označme ordinální hodnoty prvních dvou znaků řetězce jako $x$ a $y$.
-Pro získání indexu $i$ náležité přihrádky stačí od obou znaků odečíst hodnotu $Space$.
-Hodnoty po odečtení označme $x'$a $y'$ a označme $((x' \cdot 95)+y')$ jako $strValue$.
-Následně $i=strValue/d$.
+Určení přihrádky řetězce pak bude vypadat následovně.
+Označme ordinální hodnoty prvních dvou znaků řetězce jako $[x]$ a $[y]$, kde první je $[x]$.
+Pro získání indexu $i$ náležité přihrádky stačí od obou hodnot znaků odečíst hodnotu [32].
+Pokud znaky chybí přiřadíme jim hodnotu 0.  
+Hodnoty po odečtení označme $x'$ a $y'$.
+Jejich hodnotu $q$ z rozsahu $R$ vypočteme jako $q=((x' \cdot 95)+y')$, protože každý znak se kombinoval s každým znakem.
+Následně $i=q/d$.
 
 Nastává tady problém pro velký počet vláken.
 Uvažujme $t=64$, pak $d=R_{max}/4096=2$.
-Jenže v moment výpočtu $i$ bychom pro hodnoty $strValue>2 \cdot 4096$ přiřadili všechny do poslední přihrádky. 
-Řešením daného problému je hodnoty rozprostříd to prvních $n$ přihrádek počínaje nultou.
-Všimněme si, že omezením vláken na 64 si můžeme dovolit vložit do každé z $n$ přihrádek právě jednu hodnotu.
-Tyto přihrádky budou mít $d'=d+1$ a zbytek původní $d$.
-Označme hodnotu horní meze rozsahu poslední přihrádky mající $d'$ jako $D_{max}$.
+Jenže v moment výpočtu $i=q/2$ bychom pro hodnoty $q>2 \cdot 4096$ získali indexy větší než počet přihrádek.  
+Všimněme si, že počet problematických hodnot je zde vždy menší než počet přihrádek.
+Tedy řešením daného problému je hodnoty spadající za danou hranici rozprostříd do prvních $n$ přihrádek, které mají $i=0, 1, ..., n-1$.
+Tyto přihrádky budou mít $d'=d+1$ a zbytek $d$.
 Výpočet $i$ nyní bude vypadat následovně.
-Pokud $strValue \leq D_{max}$, pak $i=strValue/d'$.
-V opačném případě $i=n+((strValue-D_{max})/d)$.
+Označme hodnotu horní meze rozsahu poslední přihrádky mající $d'$ jako $D_{max}$.
+Pokud $q\leq D_{max}$, pak $i=q/d'$, protože prvních $n$ rozsahů má o jednu hodnotu navíc.
+V opačném případě $i=n+((q-D_{max})/d)$, jelikož od $D_{max}$ jsou rozsahy původní velikosti a předcházelo jim $n$ přihrádek.
 Přičítáme $n$, protože přihrádky jsou číslované od nuly.
 
+\smallskip
+Tímto jsme dokončili návrh vykonávání paralelního Order by.
+Dělení popsané v předchozích kapitolách jsme určili na základě jazyka C\#.
+Myslíme, že dané principy se dají aplikovat i v dalších jazycích.
+
+\bigskip
+\textit{
+Dokončili jsme analýzu a návrh úprav dotazovacího enginu.
+Nyní přejdeme k části implementace.
+}
 
