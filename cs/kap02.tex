@@ -108,7 +108,7 @@ Mít jeden typ hrany obsahující všechny nutné informace.
 Řešením by mohlo být vytvořit pole in/out hran pro každý vrchol. 
 Daný přístup nám případá výrazně náročnější z hlediska paměti, protože musíme vytvářet pole pro každý vrchol zvlášť. 
 
-\subsection{Návrh vstupních grafových dat}
+\subsection{Návrh vstupních grafových dat} \label{anal.vstup}
 
 Vstupní soubory musí obsahovat informace nutné pro Property graf.
 Budeme očekávat dva druhy souborů.
@@ -174,7 +174,7 @@ Nyní musíme analyzovat způsob získání informací z uživatelem zadaného d
 
 Uživatelský dotaz se pohybuje v rozsahu definovaném v sekci PGQL \ref{req.pgql}.
 Nicméně, je zde nutné přemýšlet i nad možnými rozšířeními.
-Například může dojít k přidaní částí Where a Having spolu s nutností porovnávání (Where x.PropOne $>= 10$).
+Například může dojít k přidaní částí Where a Having spolu s nutností porovnávání (Where x.PropOne $\leq 10$).
 Proto se budeme snažit držet základních principů object oriented programming a volit vhodné návrhové vzory.
 
 K načtení uživatelského dotazu se nám jeví jako nejvhodnější způsob použít techniky známé z překladačů programovacích jazyků.
@@ -1306,7 +1306,7 @@ V následujících sekcích navrhneme způsob zpracování Order by v průběhu 
 V naši představě zpracování budeme udržovat setříděnou posloupnost výsledků hledání.
 Při nalezení výsledku výsledek zatřídíme do již setříděné posloupnosti.
 Obecně jsme se rozhodli použít následující princip.
-Bude existovat totožná tabulka výsledků hledání jako v původním řešení společně s indexační strukturou tabulky, protože opět nechceme přesouvat řádky tabulky.
+Bude existovat totožná tabulka výsledků hledání jako v původním řešení společně s indexační strukturou tabulky, protože nechceme přesouvat řádky tabulky.
 Indexační struktura bude opět obsahovat indexy řádků v tabulce.
 Výsledek Order by pak bude tabulka výsledku s indexační strukturou.
 
@@ -1331,13 +1331,17 @@ Myšlenka přístupu je udržovat setříděné pole indexů.
 V moment nalezení výsledku je využito binární vyhledávání \citep[str. 26]{labyrint} k nalezení vhodného místa vložení do pole.
 Prvek je vložen do pole.
 Pokud se na místě nacházel již nějaký prvek, prvek je posunut doprava.
+Pokud v poli není dostatek místa, tak je rozšířeno.
 Jedná se vlastně o algoritmus Insert sort (třídění vkládáním).
 Jediným rozdílem je, že k nalezení místa vložení se používá binární vyhledávání.
+
 Problém zde představuje posouvání prvků v poli.
 Předpokládáme-li, že prvky posouváme napravo, tak v nejhorším případě vložením na začátek pole posuneme všechny prvky.
 V naši představě bychom chtěli problém řešit rozmístěním mezer mezi prvky v poli.
 Mezerou zde rozumíme prázdný záznam, tj. neobsahuje žádný index tabulky výsledků.
-Při posouvání prvků pak stačí posouvat prvky do první mezery.
+Mezi každými dvěma sousedními prvky by existoval stejný počet prázných záznamů.
+Vložení by bylo opět realizováno binárním vyhledáváním.
+V sitauci posouvání prvků nyní stačí posouvat prvky do první mezery.
 Řešení však naskýtá spoustu otázek.
 Například neznáme ideální počet mezer mezi prvky a nevíme jak optimálně navrhnout binární vyhledávání na takovém poli.
 Navíc, zvyšováním počtu mezer se pole značně zvětšuje, tj. roste paměťová složitost.
@@ -1346,18 +1350,20 @@ Navíc, zvyšováním počtu mezer se pole značně zvětšuje, tj. roste pamě�
 
 Druhý přístup využívá vyhledávací stromy \citep[str. 177]{labyrint}.
 Chtěli bychom využít základní druhy vyhledávacích stromů jako binární vyhledávací stromy nebo $(a, b)$-stromy.
-Výhoda $(a, b)$-stromů je ta, že každý vrchol stromu obsahuje až $b$ klíčů, zatímco binární vyhledávací stromy drží pouze jeden klíč ve vrcholu.
-Ideálně v průběhu implementace budeme chtít využít již stávajících knihoven.
+Výhoda $(a, b)$-stromů je ta, že každý vrchol stromu obsahuje až $b-1$ klíčů, zatímco binární vyhledávací stromy drží pouze jeden klíč ve vrcholu.
+Pokud bychom implementovali řešení s vyhledávacími stromy, tak budeme ideálně chtít využít již stávajících knihoven.
 
-\subsubsection{Experiment}
+\subsubsection{Experiment pole vůči vyhledávácím stromům}
 
 K porovnání dvou přístupů jsme se rozhodli provést jednoduchý experiment.
 Cílem testu je otestovat rychlost vkládání prvků do vybraných datových struktur.
+Test bude částečně simulovat reálnou činnost zatřiďování prvků do struktury.
 Experiment jsme naprogramovali v jazyce C\#.
 Kód je součástí příloh \ref{prilohy.benchtreevsarray}.
 Kód jsme přeložili pro platformu Windows 10 x64 cílící na .Net Framework 4.8.
 Samotný hardware testovacího stroje je rozepsán v sekci metodiky \ref{expr.hw}.
 K otestování jsme vybrali dvě nativní struktury C\#:
+
 \begin{enumerate}
 \item \texttt{List}: reprezentuje případ zatřiďování do pole binárním vyhledáváním.
 \item \texttt{SortedSet}: reprezentuje případ binárního vyhledávacího stromu.
@@ -1366,6 +1372,7 @@ Struktury jsme zaplnili $n$ náhodně generovanými prvky.
 Prvky byly generovány nativní třídou \texttt{Random} s inicializační hodnotou 100100 v rozsahu hodnot $[10$ $000; Int32.MaxInt - 10$ $000]$.
 Struktury byly setříděny.
 Následně jsme do struktur vkládali $m$ náhodně generovaných prvků (totožnou třídou \texttt{Random}) z dvou různých rozsahů:
+
 \begin{enumerate}
 \item Rozsah $[0; 10$ $000]$ a je označen $front$. 
 Umožní nám vkládat prvky na začátek setříděné posloupnosti. 
@@ -1373,21 +1380,50 @@ Sledujeme nejhorší případ pro pole, kdy dochází k posouvání všech prvk�
 \item Rozsah $[10$ $000; Int32.MaxInt - 10$ $000]$ a je označen $random$.
 Umožní nám sledovat vkládání prvků do náhodných pozic struktury.
 \end{enumerate}
-Měřili uběhlou dobu pomocí třídy \texttt{Stopwatch}.
+Měřili jsme pouze část vkládání $m$ prvků do struktur pomocí třídy \texttt{Stopwatch}.
 Měření jsme opakovali desetkrát pro každý rozsah a vybrali průměr hodnot.
-Při každém opakování byly struktura znovu sestavena.
+Při každém opakování byly struktury znovu sestaveny.
 Parametry $n$ a $m$ jsme volili tak, abychom byli schopni sledovat chování při zvyšování počtu vložených a vkládaných prvků. 
 
 \subsubsection{Výsledky}
 
 Výsledky se nacházejí v tabulce \ref{tab.orderbyexpr1}.
 Z tabulky vidíme, že vkládání prvků do pole pomocí binárního vyhledávání značně zaostává, proto jsme se rozhodli upustit od myšlenky pole s mezerami.
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{lD{.}{,}{1.4}D{.}{,}{1.4}D{.}{,}{2.4}D{.}{,}{1.4}D{.}{,}{3.4}D{.}{,}{1.4}}
+\toprule
+\mc{} & \multicolumn{2}{c}{$n=10^6$} & \multicolumn{2}{c}{$n=10^7$} & \multicolumn{2}{c}{$n=10^8$} \\
+\mc{} & \mc{\texttt{List}} & \mc{\texttt{SSet}} & \mc{\texttt{List}} & \mc{\texttt{SSet}} & \mc{\texttt{List}} & \mc{\texttt{SSet}} \\
+\midrule
+\textit{random} $10^2$   & 0.0335  & 0.0001  &  0.464  & 0.0001   &   4.327   &  0.0001        \\
+\textit{random} $10^3$   & 0.3312  & 0.002   &  4.470  & 0.0011   &  44.148  &  0.0016    \\
+\textit{random} $10^4$   & 3.1092  & 0.006   & 43.999 &   0.0117   & 440.254  &  0.0155    \\
+\textit{front} $10^2$    & 0.883   & 0.0001  &  0.879  & 0.0001   &   8.673  &   0.0001     \\
+\textit{front} $10^3$    & 0.8729  & 0.0001  &  8.793  & 0.001    &  87.396  &  0.001    \\
+\textit{front} $10^4$    & 9.6823  & 0.0049  & 87.856 &   0.0119   & 885.589  &  0.0117   \\
+\bottomrule
+\multicolumn{4}{l}{\footnotesize \textit{Pozn:}
+\texttt{SSet} = \texttt{SortedSet}}
+\end{tabular}
+\caption{Výsledky testu vkládání v sekundách \texttt{List} vůči \texttt{SortedSet}.
+Hodnota za názvem testu představuje parametr \textit{m}.}
+\label{tab.orderbyexpr1}
+\end{table}
+
+\subsubsection{Experiment (a, 2a)-strom vůči SortedSet}
+
 Na základě výsledků jsme se rozhodli naimplementovat $(a, 2a)$-strom dle přednášky Datových struktur I \citep{dataLecture}.
-$(a, 2a)$-strom jsme porovnali vůči \texttt{SortedSet} při stejných testech, ale pouze pro nejvýšší řády počtu prvků stavby a vkládání.
+Pro experiment jsme určili parametr $a=128$, protože jsme díky němu dosahovali nejrychlejších výsledků.
+Strom jsme porovnali vůči struktuře \texttt{SortedSet} při stejných testech, ale pouze pro nejvýšší řády počtu prvků stavby a vkládání.
+
+\subsubsection{Výsledky}
+
 Výsledky jsou zobrazeny v tabulce \ref{tab.orderbyexpr2}.
 Z tabulky vidíme, že při vkládání prvků je rychlejší $(a, 2a)$-strom.
 Pro finální rozhodnutí, kterou strukturu zvolíme k zatřiďování, jsme rozhodli provést poslední experiment.
-Tentokrát budeme měřit první část vkládání $n$ prvků do prázdné struktury (test je označen \texttt{Build}).
+Tentokrát budeme měřit první část vkládání $n$ prvků do prázdné struktury (test je označen \textit{build}).
 Výsledky jsou v tabulce \ref{tab.orderbyexpr3}.
 Vidíme, že v experimentu je rychlejší \texttt{SortedSet}.
 Sitauci si vysvětlujeme režií za operaci vložení do $(a, 2a)$-stromu, kdy dochází k častému překopírovávání prvků v moment vytváření nového vrcholu.
@@ -1398,39 +1434,19 @@ Daný jev je způsoben vytvářením nové třídy pro každý vložený prvek d
 
 \begin{table}[!htb]
 \centering
-\begin{tabular}{lD{.}{,}{1.4}D{.}{,}{1.4}D{.}{,}{2.4}D{.}{,}{1.4}D{.}{,}{3.4}D{.}{,}{1.4}}
-\toprule
-\mc{} & \multicolumn{2}{c}{$n=10^6$} & \multicolumn{2}{c}{$n=10^7$} & \multicolumn{2}{c}{$n=10^8$} \\
-\mc{} & \mc{\texttt{List}} & \mc{\texttt{SSet}} & \mc{\texttt{List}} & \mc{\texttt{SSet}} & \mc{\texttt{List}} & \mc{\texttt{SSet}} \\
-\midrule
-\textit{random} $m=10^2$   & 0.0335  & 0.0001  &  0.4642  & 0.0001   &   4.327   &  0.0001        \\
-\textit{random} $m=10^3$   & 0.3312  & 0.002   &  4.470  & 0.0011   &  44.148  &  0.0016    \\
-\textit{random} $m=10^4$   & 3.1092  & 0.006   & 43.999 &   0.0117   & 440.254  &  0.0155    \\
-\textit{front} $m=10^2$    & 0.883   & 0.0001  &  0.879  & 0.0001   &   8.673  &   0.0001     \\
-\textit{front} $m=10^3$    & 0.8729  & 0.0001  &  8.793  & 0.001    &  87.396  &  0.001    \\
-\textit{front} $m=10^4$    & 9.6823  & 0.0049  & 87.856 &   0.0119   & 885.589  &  0.0117   \\
-\bottomrule
-\multicolumn{4}{l}{\footnotesize \textit{Pozn:}
-\texttt{SSet} = \texttt{SortedSet}}
-\end{tabular}
-\caption{Výsledky testu vkládání v sekundách \texttt{List} vůči \texttt{SortedSet}.}
-\label{tab.orderbyexpr1}
-\end{table}
-
-\begin{table}[!htb]
-\centering
 \begin{tabular}{lD{.}{,}{1.4}D{.}{,}{1.4}}
 \toprule
 \mc{} & \multicolumn{2}{c}{$n=10^8$} \\
 \mc{} & \mc{\texttt{SortedSet}} & \mc{\texttt{$(128, 256)$-strom}} \\
 \midrule
-\textit{random} $m=10^4$   &  0.0155  & 0.014   \\
-\textit{random} $m=10^5$   &  3.992  & 1.338   \\
-\textit{front} $m=10^4$    & 0.0117  & 0.002  \\
-\textit{front} $m=10^5$    & 1.483  & 0.483  \\
+\textit{random} $10^4$   &  0.0155  & 0.014   \\
+\textit{random} $10^5$   &  3.992  & 1.338   \\
+\textit{front} $10^4$    & 0.0117  & 0.002  \\
+\textit{front} $10^5$    & 1.483  & 0.483  \\
 \bottomrule
 \end{tabular}
-\caption{Výsledky testu vkládání v sekundách \texttt{SortedSet} vůči $(128, 256)$-strom.}
+\caption{Výsledky testu vkládání v sekundách \texttt{SortedSet} vůči $(128, 256)$-strom.
+Hodnota za názvem testu představuje parametr \textit{m}.}
 \label{tab.orderbyexpr2}
 \end{table}
 
@@ -1440,7 +1456,7 @@ Daný jev je způsoben vytvářením nové třídy pro každý vložený prvek d
 \toprule
 \mc{} & \mc{\texttt{SortedSet}} & \mc{\texttt{$(128, 256)$-strom}} \\
 \midrule
-\textit{Build} $n=10^8$   &  59,890  & 101,421   \\
+\textit{build} $n=10^8$   &  59,890  & 101,421   \\
 \bottomrule
 \end{tabular}
 \caption{Výsledky testu stavby struktur v sekundách \texttt{SortedSet} vůči $(128, 256)$-strom.}
@@ -1455,16 +1471,179 @@ Předpokládejme, že ve stromě existuje index s určitou hodnotou klíče.
 Prohledávání nalezne výsledek a uloží jej do tabulky a následně index řádku vloží k zatřídění do stromu.
 V takovém případě dva indexy se budou jevit jako shodné.
 Avšak, stále potřebuje mít indexy setříděné, čili v moment shodnosti klíčů třídění budeme třídit prvky pomocí samotných hodnot indexů.
+To můžeme, protože každý index řádku je pouze jeden v tabulce.
+Čili nedojde k porušení setříděnosti.
 
 Nyní jsme si uvědomili jednu možnou optimalizaci.
 Optimalizace bude fungovat v případech, kdy se hodnoty třídění často opakují.
-Každý záznam ve stromě bude obsahovat pole.
-Pokud vkládáme prvek, který ještě není ve stromě, tak prvek vložíme do stromu a vytvoříme pro něj pole.
+Každý záznam ve stromě bude obsahovat dvojici \texttt{(index, pole)}.
+\texttt{index} je index řádku tabulky.
+\texttt{pole} je datová struktura pole.
+Pokud vkládáme prvek, který ještě není ve stromě, tak se pro prvek vytvoří daná dvojice.
+Pole bude prázdné a položka \texttt{index} je index právě vkládaného řádku.
 Pokud vkládáme prvek, který už se nachází ve stromě, tak prvek pouze vložíme do příslušného pole.
 Tímto způsobem omezíme počet prvků ve stromě a tím i počet porovnání.
 
 Pro shrnutí jsme ustanovili, že v průběhu implementace vytvoříme dva řešení jednovláknového zpracování.
-První bude využívat prostý $(a,2a)$-stromu (značení \textbf{ABTree}).
+První bude využívat prostý $(128, 256)$-stromu (značení \textbf{ABTree}).
 Druhé bude využívat optimalizovaný strom (značení \textbf{ABTreeAcccumulator}).
 
-\subsection{Paralelizace}
+\textit{Nyní navrhneme způsob paralelizace tříděn pro naše módy zpracování.
+V průběhu návrhu se budeme snažit využít jíž získané informace z předchozí sekce.}
+
+\subsection{Half-Streamed}
+
+Samotný model zpracování \textbf{Half-Streamed} nám nabízí využít zatřiďování pomocí zmíněných stromů.
+V prvním kroku každé vlákno bude lokálně vytvářet svou tabulku výsledků a indexační strom.
+Problematická část je zde slévání výsledků.
+Informace zde jsou uloženy ve stromech.
+Všechny struktury bychom mohli průběžně iterovat a udržovat si minimum z aktuálních výsledků.
+Budeme vlastnit separátní pole, do kterého na jeho konec ukládáme minima v každém kroku iterace.
+Po dokončení iterace pole bude obsahovat výsledek slévání.
+Bohužel jsme nepřišli na způsob paralelizace tohoto řešení, proto jsme se rozhodli od něj upustit.
+
+Místo toho využijeme již několikrát zmiňované dvoucestné slévání (použili jsme jej při paralelizaci Group by v sekci Local + dvoucestné slévání \ref{anal.groupby.local}).
+V moment dokočení hledání všemi vlákny se vytvoří jedno pole a každé vlákno do něj překopíruje své výsledky.
+Zde budeme muset překopírovat proxy třídy řádků a nikoliv pouze jejich indexy, protože existuje zde mnoho tabulek a sléváním pouhých indexů nedokážeme rozeznat, jaké tabulce přináleží.
+To znamená, že pole obsahuje posloupnosti výsledků vláken.
+Následně se posloupnosti slévají po dvojicích, jako v zmiňovaném řešení Group by. 
+Nevýhoda tohoto řešení je nutnost čekat na dokončení práce prohledávaní grafu všech vláken.
+ 
+\subsection{Streamed}
+
+Zatřiďování do globální struktury je mnohem komplikovanější problém.
+Avšak, stále zde využijeme již navrhnuté principy tabulek a stromů.
+Připravíme určité množství přihrádek.
+Každá přihrádka bude obsahovat tabulku výsledků hledání a indexační strom.
+Přihrádka bude přístupná pouze skrze zámek.
+
+Třídění probíhá na základě klíčů zadaných uživatelem.
+Klíče jsou vlastnosti elementů grafu.
+Vlastnosti mají svůj typ (např: číselná hodnota integer nebo řetězec string).
+V moment implementace enginu typ vlastnosti je definovám konkrétním typem programovícho jazyka.
+Pro jazyk C\# číselná hodnota může být typ \texttt{Int32} a řetězec typ \texttt{string}.
+Dané typy mají své rozsahy hodnot.
+Například pro \texttt{Int32} je rozsah hodnot $[$\texttt{Int32.MinValue}; \texttt{Int32.MaxValue}$]$.
+Rozsah typu \textbf{prvního} klíče rozsekáme na části obsahující stejný počet prvků. 
+Nyní každé přihrádce přiřadíme jednu část rozsahu. 
+Přihrádky tedy budou tvořit ostré uspořádání.
+Dále bude existovat objekt sdílený všemi vlákny, který pro každý zatřiďováný výsledek určí přihrádku na základě jeho hodnoty prvního klíče.
+Tedy vlákno při zatřiďování přistoupí k sdílenému objektu.
+Ten na základě hodnoty prvního klíče výsledku určí jeho přihrádku.
+Vlákno uzamkne zámek dané přihrádky, následně vloží výsledek hledání do tabulky a index nového řádku uloží do indexačního stomu.
+Zámek se po zatřídění odemkne a vlákno pokračuje v prohledávání grafu.
+
+Jsme si vědomi, že rozdělování celého rozsahu typu programovacího jazyka není ideální, protože nám nic neříká o konkrétních hodnotách vlasností v grafu.
+Nicméně, daný postup chceme vyzkoušet, protože se dané hodnoty dají jednoduše pro graf vygenerovat.
+Pokud bychom zjistili, že daný přístup je dostatečně rychlý, tak bylo vhodné v budoucích rozšířeních zvážit vytvoření statistik rozsahu konkrétních hodnot vlastností.
+
+Nyní musíme zodpovědět několik otázek.
+Musíme určit, kolik přihrádek budeme vytvářet.
+Jak budeme rozdělovat rozsahy klíčů a jak určíme správnou přihrádku pro výsledek hledání.
+Pro jednoduchost nebudeme uvažovat případ, kdy existuje pouze jedna příhrádka nebo práci vykonává pouze jedno vlákno.
+Nejdříve si definuje formálně základní zmíněná označení:
+
+\begin{itemize}
+
+\item $P$ je množina všech přihrádek.
+
+\item $|P|$ je počet příhrádek, kde $|P|\geq2$.
+
+\item $p_i$ je přihrádka $i$, kde $i=0, 1, 2 ..., |P|-1$.
+
+\item $t$ je počet vláken prohledávající graf, kde $t\geq2$, $t\leq64$ a $t$ je sudé.
+
+\item $R=\{n\in N_0 \wedge n\geq1| 0, 1, 2, ..., n\}$ je množina rozsahu hodnot typu klíče třídění.
+
+\item $R_i\subset R $, kde $i=0, 1, 2, ..., |P|-1$ jsou části rozsahu hodnot klíče třídění.
+
+\item $|R_i|$ je počet hodnot v části rozsahu. Platí $|R_i|=|R_j|$ pro všechna $i, j=0, 1, 2, ..., |P|-1$. 
+Dále $\forall x \in R_i$ a $\forall y \in R_j$ platí $x<y$ pro všechna $i, j=0, 1, 2 ..., |P|-1$, kde $i<j$.
+
+\end{itemize}
+
+\subsubsection{Počet přihrádek}
+
+Ideální počet přihrádek je těžké odhadnout.
+Obecně platí, že čím více přihrádek, tím je menší šance, že se dva vlákna setkají u jednoho zámku, tak aby jedno vlákno čekalo na odemknutí zámku druhým vláknem.
+Proto počáteční odhad přihrádek určíme jako $|P|=t^2$.
+Abychom nemuseli pracovat s obecným počtem přihrádek, omezili jsme počet vláken na 64.
+
+\subsubsection{Rozdělování rozsahu}
+
+Rozhodli jsme se, že rozdělení přihrádek budeme provádět pouze podle prvního klíče třídění.
+Cílem je rozdělit rozsah typu programovacího jazyka na části stejné velikosti tak, aby tvořili ostré uspořádání dle poznámek výše.
+Pro jednoduchost budeme přetvářet konkrétní rozsahy na rozsah $R$, s kterým dále budeme pracovat.
+Dále přihrádce $p_i$ přináleží po rozdělení část rozsahu $R_i$.
+Jako základní typy vlastností jsme v sekci vstupních dat \ref{anal.vstup} zvolili integer a string. 
+Nyní se pokusíme demostrovat způsob rozdělení rozsahu typů v jazyce C\# pro .NET Framework 4.8.
+Typ integer jsme zvolili jako typ \texttt{Int32}.
+Typ string jsme zvolili jako typ \texttt{string}.
+Musíme zmínit, že jsme v sekci vstupních dat omezili znaky vstupních řetězců pouze na hodnoty ASCII [0; 127]. 
+V jiných jazycích lze aplikovat podobný přístup.
+
+\subsubsection{Rozdělování typu Int32}
+
+Nejdíve vytvoříme rozsah $R=[$0; $n$].
+Následně dle něj vytvoříme rozdělení přihrádek.
+Finálně pak sestavíme konkrétní rozsah náležící přihrádce.
+\texttt{Int32} je 32-bitový typ s rozsahem $I=[$\texttt{Int32.MinValue}; \texttt{Int32.MaxValue}$]$, což zde znamená $I=[$-2 147 483 648; 2 147 483 647].
+Označme \texttt{Int32.MinValue} jako $I_{min}$ a \texttt{Int32.MaxValue} jako $I_{max}$.
+Abychom vytvořili námi chtěný rozsah $R=[$0; $n$], tak přičteme ke každé hodnotě rozsahu $I$ kladnou hodnotu \texttt{Int32.MinValue}.
+Hodnotu označme $I_{+min}$.
+Tímto vytvoříme rozsah $R=[0$; 4 294 967 295] a maximální hodnotu tohoto intervalu označme $R_{max}$.
+Z tohoto rozsahu nyní jednoduše určíme velikosti částí k rozdělení původního rozsahu $I$.
+Velikost částí je $d=R_{max}/t^2$, za předpokladu, že máme $t$ vláken. 
+Tedy každá přihrádka, až na jednu, bude obsahovat právě $d$ hodnot.
+Jedna zbylá přihrádka bude mít $d+1$, protože dělíme liché číslo sudým.
+Nyní zbývá určit jak budou vypadat samotné rozsahy přihrádek.
+Pro každou přihrádku $p_i$ je rozsah $R_i=[i \cdot d; d+(i \cdot d)-1]$, což odpovídá $I_i=[I_{min}+(i \cdot d); I_{min}+d+(i \cdot d)-1]$
+Poslední přihrádka pak bude mít horní mez +1.
+
+K nalezení indexu $i$ správné přihrádky nyní stačí použít dělení.
+Předpokládejme, že nalezený výsledek má hodnotu prvního klíče třídění $k$.
+Pomyslná nula je zde hodnota $I_{+min}$.
+Pokud je $k \leq 0$, pak index přihrádky je $i=(I_{+min}-(-k))/d$.
+V opačném případě je $i=(I_{+min}+k)/d$.
+Pokud $i=t^2$, pak volíme přihrádku $p_{|P|-1}$
+
+\subsubsection{Rozdělování typu string}
+
+Nyní musíme rozdělit rozsah typu \texttt{string}.
+Pracujeme pouze se znaky ASCII [0; 127].
+Abychom byli schopni definovat nějaký vhodný rozsah, rozhodli jsme se provádět porovnání ordinální.
+Při porovnávání znaků budeme tedy uvažovat pouze jejich ordinální hodnoty a ne abecední pořadí.
+ASCII v hotnotách [0; 31] a [127] obsahuje znaky, které se nevykreslují.
+Proto budeme považovat za adekvátní práci pouze s $128-33=95$ znaky, čili rozsah hodnot typu je $K=[$32; 126].
+K získání rozsahu $R=[$0; $n$] odečteme hodnotu 32 od každé hodnoty rozsahu $K$.
+Výsledný rozsah je  $R=[$0; 94]
+Znak s hodnotou 32 budeme tedy chápat jako pomyslnou nulu, označme ji $Space$.
+Kdybychom vytvářeli přihrádky na základě prvního znaku, tak bychom měli problém rozdělit rozsah pro větší počty vláken.
+Proto jsme se rozhodli vytvořit rozsah na základě ordinálních hodnot dvou prvních znaků.
+Což vlastně vytváří skalární součin $R \times R$.
+Od každého zpracovaného znaku odečteme hodnotu $Space$.
+Pokud znak chybí, přiřadíme jim hodnotu 0.
+Uvažujeme tedy rozsah $R=[$0; $95^2-1]$, protože máme 95 znaků a děláme skalární součin.
+Hodnoty jsou ale stále číslovány od 0, tedy $-1$.
+
+Nyní můžeme postupovat stejným způsobem jako v minulé sekci.
+Velikost částí je $d=R_{max}/t^2$.
+Přihrádka $p_i$ má rozsah $R_i=[d \cdot i; d+(d \cdot i)-1]$.
+Označme ordinální hodnoty prvních dvou znaků řetězce jako $x$ a $y$.
+Pro získání indexu $i$ náležité přihrádky stačí od obou znaků odečíst hodnotu $Space$.
+Hodnoty po odečtení označme $x'$a $y'$ a označme $((x' \cdot 95)+y')$ jako $strValue$.
+Následně $i=strValue/d$.
+
+Nastává tady problém pro velký počet vláken.
+Uvažujme $t=64$, pak $d=R_{max}/4096=2$.
+Jenže v moment výpočtu $i$ bychom pro hodnoty $strValue>2 \cdot 4096$ přiřadili všechny do poslední přihrádky. 
+Řešením daného problému je hodnoty rozprostříd to prvních $n$ přihrádek počínaje nultou.
+Všimněme si, že omezením vláken na 64 si můžeme dovolit vložit do každé z $n$ přihrádek právě jednu hodnotu.
+Tyto přihrádky budou mít $d'=d+1$ a zbytek původní $d$.
+Označme hodnotu horní meze rozsahu poslední přihrádky mající $d'$ jako $D_{max}$.
+Výpočet $i$ nyní bude vypadat následovně.
+Pokud $strValue \leq D_{max}$, pak $i=strValue/d'$.
+V opačném případě $i=n+((strValue-D_{max})/d)$.
+Přičítáme $n$, protože přihrádky jsou číslované od nuly.
+
+

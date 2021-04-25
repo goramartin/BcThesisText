@@ -7,6 +7,13 @@ Prilohy benchmarku trees vs arrays
 
 ------------------------------
 
+Uvod
+
+Protpertz graf
+pgql
+json
+ASCII
+
 Analyza a implementace
 
 analyza je to ze nemam nic nakodeneho, ale poposuji reseni problemu ktere jsme resil
