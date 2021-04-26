@@ -338,7 +338,7 @@ Následuje shrnutí:
 \end{itemize}
 
 \section{Metodika}
-Pro provedení experimentu jsme připravili jednoduchý benchmark v jazyce C\# pro .Net Framowork 4.8, který je součástí příloh zdrojových kódů \ref{prilohy.kod}.
+Pro provedení experimentu jsme připravili jednoduchý benchmark v jazyce C\# pro .NET Framowork 4.8, který je součástí příloh zdrojových kódů \ref{prilohy.kod}.
 Paralelizování řešení jsme otestovali při zatížení všech dostupných jader procesoru (argument \verb+ThreadCount = 8+).
 Při spuštění programu dojde k navýšení priority procesu, aby docházelo k méně častému vykonávání ostatních procesů na pozadí během testování. 
 Pro \verb+ThreadCount = 1+ navíc dochází k navýšení priority hlavního vlákna. 
@@ -380,7 +380,7 @@ static void CleanGC()
 
 \subsection{Měření uběhlého času}
 
-Protože benchmark je implementovám v jazyce C\# pro .Net Framework 4.8, rozhodli jsme se využít nativních možností měření uběhlé doby.
+Protože benchmark je implementovám v jazyce C\# pro .NET Framework 4.8, rozhodli jsme se využít nativních možností měření uběhlé doby.
 Existují dvě hlavní metody meření a to pomocí třídy \texttt{Stopwatch} nebo přísup k vlasnotsti \texttt{Process.TotalProcessorTime}.
 První možnost je závíslá na instanci.
 Meří uběhlý čas mezi voláním metod \texttt{Start} a \texttt{Stop} na instanci bez ohledu v jakém vlákně byly metody volány.
@@ -596,7 +596,7 @@ Na první pohled jsme si všimli mnohonásobného zpomalení Streamed řešení 
 Výše jsme zmínili základní princip Streamed řešení.
 Rozsah hodnot prvního klíče třídění se rozdělí na rovnoměrné části a pro každý takový rozsah existuje přihrádka přístupná pomocí zámku.
 Vlákno v moment nalezení výsledku přistupuje k přihrádce pomocí zámku a vloží do ní daný výsledek.
-Při implementaci řešení jsme se omezili pouze na celý rozsah hodnot C\# typu vlastnosti.
+Při implementaci řešení jsme se omezili pouze na celý rozsah hodnot C\# (.NET Framework 4.8) typu vlastnosti.
 To znamená, že pokud vlastnost má typ integer (v C\# Int32), ačkoliv hodnoty vlastnosti v grafu mohou být v rozsahu $[0; 100]$, tak rozdělení přihrádek se vytvářejí z celého rozsahu C\# typu.
 Tedy přihrádky se vytvářejí rozdělením rozsahu $[$\verb+Int32.MinValue+; \verb+Int32.MaxValue+$]$ a nikoliv $[0; 100]$.
 To má za následek při třídění pomocí vlastnosti s rozsahem hodnot v grafu $[0; 100]$, že vlákna budou přistupovat v nejhorším případě k pouze jedné přihrádce.

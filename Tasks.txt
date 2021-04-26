@@ -1,39 +1,32 @@
 Obecne
 
+Nezapomenout na prilohy:
+Cely solution applikace
+Banechmark trees vs arrays
+Perperty generator
+GraphData builder
 Prilohy namerenych dat:
-odamazat duplicitni zaznamy z Q1 a nechat jen to pouzite v datovych souborech + prepis te promene v nazvu
-
-Prilohy benchmarku trees vs arrays
+	odamazat duplicitni zaznamy z Q1 a nechat jen to pouzite v datovych souborech + prepis te promene v nazvu
 
 ------------------------------
 
 Uvod
 
+graf
 Protpertz graf
 pgql
-json
-ASCII
 
-Analyza a implementace
 
-analyza je to ze nemam nic nakodeneho, ale poposuji reseni problemu ktere jsme resil
-implementace je pak ciste toho co jsem naimplementoval
+Implementace
 
-Analyza:
+rict jak vypada zakladni pohled na struktura
+moduly
+v cem se to psalo a tak
+asi rict ze jsme to implementovali skoro podobne podle analyzy
+popsat adresare
+pak jednotlive implementace tech sracek 
 
-	Vylepseni:
 
-	Obecne začátek
-	Co je cilem
-	Z ceho vychazime 
-	Obecné problemy
-	postup pri vytvareni	
-
-	Match
-
-	Order by 
-
-	Group by 
 
 ------------------------------
 

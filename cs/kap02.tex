@@ -9,7 +9,7 @@ Začneme obecným návrhem dotazovacího enginu a projdeme hlavní koncepty pro 
 V druhém kroku zvážíme kroky vykonávání dotazů a postup výběru řešení částí Order by a Group by, které se budou vykonávat po dokončení vyhledávání dotazu.
 V třetím kroku provedeme analýzu úprav pro agregaci v průběhu vyhledávání. 
 Součástí této části bude analýza algoritmů Order by a Group by pro dané úpravy. 
-Pokud v nějaké ukázce použijeme jazyk C\# míníme tím jazyk C\# pro .Net Framework 4.8.
+Pokud v nějaké ukázce použijeme jazyk C\# míníme tím jazyk C\# pro .NET Framework 4.8.
 
 \section{Obecný pohled na engine}
 
@@ -28,8 +28,16 @@ Při parsování se načítá uživatelký dotaz do interní reprezentace.
 Expressions slouží k výpočtu hodnot z uživatelsky zadaných výrazů.
 Například v části \texttt{order by x.PropOne}, musíme vědět, jak reprezentovat výraz \texttt{x.PropOne} a získat jeho hodnotu. 
 Na základě interní reprezentace se musí vytvořit struktury dotazu a definovat exekuční plán. 
-Z obecných úkonů částí vidíme, že se nejedná o stand-alone části.
-Vytváří se nám závislosti, které budeme muset uvážit.
+Blok dotaz/vykonání dotazu pak musí navíc obsahovat dva módy.
+A to upravené řešení a původní řešení.
+Uživatel si při spuštění enginu bude moct vybrat požadovaý mód.
+
+Samotná představa vykonávání je následovná.
+Uživatel při spuštění aplikace vybere chtěný mód.
+Aplikace po zapnutí načte graf z datových souborů.
+Uživatel pomocí příkazové řádku zadá dotaz k vykonání.
+Dotaz se vykoná a po dokončení uživatel může opět zadat další dotaz.
+Myslíme, že zde není nutné složité grafické rozhraní a proto budeme engine považovat za konzolovou aplikaci. 
 
 \section{Reprezentace grafu} \label{anal.grafrep}
 
@@ -128,6 +136,8 @@ V tomto případě se nám jeví nejvhodnější zvolit pro reprezentaci schéma
 Bude obsahovat položku \verb+Kind+, jejíž hodnota udává jméno \verb+elType+.
 Za ní bude následovat výčet vlastností.
 Vlastnosti budou reprezentovány dvojicí \verb+(propName/propType)+.
+\texttt{propName} je zde název vlastnosti.
+Každý JSON objekt tedy definuje jeden \texttt{elType}.
 Záznamy pak budou obsaženy v JSON poli:
 \begin{code}
 Soubor schéma vrcholů:
@@ -137,10 +147,13 @@ Soubor schéma hran:"
 [    { "Kind": "BasicEdge" }, 
      { "Kind": "BasicEdgeTwo", "PropertyOne": "integer" } ]
 \end{code}
+Pro vrcholy zde vidíme dva \texttt{elType} s názvy \texttt{BasicNode} a \texttt{BasicNodeTwo}.
+První nemá žádné vlastnosti, ale druhá má vlastnost \texttt{PropertyOne} s typem \texttt{integer}.
+Následně identicky pro schéma hran.
 Jako určující \verb+propTypes+ pro náš případ enginu bychom chtěli zvolit dva druhy.
 První by byla číselná hodnota značená integer (32-bitový integer).
 Další by představoval řetězec značený string.
-Práce s řetězci je obecný problém a existuje mnoho znakových sad, proto bychom chtěli zvolit vstupní řetězce pouze se základní znaky ASCII.  
+Práce s řetězci je obecný problém a existuje mnoho znakových sad, proto bychom chtěli zvolit vstupní řetězce pouze se základní znaky ASCII v rozsahu hodnot 0 až 127.  
 Dané dva druhy představují základní typy použitých v komerčních sférách.
 
 Samotná data budou obsažena opět ve dvou separatních souborech pro hrany a vrcholy.
@@ -148,7 +161,9 @@ Chtěli bychom reprezentovat konkrétní data pomocí jednoduchého .txt souboru
 Každý řádek reprezentuje jednu hranu/vrchol.
 V první řadě řádek musí obsahovat unikatní \verb+ID+ elementu a jeho \verb+elType+. 
 Za \verb+elType+ následuje seznam hodnot vlastností v pořadí určených schématem.
+To znamená, že první v JSON objektu je jako první v daném seznamu.
 Pro hrany existuje na řádku navíc záznam \verb+ID+ vrcholů, které spojuje.
+Tedy \texttt{ID} počátečního vrcholu (\texttt{fromID}) a \texttt{ID} koncového vrcholu (\texttt{toID}) 
 Oddělovače mezi daty jsou implementační detail.
 Pro naše účely se jedná o dostačující formát a poskytuje nám jednoduché možnosti parsování.
 Pokud by docházelo v budoucnu k rozšířením, například více slovné vlastnosti nebo XML vlastnosti, musí dojít k úpravě daných formátů.
@@ -156,12 +171,12 @@ Pokud by docházelo v budoucnu k rozšířením, například více slovné vlast
 Pro výše zmíněné schéma by datové soubory mohly vypadat následovně:
 \begin{code}
 Soubor hran:
-ID elType fromID toID Properties // bez této hlavičky
+ID elType fromID toID Vlastnosti... // bez této hlavičky
 50 BasicEdge 0 0 
 51 BasicEdgeTwo 0 1 44
 ...
 Soubor vrcholů:
-ID elType Properties // bez této hlavičky
+ID elType Vlastnosti... // bez této hlavičky
 0 BasicNode
 1 BasicNodeTwo 42
 ...
@@ -235,7 +250,6 @@ Její návratová hodnota bude dvojice úspěch vyhodnocení + vypočtená hodno
 Dané struktury musí být read-only, protože se budou využívat v paralelním prostřední.
 Metody by se mohli libovolně dodávat při nutnosti použití nových struktur. 
 
-\clearpage
 Následuje ukázka možného kódu v jazyce C\#:
 \begin{code}
 // Základní rodičovské třídy
@@ -333,7 +347,9 @@ class ExpressionBinOperation<T>: ExpressionReturnValue<T> {
   public ExpressionReturnValue<T> expr1;
   public ExpressionReturnValue<T> expr2;
 }
-
+\end{code}
+\clearpage
+\begin{code}
 class ExpressionIntegerAdd: ExpressionBinOperation<int>{
   public override bool TryEvaluate(Element[] elms, out int retVal) {
     if (expr1.TryEvaluate(elms, out int expr1Val) &&
@@ -1363,7 +1379,7 @@ Cílem testu je otestovat rychlost vkládání prvků do vybraných datových st
 Test bude částečně simulovat reálnou činnost zatřiďování prvků do struktury.
 Experiment jsme naprogramovali v jazyce C\#.
 Kód je součástí příloh \ref{prilohy.benchtreevsarray}.
-Kód jsme přeložili pro platformu Windows 10 x64 cílící na .Net Framework 4.8.
+Kód jsme přeložili pro platformu Windows 10 x64 cílící na .NET Framework 4.8.
 Samotný hardware testovacího stroje je rozepsán v sekci metodiky \ref{expr.hw}.
 K otestování jsme vybrali dvě nativní struktury C\#:
 
@@ -1662,10 +1678,4 @@ Přičítáme $n$, protože přihrádky jsou číslované od nuly.
 Tímto jsme dokončili návrh vykonávání paralelního Order by.
 Dělení popsané v předchozích kapitolách jsme určili na základě jazyka C\#.
 Myslíme, že dané principy se dají aplikovat i v dalších jazycích.
-
-\bigskip
-\textit{
-Dokončili jsme analýzu a návrh úprav dotazovacího enginu.
-Nyní přejdeme k části implementace.
-}
 

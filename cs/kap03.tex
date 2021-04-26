@@ -1,4 +1,260 @@
 \chapter{Implementace}
 \label{impl}
+   
+Dokončili jsme analýzu, návrh a návrh úprav dotazovacího enginu.
+V této kapitole popíšeme implementaci.
+Začneme výběrem jazyka, obecným rozložením aplikace, popisu hlavních bloků a skončíme konkrétnějším pohledem na vybrané části aplikace.
 
-Start
+\section{Výběr jazyka}
+
+Aplikaci jsme se rozhodli implementovat v jazyce C\# pro .NET Framework 4.8.
+K výběru jazyka jsme měli několik důvodů.
+Framework nabízí množství knihoven, modulů a základních datových struktur.
+Dále také poskytuje nástroje pro práci ve vícevláknovém prostředí.
+Uvažovali jsme ještě o jazyku C++, který nabízí množství technik a možností optimalizace k získání rychlosti při vykonávání aplikace. 
+Nyní zmíníme, že hlavním cílem práce není vyvinou co nejrychlejší dotazovací engine, ale otestovat obecný koncept vykonávání Group by a Order by v průběhu prohledávání grafu.
+Myslíme, že tento koncept se dá implementovat v každém jazyce.
+Navíc, v průběhu analýzy jsme si zkoušeli již implementovat určité koncepty v daném jazyce C\#, abychom měli lepší předhled o způsobech vykonání.
+Z tohoto důvodu jsme měli určité části již naimplementovány.
+Výsledně jsme se rozhodli z výše zmíněných důvodu použít C\# pro .NET Framework 4.8.
+
+\section{Značení módu}
+
+Než přistoupíme k popisu aplikace, tak si musíme vyjasnit základní značení módů.
+Určili jsme, že engine bude pracovat v několika módech, které uživatel bude moct měnit.
+Jsou to módy:
+
+\begin{itemize}
+
+\item \textbf{Normal:} reprezentuje původní způsob vykonávání.
+V prvním kroku dojde k prohledání grafu a uložení výsledků do tabulky.
+Teprve po dokončení dojde vykonání Group by a Order by.
+
+\item \textbf{Half-Streamed:} Reprezentuje upravené vykonávání. 
+Tento mód v paralelním vykonání ukládá výsledky nejdříve lokálně a po dokončení dojde ke slévání.
+
+\item \textbf{Streamed:} Reprezentuje upravené vykonávání. 
+Tento mód v paralelním vykonání zpracovává výsledky globálně.
+\end{itemize}
+
+Samotná individuální řešení se pro upravené módy \textbf{Half-Streamed} a \textbf{Streamed} liší pouze v paralelním vykonávání.
+V určitých případech nastane, že i jednovláknová řešení jsou rozdílná.
+V takovou chvíli na to upozorníme.
+V průběhu této kapitoly se budeme držet tohoto značení.
+
+
+
+
+\section{Rozložení aplikace}
+
+Při implementaci aplikace jsme vycházeli z analýzy a návrhu z předchozí kapitoly.
+Aplikaci jsme vyvíjeli jako projekt konzolové aplikace pro .NET Framework 4.8 v prostředí Visual Studia 2019.
+Samotný projekt je rozdělený na tři hlavní řešení:
+
+\begin{itemize}
+
+\item \texttt{QueryEngine}, který představuje implementaci dotazovacího enginu.
+\item \texttt{HPCsharp} \citep{hpcsharp} je doprovodné řešení, které poskytuje sadu mnoha výkonných jednovláknových i paralelních algoritmů.
+\item \texttt{Benchmark}, který jsme implementovali pro porovnání upraveného a původního způsobu zpracování dotazu. 
+
+\end{itemize}
+
+V průběhu celé kapitoly se budeme věnovat pouze řešení \texttt{QueryEngine}, protože obsahuje hlavní část práce.
+Řešení \texttt{Benchmark} je popsáno podrobněji v kapitole \ref{expr}. Experiment, ve které se věnujeme podrobně porovnání implementovaných řešení.
+Z \texttt{HPCsharp} řešení jsme využili pouze určité algoritmy při implementaci části Order by.
+Samotná implementace algoritmů lze nalézt v odkazu citovaného zdroje. 
+Nyní popíšeme podrobněji rozložení řešení \texttt{QueryEngine}.
+
+\subsection{Rozložení řešení QueryEngine}
+
+Řešení neobsahuje další podřešení, ale pouze adresáře.
+Níže popsané adresáře rozdělují engine práve na hlavní části výstavby z kapitoly analýzy.
+Hlavní adresáře jsou:
+
+\begin{itemize}
+
+\item \texttt{DB}: obsahuje objekty grafových elementů, struktury reprezentace grafu, objekty vlastností elementů a objekty k načítání grafových dat. 
+
+\item \texttt{DataFiles}: obsahuje datové soubory, které se při překladu projektu ve Visual Studiu překopírují k binárním souborům.
+
+\item \texttt{Parser}: obsahuje metody parsování uživatelského dotazu, definované tokeny, objekty parsovacího stromu a objekty k procházení daného stromu.
+
+\item \texttt{Query}: obsahuje objekty zpracování dotazu. 
+Obecně představuje část, která vykonává Group by a Order by po dokončení prohledávání grafu. 
+
+\item \texttt{QueryStreamed}: obsahuje objekty upraveného zpracování dotazu. 
+Obecně představuje část, která vykonává Group by a Order by v průběhu prohledávání grafu.
+Adresář částečně kopíruje strukturu adresáře \texttt{Query}.
+Pokud jsou názvy složek stejné znamená to, že objekty ve složce rozšiřují právě objekty ze stejnojmenné složky uvnitř \texttt{Query}. 
+Obsahuje řešení pro Streamed i Half-Streamed módy.
+
+\end{itemize}
+
+Podrobnější popis adresářové struktury:
+
+\clearpage
+\dirtree{%
+.1 /.
+.2 DB.
+.3 Creator \DTcomment{Definuje api čtení vstupních souborů.}. 
+.3 GraphElement \DTcomment{Definuje objekty elementů grafu.}.
+.3 Processor \DTcomment{Definuje tvorbu objektů grafu.}.
+.3 Table \DTcomment{Definuje typ v Property grafu.}.
+.4 Property \DTcomment{Definuje vlastnosti typu v Property grafu.}.
+.2 DataFiles. 
+.2 Parser.
+.3 ParsedPattern \DTcomment{Definuje objekty parsovaných posloupností části Match.}.
+.3 Parser.
+.4 ParseTree \DTcomment{Definuje objekty použité k tvorbě parsovacího stromu.}.
+.5 Visitor \DTcomment{Definuje objekty procházení parsovacího stromu.}.
+.4 ParserComponent \DTcomment{Definuje metody parsování tokenů dotazu.}.
+.3 Tokenizer \DTcomment{Definuje tokeny a způsob tokenizace vstupu.}.
+.2 Query.
+.3 Expression \DTcomment{Obsahuje logiku výrazů.}.
+.4 ExpressionComparer \DTcomment{Definuje porovnávání hodnot dvou výrazů.}.
+.4 Reference \DTcomment{Defunuje výrazy odkazů na proměnné, jejich vlastnosti a agregační funkce.}.
+.3 GroupBy \DTcomment{Definuje objekty důležité k vykonání Group by.}.
+.4 Aggregate.
+.5 AggregateFunction \DTcomment{Definuje logiku agregačních funkcí.}.
+.4 AggregateInternalResults \DTcomment{Definuje úložiště hodnot agregačních funkcí.}.
+.4 MultiGroupGroupBy \DTcomment{Definuje řešení, pokud je zadano Group by.}.
+.5 EqualityComparer \DTcomment{Definuje porovnání záznamů v hašovací tabulce.}.
+.5 Hasher \DTcomment{Definuje hašování výrazů.}.
+.5 ParallelSolutions \DTcomment{Definuje paralelní vykonání Group by.}.
+.6 GlobalGroupBy.
+.6 LocalGroupByLocalTwoWayMerge.
+.6 TwoStepGroupBy.
+.5 ReferenceSingleThreadSolutions \DTcomment{Definuje jednovláknové vykonání Group by.}.
+.4 SingleGroupGroupBy \DTcomment{Definuje řešení, pokud není zadáno Group by.}.
+.3 Match \DTcomment{Definuje objekty důležité k vykonání Match.}.
+.4 DFSMatch \DTcomment{Definuje obejekty DFS prohledávání.}.
+.5 BaseMatch \DTcomment{Definuje objekty vzoru.}.
+.5 Matcher \DTcomment{Definuje objekty algoritmu prohledávání.}.
+.6 DFSParallelPatternMatcher \DTcomment{Definuje paralelní prohledávání.}.
+.6 DFSPatternMatcher \DTcomment{Definuje jednovláknové prohledávání.}.
+.5 Pattern \DTcomment{Definuje api vzoru.}.
+.4 MatchInternalResults \DTcomment{Definuje interní struktury Match pro ukládání výsledků prohledávání.}.
+.3 OrderBy \DTcomment{Definuje objekty důležité k vykonání Order by.}.
+.4 Comparer \DTcomment{Definuje porovnání řádků tabulky pomocí proxy třídy.}.
+.5 Wrappers \DTcomment{Definuje porovnání řádků tabulky pomocí indexu.}.
+.4 Sorter \DTcomment{Definuje algoritmy třídění.}.
+.6 TableSorter \DTcomment{Definuje algoritmy třídění tabulky.}.
+.3 Results \DTcomment{Definuje tabulky výsledků.}.
+.4 GroupByResults \DTcomment{Definuje formát tabulky výsledků Group by.}.
+.4 TableResults \DTcomment{Definuje formát tabulky pouze pro elementy grafu.}.
+.3 Select \DTcomment{Definuje objekty důležité k vykonání Select.}.
+.4 ExpressionToStringWrapper  \DTcomment{Definuje objekt převodu hodnoty výrazu na řetězec.}.
+.4 Formater  \DTcomment{Definuje formát výstupu.}.
+.4 Printer  \DTcomment{Definuje kam se má výstup vypsat.}.
+.2 QueryStreamed.
+.3 GroupBy  \DTcomment{Definuje objekty důležité pro upravené vykonání Group by.}.
+.4 AggregateInternalResults  \DTcomment{Definuje upravené úložište agregačních funkcí pro Streamed mód.}.
+.4 MultiGroupGroupBy  \DTcomment{Definuje Streamed a Half-Streamed řešení, pokud je zadáno Group by.}.
+.5 BucketKeyValueFactory  \DTcomment{Definuje výrobu klíče hašovací tabulky pro Streamed mód.}.
+.5 Comparers  \DTcomment{Definuje porovnání využité Half-Streamed a Streamed módem.}.
+.4 SingleGroupGroupBy \DTcomment{Definuje Streamed a Half-Streamed vykonání, pokud není zadáno Group by.}.
+.3 Match  \DTcomment{Definuje objekty důležité pro upravené vykonání Group by.}.
+.4 DFSMatch  \DTcomment{Definuje pozměněná api pro předávání výsledků částem v průběhu hledání.}.
+.5 Matcher.
+.6 DFSParallelPatternMatcher.
+.6 DFSPatternMatcher.
+.3 OrderBy \DTcomment{Definuje objekty důležité pro upravené vykonání Order by.}.
+.4 ABTree \DTcomment{Definuje použité vyhledávací stromy.}.
+.4 Sorter \DTcomment{Definuje Half-Streamed a Streamed vykonání pomocí vyhledávacích stromů.}.
+.5 ABTreeSorterHalfStreamed.
+.5 ABTreeSorterStreamed.
+.6 Comparer.
+.7 Wrapper \DTcomment{Definuje porovnání akumulovaných skupin pomocí proxy třídy.}.
+.4 TypeRangeHasher \DTcomment{Obsahuje objekty, které rozdělují rozsah typu na přihrádky.}.
+.3 Results \DTcomment{Definuje upravené fotmáty tabulek výsledků.}.
+.4 GroupByResults.
+.4 TableResults.
+.5 ABTree \DTcomment{Formát tabulky pro řešení s normálním (a, b)-stromem.}.
+.5 ABTreeAccum \DTcomment{Formát tabulky pro řešení s (a, b)-stromem, který akumuluje shodné řádky.}.
+}
+
+\section{Programátorská dokumentace}
+
+V této sekci popíšeme postupně klíčové objekty, položky a způsoby vypracování aplikace.  
+
+\subsection{Grafové elementy}
+
+Budeme postupovat dle analýzy.
+Všechny elementy grafu dědí od abstraktní třídy \texttt{Element}.
+Hlavní vlastnosti jsou:
+\begin{itemize}
+\item \texttt{int ID} je inikátní identifikátor elementu. Definuje jej uživatel ve vstupním souboru. Není to vlastnost v Property grafu.
+\item \texttt{Table Table} odkaz na typ v Property grafu.
+\item \texttt{int PositionInList} pozice v \texttt{List<T>}, kde \texttt{T} je potomek třídy \texttt{Element}, protože každý potomek je obsažen v poli.
+\end{itemize}
+
+Potomci abstraktní třídy jsou \texttt{Vertex} a \texttt{Edge}.
+\texttt{Edge} přidává novou položku \texttt{Vertex EndVertex}, která odkazuje na koncový vrchol hrany.
+Z dané třídy vznikají potomci \texttt{InEdge} a \texttt{OutEdge}.
+Hrany jsou orientované a spojují dva vrcholy.
+Mějme hranu z vrcholu x do y.
+Položka \texttt{Endvertex} pro \texttt{OutEdge} zde odkazuje na vrchol y.
+Pro \texttt{InEdge} to je x.
+Tedy pro každou definovanu hranu v grafu existují obě instance tříd. 
+Instance sdílejí \texttt{ID}, ale záznam v \texttt{Table} je pouze jeden, tedy sdílejí hodnoty vlastností. 
+\texttt{Vertex} přidává položky dvou dvojic indexů, o kterých jsme mluvili v analýze.
+První dvojice je \texttt{int OutEdgesStartPosition} a \texttt{int OutEdgesEndPosition}, které označují rozsah hran v poli \texttt{OutEdge} náležících vrcholu.
+Druhá dvojice je pro typ \texttt{InEdge} ekvivalentí.
+Třída \texttt{Table} zde určuje typ elementu v Property grafu.
+Hlavní vlastnosti jsou:
+\begin{itemize}
+\item Položka \texttt{string IRI} je název typu.
+\item Položka \texttt{Dictionary<int, int> IDs}, kde klíčem je \texttt{ID} elementu a hodnota je pozice hodnot vlastností v obsaženém poli.
+\item Položka \texttt{Dictionary<int, Property>}, kde klíč je \texttt{ID} vlastnosti a hodnota je třída reprezentující vlasnost.
+\item \texttt{bool TryGetPropertyValue<T>(int id,int propID, out T retValue)}\\* 
+je metoda, která se pokusí získat hodnotu vlastnosti \texttt{propID} pro daný element s daným \texttt{id}.
+Hodnota se vrací v \texttt{retValue}. Úspěšně dokončená vrací \texttt{true}, jinak \texttt{false}.
+\end{itemize}
+
+\subsection{Vlastnosti Property grafu}
+
+Samotné vlastnosti jsou reprezentovány abstraktní třídou \texttt{Property}, která má svůj nazev \texttt{string IRI}.
+Z třídy vznikají abstraktní generické třídy \texttt{Property<T>}, kde \texttt{T} je typ hodnot vlastnosti.
+Třída obsahuje pole hodnot \texttt{List<T> propHolder}.
+Z třídy pak vznikají konkrétní třídy \texttt{StringProperty} a \texttt{IntProperty}.
+Implementují metodu \texttt{ParsePropFromStringToList(string strProp)}, která se používá při načítání hodnot a převede hodnotu vstupu na svůj typ \texttt{T} a uloží na konec \texttt{propHolder}.
+Rozhodli jsme se implementovat pouze dva typy. 
+A to pro \texttt{int} a \texttt{string}. 
+V schématu vstupních souborů jim odpovídají typy \texttt{integer} a \texttt{string}.
+Což znamená, že v celém enginu bude možno pracovat \textbf{pouze s těmito dvěma typy}.
+Každý element v \texttt{Table} má svou hodnotu vlastnosti v poli na pozici \texttt{IDs[Element.ID]}.
+Třídy vlastností se vytvářejí pomocí třídy \texttt{PropertyFactory}, která implementuje Factory metodu \\*\texttt{Property CreateProperty(string token, string name)}.
+Kde \texttt{token} je typ vlastnosti a \texttt{name} je její název.
+
+\subsection{Třída Graph}
+Třída \texttt{Graph} pak reprezentuje celý graf.
+Načítá grafová data během inicializace.
+Zároveň dělá kontrolu načtených vlastností a jejich typů během načítání.
+Obsahuje pole všech typů elementů. Tedy \texttt{List<Vertex>}, \texttt{List<InEdge>} a \texttt{List<OutEdge>}.
+Obsahuje dále:
+\begin{itemize}
+\item \texttt{Dictionary<string, Table> nodeTables} všechny typy vrcholů Property grafu. To samé pro hrany.
+\item \texttt{Dictionary<string, Tuple<int, Type> > labels} mapa, kde klíč je název vlastnosti a \texttt{int} je její přiřaděný unikátní identifikátor, abychom nemuseli v enginu používat řetězce jako \texttt{ID} vlastnosti.
+\texttt{Type} je pak typ vlastnosti, slouží pro kontrolu, protože dvě stejnojmenné vlastnosti musí mít stejný typ. 
+\end{itemize}
+
+\subsection{Načítání grafových dat}
+
+Rozdhodli jsme se použít totožný formát jako při analýze.
+Při spuštění program očekává čtyři soubory.
+Dva soubory se zmiňovaným JSON formátem \textit{EdgeTypes.txt} (schéma hran) a \textit{NodeTypes.txt} (schéma vrcholů), které definují typy Property grafu a jejich vlastnosti.
+Další dva soubory \textit{Edge.txt} a \textit{Nodes.txt} obsahují samotná data s mezerami jako oddělovače.
+Jediná úprava formátu je ta, že hrany v datovém souboru musí být seřazeny podle \texttt{ID} počátečního vrcholu hrany tak, jak jsou vrcholy seřazeny v jejich datovém souboru.
+To zmanená, že pokud máme v souboru vrcholů za sebou vrcholy s \texttt{ID} 1, 2 a 3, tak soubor hran musí nejdříve obsahovat hrany začínající vrcholem s \texttt{ID} 1, pak s \texttt{2} apod.
+Načítání je implementováno následovně.
+\texttt{interface Creator<T>} s metodou \texttt{T Create()} je vzor pro tvorbu objektů \texttt{T}.
+Tento vzor rozšíříme na třídu \texttt{CreatorFromFile<T>}, která symbolizuje tvorbu objektu \texttt{T} ze souboru.
+Třída očekává při incializaci třídu čtoucí vstupní soubor po částech \texttt{IReader}.
+A třídu vytvářející iterativně \texttt{T} na základě poskytnutých částí souboru \texttt{IProcessor}.
+Protože text je čtený po částech, tak IProcessor implementuje návrhový vzor State.
+V našem případě nejdříve zpracujeme soubory schémat pomocí třídy \texttt{TableDictProcessor}, která vytváří třídy \texttt{Table}.
+Následně načteme datový soubor vrcholů pomocí třídy \texttt{VerticesListProcessor}, která vytváří pole vrcholů.
+A posledně \texttt{EdgeListsProcessor}, která vytváří dva pole \texttt{InEdge} a \texttt{OutEdge}. 
+
+
+\subsection{Parser}
