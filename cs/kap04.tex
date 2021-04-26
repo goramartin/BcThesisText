@@ -338,8 +338,7 @@ Následuje shrnutí:
 \end{itemize}
 
 \section{Metodika}
-
-Pro provedení experimentu jsme připravili jednoduchý benchmark, který je součástí příloh zdrojových kódů \ref{prilohy.kod}.
+Pro provedení experimentu jsme připravili jednoduchý benchmark v jazyce C\# pro .Net Framowork 4.8, který je součástí příloh zdrojových kódů \ref{prilohy.kod}.
 Paralelizování řešení jsme otestovali při zatížení všech dostupných jader procesoru (argument \verb+ThreadCount = 8+).
 Při spuštění programu dojde k navýšení priority procesu, aby docházelo k méně častému vykonávání ostatních procesů na pozadí během testování. 
 Pro \verb+ThreadCount = 1+ navíc dochází k navýšení priority hlavního vlákna. 
@@ -381,8 +380,8 @@ static void CleanGC()
 
 \subsection{Měření uběhlého času}
 
-Protože benchmark je implementovám v jazyce C\# \citep{microsoft}, rozhodli jsme se využít nativních možností měření uběhlé doby.
-V jazyce C\# existují dvě hlavní metody meření a to pomocí třídy \texttt{Stopwatch} nebo přísup k vlasnotsti \texttt{Process.TotalProcessorTime}.
+Protože benchmark je implementovám v jazyce C\# pro .Net Framework 4.8, rozhodli jsme se využít nativních možností měření uběhlé doby.
+Existují dvě hlavní metody meření a to pomocí třídy \texttt{Stopwatch} nebo přísup k vlasnotsti \texttt{Process.TotalProcessorTime}.
 První možnost je závíslá na instanci.
 Meří uběhlý čas mezi voláním metod \texttt{Start} a \texttt{Stop} na instanci bez ohledu v jakém vlákně byly metody volány.
 Měření probíhá pomocí počítání taktů časovače v podkladovém mechanismu hardwaru.

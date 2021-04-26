@@ -9,6 +9,7 @@ Začneme obecným návrhem dotazovacího enginu a projdeme hlavní koncepty pro 
 V druhém kroku zvážíme kroky vykonávání dotazů a postup výběru řešení částí Order by a Group by, které se budou vykonávat po dokončení vyhledávání dotazu.
 V třetím kroku provedeme analýzu úprav pro agregaci v průběhu vyhledávání. 
 Součástí této části bude analýza algoritmů Order by a Group by pro dané úpravy. 
+Pokud v nějaké ukázce použijeme jazyk C\# míníme tím jazyk C\# pro .Net Framework 4.8.
 
 \section{Obecný pohled na engine}
 
@@ -25,7 +26,7 @@ Graf nám bude simulovat grafovou databázi.
 Samotně pak určuje formát objektů, nad kterými je vykonán uživatelský dotaz.
 Při parsování se načítá uživatelký dotaz do interní reprezentace.
 Expressions slouží k výpočtu hodnot z uživatelsky zadaných výrazů.
-Například v části order by x.PropOne, musíme vědět, jak reprezentovat výraz x.PropOne a získat jeho hodnotu. 
+Například v části \texttt{order by x.PropOne}, musíme vědět, jak reprezentovat výraz \texttt{x.PropOne} a získat jeho hodnotu. 
 Na základě interní reprezentace se musí vytvořit struktury dotazu a definovat exekuční plán. 
 Z obecných úkonů částí vidíme, že se nejedná o stand-alone části.
 Vytváří se nám závislosti, které budeme muset uvážit.
@@ -88,24 +89,25 @@ Na základě daného elementu musíme provést akci:
 \end{itemize}
 
 K vyřešení daných problému v naší představě bychom použili tři pole.
-Pole vrcholů, pole out hran a in hran. 
-Zde by bylo vhodné vytvořit nové potomky obecné hrany: out hrana a in hrana.
+Pole vrcholů, pole \texttt{out} hran (ukazují na koncový vrchol hrany) a \texttt{in} hran (ukazují na počáteční vrchol hrany). 
+Zde by bylo vhodné vytvořit nové potomky obecné hrany: \texttt{out} hrana a \texttt{in} hrana.
 Hrany by si pamatovali svůj koncový vrchol.
-Pro in hranu by to byl vrchol odkud vychází, aby bylo možné v moment držení vrcholu projít skrze ni na vrchol další.
-Každé pole tedy bude mít unikátní typ, který nám pomůže rozlišit k jaké situaci má dojít v průběhu prohledávání.
+Pro \texttt{in} hranu by to byl vrchol odkud vychází, aby bylo možné v moment držení vrcholu projít skrze ni na vrchol další.
+Tedy pro jednu hranu na vstupu budou existovat dva záznamy v daných polích, které se liší pouze koncovým vrcholem.
 Abstraktní předek všech elementů by si měl nově pamatovat i svou pozici v daných polích pro rychlý přístup k jeho sousedům.
+Každé pole tedy bude mít unikátní typ, který nám pomůže rozlišit k jaké situaci má dojít v průběhu prohledávání.
 
 Zbývá vyřešit vztah hran a vrcholů.
-Řešení, které bychom chtěli zvolit, je mít hrany v polích seskupeny podle: vrcholů odkud vycházejí (pole out hran), vrcholů kam směřují (pole in hran).
+Řešení, které bychom chtěli zvolit, je mít hrany v polích seskupeny podle: vrcholů odkud vycházejí (pole \texttt{out} hran), vrcholů kam směřují (pole \texttt{in} hran).
 Vrchol by si pak pamatoval rozsah svých hran v příslušných polích. 
-Chceme-li procházet hrany vrcholu, stačí procházet pole out/in hran pomocí rozsahů uložených v daném vrcholu.
+Chceme-li procházet hrany vrcholu, stačí procházet pole \texttt{out}/\texttt{in} hran pomocí rozsahů uložených v daném vrcholu.
 Tedy čtyř indexů.
 Skrze indexy můžeme pak pole libovolně iterovat.
 
 Uvažovali jsme nad různými alternativami. 
 Mít jeden typ hrany obsahující všechny nutné informace.
 Řešení je paměťově přijatelnější, ale nastává problém s přístupem k in hranám vrcholu.
-Řešením by mohlo být vytvořit pole in/out hran pro každý vrchol. 
+Řešením by mohlo být vytvořit pole \texttt{out}/\texttt{in} hran pro každý vrchol. 
 Daný přístup nám případá výrazně náročnější z hlediska paměti, protože musíme vytvářet pole pro každý vrchol zvlášť. 
 
 \subsection{Návrh vstupních grafových dat} \label{anal.vstup}
@@ -122,7 +124,7 @@ Pro \verb+elType+ je důležitý název a výčet vlastností.
 Vlastnosti pak musí nést svůj název a \verb+propType+.
 Vidíme, že se jedná jen o výčet \verb+(name/value)+ dvojic (např. \verb+(PropertyOne, integer)+).
 V tomto případě se nám jeví nejvhodnější zvolit pro reprezentaci schémat formát JSON.
-\verb+elType+ bude reprezentován JSON objektem. 
+\verb+elType+ bude reprezentován JSON\footnote{https://www.json.org/} objektem. 
 Bude obsahovat položku \verb+Kind+, jejíž hodnota udává jméno \verb+elType+.
 Za ní bude následovat výčet vlastností.
 Vlastnosti budou reprezentovány dvojicí \verb+(propName/propType)+.
@@ -136,13 +138,13 @@ Soubor schéma hran:"
      { "Kind": "BasicEdgeTwo", "PropertyOne": "integer" } ]
 \end{code}
 Jako určující \verb+propTypes+ pro náš případ enginu bychom chtěli zvolit dva druhy.
-První by byla číselná hodnota značená integer (32-bit integer).
+První by byla číselná hodnota značená integer (32-bitový integer).
 Další by představoval řetězec značený string.
 Práce s řetězci je obecný problém a existuje mnoho znakových sad, proto bychom chtěli zvolit vstupní řetězce pouze se základní znaky ASCII.  
 Dané dva druhy představují základní typy použitých v komerčních sférách.
 
 Samotná data budou obsažena opět ve dvou separatních souborech pro hrany a vrcholy.
-Chtěli bychom reprezentovat konkrétní data pomocí jednoduchého .csv souboru.
+Chtěli bychom reprezentovat konkrétní data pomocí jednoduchého .txt souboru.
 Každý řádek reprezentuje jednu hranu/vrchol.
 V první řadě řádek musí obsahovat unikatní \verb+ID+ elementu a jeho \verb+elType+. 
 Za \verb+elType+ následuje seznam hodnot vlastností v pořadí určených schématem.
@@ -174,7 +176,7 @@ Nyní musíme analyzovat způsob získání informací z uživatelem zadaného d
 
 Uživatelský dotaz se pohybuje v rozsahu definovaném v sekci PGQL \ref{req.pgql}.
 Nicméně, je zde nutné přemýšlet i nad možnými rozšířeními.
-Například může dojít k přidaní částí Where a Having spolu s nutností porovnávání (Where x.PropOne $\leq 10$).
+Například může dojít k přidaní částí Where a Having spolu s nutností porovnávání (\texttt{Where x.PropOne} \texttt{< 10}).
 Proto se budeme snažit držet základních principů object oriented programming a volit vhodné návrhové vzory.
 
 K načtení uživatelského dotazu se nám jeví jako nejvhodnější způsob použít techniky známé z překladačů programovacích jazyků.
@@ -196,7 +198,7 @@ Každá hlavní část dotazu po sesbírání informací pomocí Visitoru vygene
 Pro Match se přímočaře naskytuje reprezentovat posloupnosti vrcholů a hran pomocí polí.
 Každá posloupnost oddělená čárkou bude obsažena v samostatném poli.
 Pole bude obsahovat třídy.
-Třída si musí pamatovat jakou proměnou reprezentuje, \verb+elType+ pokud je definován a jde-li o hranu (in/out/any) nebo vrchol.
+Třída si musí pamatovat jakou proměnou reprezentuje, \verb+elType+ pokud je definován a jde-li o hranu (\texttt{in}/\texttt{out}/\texttt{any}) nebo vrchol.
 Jedná se o všechny nutné informace, které můžeme následně využít k vytvoření vzoru prohledávání grafu.
 Všimout si musíme faktu, že Match část definuje proměnné ve zbytku dotazu.
 Během parsování musíme určit zda se jedná o validní proměnnou a při vypočtech hodnot výrazů je nutné vědět přesně k jaké proměnné musíme přistoupit.
@@ -205,16 +207,16 @@ Proměnným pak můžeme přiřadit \verb+ID+.
 
 \subsection{Select, Order/Group by}
 
-Ostatní části Group by, Order by a Select obsahují výrazy proměnných (např: order by x), přístup k vlastnostem proměnných (např: select x.PropOne) nebo volání agregačních funkcí (\verb+min+, \verb+max+, \verb+avg+, \verb+sum+ a \verb+count+).
+Ostatní části Group by, Order by a Select obsahují výrazy proměnných (např: \texttt{order by x}), přístup k vlastnostem proměnných (např: \texttt{select x.PropOne}) a volání agregačních funkcí (\verb+min+, \verb+max+, \verb+avg+, \verb+sum+ a \verb+count+).
 Proměnné zde představují elementy grafu.
 Várazy se však musí evaluovat za běhu programu.
 Dalším problémem je, že výrazy mají různorodé návratové hodnoty.
-Výraz x (\verb+ID+ vrcholu) lze chápat jako integer.
-Váraz x.PropOne má návratovou hodnotu dle \verb+propType+, který je definovám ve vstupním schématu.
+Výraz \texttt{x} (\verb+ID+ vrcholu) lze chápat jako integer.
+Váraz \texttt{x.PropOne} má návratovou hodnotu dle \verb+propType+, který je definovám ve vstupním schématu.
 Agregační funkce \verb+min+, \verb+max+ mají návratovou hodnotu definovanou na základě jejich vstupních argumentů.
 Funkce \verb+sum+ a \verb+count+ by měli ideálně pracovat s typem, který by předešel přetečení.
 U \verb+avg+ se očekává hodnota s desetinnou čárkou.  
-V budoucnu však může dojít k rozšířením a vyvstanou složitější výrazy, například infixová notace x.PropOne + y.PropOne nebo zmiňované porovnání z Where/Having části.
+V budoucnu však může dojít k rozšířením a vyvstanou složitější výrazy, například infixová notace \texttt{x.PropOne + y.PropOne} nebo zmiňované porovnání z Where/Having části.
 Problém nám usnadňuje fakt, že vlastnosti nesoucí stejné jméno mají stejný \verb+propType+.
 Pokud ne, je nutné určit vhodnou návratovou hodnotu.
 Navíc musíme brát v potaz, že daný výraz se nemusí vyhodnotit, například absence vlastnost na vrcholu.
@@ -233,6 +235,7 @@ Její návratová hodnota bude dvojice úspěch vyhodnocení + vypočtená hodno
 Dané struktury musí být read-only, protože se budou využívat v paralelním prostřední.
 Metody by se mohli libovolně dodávat při nutnosti použití nových struktur. 
 
+\clearpage
 Následuje ukázka možného kódu v jazyce C\#:
 \begin{code}
 // Základní rodičovské třídy
@@ -255,7 +258,7 @@ class VariableIDAccess: VariableAccess<int> {
 Třída \verb+VariableAccess+ nám poskytuje abstrakci pro přístup k proměnné.
 Položka \verb+accessedVariableID+ určuje k jaké proměnné se má přistoupit.
 Zde předpokládáme, že pole \verb+Element[]+ obsahuje proměnné přesně v pořadí, jak se vyskytly v části Match.
-Tedy pokud je roven Match (x) -> (y), tak jeden výsledek hledání by bylo pole obsahující dva elementy x a y.
+Tedy pokud je zadán \texttt{match (x) -> (y)}, tak jeden výsledek hledání by bylo pole obsahující dva elementy x a y.
 Jedná se pouze o ilustrační příklad. 
 
 Případ přístupu k vlasnosti by mohl vypadat následovně:
