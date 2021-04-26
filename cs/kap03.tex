@@ -247,14 +247,14 @@ Další dva soubory \textit{Edge.txt} a \textit{Nodes.txt} obsahují samotná da
 Jediná úprava formátu je ta, že hrany v datovém souboru musí být seřazeny podle \texttt{ID} počátečního vrcholu hrany tak, jak jsou vrcholy seřazeny v jejich datovém souboru.
 To zmanená, že pokud máme v souboru vrcholů za sebou vrcholy s \texttt{ID} 1, 2 a 3, tak soubor hran musí nejdříve obsahovat hrany začínající vrcholem s \texttt{ID} 1, pak s \texttt{2} apod.
 Načítání je implementováno následovně.
-\texttt{interface Creator<T>} s metodou \texttt{T Create()} je vzor pro tvorbu objektů \texttt{T}.
+\texttt{interface Creator<T>} s metodou \texttt{T Create()} je rozhraní pro tvorbu objektů \texttt{T}.
 Tento vzor rozšíříme na třídu \texttt{CreatorFromFile<T>}, která symbolizuje tvorbu objektu \texttt{T} ze souboru.
-Třída očekává při incializaci třídu čtoucí vstupní soubor po částech \texttt{IReader}.
-A třídu vytvářející iterativně \texttt{T} na základě poskytnutých částí souboru \texttt{IProcessor}.
-Protože text je čtený po částech, tak IProcessor implementuje návrhový vzor State.
+Třída očekává při incializaci rozhraní \texttt{IReader} čtoucí vstupní soubor po částech metodou \texttt{string Read()}.
+A třídu vytvářející iterativně \texttt{T} na základě poskytnutých částí souboru rozhraním \texttt{IProcessor}.
+Protože text je čtený po částech, tak \texttt{IProcessor} implementuje návrhový vzor State.
 V našem případě nejdříve zpracujeme soubory schémat pomocí třídy \texttt{TableDictProcessor}, která vytváří třídy \texttt{Table}.
 Následně načteme datový soubor vrcholů pomocí třídy \texttt{VerticesListProcessor}, která vytváří pole vrcholů.
 A posledně \texttt{EdgeListsProcessor}, která vytváří dva pole \texttt{InEdge} a \texttt{OutEdge}. 
-
+Všechny tyto třídy implementují \texttt{IProcessor}.
 
 \subsection{Parser}
