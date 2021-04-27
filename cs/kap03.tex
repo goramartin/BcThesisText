@@ -18,7 +18,7 @@ Navíc, v průběhu analýzy jsme si zkoušeli již implementovat určité konce
 Z tohoto důvodu jsme měli určité části již naimplementovány.
 Výsledně jsme se rozhodli z výše zmíněných důvodu použít C\# pro .NET Framework 4.8.
 
-\section{Značení módu}
+\section{Značení módů}
 
 Než přistoupíme k popisu aplikace, tak si musíme vyjasnit základní značení módů.
 Určili jsme, že engine bude pracovat v několika módech, které uživatel bude moct měnit.
@@ -60,7 +60,7 @@ Samotný projekt je rozdělený na tři hlavní řešení:
 \end{itemize}
 
 V průběhu celé kapitoly se budeme věnovat pouze řešení \texttt{QueryEngine}, protože obsahuje hlavní část práce.
-Řešení \texttt{Benchmark} je popsáno podrobněji v kapitole \ref{expr}. Experiment, ve které se věnujeme podrobně porovnání implementovaných řešení.
+Řešení \texttt{Benchmark} je popsáno podrobněji v kapitole \ref{expr}. Experiment, ve které se věnujeme porovnání implementovaných řešení.
 Z \texttt{HPCsharp} řešení jsme využili pouze určité algoritmy při implementaci části Order by.
 Samotná implementace algoritmů lze nalézt v odkazu citovaného zdroje. 
 Nyní popíšeme podrobněji rozložení řešení \texttt{QueryEngine}.
@@ -261,5 +261,34 @@ Následně čtením datového souboru \textit{Nodes.txt} vytvoříme pole vrchol
 A posledně čtením datového souboru \textit{Edges.txt} vytvoříme dva pole \texttt{InEdge} a \texttt{OutEdge} třidou \texttt{EdgeListsProcessor}. 
 Všechny tyto třídy implementují \texttt{IProcessor}.
 
-\subsection{Parser}
+\subsection{Parsováni uživatelského dotazu}
 
+Implementaci jsme provedli přesně podle analýzy.
+V prvním kroku dojde k tokenizaci uživatelského dotazu pomocí třídy \texttt{Tokenizer}.
+Uživatel zadá do konzole svůj dotaz a třída provede tokenizaci.
+Výstupem tokenizace je pole \texttt{List<Token>}, které obsahuje všechny nalezené tokeny.
+Tokenem zde myslíme \texttt{struct Token}, který obsahuje dvě položky.
+První je \texttt{TokenType type}, což je typ tokenu.
+Druhá je \texttt{string strValue}, která obsahuje hodnotu tokenu, pokud se jedná o token \texttt{Identifier}.
+Tomu odpovída například název proměnné.
+
+Pole tokenů se předá statické třídě \texttt{Parser}.
+Třída postupně z tokenů vytváří parsovací stromy každé hlavní části dotazu, jak jsme popsali v analýze.
+Parsovací stromy jsou tvořeny potomky asbtraktní třídy \texttt{Node}, která implementuje návrhový vzor Visitor, tj. metodu \texttt{Accept<T>(IVisitor<T>)}.
+Rozhraní \texttt{IVisitor<T>} implementuje druhou část vzoru, tj. metody \texttt{Visit(..)}.
+Parametr \texttt{T} je zde návratová hodnota procházení parsovacího stromu.
+Nejdůležitějšími jsou výstupy tříd implementující \texttt{IVisitor} \texttt{ExpressionVisitor} a \texttt{MatchVisitor}.
+
+\texttt{MatchVisitor} vytváří procházením pole tříd \texttt{List<ParsedPattern>}.
+Třída \texttt{ParsedPattern} reprezentuje jednu vyhledávací posloupnost Match části (např. \texttt{(x) -> (y)}).
+V poli je tolik tříd, kolik je v dotazu posloupností oddělených čárkou.
+Třída interně obsahuje pole abstraktních tříd \texttt{List<ParsedPatternNode>}. 
+\texttt{ParsedPatternNode} reprezentuje jeden hledaný element v posloupnosti, tj. hrana nebo vrchol (\texttt{(x)}/\texttt{-[e]>}).
+Obsahuje položky \texttt{string Name}, pokud je element označen proměnnou (např. vrchol \texttt{(x)}), a \texttt{Table Table} pokud je definován typ elementu (např. vrchol \texttt{(:Type)}).
+Potomci specifikují konkrétní případy vrcholů a hran.
+Abychom mohli popsat návratovou hodnotu \texttt{ExpressionVisitor}, tak musíme nejdříve popsat výrazy.
+
+\subsection{Expressions}
+
+Várazům jsme v analýze věnovali značnou pozornost.
+Samotná implementace je takměr totožná.
