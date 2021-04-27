@@ -122,63 +122,80 @@ Daný přístup nám případá výrazně náročnější z hlediska paměti, pr
 
 Vstupní soubory musí obsahovat informace nutné pro Property graf.
 Budeme očekávat dva druhy souborů.
-Soubory schémat typů elementů a jejich vlastností.
-Datové soubory pak budou obsahovat konkrétní data elementů.
+Soubory schémat \texttt{elType} a jejich vlastností.
+Datové soubory pak budou obsahovat konkrétní data grafových elementů.
 (Jedná se o návrh a finální specifikaci uvedeme v rámci implementace.)
 
-Protože každý element grafu má svůj \verb+elType+, budeme mít na vstupu dva soubory schémat pro hrany a vrcholy.
-Schéma bude obsahovat informace o všech \verb+elType+ a \verb+propType+ vyskytujících se v grafu.
+\subsubsection{Soubory schémat}
+
+Protože každý element grafu má svůj \verb+elType+, budeme mít na vstupu dva soubory schémat. 
+Jeden pro hrany a jeden pro vrcholy.
+Schéma bude obsahovat informace o všech \verb+elType+ a jejich vlastností.
 Pro \verb+elType+ je důležitý název a výčet vlastností.
 Vlastnosti pak musí nést svůj název a \verb+propType+.
-Vidíme, že se jedná jen o výčet \verb+(name/value)+ dvojic (např. \verb+(PropertyOne, integer)+).
+Vidíme, že se jedná jen o výčet \verb+(Název/Hodnota)+ dvojic.
 V tomto případě se nám jeví nejvhodnější zvolit pro reprezentaci schémat formát JSON.
 \verb+elType+ bude reprezentován JSON\footnote{https://www.json.org/} objektem. 
-Bude obsahovat položku \verb+Kind+, jejíž hodnota udává jméno \verb+elType+.
+První položka objektu je \verb+Kind+, která představuje \texttt{Název} a její \texttt{Hodnota} udává jméno \verb+elType+.
 Za ní bude následovat výčet vlastností.
-Vlastnosti budou reprezentovány dvojicí \verb+(propName/propType)+.
-\texttt{propName} je zde název vlastnosti.
+Vlastnosti budou opět reprezentovány dvojicí \verb+(NázevVlastnosti/propType)+.
 Každý JSON objekt tedy definuje jeden \texttt{elType}.
-Záznamy pak budou obsaženy v JSON poli:
+Všechny objekty pak budou obsaženy v JSON poli:
 \begin{code}
 Soubor schéma vrcholů:
-[    { "Kind": "BasicNode" }, 
-     { "Kind": "BasicNodeTwo", "PropertyOne": "integer" } ]
-Soubor schéma hran:"
-[    { "Kind": "BasicEdge" }, 
-     { "Kind": "BasicEdgeTwo", "PropertyOne": "integer" } ]
+[    { "Kind": "NodeX" }, 
+     { "Kind": "NodeY", "Vlastnost1": "integer" } 
+     { "Kind": "NodeZ", "Vlastnost2": "string", 
+       "Vlastnost1": "integer" }  ]
 \end{code}
-Pro vrcholy zde vidíme dva \texttt{elType} s názvy \texttt{BasicNode} a \texttt{BasicNodeTwo}.
-První nemá žádné vlastnosti, ale druhá má vlastnost \texttt{PropertyOne} s typem \texttt{integer}.
+\begin{code}
+Soubor schéma hran:"
+[    { "Kind": "EdgeX" }, 
+     { "Kind": "EdgeY", "Vlastnost1": "integer" } ]
+\end{code}
+Pro vrcholy zde vidíme tři \texttt{elType} s názvy \texttt{NodeX}, \texttt{NodeY} a \texttt{NodeZ}.
+První \texttt{elType} nemá definované vlastnosti, ale druhá má vlastnost \texttt{Vlastnost1} s typem \texttt{integer}.
+Poslední definuje dvě vlastnosti.
+\texttt{Vlasnost2} s typem \texttt{string} a za ní následuje opět \texttt{Vlasnost1} s typem \texttt{integer}.
+Samotné vlastnosti se mohou opakovat, ale musí mít vždy stejný \texttt{propType}.
 Následně identicky pro schéma hran.
-Jako určující \verb+propTypes+ pro náš případ enginu bychom chtěli zvolit dva druhy.
-První by byla číselná hodnota značená integer (32-bitový integer).
-Další by představoval řetězec značený string.
-Práce s řetězci je obecný problém a existuje mnoho znakových sad, proto bychom chtěli zvolit vstupní řetězce pouze se základní znaky ASCII v rozsahu hodnot 0 až 127.  
-Dané dva druhy představují základní typy použitých v komerčních sférách.
+Ačkoliv hrana i vrchol by mohli mít stejný \texttt{elType}, tak budeme vždy uvažovat, že jsou rozdílná.
+Nicméně dovolíme, aby vrchol i hrana mohli mít stejnou vlastnost vlastnosti.
+Nyní musíme říct, co konkrétně znamenají \texttt{integer} a \texttt{string}.
+Jedná se o dva různé \texttt{propType}.
+První budeme chápat jako 32-bitový integer (v C\# \texttt{Int32}).
+A druhý jako řetězec (v C\# \texttt{string}).
+Práce s řetězci je obecný problém a existuje mnoho znakových sad, proto bychom chtěli zvolit vstupní řetězce pouze základní znaky ASCII v rozsahu hodnot 0 až 127.  
+Dané dva druhy představují základní typy použitých i v komerčních sférách, proto chceme omezit vstupní typy pouze na tyto dva.
+
+\subsubsection{Datové soubory}
 
 Samotná data budou obsažena opět ve dvou separatních souborech pro hrany a vrcholy.
 Chtěli bychom reprezentovat konkrétní data pomocí jednoduchého .txt souboru.
-Každý řádek reprezentuje jednu hranu/vrchol.
+Každý řádek bude reprezentovat jednu hranu/vrchol.
 V první řadě řádek musí obsahovat unikatní \verb+ID+ elementu a jeho \verb+elType+. 
 Za \verb+elType+ následuje seznam hodnot vlastností v pořadí určených schématem.
-To znamená, že první v JSON objektu je jako první v daném seznamu.
+To znamená, že první v JSON objektu má hodnotu jako první v daném seznamu.
 Pro hrany existuje na řádku navíc záznam \verb+ID+ vrcholů, které spojuje.
 Tedy \texttt{ID} počátečního vrcholu (\texttt{fromID}) a \texttt{ID} koncového vrcholu (\texttt{toID}) 
 Oddělovače mezi daty jsou implementační detail.
 Pro naše účely se jedná o dostačující formát a poskytuje nám jednoduché možnosti parsování.
 Pokud by docházelo v budoucnu k rozšířením, například více slovné vlastnosti nebo XML vlastnosti, musí dojít k úpravě daných formátů.
-
 Pro výše zmíněné schéma by datové soubory mohly vypadat následovně:
 \begin{code}
-Soubor hran:
-ID elType fromID toID Vlastnosti... // bez této hlavičky
-50 BasicEdge 0 0 
-51 BasicEdgeTwo 0 1 44
+Soubor hran (bez hlavičky a komentáře):
+ID elType fromID toID Vlastnosti... 
+50 EdgeX 0 0    // EdgeX nemá vlastnosti.
+51 EdgeY 0 1 44 // EdgeY má vlastnost Vlastnost1
+                // s číselnou hodnotou.
+52 EdgeX 1 2   
 ...
 Soubor vrcholů:
-ID elType Vlastnosti... // bez této hlavičky
-0 BasicNode
-1 BasicNodeTwo 42
+ID elType Vlastnosti...
+0 NodeX    // NodeX nemá vlastnosti.
+1 NodeY 42 // NodeY má jednu vlastnost.
+2 NodeZ Martin 22 // Dvě vlastnosti v pořadí
+                  // definované schématem.
 ...
 \end{code}
 
@@ -246,7 +263,8 @@ Základní myšlenka je reprezentovat výraz pomocí stromové struktury.
 Každý vrchol stromové struktury bude reprezentovat určitou akci.
 Vrcholy budou výše vypsané výrazy. 
 Na struktuře bude existovat metoda pro vyhodnocení.
-Její návratová hodnota bude dvojice úspěch vyhodnocení + vypočtená hodnota. 
+Její návratová hodnota bude dvojice úspěch vyhodnocení + vypočtená hodnota.
+Úspěch je zde důležitý, protože například můžeme přistupovat k neexistující vlastnosti. 
 Dané struktury musí být read-only, protože se budou využívat v paralelním prostřední.
 Metody by se mohli libovolně dodávat při nutnosti použití nových struktur. 
 
@@ -254,26 +272,31 @@ Následuje ukázka možného kódu v jazyce C\#:
 \begin{code}
 // Základní rodičovské třídy
 abstract class Expression { }
-abstract class ExpressionReturnValue<T>: Expression {
+abstract class ExpReturnValue<T>: Expression {
   public abstract bool TryEvaluate(Element[] elms, out T retVal); 
 }
-abstract class VariableAccess<T>: ExpressionReturnValue<T> {
+abstract class VariableAccess<T>: ExpReturnValue<T> {
      readonly int accessedVariableID; }
 \end{code}
+
 Třída reprezentující přístup k \verb+ID+ proměnné:
 \begin{code}
 class VariableIDAccess: VariableAccess<int> {
   public override bool TryEvaluate(Element[] elms, out int retVal) {
-     returnValue = elms[accessedVariableID].ID;
-     return true; 
-  }
-}
+     retVal = elms[accessedVariableID].ID;
+     return true; } }
 \end{code}
+Typ návratu funkce je definovám pomocí \texttt{T} parametru třídy \texttt{ExpReturnValue}.
+Volající tedy musí znát typ návratové hodnoty, aby funkci mohl vyhodnotit.
 Třída \verb+VariableAccess+ nám poskytuje abstrakci pro přístup k proměnné.
 Položka \verb+accessedVariableID+ určuje k jaké proměnné se má přistoupit.
 Zde předpokládáme, že pole \verb+Element[]+ obsahuje proměnné přesně v pořadí, jak se vyskytly v části Match.
 Tedy pokud je zadán \texttt{match (x) -> (y)}, tak jeden výsledek hledání by bylo pole obsahující dva elementy x a y.
+\texttt{Element} je zde chápán jako element grafu, tj. vrchol nebo hrana.
+Na elementu existuje položka \texttt{ID} s unikátním identifikátorem elementu.
+Funkce pak vrací hodnotu uloženou v \texttt{retVal} a úspěch vyhodnocení v návratové hodnotě. 
 Jedná se pouze o ilustrační příklad. 
+Výsledný formát definujeme v implementační části.
 
 Případ přístupu k vlasnosti by mohl vypadat následovně:
 \begin{code}
@@ -286,8 +309,11 @@ class VariablePropertyAccess<T>: VariableAccess<T> {
 }
 \end{code}
 Zde dojde k volání metody na elementu grafu, který přistoupí k třidě reprezentující jeho \verb+elType+.
+\texttt{accessedPropertyID} je identifikátor přistupované proměnné.
 Třída pak na základě existence vlastnosti vrátí hodnotu nebo neuspěje.
 Timto dokážeme vyřešit základní definované problémy.
+
+\subsubsection{Aggregační funkce}
 
 Zbává uvažovat, jakým způsobem reprezentovat agregační funkce.
 Agregační funkce představují několik problémů.
@@ -303,27 +329,30 @@ Zároveň bude obsahovat logiku počítané funkce.
 Například logika funkce \verb+min+ je porovnat dvě hodnoty a vybrat menší.
 Na vstupu dané funkce pak bude úložiště hodnoty dané skupiny.
 Všechny počítané agregační funkce zadané uživatelem označíme pomocí \verb+ID+.
-Druhý koncept představuje nový potomek třídy expression.
+Druhý koncept představuje nový potomek třídy \texttt{Expression}.
 Daný potomek si pamatuje \verb+ID+ přistupované agregační funkce a na vstupu očekává strukturu reprezentující skupinu.
 K hodnotě počítané agregace přistoupíme pomocí její \verb+ID+.
 
 Následuje ukázka druhého konceptu:
 \begin{code}
-class GroupAggValueAccess<T>: ExpressionReturnValue<T> {
-  reaonly int accessedAggregationFuncID; 
+class GroupAggValueAccess<T>: ExpReturnValue<T> {
+  reaonly int accessedAggFuncID; 
   public override bool TryEvaluate(Group group, out T retVal) {
-    retVal = group.GetAggValue<T>(accessedAggregationFuncID);
+    retVal = group.GetAggValue<T>(accessedAggFuncID);
     return true; }}
 \end{code}
 \verb+Group+ reprezentuje výsledky jedné skupiny.
-\verb+accessedAggregationFuncID+ je \verb+ID+ vypočítané agregační funkce.
+\verb+accessedAggFuncID+ je identifikátor vypočítané agregační funkce.
 Hodnota funkce se vrací pomocí \verb+GetAggValue<T>+.
+Obecně výždy nemusí dojít k úspěchu vyhodnocení.
+Při výpočtu se například vždy přistoupilo k neexistující vlastnosti.
 
+\clearpage
 Následuje ukázka prvního konceptu:
 \begin{code}
 abstract class Aggregation { }
 abstract class Aggregation<T>: Aggregation {
-  public ExpressionReturnValue<T> expr; // Argument of the agg. func.
+  public ExpReturnValue<T> expr; // Argument agg. funkce.
   public abstract void Apply(ValueStorage storage, Element[] elms);
 }
 
@@ -348,7 +377,6 @@ class ExpressionBinOperation<T>: ExpressionReturnValue<T> {
   public ExpressionReturnValue<T> expr2;
 }
 \end{code}
-\clearpage
 \begin{code}
 class ExpressionIntegerAdd: ExpressionBinOperation<int>{
   public override bool TryEvaluate(Element[] elms, out int retVal) {
