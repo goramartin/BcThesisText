@@ -126,7 +126,7 @@ Soubory schémat \texttt{elType} a jejich vlastností.
 Datové soubory pak budou obsahovat konkrétní data grafových elementů.
 (Jedná se o návrh a finální specifikaci uvedeme v rámci implementace.)
 
-\subsubsection{Soubory schémat}
+\subsubsection{Soubory schémat} 
 
 Protože každý element grafu má svůj \verb+elType+, budeme mít na vstupu dva soubory schémat. 
 Jeden pro hrany a jeden pro vrcholy.
@@ -204,7 +204,7 @@ ID elType Vlastnosti...
 Samotné načítání je už implementační detail.
 Nyní musíme analyzovat způsob získání informací z uživatelem zadaného dotazu. }
 
-\section{Parsování uživatelského dotazu}
+\section{Parsování uživatelského dotazu} \label{anal.parsing}
 
 Uživatelský dotaz se pohybuje v rozsahu definovaném v sekci PGQL \ref{req.pgql}.
 Nicméně, je zde nutné přemýšlet i nad možnými rozšířeními.
@@ -1250,7 +1250,7 @@ Zmiňovali jsme, že se jedná o paralelní mapu/slovník (C\# \texttt{Concurren
 Nepoužijeme zde řešení Local + dvoucestné slévání, protože samotné slévání vytváří nutnost vláken čekat na dokončení práce jiného vlákna.
 Pomocí řešení Two-step se problému kompletně vyhneme.
 
-\subsubsection{Ukládaní pouze reprezentantů skupin}
+\subsubsection{Ukládání pouze reprezentantů skupin} \label{anal.uprava.Groupby.table}
 
 K upravení původního řešení musíme pouze vyřešit problém chybějící tabulky výsledků, protože v moment nalezení výsledku je výsledek předán části Group by a není tak uložen do tabulky.
 Mohli bychom výsledky opět ukládat do tabulky.
