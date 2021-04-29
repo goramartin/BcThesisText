@@ -686,7 +686,7 @@ Analýza nám pomůže pochopit jejich fungování, což nám umožní je lépe 
 Zároveň také tvoří odrazový můstek pro návrh vylepšených řešení.}
 
 
-\section{Order by}
+\section{Order by} \label{anal.orderby}
 
 Order by si klade za cíl setřídit vyhledané výsledky z části Match pomocí zadaných klíčů.
 Pořadí klíčů určuje pořadí porovnání.
@@ -732,7 +732,7 @@ Indexy budou setříděny namísto pravých řádků vybraným algoritmem a při
 Přistup nám umožní vyřadit přesouvání řádků, ale zase potřebujeme lineární pamět na pole indexů.
 Po dokončení třídění se pole použije jako indexační struktura.
 
-\subsection{Optimalizace porovnání vlastností hodnot} \label{anal.order.opt1}
+\subsection{Optimalizace porovnání vlastností hodnot} \label{anal.orderby.opt1}
 
 Třídění obvykle představuje opakované porovnání jednoho prvku s ostatními v řadě za sebou.
 Pro pokaždé takové porovnání v řadě počítáme stejnou hodnotu výrazu opakovaně.
@@ -743,7 +743,7 @@ Danou situaci můžeme vyřešit částečně cachování výsledků výrazů.
 Budeme si pamatovat poslední porovnané řádky a jejich hodnoty.
 Pokud dojde k porovnání řádků pro který byl výraz již vypočítán, tak použijeme zachovanou hodnotu.
 
-\subsection{Optimalizace porovnání stejných elementů}
+\subsection{Optimalizace porovnání stejných elementů} \label{anal.orderby.opt2}
 
 Dalši možná optimalizace porovnání může nastat v případě, pokud pro použitý graf platí \#Vrcholů $<<$ \#Hran.
 Daná vlastnost může mít za následek, že porovnávané řádky budou často obsahovat stejné elementy pro dotazy typu:
@@ -751,7 +751,7 @@ Daná vlastnost může mít za následek, že porovnávané řádky budou často
 select x.PropOne match (x) -> (y) order by x.PropOne;
 \end{code}
 V takovém dotazu by hledání mělo vygenerovat několik výsledků se stejným elementem v proměnné x.
-Počet takových výsledků zde odpovídá počtu hran vrcholů x.
+Počet takových výsledků zde odpovídá počtu hran vrcholů \texttt{x}.
 Abychom předešli opakovanému porovnávání hodnot vlastností stejných elementů, tak než přistoupíme k výpočtu výrazů porovnáme \texttt{ID} přistupovaných elementů.
 Tedy využijeme dvou optimalizací.
 Budeme si cachovat poslední výsledky výrazů a navíc omezíme porovnání výsledků se stejnými elementy.
@@ -767,7 +767,7 @@ Vlákna by se snažila číst a ukládat výsledky ze sdíleného úložiště a
 Problém se dá vyřešit například tak, že každé vlákno bude vlastnit svoje objekty s cachí výsledků.
 V průběhu implementace budeme muset najít vhodnou techniku ukládání, aby došlo ke zrychlení třídění.
 
-\section{Group by}
+\section{Group by} \label{anal.groupby}
 
 Group by seskupuje výsledky hledání podle uživatelem zadaných klíčů.
 Dva výslekdy patří do stejné skupiny právě tehdy, když se shodují ve všech hodnotách klíčů.
@@ -868,7 +868,7 @@ Pokud už je obsažen v tabulce, tak se pouze pro získanou \texttt{value} (pole
 V opačném případě bude vložen nový záznam s novou \texttt{value}.
 Pro Single group Group by stačí pouze iterovat skrze tabulku a počítat agregační funkce.
 
-\subsection{Optimalizace při výpočtu haš hodnoty}
+\subsection{Optimalizace při výpočtu haš hodnoty} \label{anal.groupby.opt1}
 
 Minulý přístup nám nabízí jednu optimalizaci k ušetření opakovaného výpočtu hodnoty výrazu klíčů.
 Hašovací tabulka při vložení dvojice v prvním kroku vypočte hodnoty klíčů a vypočte jejich haš.
@@ -878,7 +878,7 @@ Při tomto porovnání se opět musí vypočíst hodnoty výrazů vkládané dvo
 Zde mužeme využít chvíle výpočtu haš hodnoty.
 Budeme cachovat hodnoty výrazů a následně je znovu použít při porovnání.
 Nicméně, pravděpodobně budeme nutni vytvořit závislost mezi objektem počítajícím haš hodnotu a objektem provádějícím porovnání.
-Stejný princip jsme použili při optimalizaci porovnání v sekci \ref{anal.order.opt1}.
+Stejný princip jsme použili při optimalizaci porovnání v sekci \ref{anal.orderby.opt1}.
 Nastávají pro něj také stejné problémy v paralelním prostředí.
 
 \subsection{Paralelní zpracování}

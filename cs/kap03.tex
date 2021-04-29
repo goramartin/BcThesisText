@@ -178,7 +178,7 @@ Podrobnější popis adresářové struktury:
 V této sekci popíšeme postupně klíčové objekty, položky a způsoby vypracování aplikace.  
 
 \subsection{Reprezentace grafu}
-V tétto sekci popíšeme hlavní objekty, které jsme použili k reprezentaci grafových dat.
+V této sekci popíšeme hlavní objekty, které jsme použili k reprezentaci grafových dat.
 Při implementaci jsme postupovali dle návrhu z sekce analýzy \ref{anal.grafrep}.
 
 \subsubsection{Třída Element}
@@ -190,7 +190,8 @@ Hlavní vlastnosti jsou:
 \item \texttt{int ID} je unikátní identifikátor elementu. Definuje jej uživatel ve vstupním souboru. Není to vlastnost v Property grafu.
 \item \texttt{Table Table} odkaz na typ v Property grafu.
 \item \texttt{int PositionInList} pozice v \texttt{List<T>}, kde \texttt{T} je potomek třídy \texttt{Element}, protože každý potomek je obsažen ve vlastním poli.
-Pole pak jsou obsažená v třídě \texttt{Graph}.
+Určili jsme v analýze, kvůli jednoduché možnosti iterace elementů.
+Pole jsou pak obsažená v třídě \texttt{Graph}.
 \end{itemize}
 
 Potomek abstraktní třídy je třída \texttt{Vertex} (vrchol) a abstraktní třída \texttt{Edge} (hrana).
@@ -198,13 +199,13 @@ Potomek abstraktní třídy je třída \texttt{Vertex} (vrchol) a abstraktní t�
 Z dané třídy vznikají konkrétní potomci \texttt{InEdge} a \texttt{OutEdge}.
 Hrany jsou orientované a spojují dva vrcholy.
 Mějme hranu z vrcholu x do y.
-Položka \texttt{Endvertex} pro \texttt{OutEdge} zde odkazuje na vrchol y.
+Položka \texttt{EndVertex} pro \texttt{OutEdge} zde odkazuje na vrchol y.
 Pro \texttt{InEdge} to je x.
 Tedy pro každou definovanu hranu v grafu existují obě instance tříd. 
 Instance sdílejí \texttt{ID}, ale záznam v \texttt{Table} je pouze jeden, tedy sdílejí i hodnoty vlastností. 
 \texttt{Vertex} přidává položky dvou dvojic indexů, o kterých jsme mluvili v analýze.
 První dvojice je \texttt{int OutEdgesStartPosition} a \texttt{int OutEdgesEndPosition}, které označují rozsah hran v poli \texttt{OutEdge} náležících vrcholu.
-Druhá dvojice je pro typ \texttt{InEdge} ekvivalentí.
+Ekvivalentně pro typ \texttt{InEdge}.
 Celkově tedy třída \texttt{Graph} bude obsahovat pole \texttt{List<T>} pro každého neabstraktního potomka třídy \texttt{Element}.
 
 \subsubsection{Třída Table}
@@ -214,15 +215,16 @@ Hlavní vlastnosti jsou:
 \begin{itemize}
 \item Položka \texttt{string IRI} je název typu.
 \item Položka \texttt{Dictionary<int, int> IDs}, kde klíčem je \texttt{ID} elementu a hodnota je pozice hodnot vlastností ve struktuře, která je obsahuje (tj. třídě \texttt{Property}).
-\item Položka \texttt{Dictionary<int, Property>}, kde klíč je \texttt{ID} vlastnosti a hodnota je třída reprezentující vlasnost.
+\item Položka \texttt{Dictionary<int, Property>}, kde klíč je \texttt{ID} vlastnosti a hodnota je třída reprezentující vlastnost.
 \item \texttt{bool TryGetPropertyValue<T>(int id,int propID, out T retValue)}\\* 
 je metoda, která se pokusí získat hodnotu vlastnosti \texttt{propID} pro daný element s daným \texttt{id}.
 Hodnota se vrací v \texttt{retValue}. Úspěšně dokončená vrací \texttt{true}, jinak \texttt{false}.
+Pro získání hodnoty vlastnosti tedy musíme znát její typ.
 \end{itemize}
 
 \subsubsection{Třída Property}
 
-Samotné vlastnosti jsou reprezentovány abstraktní třídou \texttt{Property}, která má svůj nazev \texttt{string IRI}.
+Samotné vlastnosti jsou reprezentovány abstraktní třídou \texttt{Property}, která má svůj název \texttt{string IRI}.
 Z třídy vznikají abstraktní generické třídy \texttt{Property<T>}, kde \texttt{T} je typ hodnot vlastnosti.
 Třída obsahuje pole hodnot \texttt{List<T> propHolder}.
 Z třídy pak vznikají konkrétní třídy:
@@ -256,17 +258,18 @@ Obsahuje dále:
 \subsection{Čtení vstupních souborů}
 
 Máme imlementován graf a nyní jej potřebujeme načíst.
-Budeme vycházet z kapitoly analýzy sekce \ref{anal.vstup}
-Rozdhodli jsme se použít totožný vstupní formát dat jako při analýze.
+Budeme vycházet z kapitoly analýzy sekce \ref{anal.vstup}.
+Rozhodli jsme se použít totožný vstupní formát dat jako při analýze.
 Při spuštění program očekává čtyři soubory.
 Dva soubory se zmiňovaným JSON formátem \textit{EdgeTypes.txt} (schéma hran) a \textit{NodeTypes.txt} (schéma vrcholů), které definují typy Property grafu a jejich vlastnosti.
-Další dva soubory \textit{Edge.txt} a \textit{Nodes.txt} obsahují samotná data s mezerami jako oddělovače.
+Další dva soubory \textit{Edge.txt} (data hran) a \textit{Nodes.txt} (data vrcholů) obsahují samotná data s mezerami jako oddělovače.
 Jediná úprava formátu je ta, že hrany v datovém souboru musí být seřazeny podle \texttt{ID} počátečního vrcholu hrany tak, jak jsou vrcholy seřazeny v jejich datovém souboru.
 To zmanená, že pokud máme v souboru vrcholů za sebou vrcholy s \texttt{ID} 1, 2 a 3, tak soubor hran musí nejdříve obsahovat hrany začínající vrcholem s \texttt{ID} 1, pak s \texttt{2} apod.
+Důvodem je zjednodušení procesu načítání.
 
 Načítání je implementováno následovně.
 \texttt{interface Creator<T>} s metodou \texttt{T Create()} je rozhraní pro tvorbu objektů \texttt{T}.
-Tento vzor rozšíříme na třídu \texttt{CreatorFromFile<T>}, která symbolizuje tvorbu objektu \texttt{T} postupným čtením souboru.
+Rozhraní bude implementovat třída \texttt{CreatorFromFile<T>}, která symbolizuje tvorbu objektu \texttt{T} postupným čtením souboru.
 Třída očekává při incializaci rozhraní \texttt{IReader} čtoucí vstupní soubor metodou \texttt{string Read()}, která přečte vždy určitý úsek souboru.
 Dále rozhraní \texttt{IProcessor} vytvářející iterativně \texttt{T} na základě poskytnutých částí souboru.
 Protože text je čtený po částech, tak \texttt{IProcessor} implementuje návrhový vzor State \citep[str. 305]{patterns}.
@@ -276,7 +279,7 @@ A posledně čtením datového souboru \textit{Edges.txt} vytvoříme dva pole \
 Rozhraní \texttt{IProcessor} implementují všechny tyto třídy.
 Samotné čtení souborů je vyvoláno při inicializaci třídy \texttt{Graph}.
 
-\subsection{Parsování uživatelského dotazu}
+\subsection{Parsování uživatelského dotazu} \label{impl.parsing}
 
 Při parsování jsme vycházeli z sekce analýzy \ref{anal.parsing}.
 Nejdřive dojde k tokenizaci a následně vytváření parsovacího stromu.
@@ -289,7 +292,7 @@ Výstupem tokenizace je pole \texttt{List<Token>}, které obsahuje všechny nale
 Tokenem zde myslíme \texttt{struct Token}, který obsahuje dvě položky.
 První je \texttt{TokenType type}, což je typ tokenu.
 Druhá je \texttt{string strValue}, která obsahuje hodnotu tokenu, pokud se jedná o token \texttt{Identifier}.
-Tomu odpovída například token názevu proměnné.
+Tomu odpovída například token názvu proměnné.
 Pole tokenů se předá statické třídě \texttt{Parser}.
 
 \subsubsection{Třída Parser}
@@ -302,7 +305,7 @@ Například \texttt{ParseMatch(ref int position, .. tokens)} parsuje část Matc
 V průběhu parsování částí se rekurzivně volájí další metody.
 V průběhu rekurze se používá parametr \texttt{position}, který udržuje pozici aktuálně parsovaného tokenu.
 
-Parsovací stromy jsou tvořeny potomky asbtraktní třídy \texttt{Node}, která implementuje návrhový vzor Visitor, tj. metodu \texttt{Accept<T>(IVisitor<T>)}.
+Parsovací stromy jsou tvořeny potomky asbtraktní třídy \texttt{Node}, která implementuje návrhový vzor Visitor \citep[str. 331]{patterns}, tj. definuje metodu \texttt{Accept<T>(IVisitor<T> ..)}.
 Rozhraní \texttt{IVisitor<T>} implementuje druhou část vzoru, tj. metody \texttt{Visit(..)}.
 Každá část dotazu má svůj objekt implementující \texttt{IVisitor<T>}, například Match má objekt \texttt{MatchVisitor}.
 Parametr \texttt{T} je zde návratová hodnota procházení parsovacího stromu.
@@ -352,7 +355,7 @@ Třída definuje rozhraní exekučního plánu.
 Obsahuje:
 \begin{itemize}
 \item Položku \texttt{QueryObject next}, která propojuje objekt s dalším objektem.
-\item Metodu \texttt{void Compute(out ITableResults r,} \texttt{out GroupByResults g)}, která rekurzivné volá stejnou metodu na dalším objektu.
+\item Metodu \texttt{void Compute(out ITableResults r,} \texttt{out GroupByResults g)}, která rekurzivné volá stejnou metodu na dalším objektu v \texttt{next}.
 Každý potomek třídy si implementuje vlastní logiku zpracování této metody.
 Všimněme si, že tato metoda definuje rozhraní pro předávání výsledků zpracování.
 \texttt{ITableResults} definuje obecné rozhraní tabulky výsledků hledání, pokud není zadáno Group by.
@@ -384,7 +387,7 @@ Třída obsahuje:
 Třída reprezentuje jeden hledaný element v posloupnosti, tj. hrana  (\texttt{-[e]>}) nebo vrchol (\texttt{(x)}).
 Obsahuje položky \texttt{string Name}, pokud je element označen proměnnou (např. vrchol \texttt{(x)}), a \texttt{Table Table} pokud je definován typ elementu (např. vrchol \texttt{(:Type)}).
 Potomci specifikují konkrétní případy vrcholů a hran. Pokud vezmeme příklad výše \texttt{(x) -> (y)}, tak pole bude obsahovat tří třídy.
-\texttt{pattern[0]} je třída vrcholu \texttt{x}, \texttt{pattern[1]} je třída \texttt{OutEdge} hrany,  apod.
+\texttt{pattern[0]} je třída vrcholu \texttt{x}, \texttt{pattern[1]} je třída \texttt{OutEdge} hrany a \texttt{pattern[2]} je třída vrcholu \texttt{y}.
 
 \item Položku \texttt{string splitBy}, která označuje jméno proměnné, podle které posloupnost budeme dělit na dvě posloupnosti v průběhu vytváření objektu vzoru.
 Výsledkem dělení budou tedy dvě třídy \texttt{ParsedPattern}.
@@ -406,7 +409,7 @@ Z daného formátu se během vytváření struktur Match části vytvoří finá
 
 Třída reprezentuje hledaný vzor (obrázek \ref{figure.diaQueryObjectsMatchPar} blok \texttt{Pattern}).
 Konstruktor dostane pole \texttt{ParsedPattern}.
-V analýze jsme řekli, že se z posloupnosti vytvoří souvislé kompomenty.
+V analýze jsme řekli, že se z posloupností vytvoří souvislé kompomenty.
 Aplikováním výše zmíněných metod nalezneme sdílené proměnné.
 Pole, která sdílejí proměnnou, seskupíme k sobě a samotné posloupnosti rozdělíme pomocí položky \texttt{splitBy}.
 Výsledkem bude pole posloupností a souvislé komponenty v něm budou obsaženy postupně za sebou.
@@ -417,7 +420,8 @@ Původní List<ParsedPattern> a unitř List<ParsedPatternNode>:
 Pole po zpracovní:
 [[(x), ->, (z)], [(x), <-, (y)], [(x), ->, (w)], [(r), ->, (q)]]
 \end{code}
-Zde vidíme, že první tři posloupnosti po zpracování tvoří souvislou komponentu, ale původně nebyli v poli za sebou.
+Zde vidíme, že první tři posloupnosti po zpracování tvoří souvislou komponentu, protože sdílejí proměnnou \texttt{x}, ale původně nebyli v poli za sebou.
+Nulté a druhé pole sdílejí proměnnou \texttt{x}, podle které jsme druhou posloupnost dělili.
 V průběhu hledání budeme vždy iterovat po daných posloupnostech.
 V moment nalezení vhodného elementu se posuneme na další prvek posloupnosti (doprava) nebo na novou posloupnost.
 To symbolizuje DFS krok zanoření.
@@ -431,6 +435,7 @@ Pole obsahuje každou proměnnou hledání právě jednou.
 Pokud ve vzoru není žádná proměnná, tak je pole vždy prázdné.
 Každá proměnná má svou pozici.
 Tyto pozice budeme chápat jako \texttt{ID} proměnných v celém dotazu.
+Toto pořadí je uchováváno v třídě \texttt{QueryVariableMap}.
 V moment nalezení vhodného elementu proměnné se element uloží do daného pole na pozici proměnné.
 V moment vynořování z DFS se element z pozice smaže.
 Položka se používá ke kopírování do tabulky nebo k dalšímu zpracování.
@@ -464,7 +469,7 @@ Třída obsahuje:
 \item Metodu \texttt{bool Apply(Element e, Element[] map)}, která ověřuje jestli \\*element \texttt{e} se dá použit v aktuálním kroku hledání.
 \texttt{map} je pak \texttt{scope} vzoru, kde se případně ověří rovnost elementů opakující se proměnné. Při úspěchu vrací \texttt{true}.
 \end{itemize}
-Potomci pak specifikují, jestli se jedná o \texttt{Vertex}, \texttt{InEdge}, \texttt{OutEdge} nebo \texttt{AnyEdge}.
+Potomci pak specifikují, jestli se jedná o \texttt{Vertex} (vrchol), \texttt{InEdge} (hrana vedouci do vrcholu), \texttt{OutEdge} (hrana vedouci z vrcholu) nebo \texttt{AnyEdge} (jakýkoliv druh hrany).
 Ještě než popíšeme struktury algoritmu prohledávání, tak popíšeme struktury pro ukládání výsledků vláken v průběhu hledání.
 
 \subsubsection{Třída MatchFixedResultsInternal}
@@ -484,11 +489,12 @@ Uvnitř je:
 \item Položka \texttt{List<Element[][]> ResTable} je tabulka výsledků. 
 Je složená z bloků \texttt{Element[][FixedArraySize] block} kostantní velikosti.
 \texttt{block[i]} přistupuje k \textit{i}-tému sloupečku a \texttt{block[i][j]} přistupuje k \textit{j}-té pozici \textit{i}-tého sloupečku.
-\item Položka \texttt{Element[][] LastBlock} je odkaz na poslední nezaplněný blok.
+\item Položka \texttt{Element[][FixedArraySize] LastBlock} je odkaz na poslední nezaplněný blok.
 \item Položka \texttt{int CurrentPosition} je odkaz na první volný index v posledním bloku.
 \item Metoda \texttt{void AddRow(Element[] row)} přidá nový výsledek do tabulky.
 Pokud je poslední blok zaplněn, vytvoří se nový.
 Při vytváření nového bloku nemusí docházet k překopírovávání výsledků hledání, protože pole \texttt{ResTable} drží odkazy na zmíněné bloky.
+Rozšířením pak překopíruje pouze odkazy na pole.
 Očekává se, že \texttt{row} je položka \texttt{scope} vzoru. 
 
 \end{itemize}
@@ -518,13 +524,13 @@ Prohledávání prochází všechny vrcholy v definovaném rozsahu a pak se ukon
 V tento moment lze nastavit zmíněnou metodou další rozsah a opět spustit hledání.
 V moment nalezení finálního výsledku se zavolá abstraktní metoda \texttt{void ProcessResult()}, která zpracuje výsledek.
 Rozhraní prohledávání neposkytuje návrat nalezených výsledků.
-Pokud se výsledky mají ukládat, tak potomek dané třídy musí dostat v konstruktoru objekt úložiště a přepsat metodu \texttt{void ProcessResult()}
+Pokud se výsledky mají ukládat, tak potomek dané třídy musí dostat v konstruktoru objekt úložiště a přepsat metodu \texttt{void ProcessResult()}.
 Způsob zpracování výsledku si definují potomci.
 
 \subsubsection{Třída DFSPatternMatcher}
 
 Třída je potomkem třídy výše.
-reprezentuje algoritmus prohledávání, které ukládá výsledky do tabulky v moment jejich nalezení.
+Reprezentuje algoritmus prohledávání, který ukládá výsledky do tabulky v moment jejich nalezení.
 V konstruktoru dostane tabulku \texttt{MatcherFixedResultsInternal}, kam ukládá své výsledky hledání.
 Metoda \texttt{ProcessResult} tedy ukládá výsledky do dané tabulky.
 
@@ -533,7 +539,7 @@ Metoda \texttt{ProcessResult} tedy ukládá výsledky do dané tabulky.
 Třída představuje paralelní prohledávání grafu, které ukládá výsledky v moment nalezení do tabulky.
 Paralelizaci jsme popsali v sekci \ref{anal.matchPar}.
 V konstruktoru dostává počet vláken \texttt{ThreadCount}, vzor \texttt{DFSPattern}, graf \texttt{Graph} a instanci úložiště výsledků \texttt{MatchFixedResults}.
-K paralelizaci prohledávání využívá instance třídy \texttt{DFSPatternMatcher} a počet instanci odpovídá hodnotě \texttt{ThreadCount}.
+K paralelizaci prohledávání využívá instance třídy \texttt{DFSPatternMatcher} a počet instancí odpovídá hodnotě \texttt{ThreadCount}.
 Tedy v konstruktoru vytvoří tyto instance a každé přidělí kopii vzoru, graf a její lokální úložiště.
 Výsledně obsahuje položky:
 \begin{itemize}
@@ -545,18 +551,20 @@ Paralelní prohledávání je spuštěno metodou \texttt{void Search()}.
 Zde využíváme nativní \texttt{ThreadPool}.
 Je vytvořeno \texttt{ThreadCount} instancí \texttt{Task} vykonávají práci \texttt{WorkMultiThreadSearch(object o)}, kde \texttt{o} je lokální \texttt{JobMultiThreadSearch}.
 Ten obsahuje instanci prohledávání a objekt \texttt{VertexDistributor}.
-Objek jsme definovali v analýze (obrázek \ref{figure.diaQueryObjectsMatchPar} blok \texttt{VertexDistributor}).
+Objekt jsme definovali v analýze (obrázek \ref{figure.diaQueryObjectsMatchPar} blok \texttt{VertexDistributor}).
 Drží odkaz na pole vrcholů grafu a index posledního přiděleného vrcholu.
 Množství přidělených vrcholů je definovám v jeho položce \texttt{int verticesPerRound}.
 Vklákna jej žádají o vrcholy k prohledávání, metodou \texttt{DistributeVertices(..)}.
 
 Po dokončení hledání dojde k paralelnímu slévání tabulek.
-Rozdhodli jsme se použít metodu slévání po sloupečcích tabulek, protože slévání celých tabulek po dvojicích bylo pomalejší.
+Rozhodli jsme se použít metodu slévání po sloupečcích tabulek, protože slévání celých tabulek po dvojicích bylo pomalejší.
 Paralelizace probíhá stejně.
-Přidělování sloupečků ke slévání je implementováno pomocí třídy \texttt{ColumnDistributor}.  
-Třída si pamatuje index prvního nepřiděleného sloupečku \texttt{int firstFreeColumn}.
+Vlákna žádají objekt \texttt{ColumnDistributor} o sloupeček ke slévání.
+Interně objekt funguje totožně jako \texttt{VertexDistributor} s rozdílem, že si objekt pamatuje index prvního nepřiděleného sloupečku v položce \texttt{int firstFreeColumn}.
+Slévání probíha pomocí volání metody \texttt{MergeColumn} na třídě \texttt{MatchFixedResults}.
 V moment dokončení slévání jsou finální výsledky v položce \texttt{results.FinalMerged}.
 Tato položka je předána konstruktoru \texttt{TableResults}, která implementuje rozhraní \texttt{ITableResults}.
+Třída představuje tabulku výsledků, kterou si objekty částí dotazu (\texttt{QueryObjekt}) předávají ke zpracování.
 
 \subsection{Tabulka výsledků}
 
@@ -579,26 +587,266 @@ To nám umožní v moment dokočení slévání pouze přesunou výsledky do kos
 \item \texttt{List<Element[FixedArraySize]>[] resTable} je tabulka výsledků hledání.
 \texttt{resTable[i]} je \textit{i}-tý sloupeček.
 \texttt{resTable[i][j]} je \textit{j}-tý blok ve sloupečku.
-\texttt{resTable[i][j][k]} je \texttt{k}-tý výsledek v bloku.
-\item \texttt{Element[] tmpRow} představuje odkaz na pole elementů, ke kterému lze přistoupit skrze api, aniž by bylo pole elementů v tabulce.
+\texttt{resTable[i][j][k]} je \textit{k}-tý výsledek v bloku.
+\item \texttt{Element[] tmpRow} představuje odkaz na pole elementů, ke kterému lze přistoupit skrze rozhraní tabulky, aniž by bylo pole elementů v tabulce.
 \item Metoda \texttt{StoreRow(Element[])} překopíruje hodnoty do tabulky. Funguje ekvivalentně jako \texttt{AddRow} ve třídě \texttt{MatcherFixedResultsInternal}.
 \item Metoda \texttt{StoreTemporaryRow()} vyvolá metodu výše pro uložení pole \texttt{tmpRow} do tabulky.
 \item Metoda indexeru \texttt{RowProxy this[int i]}, která vrátí proxy třídu řádku.
+\item Položka \texttt{int[] order} umožní definovat vlastní pořadí řádků v tabulce bez nutnosti přesouvat řádky.
+
 \end{itemize}
 V průběhu analýzy jsme navrhli způsob práce s řádky. 
-Místo abychom pracovali konkrétně s řádky implementovali jsme proxy třídu řádku \texttt{struct RowProxy}.
+Místo abychom pracovali konkrétně s řádky, tak jsme implementovali proxy třídu řádku \texttt{struct RowProxy}.
 Třída obsahuje pouze dvě položky index řádku \texttt{int index}, který reprezentuje, a odkaz na tabulku \texttt{TableResults resTable}.
 Získá se voláním indexeru na tabulce.
-Na struktuře se pak voláním metody \texttt{Element this[int c]} přistoupí k proměnné na řádku tabulky.
+Na struktuře se pak voláním metody \texttt{Element this[int c]} přistoupí k proměnné na řádku tabulky (\texttt{c} je zde sloupeček tabulky).
 Danou třídu pak budeme používat k vyhodnocení výrazů a výpočtům agregačních funkcí.
+Kdykoliv budeme předávat strukturu do funkce, tak ji budeme předávat pomocí parametru \texttt{in}, který vyvolá předání odkazem.
+Tím vyloučíme zbytečné kopírování položek struktury.
+Na struktuře existuje statická metoda \texttt{AreIdenticalVars}, která porovná dvě proxy třídy řádků, zda obsahují stejné elementy grafu na základě jejich \texttt{ID}.
 
 \subsection{Expressions}
 
-Návratová hodnota \texttt{ExpressionVisitor}, je ExpressionBase.
-ExpressionBase představuje abtrakci výrazu (expression), kterým jsme v analýze věnovali značnou pozornost.
-Samotná implementace je takměr totožná.
+Než přistoupíme k implementaci Order by a Group by musíme implementovat způsob vyhodnocení výrazů.
+K výpočtu výrazů jsme implementovali vlastní jednochý systém.
+Postupovali jsme přesně podle sekce analýzy \ref{anal.expressions}, proto popíšeme jen tvorbu a základní objekty.
 
-%\texttt{}
-%\begin{itemize}
-%\item \texttt{}
-%\end{itemize}
+\subsubsection{Tvorba výrazů}
+
+V části parsování dotazu \ref{impl.parsing} jsme uvedli, že výstupem parsování jsou parsovací stromy každé části dotazu.
+Tyto stromy obsahují i podstromy výrazů.
+Každá část dotazu má svůj objekt implementující rozhraní \texttt{IVisitor<T>}, kterým se sbírají důležitá data.
+Pokud v průběhu procházení dojde k nalezení podstromu výrazu, tak dojde k vytvoření speciálního objektu \texttt{ExpressionVisitor}.
+Tento objekt procházením podstromu vytvoří stromovou strukturu výrazu, pomocí které se bude vyhodnocovat daný výraz v průběhu vykonávání dotazu.
+Objekt implementuje \texttt{IVisitor<ExpressionBase>}, kde \texttt{ExpressionBase} reprezentuje výsledný výraz.
+Všechny výrazy se globálně udržují v třídě \texttt{QueryExpressionInfo}, která jim přiděluje \texttt{ID} na základě jejich pořadí vytvoření.
+Třída si také pamatuje výrazy agregačních funkcí a přiděluje jim rovněž \texttt{ID} na základě pořadí vzniku.
+
+\subsubsection{Třídy výrazů}
+
+Implementace tříd výrazů je totožná jako v analýze.
+\texttt{ExpressionBase} je abstraktní třída, která definuje základní rozhraní struktur výrazů.
+Definuje:
+\begin{itemize}
+\item Položku \texttt{int ExprPosition} je \texttt{ID} výrazu dle pořadí vytvoření.
+\item Metodu \texttt{Type GetExpressionType()}, která vrací navratový typ výrazu.
+\item Metodu \texttt{void CollectUsedVars(ref List<int> v)}, která vratí \texttt{ID} proměnných potřebných k vyhodnocení stromové struktury výrazu.
+\end{itemize}
+Z třídy vzniká abstraktní potomek \texttt{ExpressionReturnValue<T>}, který definuje návratovou hodnotu funkce v parametru \texttt{T}.
+Třída definuje rozhraní výpočtu výrazu metodami \texttt{bool TryEvaluate( .. x, out T returnValue)}.
+Kde \texttt{x} jsou položky nutné k vyhodnocení výrazu, což jsou zde řádky z tabulky výsledků.
+Mezi hlavní patří \texttt{Element[]} a \texttt{RowProxy}.
+Z třídy následně dědí nová abstraktní třída \texttt{VariableReference<T>}, která představuje přístup k proměnné.
+\texttt{ID} přistupované proměnné je uloženo v položce \texttt{int VariableIndex}.
+Z třídy finálně dědí dvě třídy.
+Konkrétní třída \texttt{VariableIDReference}, která vrací \texttt{ID} elementu grafu představující proměnnou.
+Druhá třída je \texttt{VariablePropertyReference<T>}, která představuje přístup k vlastnosti elementu grafu představující proměnnou a \texttt{T} je zde typ vlastnosti.
+\texttt{ID} vlastnosti je uloženo v položce \texttt{int PropertyID}. 
+
+\subsubsection{Výraz agregační funkce}
+
+Při implementaci výrazu agregační funkce jsme postupovali jako v analýze.
+Vytvořili jsme dva koncepty.
+První koncept představuje logiku agregační funkcí.
+Tu představuje asbtraktní třída \texttt{Aggregate}, jejíž potomci implementují specifickou logiku výpočtu funkcí. 
+Druhý koncept představuje odkaz na vypočtenou hodnotu funkce, ke které se může přistupovat v jiných částech dotazu.
+Tento koncept představuje třída \texttt{AggregateReference<T>: ExpressionReturnValue<T>}.
+Třída reprezentuje hodnotu již vypočtené agregační funkce a typ hodnoty je parametr \texttt{T}.
+\texttt{ID} funkce, kterou reprezentuje, je uloženo v položce \texttt{int AggrPosition}.
+
+Obecně jsme vytvořili třídu \texttt{ExpressionHolder}, která udržuje odkaz třídu na \texttt{ExpressionBase}.
+Tato třída je používaná k předávání výrazů do funkcí a konstruktorů.
+
+\subsection{Order by}
+
+Implementovali jsme části nutné ke zpracování Order by a Group by.
+Nyní popíšeme implementaci jejich řešení.
+Začneme částí Order by.
+
+U implementace jsme vycházeli z sekce analýzy \ref{anal.orderby}.
+Část Order by je reprezentována objektem \texttt{OrderByObject: QueryObject}.
+Order by musí setřídit tabulku \texttt{TableResults} pomocí výrazů zadaných uživatelem (klíčů třídění).
+Klíče jsou vytvořeny v konstruktoru objektu při procházení parsovacího stromu objektem \texttt{OrderByVisitor<List<ExpressionComparer> >}.
+Výstup procházení obsahuje pole porovnávačů, které se musí použít k porovnaní řádků tabulky.
+
+\subsubsection{Třída ExpressionComparer}
+
+\texttt{ExpressionComparer} je abstraktní třída definující rozhraní porovnávače jednoho klíče třídění.
+Jejím úkolem je vypočíst a porovnat hodnoty jednoho klíče třídění dvou řádků.
+Definuje:
+\begin{itemize}
+\item Abstraktní metodu \texttt{int Compare(in RowProxy x, in RowProxy y)} porovnávající dva řádky tabulky.
+\texttt{in} parametr zde představuje předání argumentu odkazem, aby nedokázelo ke zbytečnému kopírování struktur.
+\item Položku \texttt{int[] usedVars}, která obsahuje \texttt{ID} proměnných nutných k výpočtu hodnot klíče.
+\item Položku \texttt{bool isAscending}, která určuje, jestli se třídí sestupně nebo vzestupně.
+\item Položku \texttt{ExpressionHolder expr}, která obsahuje výraz porovnávání.
+\item Položku \texttt{bool CacheResults}, která určuje, zda se má se má použít optimalizace.
+\texttt{true} označuje využití optimalizace.
+
+\end{itemize}
+Potomky třídy jsou třídy \texttt{ExpressionComparer<T>}, které představují porovnání konkrétních typů návratoých hodnot výrazů.
+Potomci budou také implementovat zmíněné optimalizace z sekce analýzy \ref{anal.orderby}.
+
+\subsubsection{Třída ExpressionComparer<T>}
+
+Třída konkretizuje návratovou hodnotu výrazu porovnání v parametru \texttt{T}.
+Obsahuje výraz \texttt{ExpressionReturnValue<T>}, který se vyhodnotí porovnávanými řádky.
+Implementuje metodu \texttt{Compare( .. x, .. y)} rodiče.
+Nyní popíšeme způsob provnání společně s optimalizacemi:
+
+\begin{enumerate}
+\item Dojde k porovnání proxy tříd pomocí statické metody \\*\texttt{RowProxy.AreIdenticalVars(in x, in y, this.usedVars)}, \\*která
+porovnává elementy na řádcích tabulky dle jejich \texttt{ID}.
+Avšak, porovnáváme zde jen elementy proměnných, které se používají k výpočtu výrazu (položka \texttt{usedVars}).
+Pokud jsou totožné, nemusíme vypočítávat hodnotu výrazu.
+Tím vyřešíme optimalizaci porovnání stejných elementů z sekce \ref{anal.orderby.opt2}.
+
+\item Následuje vypočtení hodnot výrazů řádků a jejich porovnání.
+Pokud byla \texttt{CacheResults == false}, tak nic dalšího se neprovádí.
+Opačně, při výpočtu hodnot si uložíme pozici řádku \texttt{x.index} do \texttt{int lastXRow}, zda se výraz vyhodnotil správně do \texttt{bool lastXSuccess} a hodnotu výrazu do \texttt{T lastXValue}.
+To samé pro řádek \texttt{y}.
+Pokud při příštím porovnání budou \texttt{x} nebo \texttt{y} totožné řádky, tak již máme vypočtené hodnoty výrazů. 
+Tím vyřešíme optimalizaci porovnání stejných vlastností z sekce \ref{anal.orderby.opt1}.
+\end{enumerate}
+
+Optimalizace v druhém kroku je nefunkční v paralelním prostředí.
+Protože by se vlákna snažila ukládat výsledky na sdílené pozice a došlo by k souběhu.
+Snažili jsme se problém vyřešit třídou \texttt{ThreadLocal} (lokální úložiště vlákna).
+Každá ukládaná položka by byla obsažena v dané tříde a vlákna by tak měla svá úložiště.
+Dalším zkoušeným řešením bylo uzavřít celou třídu porovnávače do \texttt{ThreadLocal}.
+Avšak, tyto způsoby způsobili zpomalení vykonávání a proto jsme se rozhodli optimalizaci využívat pouze v jednovláknovém prostředí.
+
+\subsubsection{Třída RowComparer a IndexToRowProxyComparer}
+
+Všechny třídy porovnávače využívané k porovnání dvou proxy tříd jsme uzavřeli do třídy \texttt{RowComparer}, která postupně zkouší vykonat porovnání porovnávači, než dojde ke stanovéní rovnosti řádků.
+Protože jsme v analýze stanovili, že se budou porovnávat pouze indexy řádků, tak jsme vytvořili třídu, která obalí \texttt{RowComparer} a umožní porovnávat řádky pomocí indexů. 
+Třída se jmenuje \texttt{IndexToRowProxyComparer}.
+Drží odkaz na tabulku \texttt{ResultTable} a zmíněnou \texttt{RowComparer}.
+Volání metody \texttt{int Compare(int x, int y)} na třídě dojde k získání proxy tříd řádků \texttt{x} a \texttt{y}.
+Následně dojde k jejich porovnání pomocí \texttt{RowComparer}.
+
+\subsubsection{Řešení Normal: Merge sort}
+
+Připravili jsme všechny nutné podklady pro vykonání třídění.
+Samotné vykonání třídění je implementováno v třídě \texttt{MultiColumnTableSorter} v metodě \texttt{Sort}.
+Třída drží odkaz na \texttt{IndexToRowProxyComparer}, který bude sloužit jako porovnávač při třídění.
+Metoda vytvoří pole indexů \texttt{int[]} velikosti odpovídající počtu řádků v tabulce.
+K třídění indexů v poli používáme knihovnu HPCsharp \citep{hpcsharp}.
+Konkrétně využíváme algoritmus Merge sort pro jednovláknové zpracování a pro paralelní používáme paralelní verzi Merge sort.
+Výsledně se pole indexu předá tabulce na položku \texttt{ResultTable.order}.
+Pole nyní slouží jako indexační struktura tabulky.
+
+\subsection{Group by}
+
+U implementace Group by jsme vycházeli z sekce analýzy \ref{anal.groupby}.
+Část Group by je reprezentována objektem \texttt{GroupByObject: QueryObject}.
+Group by musí seskupit výsledky v tabulce hledání \texttt{TableResults} pomocí výrazů zadaných uživatelem (klíčů seskupení).
+Zároveň musí provést výpočet agregačních funkcí.
+Klíče seskupování jsou vytvořeny v kostruktoru objektu při procházení parsovacího stromu objektem \texttt{GroupByVisitor<List<ExpressionHolder> >}.
+Výsledné pole obsahuje výrazy, které se musí použít k seskupování.
+V průběhu sestavování dalších částí dotazu dochází k vytváření objektů logiky výpočtu agregačních funkcí.
+Logika je obsažena v potomcích objektu \texttt{Aggregate}.
+Výsledný objekt části Match tedy obsahuje pole výrazů a pole objektů logiky agregačních funkcí.
+Nejdříve popíšeme implementaci seskupování a následně implementaci agregačních funkcí.
+
+\subsubsection{Dictionary a ConcurrentDictionary}
+
+Abychom pochopili implementaci seskupování musíme se podívat na způsob práce s hašováním výrazů.
+V analýze jsme určili, že výsledky hledání budeme seskupovat pomocí hašovací tabulky, ať už v jednovláknovém nebo paralelním zpracování.
+Jazyk C\# obsahuje hašovací tabulku \texttt{Dictionary<Key, Value>} pro jednovláknové zpracování a \texttt{ConcurrentDictionary<Key, Value>} pro paralelní zpracování.
+\texttt{ConcurrentDictionary} je thread-safe verze \texttt{Dictionary}. 
+\texttt{Key} zde chápeme jako řádek tabulky a \texttt{Value} úložiště hodnot agregačních funkcí. 
+\texttt{Key} zde nebude proxy třída, ale pouze index řádku.
+Porovnání vyvolá získání proxy třídy jako v předchozí sekci u třídění.
+Obvyklé vkládání prvků do \texttt{Dictionary} vypadá následovně:
+\begin{code}
+Dictionary<int, int> dict = new Dictionary<int, int>();
+int x = 5;
+if (!dict.TryGetValue(x, out int y)) dict.Add(x, x);
+\end{code}
+Nejdříve se v podmínce otestuje, jestli vkládaný prvek ve struktuře existuje.
+To znamená, že se vypočte haš prvku a nalezne se místo vložení.
+Jestli na místě nějaký prvek již leží, tak dojde k porovnání hodnot a jinak funkce vrací \texttt{false}.
+Funkce vrátí \texttt{true} při úspěchu porovnání prvků a při neúspěchu vratí \texttt{false}.
+Při vrácení \texttt{false} dojde k vložení funkcí \texttt{Add}, která opět vypočte haš a případně porovná prvky.
+Obvyklé vkládání prvku pro \texttt{ConcurrentDictionary} vypadá následovně:
+\begin{code}
+ConcurrentDictionary<int, int> dict = 
+    new ConcurrentDictionary<int, int>();
+int x = 5;
+var retVal = dict.GetOrAdd(x, x);
+\end{code}
+Nyní neuvažujme žádné synchronizační koncepty.
+Funkce \texttt{GetOrAdd} vypočte haš, získá místo vložení a pokud na místě jiný prvek není rovnou ho vloží.
+Zde tedy dochází k hašování a porovnání pouze jednou.
+V prvním případě \texttt{Dictionary} bychom byli nuceni vyhodnotit ten samý výraz 4-krát.
+Obecně obě struktury pro dva rozdílné prvky se stejnou haš hodnotou mohou vytvářet spojový seznam daných prvků.
+Výsledně bychom museli vypočítávat výrazy při každém porovnání v seznamu.
+Navíc, pokud by docházelo ke slévání výsledků dvou hašovacích tabulek do jedné, tak bychom opět museli počítat haš a porovnávat.
+Interně obě struktury používají k výpočtu haš hodnoty a porovnání objekt s rozhraním \texttt{IEqualityComparer<T>}.
+Kde \texttt{T} je \texttt{Key}. 
+Objekt má metodu \texttt{int GetHashCode(T o)} a \texttt{bool Equals(T x, T y)}.
+První vypočte haš vkládaného objektu a při porovnání se vyvolá metoda \texttt{Equals}.
+Strukturám se dá v konstruktoru poskytnou vlastní implementaci rozhraní.
+Díky této implementaci jsme vymysleli dvě optimalizace:
+\begin{enumerate}
+\item V moment, kdy dochází k použití \texttt{Dictionary} nebo aktu slévání hašovacích tabulek budeme jako \texttt{Key} používat strukturu \texttt{GroupDictKey}.
+Struktura obsahuje dvě položky \texttt{int hash} a \texttt{int position}. 
+\texttt{hash} je zde haš řádku a \texttt{position} je index řádku v tabulce výsledků.
+Tedy jsme rozšířili \texttt{Key} o haš hodnotu řádku, kterou můžeme znovu použít, pokud to bude nutné.
+Budeme implementovat vlastní \texttt{IEqualityComparer<T>}, který jen použije haš hodnotu ze struktury.
+Tímto vypočteme haš pouze jednou za celý cyklus vkládání nebo slévání.
+Pokud používáme \texttt{ConcurrentDictionary} a nedochází ke slévání, tak stačí jako \texttt{Key} volit index řádku.
+\item Při výpočtu haš hodnoty se vypočítávají hodnoty výrazů.
+Abychom nepočítali stejné výrazy opětovně při porovnání, tak budeme používat dvě třídy.
+V prvním případě vytvoříme \texttt{ExpressionHasher}, který počítá haš hodnotu jednoho výrazu.
+Třídu propojíme s již existující \texttt{ExpressionComparer<T>}.
+Třída \texttt{ExpressionHasher} při výpočtu výrazu pak jen aktualizuje vnitřní hodnoty položek uvnitř porovnávače a ten je následně využije.
+Toto odpovída navržené optimalizaci z sekce analýzy \ref{anal.groupby.opt1}.
+\end{enumerate}
+Problémem u druhé optimalizace je opět sdílení položek v paralelním prostředí.
+Jelikož jsme se v předchozí sekci Order by rozhodli nevyužívat při paralelním zpracování optimalizaci ukládání výsledků výrazů.
+Tak ani zde ji nebudeme implementovat pro paralelní zpracování. 
+
+\subsubsection{Třída ExpressionHasher a třídy ExpressionHasher<T>}
+
+\texttt{ExpressionHasher} je abstraktní třída reprezentující jeden klíč seskupení.
+Definuje:
+\begin{itemize}
+\item Položku \texttt{ExpressionHolder expr}, která obsahuje výraz seskupení.
+\item Abstraktní metodu \texttt{int Hash(in RowProxy row)}, která vypočte haš výrazu pro řádek tabulky. 
+V průběhu výpočtu dojde k nastavení položek porovnávače.
+\item Abstraktní metodu \texttt{SetCache(ExpressionComparer cache)}, ve které si potomci nastaví odkaz na \texttt{ExpressionComparer<T>}.
+To umožní následně při výpočtu hodnoty výrazu přiřadit výsledky dané třídě.
+\end{itemize}
+Potomky třídy jsou třídy \texttt{ExpressionHasher<T>}.
+Implementují výpočet výrazu pro konkrétní návratový typ \texttt{T} a výpočet haše výrazu.
+Třída obsahuje položku \texttt{ExpressionComparer<T> exprComp}, která je odkaz na porovnávač. 
+Skrze odkaz se třídě přepíšou položky při výpočtu výrazu.
+Dále obsahuje výraz seskupení \texttt{ExpressionReturnValue<T> exprR}.
+Všechny klíče seskupení jsou obsaženy v třídě \texttt{RowHasher}, která vypočte finální haš kombinací všech haš hodnot výrazů. 
+
+\subsubsection{Rozhraní IEqualityComparer<T>}
+
+V aplikaci jsme vytvořili dva objekty:
+\begin{itemize}
+\item \texttt{RowEqualityComparerInt: IEqualityComparer<int>} definuje porovnání a výpočet haš hodnot pomocí indexu řádku tabulky.
+Třída drží odkaz na tabulku \texttt{TableResults} pro získání proxy třídy řádku indexem.
+Dále má porovnávače \texttt{ExpressionComparer[]} pro zjištění rovnosti dvou prvků v hašovací tabulce a finálně \texttt{RowHasher} pro výpočet haše.
+Položka \texttt{bool cacheResults} určuje zda se má použít druhá optimalizace.
+\item \texttt{RowEqualityComparerGroupDictKey:} \\*\texttt{IEqualityComparer<GroupDictKey>}, který je totožný s předchozím, ale neobsahuje \texttt{RowHasher}, protože haš je uložev v objektu porovnání.
+\end{itemize}
+
+\subsubsection{Úložiště hodnot agregačních funkcí}
+
+Implementovali jsme způsob seskupování.
+Než přistoupíme k logice agregačních funkcí vytvoříme úložiště jejich výsledků.
+
+
+
+
+%   \texttt{}
+%  \begin{itemize}
+%  \item \texttt{}
+%  \item \texttt{}
+%  \end{itemize}
