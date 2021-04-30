@@ -88,9 +88,9 @@ Na základě daného elementu musíme provést akci:
 
 \begin{itemize}
 
-\item Pokud držíme vrchol, musíme být schopni přistoupit k jeho hranám. Hranám z/do něj. Daný přístup by měl být co nejrychlejší a neměl by obsahovat žádné iterace. V průběhu hledání se z vrcholu musí projít skrze všechny jeho hrany. Ideálně by měly být hrany přístupné skrze index.
+\item Pokud držíme vrchol, musíme být schopni přistoupit k jeho hranám. Hranám z/do něj. Daný přístup by měl být co nejrychlejší a neměl by obsahovat žádné iterace. V průběhu prohledávání se z vrcholu musí projít skrze všechny jeho hrany. Ideálně by měly být hrany přístupné skrze index.
 
-\item Pokud držíme hranu, musíme být schopni přistoupit ke koncovému vrcholu. V průběhu hledání vždy vlastníme vrchol než přistoupíme k jeho hraně a následně k jejímu koncovému vrcholu. Tímto můžeme vyloučit nutnost, aby hrana znala informaci o svém původu.
+\item Pokud držíme hranu, musíme být schopni přistoupit ke koncovému vrcholu. V průběhu prohledávání vždy vlastníme vrchol než přistoupíme k jeho hraně a následně k jejímu koncovému vrcholu. Tímto můžeme vyloučit nutnost, aby hrana znala informaci o svém původu.
 
 \item Pokud držíme element grafu, chceme být schopni přistoupit k jeho sousedním elementů v obsajující struktuře za předpokladu, že víme, jestli se jedná o hranu nebo vrchol. 
 
@@ -291,7 +291,7 @@ Volající tedy musí znát typ návratové hodnoty, aby funkci mohl vyhodnotit.
 Třída \verb+VariableAccess+ nám poskytuje abstrakci pro přístup k proměnné.
 Položka \verb+accessedVariableID+ určuje k jaké proměnné se má přistoupit.
 Zde předpokládáme, že pole \verb+Element[]+ obsahuje proměnné přesně v pořadí, jak se vyskytly v části Match.
-Tedy pokud je zadán \texttt{match (x) -> (y)}, tak jeden výsledek hledání by bylo pole obsahující dva elementy x a y.
+Tedy pokud je zadán \texttt{match (x) -> (y)}, tak jeden výsledek prohledávání by bylo pole obsahující dva elementy x a y.
 \texttt{Element} je zde chápán jako element grafu, tj. vrchol nebo hrana.
 Na elementu existuje položka \texttt{ID} s unikátním identifikátorem elementu.
 Funkce pak vrací hodnotu uloženou v \texttt{retVal} a úspěch vyhodnocení v návratové hodnotě. 
@@ -414,7 +414,7 @@ V ideálním případě chceme dosáhnout toho, aby dotazovací engine poskytova
 Mód zde reprezentuje způsob vykonání dotazu.
 Uživatel enginu si při spuštění vybere chtěný mód.
 Tudíž, módy musí v programu koexistovat.
-V této části analyzujeme obecný model vykonání, který posléze v sekci \ref{anal.improvement} upravíme, aby vykonával Group/Order by v průběhu hledání.
+V této části analyzujeme obecný model vykonání, který posléze v sekci \ref{anal.improvement} upravíme, aby vykonával Group/Order by v průběhu prohledávání.
 
 Při zkoumání vlastností hlavních částí PGQL (sekce \ref{req.pgql}) jsme si uvědomili jejich separaci logiky z hlediska vykonávání dotazu.
 Match prohledává graf a produkuje výsledky. 
@@ -479,11 +479,11 @@ V části Group by dojde k vytvoření skupin a výpočtů agregačních funkcí
 Pokud je v uživatelském dotazu zahrnuto Group by, tak zbylé části musí očekávat jiný formát výsledků.
 Daný formát musí obsahovat skupiny a výsledné hodnoty agregačních funkcí.
 
-Obecné výsledky hledání budeme ukládat do tabulky.
-Jeden řádek tabulky bude reprezentovat jeden výsledek hledání.
+Obecné výsledky prohledávání budeme ukládat do tabulky.
+Jeden řádek tabulky bude reprezentovat jeden výsledek prohledávání.
 Nyní musíme rozhodnout, jaké informace do tabulky uložíme.
 V části Match se pracuje s elementy grafu.
-Jeden výsledek hledání obsahuje seznam elementů, které odpovídají vzoru.
+Jeden výsledek prohledávání obsahuje seznam elementů, které odpovídají vzoru.
 Máme dvě možnosti, jak daný výsledek zpracovat.
 První varianta v části Match při jeho nalezení vypočte hodnoty všech výrazů obsažených ve zbytku dotazu.
 Sloupeček představuje hodnoty jednoho výrazu.
@@ -534,14 +534,14 @@ V analýze jsme se rozhodli vychenat část Select, protože není podstatná pr
 \section{Match a prohledávání grafu} \label{anal.match}
 
 Match část má za úkol najít všechny podgrafy v grafu odpovídající zadanému vzoru.
-Vlastnosti hledání jsou definované jazykem PGQL (sekce \ref{req.pgql}).
+Vlastnosti prohledávání jsou definované jazykem PGQL (sekce \ref{req.pgql}).
 Vzor se vždy skládá z posloupnosti vrcholů a hran.
 Na každý prvek posloupnosti se můžeme dívat jako na placeholder nějakého elementu grafu.
 
-Vlastnosti hledání:
+Vlastnosti prohledávání:
 \begin{itemize}
 
-\item Výsledky hledání jsou podgrafy homomorfní se zadaným vzorem.
+\item Výsledky prohledávání jsou podgrafy homomorfní se zadaným vzorem.
 \item Hrana se může opakovat několikrát v rámci jednoho vzoru.
 \item Proměnná hrany ve vzoru se může použít pouze jednou.
 \item Dvě rozdílné proměnné mohou obsahovat stejný element.
@@ -567,10 +567,10 @@ K aplikaci algoritmu musíme vytvořit strukturu (vzor) představující hledan�
 Strukturu budeme chápat jako propojené posloupnosti tříd.
 Třída obsahuje informace specifikující vhodný element grafu, který ji má náležet.
 Cílem DFS je nalézt elementy grafu, které budou odpovídat hledaným posloupnostem.
-V průběhu DFS hledání si vzor pamatuje aktuální třídu, pro kterou DFS hledá vhodný element.
+V průběhu DFS prohledávání si vzor pamatuje aktuální třídu, pro kterou DFS hledá vhodný element.
 V moment průchodu DFS přes nějaký element se ověří zda se jedná o vhodný element pro aktuální třídu.
-Pokud ano, třída nyní reprezentuje daný element, DFS z něj pokračuje v hledání a dojde k přestupu na další třídu v posloupnosti.
-Pokud ne, DFS se vrací na předchozí element v hledání, ze kterého vybere následující element procházení.
+Pokud ano, třída nyní reprezentuje daný element, DFS z něj pokračuje v prohledávání a dojde k přestupu na další třídu v posloupnosti.
+Pokud ne, DFS se vrací na předchozí element v prohledávání, ze kterého vybere následující element procházení.
 
 \subsubsection{Tvorba vzoru}
 
@@ -593,7 +593,7 @@ Souvislá komponenta představuje hledaný vzor.
 Strukturu tedy chápeme jako abstrakci procházení DFS.
 Problém vyvstane, pokud nám vzniknou dvě separátní komponenty z jednoho dotazu.
 Tento případ nastene právě tehdy, když pro dvě komponenty neexistuje proměnná, která by je propojila.
-V takovém případě se můžeme dívat na dotaz, jako na skalární součin výsledků hledání dvou komponent.
+V takovém případě se můžeme dívat na dotaz, jako na skalární součin výsledků prohledávání dvou komponent.
 Stejný princip aplikujeme, pokud existuje vícero separátních komponent.
 
 Příklad dotazu separátních komponent:
@@ -607,10 +607,10 @@ Součástí struktury musí být také aktuální pole elementů představujíc�
 Jedna položka v poli odpovídá jedné proměnné.
 Bude existovat pouze jedno pole pro jeden vzor. 
 Nebudou se vytvářet další, pouze se budou měnit obsahující elementy, protože chceme omezit režii za tvorbu polí.
-Pole bude sloužit k ověření zda držíme totožné elementy v moment opakující se proměnné v průběhu hledání.
-V moment nalezení celého podgrafu bude pole proměnných zaplněné a bude chápáno jako finální výsledek hledání, protože pouze proměnné jsou přístupné v jiných částech dotazu.
+Pole bude sloužit k ověření zda držíme totožné elementy v moment opakující se proměnné v průběhu prohledávání.
+V moment nalezení celého podgrafu bude pole proměnných zaplněné a bude chápáno jako finální výsledek prohledávání, protože pouze proměnné jsou přístupné v jiných částech dotazu.
 
-\subsection{Průběh hledání}
+\subsection{Průběh prohledávání}
 
 K nalezení všech podgrafů v grafu pořebujeme z každého vrcholu spustit DFS.
 Při DFS se bude kontrolovat, jestli průchod odpovídá hledanému vzoru.
@@ -622,15 +622,15 @@ V našem případě tedy překopírování elementů z pole proměnných nálež
 Vyhledávání separátních komponent vyřešíme následovně.
 V momentě, kdy nalezneme podgraf odpovídající jedné komponentě, tak se spustí DFS vyhledávání pro komponentu další.
 Teprve až projdeme všechny komponenty, výsledek se uloží do tabulky.
-V tuto chvíli budeme vlastnit finální výsledek hledání, který můžeme uložit do tabulky.
+V tuto chvíli budeme vlastnit finální výsledek prohledávání, který můžeme uložit do tabulky.
 Zbavíme se tak nutnosti uchovávat mezivýsledky a následnému tvoření skalárního součinu.
 
-\subsection{Paralelizace hledání} \label{anal.matchPar}
+\subsection{Paralelizace prohledávání} \label{anal.matchPar}
 
-Nyní přistoupíme k analýze paralelizace hledání.
+Nyní přistoupíme k analýze paralelizace prohledávání.
 V paralelním řešení chceme použít co nejmenší počet synchronizačních primitiv.
 Ukládání výsledků do společné struktury by způsobilo značnou režii za synchronizaci.
-V ideálním případě bude probíhat hledání lokálně, následně pak dojde k efektivnímu slévání výsledků.
+V ideálním případě bude probíhat prohledávání lokálně, následně pak dojde k efektivnímu slévání výsledků.
 
 Jako řešení jsme zvolili jeden ze základních způsobů.
 Budeme paralelizovat prohledávání ze startovních vrcholů.
@@ -652,9 +652,9 @@ Jedno vlákno by mohlo dostat vrholy nacházející se v oblasti s množstvím h
 Jelikož se rychle vyčerpaly startovní vrcholy, tak vlákno z řídké oblasti ukončí svou práci mnohem dříve něž vlákno první.
 Nyní se musí čekat na dokončení práce prvního vlákna.
 
-\subsection{Slévání výsledků hledání}
+\subsection{Slévání výsledků prohledávání}
 
-Po dokončení hledání je nutno vyřešit slévání výsledků jednotlivých vláken.
+Po dokončení prohledávání je nutno vyřešit slévání výsledků jednotlivých vláken.
 Kdybychom ponechali výsledky bez úpravy, tak nedokážeme rovnoměrně rozdělit práci mezi vlákna v paralelních řešeních Order/Group by.
 Cílem je vytvořit jednu tabulku obsahující všechny výsledky.
 K vyhnutí překopírovávání všech výsledků vláken využijeme následující princip.
@@ -664,7 +664,7 @@ V kroku slévání nyní pouze překopírujeme odkazy na pole místo samotných 
 Avšak, pořád nám zůstává nutnost překopírovat výsledky posledních polí sloupečků, která jsou nezaplněná.
 Volbou vhodné hodnoty \texttt{FixedArraySize} se bude překopírovávat pouze malé množství výsledků.
 Konkrétní volba hodnoty je heuristická a vyplývá z vlastností grafu a počtu nalezených výsledků.
-Pro naše učely během implementace zkusíme zvolit prvně $n/\log_2 n$ ($n = $ \#výsledků hledání) pro jednovláknové a pro paralelní zpracování $(n/\log_2 n)/\#threads$.
+Pro naše učely během implementace zkusíme zvolit prvně $n/\log_2 n$ ($n = $ \#výsledků prohledávání) pro jednovláknové a pro paralelní zpracování $(n/\log_2 n)/\#threads$.
 $log_2 n$ odpovídá počtu přealokování při plnění dynamického pole $n$ položkami.
 Slévání bude probíhat opět paralelně.
 Nabízí se dva způsoby.
@@ -695,7 +695,7 @@ To znamená, pokud jsou dva klíče stejné, postoupí se k porovnání s klíč
 Rovnost dvou výsledků nastává právě tehdy, když mají stejné hodnoty pro všechny klíče. 
 Pro klíč se také definuje, jestli má třídění probíhat v rostoucím nebo klesajícím pořadí.
 Defaultní pořadí je chápáno jako rostoucí. 
-Potřebujeme určit, jakým způsobem budou výsledky hledání setříděny.
+Potřebujeme určit, jakým způsobem budou výsledky prohledávání setříděny.
 Musíme vybrat algoritmus a následně navrhnout způsob efektivního třídění tabulky výsledků.
 
 \subsection{Výběr algoritmů a paralelizace}
@@ -750,7 +750,7 @@ Daná vlastnost může mít za následek, že porovnávané řádky budou často
 \begin{code}
 select x.PropOne match (x) -> (y) order by x.PropOne;
 \end{code}
-V takovém dotazu by hledání mělo vygenerovat několik výsledků se stejným elementem v proměnné x.
+V takovém dotazu by prohledávání mělo vygenerovat několik výsledků se stejným elementem v proměnné x.
 Počet takových výsledků zde odpovídá počtu hran vrcholů \texttt{x}.
 Abychom předešli opakovanému porovnávání hodnot vlastností stejných elementů, tak než přistoupíme k výpočtu výrazů porovnáme \texttt{ID} přistupovaných elementů.
 Tedy využijeme dvou optimalizací.
@@ -769,7 +769,7 @@ V průběhu implementace budeme muset najít vhodnou techniku ukládání, aby d
 
 \section{Group by} \label{anal.groupby}
 
-Group by seskupuje výsledky hledání podle uživatelem zadaných klíčů.
+Group by seskupuje výsledky prohledávání podle uživatelem zadaných klíčů.
 Dva výslekdy patří do stejné skupiny právě tehdy, když se shodují ve všech hodnotách klíčů.
 Musíme být schopni vypočítat agregační funkce pro skupiny.
 K tomu již máme navržené způsoby z sekce Expressions (\ref{anal.expressions}).
@@ -850,7 +850,7 @@ Dále, byla-li hodnota již nastavena, protože musíme být schopni rozeznat pr
 \item \texttt{Avg:} výsledek je aritmetický průměr. Chtěli bychom volit inkrementální metodu. Budeme si ukládat počet výsledků a sumu hodnot výsledků. Pro získání finální hodnoty dojde k vypočtení podílu sumy a počtu výsledků.
 \end{itemize}
 
-\subsection{Jednovláknové zpracování}
+\subsection{Jednovláknové zpracování} \label{anal.groupby.singlethread}
 
 Po celou dobude budeme pracovat s tabulkou výsledků Match části.
 Pro vykonání Group by se nám nabízí několik možností.
@@ -887,7 +887,7 @@ Chceme zvolit několik řešení s rozdílnou úrovní synchronizace, protože n
 Navíc nám větší počet řešení umožní lépe porovnat vylepšená řešení.
 Pro paralelní zpracování jsme vymysleli tři přístupy: \textbf{Global}, \textbf{Two-step} a \textbf{Local + dvoucestné slévání} (všechny budou schopny pracovat s úložišti Bucket i List).
 Každý z nich začíná rozdělením tabulky výsledků Match na ekvivalentní části.
-To si můžeme dovolit, neboť máme tabulku obsahující všechny výsledky hledání.
+To si můžeme dovolit, neboť máme tabulku obsahující všechny výsledky prohledávání.
 Každé vlákno dostane danou část ke zpracování.
 Tím zaručíme rovnoměrnost práce mezi vlákny.
 Samotná práce vláken pak zavisí na zvoleném přístupu.
@@ -971,7 +971,7 @@ Používají se metody bez synchronizace.
 Nevýhoda řešení je, že vlákna musejí čekat při slévání na dokončení práce druhého vlákna a teprve až pak může dojít ke slévání.
 Přístup je znázorněn na obrázku \ref{figure.diaLocalGr}.
 
-\subsection{Paralelizace Single group Group by}
+\subsection{Paralelizace Single group Group by} \label{anal.groupby.singlegroup}
 
 K paralelizaci Single group Group by se nám poskytuje využít jíž zmíněných principů.
 Konkrétně zde mají využítí všechny tři.
@@ -1008,7 +1008,7 @@ V takovém případě nebudeme implementovat paralelní slévání, ale pouze je
 \bigskip
 \textit{Analyzovali jsme a navrhli řešení vykonání částí Match, Group by a Order by.
 Tímto jsme dokončili analýzu a návrh dotazovacího enginu.
-Daná analýza a návrh nám poskytnou odrazový můstek při analýze úprav pro vykonání částí Group by a Order by v průběhu hledání.
+Daná analýza a návrh nám poskytnou odrazový můstek při analýze úprav pro vykonání částí Group by a Order by v průběhu prohledávání.
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1018,10 +1018,10 @@ Cílem úprav je poskytnout enginu schopnost provádět části Group by a Order
 Obecně to znamená, že v moment nalezení jednoho výsledku jej musíme okamžitě zpracovat.
 Pro Order by to znamená výsledek správně zatřídit do již setříděné posloupnosti výsledků.
 Pro Group by to znamená výsledek přidat do správné skupiny nebo pro něj skupinu vytvořit, navíc musíme pro něj zpracovat agregační funkce. 
-Čili, výsledky v průběhu hledání Match části nebudeme ukládat do tabulky, která se po nalezení všech výsledků předá k dalšímu zpracování.
+Čili, výsledky v průběhu prohledávání Match části nebudeme ukládat do tabulky, která se po nalezení všech výsledků předá k dalšímu zpracování.
 Namísto toho navrhneme postup, kterým docílíme zpracování výsledků v moment jeho nalezení.
 Postupy ověříme vůči stávajícím řešením v kapitole Experiment \ref{expr} z hlediska doby vykonání.
-V ideálním případě docílíme zrychlení nebo pouze vyrovnání vůči řešením vykonávající Order by a Group by po dokončení hledání.
+V ideálním případě docílíme zrychlení nebo pouze vyrovnání vůči řešením vykonávající Order by a Group by po dokončení prohledávání.
 Z hlediska implementace to také znamená naprogramovat vylepšení tak, abychom byli schopni jednoduše přepínat mezi způsobem vykonání dotazu.
 Řešení tedy musí fungovat nezávisle na sobě. 
 V prvním kroku úprav musíme získat obecný pohled na pozměněný způsob vykonání dotazu.
@@ -1054,7 +1054,7 @@ Otázkou je, co je zde předávaný výsledek.
 Budeme předpokládat, že předávaný výsledek ke zpracování je pole promenných definové v sekci hledaného vzoru \ref{anal.match.res}.
 To znamená, že předané pole se nesmí měnit, protože pole náleží struktuře vzoru.
 Tedy pokud s ním chceme pracovat přímo, musíme vytvořit kopii.
-\textbf{Když budeme hovořit o výsledku hledání, tak máme na mysli dané pole proměnných.}
+\textbf{Když budeme hovořit o výsledku prohledávání, tak máme na mysli dané pole proměnných.}
 
 \subsection{Order/Group by část jako bariéra}
 
@@ -1114,11 +1114,11 @@ Finální propojení objektů je pak znázorněno na obrázku \ref{figure.diaStr
 
 \subsubsection{Propojení vyhledávání a zpracování výsledku}
 
-Musíme ještě navrhnout způsob předávání výsledků částem Order/Group by v průběhu hledání.
+Musíme ještě navrhnout způsob předávání výsledků částem Order/Group by v průběhu prohledávání.
 Způsob musí být použitelný pro paralelní zpracování, proto budeme rovnou přemýšlet nad paralelním řešením.
 V naši představě budeme vycházet přímo z původního návrhu z sekce \ref{anal.match}.
 Definovali jsme si, že každé vlákno vlastní lokálně strukturu vzoru \texttt{Pattern}, objekt vyhledávání \texttt{Matcher} a tabulku výsledků.
-Finální výsledky ukládá do tabulky a po dokončení hledání dojde k slévání tabulek.
+Finální výsledky ukládá do tabulky a po dokončení prohledávání dojde k slévání tabulek.
 Zde upravíme část, kdy dochází k ukládání výsledků do tabulky.
 Vlákno bude držet odkaz na objekt Group/Order by a v moment nalezení výsledek předá pomocí volání metody \texttt{ProcessResult}.
 Metoda výsledek zpracuje a po návratu z metody se pokračuje ve vyhledávání.
@@ -1153,7 +1153,7 @@ Musíme být schopni zpracovávat výsledky z množství vláken v jeden okamži
 Je nutné aby docházelo k synchronizaci.
 Ještě než přistoupíme k konkrétním návrhům algoritmům zpracování.
 Navrhneme obecný model paralelního zpracování.
-Vymysleli jsme dva modely, které využijeme při našem zpracování výsledků v průběhu hledání.
+Vymysleli jsme dva modely, které využijeme při našem zpracování výsledků v průběhu prohledávání.
 Modely \textbf{Streamed} a \textbf{Half-Streamed}.
 Modely jsme vybrali na základě množství využívané synchronizace a množství slévání výsledků.
 Chceme vytvořit větší množství řešení, abychom mohli lépe porovnat výsledky v kapitole Experiment \ref{expr}.
@@ -1192,10 +1192,10 @@ Po dokončení dojde ke slévání výsledků vláken.
 \section{Úprava Single group Group by}
 
 Single group Group by je mód, ve kterém uživatel zadal v dotazu výpočet agregačních funkcí, ale nezadal část Group by.
-V tomto případě všechny výsledky hledání náleží pouze do jedné skupiny, pro kterou se počítají dané agregační funkce.
+V tomto případě všechny výsledky prohledávání náleží pouze do jedné skupiny, pro kterou se počítají dané agregační funkce.
 V původním řešení se mód vykonával následovně.
 Prohledávání grafu nalezlo všechny výsledky a uložilo je do tabulky výsledků.
-Po dokončení hledání dochází ke zpracování výsledků.
+Po dokončení prohledávání dochází ke zpracování výsledků.
 V jednovláknovém vykonání dojde k iteraci všech výsledků a průběžné aktualizaci hodnot agregačních funkcí.
 V paralelním zpracování dojde k rovnoměrnému rozdělení výsledků mezi vlákny a vlákna počítají agregační funkce lokálně.
 Po dokončení jedno vybrané vlákno provede slévání výsledků agregačních funkcí.
@@ -1211,9 +1211,9 @@ Samotný výpočet hodnot funkcí a úložiště hodnot budou totožné s původ
 
 V tomto módu každé vlákno počítá hodnoty agregačních funkcí lokálně.
 Po nalezení výsledku dojde k aktualizování lokálních hodnot agregačních funkcí.
-V moment dokončení hledání všech vláken dojde ke slévání výsledků vláken.
+V moment dokončení prohledávání všech vláken dojde ke slévání výsledků vláken.
 Samotné slévání můžeme implementovat totožným způsobem jako původní řešení.
-To znamená, že jedno vybrané vlákno bude slévat všechny lokální výsledky vláken, když dojde k ukončení hledání všemi vlákny.
+To znamená, že jedno vybrané vlákno bude slévat všechny lokální výsledky vláken, když dojde k ukončení prohledávání všemi vlákny.
 Výhoda tohoto řešení je vyřazení nutnosti používat thread-safe logiku agregačních funkcí.
 
 \subsubsection{Streamed}
@@ -1244,8 +1244,8 @@ Budeme uvažovat paralelní řešení, protože jednovláknové zpracování je 
 V tomto módě chceme pouze upravit původní řešení Two-step z sekce \ref{anal.groupby.twostep}.
 Má totiž stejný průběh vykonání jako samotný model \textbf{Half-Streamed}.
 Oba pracují s myšlenkou práce ve dvou krocích.
-V prvním kroku dochází k lokálnímu vytváření skupin a po dokončení hledání dojde ke slévání výsledků vláken.
-Vlákno po dokončení hledání nečeká na dokončení práce ostatních vláken, ale rovnou výsledky slévá do sdíleného úložiště.
+V prvním kroku dochází k lokálnímu vytváření skupin a po dokončení prohledávání dojde ke slévání výsledků vláken.
+Vlákno po dokončení prohledávání nečeká na dokončení práce ostatních vláken, ale rovnou výsledky slévá do sdíleného úložiště.
 Zmiňovali jsme, že se jedná o paralelní mapu/slovník (C\# \texttt{ConcurrentDictionary}, Java \texttt{ConcurrentHashMap}).
 Nepoužijeme zde řešení Local + dvoucestné slévání, protože samotné slévání vytváří nutnost vláken čekat na dokončení práce jiného vlákna.
 Pomocí řešení Two-step se problému kompletně vyhneme.
@@ -1256,16 +1256,16 @@ K upravení původního řešení musíme pouze vyřešit problém chybějící 
 Mohli bychom výsledky opět ukládat do tabulky.
 V moment nalezení je výsledek překopírován do tabulky na nový řádek a proxy třídu řádku využijeme k jeho zpracování.
 Daný způsob nám příjde neefektivní, protože cílem Group by je vytvořit skupiny. 
-K vytvoření skupin nám stačí znát pouze reprezentant skupiny, tj. klíč v hašovací tabulce (proxy třída řádku v tabulce výsledků hledání).
-Nepotřebujeme znát všechny výsledky hledání, tedy nemusíme všechny výsledky kopírovat do tabulky.
+K vytvoření skupin nám stačí znát pouze reprezentant skupiny, tj. klíč v hašovací tabulce (proxy třída řádku v tabulce výsledků prohledávání).
+Nepotřebujeme znát všechny výsledky prohledávání, tedy nemusíme všechny výsledky kopírovat do tabulky.
 Abychom mohli pouze minimálně upravit vykonávání řešení Two-step, tak upravíme původní tabulku výsledků na základě tohoto poznatku.
-Tabulka bude nyní kromě samotných hodnot obsahovat položku držící odkaz na výsledek hledání.
+Tabulka bude nyní kromě samotných hodnot obsahovat položku držící odkaz na výsledek prohledávání.
 V moment nalezení výsledku se odkaz aktualizuje na daný výsledek a tabulka bude tento akt chápat jako přidání nového imaginárního řádku.
 Při přístupu k novému řádku se vytvoří obvyklá proxy třída řádku.
 Následný přístup k hodnotám řádku skrze proxy třídu vyvolá čtení hodnot z odkazu a nikoliv hodnot z tabulky.
-Proxy třída se použije ke zpracování výsledku hledání.
+Proxy třída se použije ke zpracování výsledku prohledávání.
 Pokud byla proxy třída použita k vytvoření nové skupiny, tj. je vytvořen nový záznam v hašovací tabulce, tak je celý výsledek držený v odkazu překopírovan do tabulky.
-Tímto si zachováme pouze reprezentanty skupin a díky používání odkazu nemusíme každý výsledek hledání kopírovat do tabulky.
+Tímto si zachováme pouze reprezentanty skupin a díky používání odkazu nemusíme každý výsledek prohledávání kopírovat do tabulky.
 
 \smallskip
 Zbytek zpracování bude totožný s původním řešením Two-step.
@@ -1309,7 +1309,7 @@ Vlákna mohou jednoduše vyvolat porovnání klíčů bez nutnosti synchronizace
 
 Ačkoliv se může zdát, že vytvářením mnoha malých polí povede k značné paměťové zátěži.
 Musíme si uvědomit, že budeme uchovávat pouze ta pole, která byla vložena do paralelní mapy.
-Obecně předpokládáme, že počet finálních skupin je mnohonásobně menší než počet výsledků hledání.
+Obecně předpokládáme, že počet finálních skupin je mnohonásobně menší než počet výsledků prohledávání.
 Tedy bude zde existovat pouze malá množina polí.
 Otázka může být, proč jsme nezvolili daný postup i u ostatních řešení.
 V původním řešení jsme drželi všechny výsledky v paměti a vytváření dalších polí spolu s překopírovávání výsledků by ještě víc vytížil paměťovou spotřebu.
@@ -1317,7 +1317,7 @@ V \textbf{Half-Streamed} řešení jsme způsob nepoužili, protože výsledky v
 Kdyby každé vlákno našlo kompletně stejné skupiny, pak by existovala totožná pole pro všechna vlákna.
 
 Další otázka je proč jsme se rozhodli uchovávat hodnoty výrazů a ne elementy grafu.
-Hlavní příčina ukládání elementů jsme popsali v sekci návrhu tabulky výsledků hledání \ref{anal.tables}.
+Hlavní příčina ukládání elementů jsme popsali v sekci návrhu tabulky výsledků prohledávání \ref{anal.tables}.
 Tento problém zde odpadá, protože ukládáme malé množství výsledků.
 Navíc, v ostatních částech dotazu se mohou vyskytnout pouze výrazy klíčů Group by a agregační funkce.
 Tedy v moment výpočtu daných výrazů a agregačních funkcí jsme získali všechny možné hodnoty, ke kterým se může přístoupit v jiných částech dotazu. 
@@ -1338,24 +1338,24 @@ Nyní přejdeme k úpravě Order by.}
 
 \section{Úprava Order by}
 
-Cílem Order by je setřídit výsledky hledání.
-V původním řešení jsme měli značnou výhodu, protože v moment začátku třídění jsme vlastnili všechny výsledky hledání (tj. kompletní tabulka výsledků).
+Cílem Order by je setřídit výsledky prohledávání.
+V původním řešení jsme měli značnou výhodu, protože v moment začátku třídění jsme vlastnili všechny výsledky prohledávání (tj. kompletní tabulka výsledků).
 Místo třídění samotných řádků tabulky jsme třídili pole indexů.
 Na pole indexů pak stačilo aplikovat zákládní třídíci algoritmus.
 Nyní nevlastníme všechny výsledky.
 Výsledky jsou generovány a zpracovávány postupně.
-V následujících sekcích navrhneme způsob zpracování Order by v průběhu hledání.
+V následujících sekcích navrhneme způsob zpracování Order by v průběhu prohledávání.
 
 \subsection{Obecný princip zpracování}
 
-V naši představě zpracování budeme udržovat setříděnou posloupnost výsledků hledání.
+V naši představě zpracování budeme udržovat setříděnou posloupnost výsledků prohledávání.
 Při nalezení výsledku výsledek zatřídíme do již setříděné posloupnosti.
 Obecně jsme se rozhodli použít následující princip.
-Bude existovat totožná tabulka výsledků hledání jako v původním řešení společně s indexační strukturou tabulky, protože nechceme přesouvat řádky tabulky.
+Bude existovat totožná tabulka výsledků prohledávání jako v původním řešení společně s indexační strukturou tabulky, protože nechceme přesouvat řádky tabulky.
 Indexační struktura bude opět obsahovat indexy řádků v tabulce.
 Výsledek Order by pak bude tabulka výsledku s indexační strukturou.
 
-Výsledek hledání v moment nalezejí je vložen na nový řádek tabulky výsledků.
+Výsledek prohledávání v moment nalezejí je vložen na nový řádek tabulky výsledků.
 Následně je index nového řádku tabulky zatříděn do indexační struktury.
 Z tohoto principu budeme vycházet v našem návrhu.
 Nejdříve budeme analyzovat způsob jednovlákonvého zpracování a následně jednotlivé módy paralelního zpracování.
@@ -1510,7 +1510,7 @@ Hodnota za názvem testu představuje parametr \textit{m}.}
 
 \subsection{Ukládání prvků v (a, 2a)-stromu}
 
-V minulé sekci jsme rozhodli, že zatřiďování nalezených prvků hledání provedeme pomocí $(a, 2a)$-stromu.
+V minulé sekci jsme rozhodli, že zatřiďování nalezených prvků prohledávání provedeme pomocí $(a, 2a)$-stromu.
 Musíme definovat chování, kdy nějaké dva prvky sdílí stejnou hodnotu třídění.
 Předpokládejme, že ve stromě existuje index s určitou hodnotou klíče.
 Prohledávání nalezne výsledek a uloží jej do tabulky a následně index řádku vloží k zatřídění do stromu.
@@ -1549,7 +1549,7 @@ Po dokončení iterace pole bude obsahovat výsledek slévání.
 Bohužel jsme nepřišli na způsob paralelizace tohoto řešení, proto jsme se rozhodli od něj upustit.
 
 Místo toho využijeme již několikrát zmiňované dvoucestné slévání (použili jsme jej při paralelizaci Group by v sekci Local + dvoucestné slévání \ref{anal.groupby.local}).
-V moment dokočení hledání všemi vlákny se vytvoří jedno pole a každé vlákno do něj překopíruje své výsledky.
+V moment dokočení prohledávání všemi vlákny se vytvoří jedno pole a každé vlákno do něj překopíruje své výsledky.
 Zde budeme muset překopírovat proxy třídy řádků a nikoliv pouze jejich indexy, protože existuje zde mnoho tabulek a sléváním pouhých indexů nedokážeme rozeznat, jaké tabulce přináleží.
 To znamená, že pole obsahuje posloupnosti výsledků vláken.
 Následně se posloupnosti slévají po dvojicích, jako v zmiňovaném řešení Group by. 
@@ -1560,7 +1560,7 @@ Nevýhoda tohoto řešení je nutnost čekat na dokončení práce prohledávan�
 Zatřiďování do globální struktury je mnohem komplikovanější problém.
 Avšak, stále zde využijeme již navrhnuté principy tabulek a stromů.
 Připravíme určité množství přihrádek.
-Každá přihrádka bude obsahovat tabulku výsledků hledání a indexační strom.
+Každá přihrádka bude obsahovat tabulku výsledků prohledávání a indexační strom.
 Přihrádka bude přístupná pouze skrze zámek.
 
 Třídění probíhá na základě klíčů zadaných uživatelem.
@@ -1579,7 +1579,7 @@ Přihrádky tedy budou tvořit ostré uspořádání.
 Dále bude existovat objekt sdílený všemi vlákny, který pro každý zatřiďováný výsledek určí přihrádku na základě jeho hodnoty prvního klíče.
 Tedy vlákno při zatřiďování přistoupí k sdílenému objektu.
 Ten na základě hodnoty prvního klíče výsledku určí jeho přihrádku.
-Vlákno uzamkne zámek dané přihrádky, následně vloží výsledek hledání do tabulky a index nového řádku uloží do indexačního stomu.
+Vlákno uzamkne zámek dané přihrádky, následně vloží výsledek prohledávání do tabulky a index nového řádku uloží do indexačního stomu.
 Zámek se po zatřídění odemkne a vlákno pokračuje v prohledávání grafu.
 Jsme si vědomi, že rozdělování celého rozsahu typu programovacího jazyka není ideální, protože nám nic neříká o konkrétních hodnotách vlasností v grafu.
 Nicméně, daný postup chceme vyzkoušet, protože se dané hodnoty dají jednoduše pro graf vygenerovat.
@@ -1587,7 +1587,7 @@ Pokud bychom zjistili, že daný přístup je dostatečně rychlý, tak bylo vho
 
 Nyní musíme zodpovědět několik otázek.
 Musíme určit, kolik přihrádek budeme vytvářet.
-Jak budeme rozdělovat rozsahy klíčů a jak určíme správnou přihrádku pro výsledek hledání.
+Jak budeme rozdělovat rozsahy klíčů a jak určíme správnou přihrádku pro výsledek prohledávání.
 Pro jednoduchost nebudeme uvažovat případ, kdy existuje pouze jedna příhrádka nebo práci vykonává pouze jedno vlákno.
 Nejdříve si definuje formálně základní zmíněná označení:
 

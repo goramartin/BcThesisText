@@ -709,11 +709,11 @@ Analýzu výsledků dotazu G\_Q1 uvádíme samostatně, protože testuje pouze a
 Daný mód Group by předpokládá, že všechny výsledky patří do stejné skupiny a tedy nedochází k seskupování ale pouze k výpočtu agregačních funkcí.
 Jednovláknové Normal řešeni iteruje skrze všechny výsledky po dokončení vyhledávání a vypočte agregační funkce.
 Jednovláknové Half-Streamed a Streamed řešení jsou totožná.
-V průběhu hledání aktualizují hodnotu agregační funkce a výsledek zahodí. 
-Paralelní Normal řešení všem vláknům přidělí stejný počet výsledů hledání a každé lokálně spočte hodnoty agregačních funkcí.
+V průběhu prohledávání aktualizují hodnotu agregační funkce a výsledek zahodí. 
+Paralelní Normal řešení všem vláknům přidělí stejný počet výsledů prohledávání a každé lokálně spočte hodnoty agregačních funkcí.
 Po ukončení práce všech vláken jedno vybrané vlákno sloučí výsledky všech ostatních vláken. 
 Rešení Half-Streamed provádí stejnou práci jako v jednovláknovém zpracování.
-Po dokončení hledání dojde ke sloučení všech lokálních výsledků.
+Po dokončení prohledávání dojde ke sloučení všech lokálních výsledků.
 Streamed řešení pracuje se sdíleným úložištěm výsledků a použivá thread-safe funkce k aktualizaci výsledků.
 Obě řešení výsledky neukládají.
 
@@ -780,7 +780,7 @@ Zrychlení je zde pouze v rozsahu $[1,81; 2,64]$-krát, zatímco u zbylých ře�
 Než postoupíme dál připomeneme hlavní rozdíly řešení a značení u zobrazených grafů. 
 Každé řešení používá k Group by mapu (\verb+Dictionary<key, value>+).
 Normal řešení ukládá všechny výsledky vyhledávání vzoru do tabulky a po dokončení vykoná Group by. 
-Half-Streamed řešení vykonává Group by v průběhu hledání a ukládá do tabulky pouze výsledky, pro které ještě neexistuje skupina v použité mapě.
+Half-Streamed řešení vykonává Group by v průběhu prohledávání a ukládá do tabulky pouze výsledky, pro které ještě neexistuje skupina v použité mapě.
 Pro zmíněná řešení se jako \verb+key+ používá index do tabulky a skrze něj se následně vypočtou hodnoty klíče.
 Streamed řešení nepoužívá tabulku, ale hodnoty klíče ukládá rovnou do mapy. 
 Objevující se značení Bucket a List určuje způsob ukládání výsledků agregačních funkcí (\verb+min+, \verb+avg+...) jako \verb+value+ záznam v mapě.
