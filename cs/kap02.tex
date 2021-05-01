@@ -88,9 +88,9 @@ Na základě daného elementu musíme provést akci:
 
 \begin{itemize}
 
-\item Pokud držíme vrchol, musíme být schopni přistoupit k jeho hranám. Hranám z/do něj. Daný přístup by měl být co nejrychlejší a neměl by obsahovat žádné iterace. V průběhu prohledávání se z vrcholu musí projít skrze všechny jeho hrany. Ideálně by měly být hrany přístupné skrze index.
+\item Pokud držíme vrchol, musíme být schopni přistoupit k jeho hranám. Hranám z/do něj. Daný přístup by měl být co nejrychlejší a neměl by obsahovat žádné iterace. V průběhu prohledávání grafu se z vrcholu musí projít skrze všechny jeho hrany. Ideálně by měly být hrany přístupné skrze index.
 
-\item Pokud držíme hranu, musíme být schopni přistoupit ke koncovému vrcholu. V průběhu prohledávání vždy vlastníme vrchol než přistoupíme k jeho hraně a následně k jejímu koncovému vrcholu. Tímto můžeme vyloučit nutnost, aby hrana znala informaci o svém původu.
+\item Pokud držíme hranu, musíme být schopni přistoupit ke koncovému vrcholu. V průběhu prohledávání grafu vždy vlastníme vrchol než přistoupíme k jeho hraně a následně k jejímu koncovému vrcholu. Tímto můžeme vyloučit nutnost, aby hrana znala informaci o svém původu.
 
 \item Pokud držíme element grafu, chceme být schopni přistoupit k jeho sousedním elementů v obsajující struktuře za předpokladu, že víme, jestli se jedná o hranu nebo vrchol. 
 
@@ -103,7 +103,7 @@ Hrany by si pamatovali svůj koncový vrchol.
 Pro \texttt{in} hranu by to byl vrchol odkud vychází, aby bylo možné v moment držení vrcholu projít skrze ni na vrchol další.
 Tedy pro jednu hranu na vstupu budou existovat dva záznamy v daných polích, které se liší pouze koncovým vrcholem.
 Abstraktní předek všech elementů by si měl nově pamatovat i svou pozici v daných polích pro rychlý přístup k jeho sousedům.
-Každé pole tedy bude mít unikátní typ, který nám pomůže rozlišit k jaké situaci má dojít v průběhu prohledávání.
+Každé pole tedy bude mít unikátní typ, který nám pomůže rozlišit k jaké situaci má dojít v průběhu prohledávání grafu.
 
 Zbývá vyřešit vztah hran a vrcholů.
 Řešení, které bychom chtěli zvolit, je mít hrany v polích seskupeny podle: vrcholů odkud vycházejí (pole \texttt{out} hran), vrcholů kam směřují (pole \texttt{in} hran).
@@ -414,7 +414,7 @@ V ideálním případě chceme dosáhnout toho, aby dotazovací engine poskytova
 Mód zde reprezentuje způsob vykonání dotazu.
 Uživatel enginu si při spuštění vybere chtěný mód.
 Tudíž, módy musí v programu koexistovat.
-V této části analyzujeme obecný model vykonání, který posléze v sekci \ref{anal.improvement} upravíme, aby vykonával Group/Order by v průběhu prohledávání.
+V této části analyzujeme obecný model vykonání, který posléze v sekci \ref{anal.improvement} upravíme, aby vykonával Group/Order by v průběhu prohledávání grafu.
 
 Při zkoumání vlastností hlavních částí PGQL (sekce \ref{req.pgql}) jsme si uvědomili jejich separaci logiky z hlediska vykonávání dotazu.
 Match prohledává graf a produkuje výsledky. 
@@ -479,7 +479,7 @@ V části Group by dojde k vytvoření skupin a výpočtů agregačních funkcí
 Pokud je v uživatelském dotazu zahrnuto Group by, tak zbylé části musí očekávat jiný formát výsledků.
 Daný formát musí obsahovat skupiny a výsledné hodnoty agregačních funkcí.
 
-Obecné výsledky prohledávání budeme ukládat do tabulky.
+Obecné výsledky prohledávání grafu budeme ukládat do tabulky.
 Jeden řádek tabulky bude reprezentovat jeden výsledek prohledávání.
 Nyní musíme rozhodnout, jaké informace do tabulky uložíme.
 V části Match se pracuje s elementy grafu.
@@ -534,11 +534,11 @@ V analýze jsme se rozhodli vychenat část Select, protože není podstatná pr
 \section{Match a prohledávání grafu} \label{anal.match}
 
 Match část má za úkol najít všechny podgrafy v grafu odpovídající zadanému vzoru.
-Vlastnosti prohledávání jsou definované jazykem PGQL (sekce \ref{req.pgql}).
+Vlastnosti prohledávání grafu jsou definované jazykem PGQL (sekce \ref{req.pgql}).
 Vzor se vždy skládá z posloupnosti vrcholů a hran.
 Na každý prvek posloupnosti se můžeme dívat jako na placeholder nějakého elementu grafu.
 
-Vlastnosti prohledávání:
+Vlastnosti prohledávání grafu:
 \begin{itemize}
 
 \item Výsledky prohledávání jsou podgrafy homomorfní se zadaným vzorem.
@@ -607,10 +607,10 @@ Součástí struktury musí být také aktuální pole elementů představujíc�
 Jedna položka v poli odpovídá jedné proměnné.
 Bude existovat pouze jedno pole pro jeden vzor. 
 Nebudou se vytvářet další, pouze se budou měnit obsahující elementy, protože chceme omezit režii za tvorbu polí.
-Pole bude sloužit k ověření zda držíme totožné elementy v moment opakující se proměnné v průběhu prohledávání.
+Pole bude sloužit k ověření zda držíme totožné elementy v moment opakující se proměnné v průběhu prohledávání grafu.
 V moment nalezení celého podgrafu bude pole proměnných zaplněné a bude chápáno jako finální výsledek prohledávání, protože pouze proměnné jsou přístupné v jiných částech dotazu.
 
-\subsection{Průběh prohledávání}
+\subsection{Průběh prohledávání grafu}
 
 K nalezení všech podgrafů v grafu pořebujeme z každého vrcholu spustit DFS.
 Při DFS se bude kontrolovat, jestli průchod odpovídá hledanému vzoru.
@@ -625,12 +625,12 @@ Teprve až projdeme všechny komponenty, výsledek se uloží do tabulky.
 V tuto chvíli budeme vlastnit finální výsledek prohledávání, který můžeme uložit do tabulky.
 Zbavíme se tak nutnosti uchovávat mezivýsledky a následnému tvoření skalárního součinu.
 
-\subsection{Paralelizace prohledávání} \label{anal.matchPar}
+\subsection{Paralelizace prohledávání grafu} \label{anal.matchPar}
 
-Nyní přistoupíme k analýze paralelizace prohledávání.
+Nyní přistoupíme k analýze paralelizace prohledávání grafu.
 V paralelním řešení chceme použít co nejmenší počet synchronizačních primitiv.
 Ukládání výsledků do společné struktury by způsobilo značnou režii za synchronizaci.
-V ideálním případě bude probíhat prohledávání lokálně, následně pak dojde k efektivnímu slévání výsledků.
+V ideálním případě bude probíhat prohledávání grafu lokálně, následně pak dojde k efektivnímu slévání výsledků.
 
 Jako řešení jsme zvolili jeden ze základních způsobů.
 Budeme paralelizovat prohledávání ze startovních vrcholů.
@@ -654,7 +654,7 @@ Nyní se musí čekat na dokončení práce prvního vlákna.
 
 \subsection{Slévání výsledků prohledávání}
 
-Po dokončení prohledávání je nutno vyřešit slévání výsledků jednotlivých vláken.
+Po dokončení prohledávání grafu je nutno vyřešit slévání výsledků jednotlivých vláken.
 Kdybychom ponechali výsledky bez úpravy, tak nedokážeme rovnoměrně rozdělit práci mezi vlákna v paralelních řešeních Order/Group by.
 Cílem je vytvořit jednu tabulku obsahující všechny výsledky.
 K vyhnutí překopírovávání všech výsledků vláken využijeme následující princip.
@@ -750,7 +750,7 @@ Daná vlastnost může mít za následek, že porovnávané řádky budou často
 \begin{code}
 select x.PropOne match (x) -> (y) order by x.PropOne;
 \end{code}
-V takovém dotazu by prohledávání mělo vygenerovat několik výsledků se stejným elementem v proměnné x.
+V takovém dotazu by prohledávání grafu mělo vygenerovat několik výsledků se stejným elementem v proměnné x.
 Počet takových výsledků zde odpovídá počtu hran vrcholů \texttt{x}.
 Abychom předešli opakovanému porovnávání hodnot vlastností stejných elementů, tak než přistoupíme k výpočtu výrazů porovnáme \texttt{ID} přistupovaných elementů.
 Tedy využijeme dvou optimalizací.
@@ -769,7 +769,7 @@ V průběhu implementace budeme muset najít vhodnou techniku ukládání, aby d
 
 \section{Group by} \label{anal.groupby}
 
-Group by seskupuje výsledky prohledávání podle uživatelem zadaných klíčů.
+Group by seskupuje výsledky prohledávání grafu podle uživatelem zadaných klíčů.
 Dva výslekdy patří do stejné skupiny právě tehdy, když se shodují ve všech hodnotách klíčů.
 Musíme být schopni vypočítat agregační funkce pro skupiny.
 K tomu již máme navržené způsoby z sekce Expressions (\ref{anal.expressions}).
@@ -887,7 +887,7 @@ Chceme zvolit několik řešení s rozdílnou úrovní synchronizace, protože n
 Navíc nám větší počet řešení umožní lépe porovnat vylepšená řešení.
 Pro paralelní zpracování jsme vymysleli tři přístupy: \textbf{Global}, \textbf{Two-step} a \textbf{Local + dvoucestné slévání} (všechny budou schopny pracovat s úložišti Bucket i List).
 Každý z nich začíná rozdělením tabulky výsledků Match na ekvivalentní části.
-To si můžeme dovolit, neboť máme tabulku obsahující všechny výsledky prohledávání.
+To si můžeme dovolit, neboť máme tabulku obsahující všechny výsledky prohledávání grafu.
 Každé vlákno dostane danou část ke zpracování.
 Tím zaručíme rovnoměrnost práce mezi vlákny.
 Samotná práce vláken pak zavisí na zvoleném přístupu.
@@ -1008,7 +1008,7 @@ V takovém případě nebudeme implementovat paralelní slévání, ale pouze je
 \bigskip
 \textit{Analyzovali jsme a navrhli řešení vykonání částí Match, Group by a Order by.
 Tímto jsme dokončili analýzu a návrh dotazovacího enginu.
-Daná analýza a návrh nám poskytnou odrazový můstek při analýze úprav pro vykonání částí Group by a Order by v průběhu prohledávání.
+Daná analýza a návrh nám poskytnou odrazový můstek při analýze úprav pro vykonání částí Group by a Order by v průběhu prohledávání grafu.
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1021,7 +1021,7 @@ Pro Group by to znamená výsledek přidat do správné skupiny nebo pro něj sk
 Čili, výsledky v průběhu prohledávání Match části nebudeme ukládat do tabulky, která se po nalezení všech výsledků předá k dalšímu zpracování.
 Namísto toho navrhneme postup, kterým docílíme zpracování výsledků v moment jeho nalezení.
 Postupy ověříme vůči stávajícím řešením v kapitole Experiment \ref{expr} z hlediska doby vykonání.
-V ideálním případě docílíme zrychlení nebo pouze vyrovnání vůči řešením vykonávající Order by a Group by po dokončení prohledávání.
+V ideálním případě docílíme zrychlení nebo pouze vyrovnání vůči řešením vykonávající Order by a Group by po dokončení prohledávání grafu.
 Z hlediska implementace to také znamená naprogramovat vylepšení tak, abychom byli schopni jednoduše přepínat mezi způsobem vykonání dotazu.
 Řešení tedy musí fungovat nezávisle na sobě. 
 V prvním kroku úprav musíme získat obecný pohled na pozměněný způsob vykonání dotazu.
@@ -1091,7 +1091,7 @@ Vytvořili jsme nové objekty a nyní je musíme propojit s objektem Match.
 Objekty budou propojeny na dvou úrovních.
 První úroveň bude přímé spojení nových objektů s objektem Match a druhá úroveň bude propojení vyhledávání a zpracování výsledku.
 
-\subsubsection{Přímé spojení objektů}
+\subsubsection{Přímé spojení objektů} \label{anal.improvement.con1}
 
 Popíšeme realizaci první úrovně propojení, tj. objekt Match drží odkaz na objekt Group/Order by.
 Abychom realizovali tuto úroveň, tak musíme upravit objekt Match.
@@ -1112,24 +1112,24 @@ Finální propojení objektů je pak znázorněno na obrázku \ref{figure.diaStr
 \end{figure}
 
 
-\subsubsection{Propojení vyhledávání a zpracování výsledku}
+\subsubsection{Propojení vyhledávání a zpracování výsledku} \label{anal.improvement.con2}
 
-Musíme ještě navrhnout způsob předávání výsledků částem Order/Group by v průběhu prohledávání.
+Musíme ještě navrhnout způsob předávání výsledků částem Order/Group by v průběhu prohledávání grafu.
 Způsob musí být použitelný pro paralelní zpracování, proto budeme rovnou přemýšlet nad paralelním řešením.
 V naši představě budeme vycházet přímo z původního návrhu z sekce \ref{anal.match}.
 Definovali jsme si, že každé vlákno vlastní lokálně strukturu vzoru \texttt{Pattern}, objekt vyhledávání \texttt{Matcher} a tabulku výsledků.
-Finální výsledky ukládá do tabulky a po dokončení prohledávání dojde k slévání tabulek.
+Finální výsledky ukládá do tabulky a po dokončení prohledávání grafu dojde k slévání tabulek.
 Zde upravíme část, kdy dochází k ukládání výsledků do tabulky.
 Vlákno bude držet odkaz na objekt Group/Order by a v moment nalezení výsledek předá pomocí volání metody \texttt{ProcessResult}.
 Metoda výsledek zpracuje a po návratu z metody se pokračuje ve vyhledávání.
-To se opakuje dokud prohledávání neskončí.
+To se opakuje dokud prohledávání grafu neskončí.
 
 Zpracování dotazu bude finálně vypadat následovně.
 Na řetězci objektů se zavolá metoda \texttt{Compute}.
 První objekt v řetězci je Select.
 Select rekurzivně zavolá metodu na části Match a ta spustí vyhledávání.
 Část Match prohledává graf a výsledky předává části Order/Group by pomocí metody \texttt{ProcessResult}.
-Po dokončení prohledávání volaná metoda \texttt{Compute} na objektu Match získá zpracované výsledky z další části pomocí volání metody \texttt{RetrieveResults}.
+Po dokončení prohledávání grafu volaná metoda \texttt{Compute} na objektu Match získá zpracované výsledky z další části pomocí volání metody \texttt{RetrieveResults}.
 Výsledky se tímto předají části Select k vypsání uživateli. 
 
 \subsection{Alternativní řešení}
@@ -1153,7 +1153,7 @@ Musíme být schopni zpracovávat výsledky z množství vláken v jeden okamži
 Je nutné aby docházelo k synchronizaci.
 Ještě než přistoupíme k konkrétním návrhům algoritmům zpracování.
 Navrhneme obecný model paralelního zpracování.
-Vymysleli jsme dva modely, které využijeme při našem zpracování výsledků v průběhu prohledávání.
+Vymysleli jsme dva modely, které využijeme při našem zpracování výsledků v průběhu prohledávání grafu.
 Modely \textbf{Streamed} a \textbf{Half-Streamed}.
 Modely jsme vybrali na základě množství využívané synchronizace a množství slévání výsledků.
 Chceme vytvořit větší množství řešení, abychom mohli lépe porovnat výsledky v kapitole Experiment \ref{expr}.
@@ -1195,7 +1195,7 @@ Single group Group by je mód, ve kterém uživatel zadal v dotazu výpočet agr
 V tomto případě všechny výsledky prohledávání náleží pouze do jedné skupiny, pro kterou se počítají dané agregační funkce.
 V původním řešení se mód vykonával následovně.
 Prohledávání grafu nalezlo všechny výsledky a uložilo je do tabulky výsledků.
-Po dokončení prohledávání dochází ke zpracování výsledků.
+Po dokončení prohledávání grafu dochází ke zpracování výsledků.
 V jednovláknovém vykonání dojde k iteraci všech výsledků a průběžné aktualizaci hodnot agregačních funkcí.
 V paralelním zpracování dojde k rovnoměrnému rozdělení výsledků mezi vlákny a vlákna počítají agregační funkce lokálně.
 Po dokončení jedno vybrané vlákno provede slévání výsledků agregačních funkcí.
@@ -1211,9 +1211,9 @@ Samotný výpočet hodnot funkcí a úložiště hodnot budou totožné s původ
 
 V tomto módu každé vlákno počítá hodnoty agregačních funkcí lokálně.
 Po nalezení výsledku dojde k aktualizování lokálních hodnot agregačních funkcí.
-V moment dokončení prohledávání všech vláken dojde ke slévání výsledků vláken.
+V moment dokončení prohledávání grafu všemi vlákny dojde ke slévání výsledků vláken.
 Samotné slévání můžeme implementovat totožným způsobem jako původní řešení.
-To znamená, že jedno vybrané vlákno bude slévat všechny lokální výsledky vláken, když dojde k ukončení prohledávání všemi vlákny.
+To znamená, že jedno vybrané vlákno bude slévat všechny lokální výsledky vláken, když dojde k ukončení prohledávání grafu všemi vlákny.
 Výhoda tohoto řešení je vyřazení nutnosti používat thread-safe logiku agregačních funkcí.
 
 \subsubsection{Streamed}
@@ -1244,7 +1244,7 @@ Budeme uvažovat paralelní řešení, protože jednovláknové zpracování je 
 V tomto módě chceme pouze upravit původní řešení Two-step z sekce \ref{anal.groupby.twostep}.
 Má totiž stejný průběh vykonání jako samotný model \textbf{Half-Streamed}.
 Oba pracují s myšlenkou práce ve dvou krocích.
-V prvním kroku dochází k lokálnímu vytváření skupin a po dokončení prohledávání dojde ke slévání výsledků vláken.
+V prvním kroku dochází k lokálnímu vytváření skupin a po dokončení prohledávání grafu dojde ke slévání výsledků vláken.
 Vlákno po dokončení prohledávání nečeká na dokončení práce ostatních vláken, ale rovnou výsledky slévá do sdíleného úložiště.
 Zmiňovali jsme, že se jedná o paralelní mapu/slovník (C\# \texttt{ConcurrentDictionary}, Java \texttt{ConcurrentHashMap}).
 Nepoužijeme zde řešení Local + dvoucestné slévání, protože samotné slévání vytváří nutnost vláken čekat na dokončení práce jiného vlákna.
@@ -1344,7 +1344,7 @@ Místo třídění samotných řádků tabulky jsme třídili pole indexů.
 Na pole indexů pak stačilo aplikovat zákládní třídíci algoritmus.
 Nyní nevlastníme všechny výsledky.
 Výsledky jsou generovány a zpracovávány postupně.
-V následujících sekcích navrhneme způsob zpracování Order by v průběhu prohledávání.
+V následujících sekcích navrhneme způsob zpracování Order by v průběhu prohledávání grafu.
 
 \subsection{Obecný princip zpracování}
 

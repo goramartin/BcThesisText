@@ -127,13 +127,13 @@ Podrobnější popis adresářové struktury:
 .5 ReferenceSingleThreadSolutions \DTcomment{Definuje jednovláknové vykonání Group by.}.
 .4 SingleGroupGroupBy \DTcomment{Definuje řešení, pokud není zadáno Group by.}.
 .3 Match \DTcomment{Definuje objekty důležité k vykonání Match.}.
-.4 DFSMatch \DTcomment{Definuje obejekty DFS prohledávání.}.
+.4 DFSMatch \DTcomment{Definuje obejekty DFS prohledávání grafu.}.
 .5 BaseMatch \DTcomment{Definuje objekty vzoru.}.
-.5 Matcher \DTcomment{Definuje objekty algoritmu prohledávání.}.
-.6 DFSParallelPatternMatcher \DTcomment{Definuje paralelní prohledávání.}.
-.6 DFSPatternMatcher \DTcomment{Definuje jednovláknové prohledávání.}.
+.5 Matcher \DTcomment{Definuje objekty algoritmu prohledávání grafu .}.
+.6 DFSParallelPatternMatcher \DTcomment{Definuje paralelní prohledávání grafu.}.
+.6 DFSPatternMatcher \DTcomment{Definuje jednovláknové prohledávání grafu.}.
 .5 Pattern \DTcomment{Definuje api vzoru.}.
-.4 MatchInternalResults \DTcomment{Definuje interní struktury Match pro ukládání výsledků prohledávání.}.
+.4 MatchInternalResults \DTcomment{Definuje interní struktury Match pro ukládání výsledků prohledávání grafu.}.
 .3 OrderBy \DTcomment{Definuje objekty důležité k vykonání Order by.}.
 .4 Comparer \DTcomment{Definuje porovnání řádků tabulky pomocí proxy třídy.}.
 .5 Wrappers \DTcomment{Definuje porovnání řádků tabulky pomocí indexu.}.
@@ -154,7 +154,7 @@ Podrobnější popis adresářové struktury:
 .5 Comparers  \DTcomment{Definuje porovnání využité Half-Streamed a Streamed módem.}.
 .4 SingleGroupGroupBy \DTcomment{Definuje Streamed a Half-Streamed vykonání, pokud není zadáno Group by.}.
 .3 Match  \DTcomment{Definuje objekty důležité pro upravené vykonání Group by.}.
-.4 DFSMatch  \DTcomment{Definuje pozměněná api pro předávání výsledků částem v průběhu prohledávání.}.
+.4 DFSMatch  \DTcomment{Definuje pozměněná api pro předávání výsledků částem v průběhu prohledávání grafu.}.
 .5 Matcher.
 .6 DFSParallelPatternMatcher.
 .6 DFSPatternMatcher.
@@ -367,12 +367,15 @@ Navíc, každý potomek očekává v konstruktoru parsovací strom.
 Uvnitř kontruktoru dojde k vytvoření adekvátního \texttt{IVisitor<T>} objektu.
 Návratová hodnota \texttt{T} se využije ke konstrukci privátních objektů pro vykonání dotazu.
 
-\subsection{Třída MatchObject}
+\subsection{Match}
 
 Budeme vzcházet z sekce analýzy \ref{anal.match}.
-Třída reprezentuje Match část dotazu.
-Je potomkem třídy \texttt{MatchObjectBase}, která je potomkem \texttt{QueryObject}.
-Daný mezikrok vznikl, protože objekt části Match upraveného zpracování používá stejnou motodu ke kontrole vzoru uživatele \texttt{ParsedPatternCorrectness}.
+Třída \texttt{MatchObject} reprezentuje Match část dotazu.
+Je potomkem třídy \texttt{MatchObjectBase}, která dědí z \texttt{QueryObject}.
+Obecně třída \texttt{MatchObject} objekt obsahuje odkaz na tabulku výsledků prohledávání \texttt{MatchFixedResults} a odkaz na objekt DFS algoritmu prohledávání \texttt{DFSParallelPatternMatcher}.
+V konstruktoru třídy se vytváří vzor a objekt prohledávání.
+Objekt prohledávání obrží vzor a tabulku pro ukládání výsledků.
+Třída dědí z \texttt{MatchObjectBase}, protože objekt části Match upraveného zpracování používá stejnou motodu ke kontrole vzoru uživatele \texttt{ParsedPatternCorrectness}.
 Metoda kontroluje uživatelem zadaný vzor, jestli splňuje podmínky jazyka PGQL. 
 Metoda očekává na vstupu pole tříd, které je výstupem procházení parsovací stromové struktury objektem \texttt{MatchVisitor}. 
 
@@ -422,7 +425,7 @@ Pole po zpracovní:
 \end{code}
 Zde vidíme, že první tři posloupnosti po zpracování tvoří souvislou komponentu, protože sdílejí proměnnou \texttt{x}, ale původně nebyli v poli za sebou.
 Nulté a druhé pole sdílejí proměnnou \texttt{x}, podle které jsme druhou posloupnost dělili.
-V průběhu prohledávání budeme vždy iterovat po daných posloupnostech.
+V průběhu prohledávání grafu budeme vždy iterovat po daných posloupnostech.
 V moment nalezení vhodného elementu se posuneme na další prvek posloupnosti (doprava) nebo na novou posloupnost.
 To symbolizuje DFS krok zanoření.
 Opačně se posouváme doleva a zkoušíme ještě neprohledané elementy grafu.
@@ -470,14 +473,14 @@ Třída obsahuje:
 \texttt{map} je pak \texttt{scope} vzoru, kde se případně ověří rovnost elementů opakující se proměnné. Při úspěchu vrací \texttt{true}.
 \end{itemize}
 Potomci pak specifikují, jestli se jedná o \texttt{Vertex} (vrchol), \texttt{InEdge} (hrana vedouci do vrcholu), \texttt{OutEdge} (hrana vedouci z vrcholu) nebo \texttt{AnyEdge} (jakýkoliv druh hrany).
-Ještě než popíšeme struktury algoritmu prohledávání, tak popíšeme struktury pro ukládání výsledků vláken v průběhu prohledávání.
+Ještě než popíšeme struktury algoritmu prohledávání, tak popíšeme struktury pro ukládání výsledků vláken v průběhu prohledávání grafu.
 
 \subsubsection{Třída MatchFixedResultsInternal}
 
 Máme implementován vzor a metody k procházení vzoru.
 Nyní popíšeme implementaci ukládání výsledků prohledávání.
 Třída obsahuje lokální tabulku výsledků vlákna při prohledávání grafu (obrázek \ref{figure.diaQueryObjectsMatchPar} blok \texttt{Výsledky}). 
-Každé vlákno má odkaz na vlastní třídu v průběhu prohledávání.
+Každé vlákno má odkaz na vlastní třídu v průběhu prohledávání grafu.
 Za finální výsledek prohledávání se považují hodnoty v poli \texttt{scope}.
 Sloupečky zde tedy odpovídají unikáním proměnným v grafu.
 Řádek je pak kopie daného pole.
@@ -502,7 +505,7 @@ Očekává se, že \texttt{row} je položka \texttt{scope} vzoru.
 \subsubsection{Třída MatchFixedResults}
 
 Třída obsahuje lokální vabulky všech vláken v položce \texttt{matcherResults}.
-Takto budeme moct přistoupit k lokálním výsledkům po dokončení prohledávání.
+Takto budeme moct přistoupit k lokálním výsledkům po dokončení prohledávání grafu.
 Třída zároveň poskytuje rozhraní pro slévání sloupečků tabulek vláken v metodě \texttt{void MergeColumn(int columnIndex)}, která slévá jeden sloupeček.
 Výsledky jsou slévány do položky \texttt{List<Element[]>[] FinalMerged}.
 
@@ -519,9 +522,9 @@ Dva indexy určují rozsah vrcholů z pole vrcholů \texttt{List<Vertex>}, ze kt
 Dané položky jsou inicializovány na celý rozsah pole, což odpovídá jednovláknovému zpracování.
 Třída má rozhraní \texttt{void SetStartingVerticesIndeces( int start, int end)} nastavující dané indexy rozsahu.
 Daná metoda se používá v paralelním zpracování, kdy je přidělováno malé množství vrcholů z grafu k prohledání.
-Metodou \texttt{void Search()} se spustí prohledávání.
+Metodou \texttt{void Search()} se spustí prohledávání grafu.
 Prohledávání prochází všechny vrcholy v definovaném rozsahu a pak se ukončí.
-V tento moment lze nastavit zmíněnou metodou další rozsah a opět spustit prohledávání.
+V tento moment lze nastavit zmíněnou metodou další rozsah a opět spustit prohledávání grafu.
 V moment nalezení finálního výsledku se zavolá abstraktní metoda \texttt{void ProcessResult()}, která zpracuje výsledek.
 Rozhraní prohledávání neposkytuje návrat nalezených výsledků.
 Pokud se výsledky mají ukládat, tak potomek dané třídy musí dostat v konstruktoru objekt úložiště a přepsat metodu \texttt{void ProcessResult()}.
@@ -530,7 +533,7 @@ Způsob zpracování výsledku si definují potomci.
 \subsubsection{Třída DFSPatternMatcher}
 
 Třída je potomkem třídy výše.
-Reprezentuje algoritmus prohledávání, který ukládá výsledky do tabulky v moment jejich nalezení.
+Reprezentuje algoritmus prohledávání grafu, který ukládá výsledky do tabulky v moment jejich nalezení.
 V konstruktoru dostane tabulku \texttt{MatcherFixedResultsInternal}, kam ukládá své výsledky prohledávání.
 Metoda \texttt{ProcessResult} tedy ukládá výsledky do dané tabulky.
 
@@ -539,12 +542,12 @@ Metoda \texttt{ProcessResult} tedy ukládá výsledky do dané tabulky.
 Třída představuje paralelní prohledávání grafu, které ukládá výsledky v moment nalezení do tabulky.
 Paralelizaci jsme popsali v sekci \ref{anal.matchPar}.
 V konstruktoru dostává počet vláken \texttt{ThreadCount}, vzor \texttt{DFSPattern}, graf \texttt{Graph} a instanci úložiště výsledků \texttt{MatchFixedResults}.
-K paralelizaci prohledávání využívá instance třídy \texttt{DFSPatternMatcher} a počet instancí odpovídá hodnotě \texttt{ThreadCount}.
+K paralelizaci prohledávání grafu využívá instance třídy \texttt{DFSPatternMatcher} a počet instancí odpovídá hodnotě \texttt{ThreadCount}.
 Tedy v konstruktoru vytvoří tyto instance a každé přidělí kopii vzoru, graf a její lokální úložiště.
 Výsledně obsahuje položky:
 \begin{itemize}
 \item \texttt{MatchFixedResults results} obsahuje lokální tabulky výsledků vláken.
-\item \texttt{DFSPatternMatcher[] matchers} obsahuje instance tříd algoritmů prohledávání.
+\item \texttt{DFSPatternMatcher[] matchers} obsahuje instance tříd algoritmů prohledávání grafu.
 Každá instance má svou lokální kopii vzoru a odkaz na tabulku výsledků.
 \end{itemize}
 Paralelní prohledávání je spuštěno metodou \texttt{void Search()}.
@@ -553,15 +556,17 @@ Je vytvořeno \texttt{ThreadCount} instancí \texttt{Task} vykonávají práci \
 Ten obsahuje instanci prohledávání a objekt \texttt{VertexDistributor}.
 Objekt jsme definovali v analýze (obrázek \ref{figure.diaQueryObjectsMatchPar} blok \texttt{VertexDistributor}).
 Drží odkaz na pole vrcholů grafu a index posledního přiděleného vrcholu.
-Množství přidělených vrcholů je definovám v jeho položce \texttt{int verticesPerRound}.
-Vklákna jej žádají o vrcholy k prohledávání, metodou \texttt{DistributeVertices(..)}.
+Množství přidělených vrcholů je definováno v položce \texttt{int verticesPerRound}.
+Vlákna jej žádají o vrcholy metodou \texttt{DistributeVertices(..)} a následně spustí prohledávání z daných vrcholů.
 
 Po dokončení prohledávání dojde k paralelnímu slévání tabulek.
 Rozhodli jsme se použít metodu slévání po sloupečcích tabulek, protože slévání celých tabulek po dvojicích bylo pomalejší.
-Paralelizace probíhá stejně.
+Paralelizace probíhá podobným způsobem jako paralelizace prohledávání.
+Je vytvořeno $n$ instancí \texttt{Task}, kde $n$ je počet sloupečků v tabulce, které vykonávají práci \texttt{ParallelMergeColumnWork(object o)}, kde \texttt{o} je lokální \texttt{ParallelMergeColumnJob}.
+Ten obsahuje odkaz na \texttt{MatchInternalResults} a \texttt{ColumnDistributor}.
 Vlákna žádají objekt \texttt{ColumnDistributor} o sloupeček ke slévání.
-Interně objekt funguje totožně jako \texttt{VertexDistributor} s rozdílem, že si objekt pamatuje index prvního nepřiděleného sloupečku v položce \texttt{int firstFreeColumn}.
-Slévání probíha pomocí volání metody \texttt{MergeColumn} na třídě \texttt{MatchFixedResults}.
+Interně objekt funguje totožně jako \texttt{VertexDistributor} s rozdílem, že si objekt pamatuje index prvního nepřiděleného sloupečku.
+Slévání probíha voláním metody \texttt{MergeColumn} na instanci \texttt{results}.
 V moment dokončení slévání jsou finální výsledky v položce \texttt{results.FinalMerged}.
 Tato položka je předána konstruktoru \texttt{TableResults}, která implementuje rozhraní \texttt{ITableResults}.
 Třída představuje tabulku výsledků, kterou si objekty částí dotazu (\texttt{QueryObjekt}) předávají ke zpracování.
@@ -582,7 +587,7 @@ Pokud chceme přistoupit k proměnné výsledku prohledávání, musíme znát j
 \item \texttt{int RowCount} je počet řádků v tabulce.
 \item \texttt{int FixedArraySize} je velikost bloků v tabulce.
 Tabulka opět využívá princip ukládání výsledků do bloků fixní délky.
-Stejný princip jsme použili při ukládání výsledků v průběhu prohledávání.
+Stejný princip jsme použili při ukládání výsledků v průběhu prohledávání grafu.
 To nám umožní v moment dokočení slévání pouze přesunou výsledky do kostruktoru této třídy.
 \item \texttt{List<Element[FixedArraySize]>[] resTable} je tabulka výsledků prohledávání.
 \texttt{resTable[i]} je \textit{i}-tý sloupeček.
@@ -920,6 +925,7 @@ Třída se používá při výpočtech funkcí \texttt{count} a \texttt{sum}.
 Z této třídy dědí dvě třídy:
 \begin{itemize}
 \item První je \texttt{AggregateBucketResultWithSetFlag<T>}, která přidává položku \texttt{bool isSet}.
+Položka určuje zda byla hodnota již inicializována.
 Třída se použíje při výpočtu funkcí \texttt{min} a \texttt{max}.
 \item Druhá je \texttt{AggregateBucketAvgResult<T>}, která se použije při výpočtu \texttt{avg} a definuje počet vypočtených výrazů \texttt{int eltsUsed}.
 \end{itemize}
@@ -959,19 +965,23 @@ Využívají se obě optimalizace.
 Při přidávání nové skupiny do hašovací tabulky je určena nová pozice pro skupinu v úložisti \texttt{aggResults} pomocí \texttt{Dictionary.Count}.
 Tato hodnota se vkládá s klíčem do hašovací tabulky a skrze ni se přistoupí k výsledkům funkcí pro skupinu.
 \end{itemize}
-Všechna paralelní řešení využívají nativní třídu \texttt{ThreadPool} k spuštění několika metod najednou.
+Všechna paralelní řešení využívají nativní třídu \texttt{ThreadPool}.
+\texttt{Tasks} vykonávají statickou metodu \texttt{SingleThreadGroupByWork(object o)}, kde \texttt{o} je objekt obsahující lokální položky vláken.
+Obecně pro všechna řešení daný objekt obsahuje odkaz na pole \texttt{Aggregate}, odkaz na tabulku výsledků prohledávání \texttt{TableResults} a dva indexy určující rozsah výsledků z tabulky ke zpracování.
+Každé řešení je reprezetováno třídou, která implementuje vlastní logiku zpracování.
+
 \begin{itemize}
 \item Řešení \textbf{Normal: Global (Bucket)} odpovídá paralelnímu zpracování z sekce \ref{anal.groupby.global}.
 Řešení je obsaženo v třídě \texttt{GlobalGroupByBucket}.
-Využívá se \texttt{ConcurrentDictionary<key, value>}.
+K seskupení vlákna využívají sdílenou hašovací tabulka \texttt{ConcurrentDictionary<key, value>}.
 Není zde druhá optimalizace a \texttt{key} je zde pouze index řádku (\texttt{int}). 
 \texttt{value} je zde odkaz na pole úložiště \texttt{AggregateBucketResult[]}.
-\texttt{RowEqualityComparerInt} je zde rozhraní pro určení rovnosti skupin.
 Metoda \texttt{GetOrAdd(key, value)} je použita k vkládání.
 Při úspěšném vložení nového záznamu vrátí odkaz na námi vkládané pole úložišť (\texttt{value}).
 Při neúspěchu vrací odkaz na již dříve vložené pole.
-Zda k tomu došlu ověříme pomocí rovnosti referencí na vkládané a vrácené pole. 
+Zda k tomu došlo ověříme pomocí rovnosti referencí na vkládané a vrácené pole. 
 Samotná logika funkcí vykonává jejich thread-safe verze. 
+Rozhraní pro určení rovnosti řádků je zde \texttt{RowEqualityComparerInt}.
 Úložiště List jsme se snažili implementovat, ale nepodařilo se nám vytvořit efektivní řešení.
 Hlavní problémem byla synchronizace při přístupu k úložišti hodnot agregačních funkcí.
 Zde jsme zkoušeli využít nativní třídu \texttt{Semaphor} k omezení vstupu do kritické sekce.
@@ -981,7 +991,9 @@ Ta však při přístupu pracuje se zámky a ve výsledku řešení bylo značn�
 \item Řešení \textbf{Normal: Two-tep (Bucket)} odpovídá paralelnímu zpracování z sekce \ref{anal.groupby.twostep} s úložištěm Bucket.
 Řešení je v třídě \texttt{TwoStepGroupByBucket}.
 První část je implementována stejně jako jednovláknové řešení s Bucket.
+Každé vlákno drží odkaz na svou lokální tabulku \texttt{Dictionary}.
 Druhá část funguje jako Global řešení výše s rozdílem, že klíčem je zde \texttt{GroupDictKey}.
+Zde vlákná sdílejí \texttt{ConcurrentDictionary}.
 
 \item Řešení \textbf{Normal: Two-step (List) }odpovídá paralelnímu zpracování z sekce \ref{anal.groupby.twostep} s úložištěm List.
 Řešení je v třídě \texttt{TwoStepGroupByList}.
@@ -994,13 +1006,88 @@ Výsledně je druhá část implementována stejně jako Global řešení výše
 \item \textbf{Normal: LocalGroupByLocalTwoWayMerge (Bucket)}\textbf{/(List)} odpovídájí paralelním zpracováním z sekce \ref{anal.groupby.local} s úložištěm Bucket/List.
 Řešení jsou v třídách \texttt{LocalGroupByLocalTwoWayMerge} s příponou \texttt{Bucket} nebo \texttt{List}.
 V prvním kroku jsou implementovány stejně jako jednovláknová řešení.
+Vlákna zde drží odkaz na svou lokální tabulku \texttt{Dictionary}.
 Při slévání dvou tabulek dochází k překopírování záznamů z jedné hašovací tabulky do druhé.
 První je poté zahozena.
 Výsledně existuje pouze jedna tabulka. 
+Zde má značnou výhodu Bucket řešení, protože při slévání dochází k přesunutí odkazu na pole.
+Zatímco u List dochází překopírovávání prvků mezi poli. 
+
+\item \textbf{Normal: SingleGroupGroupBy} odpovídájí módu Single Group Group by zpracování z sekce \ref{anal.groupby.singlegroup}.
+Řešení je v třídě \texttt{SingleGroupGroupBy}.
+Třída je využívaná pro jednovláknové i paralelní zpracování.
+Každé vlákno drží odkaz na lokální pole \texttt{AggregateBucketResult[]}, do kterého ukláda hodnoty funkcí.
+Není zde úložiště List, protože pro každé vlákno existuje jen jedna skupina.
+
+\end{itemize}
+\textit{Implementovali jsme řešení, která zpracovávají výsledky po dokončení prohledávání grafu.
+Nyní budeme implementovat řešení, která vykonávají Order by a Group by v průběhu prohledávání grafu.}
+
+\subsection{Úprava propojení}
+
+K realizaci zpracování v průběhu prohledávání grafu jsme postupovali podle sekce analýzy \ref{anal.improvement}.
+Celý dotaz je reprezentován již existující třídou \texttt{Query}.
+Samotný způsob vykonání se definuje v metodě \texttt{Create(...)}, kde jeden vstupní argument je mód.
+Při vybrání upravaného módu se spustí rozdílný privatní konstruktor.
+V konstruktoru dojde k vytvoření exekučního plánu.
+V analýze jsme určili, že objekt části Select s novým objektem Match části \texttt{MatchObjectStreamed} je propojen původním způsobem.
+Nyní pouze vytvoříme objekty \texttt{ResultProcessor} implementující nový způsob zpracování a nový objekt části Match \texttt{MatchObjectStreamed}. 
+
+\subsubsection{Třída ResultProcessor}
+
+Části Order/Group by budou nyní reprezentovány třídou \texttt{ResultProcessor}.
+Třída definuje metody dle obrázku z analýzy \ref{figure.diaStreamedResultProcessor}.
+Metody jsou použity ke zpracování výsledků v průběhu prohledávání grafu.
+Je navržena dle obrázku z analýzy \ref{figure.diaStreamedResultProcessor}.
+Definuje:
+\begin{itemize}
+\item Abstraktní metodu \texttt{void Process(int matcherID, Element[] result)}, která implementuje logiku zpracování jednoho výsledku prohledávání.
+První parametr \texttt{matcherID} je zde \texttt{ID} instance algoritmu prohledávání grafu, které se použije při přístupu k lokálním výsledkům v paralelních řešeních.
+Očekává se, že instance algoritmu prohledávání grafu v moment dokončení prohledávání signalizují situaci pomocí této metody s \texttt{result == null}.
+Po této signalizaci může dojít k finálním úpravám výsledků.
+\item Absatraktní metodu \\*\texttt{RetrieveResults(out ITableResults t, out GroupByResults g)},\\* která získá finální zpracované výsledky v podobě tabulek. 
 \end{itemize}
 
-\textit{Implementovali jsme řešení, která zpracovávají výsledky po dokončení prohledávání grafu.
-Nyní budeme implementovat řešení, která vykonávají Order by a Group by v průběhu prohledávání.}
+
+
+\subsubsection{Třída MatchObjectStreamed}
+
+Třída dědí z třídy \texttt{MatchBaseObject}.
+Třídě jsme přídali položku držící odkaz na třídu zpracovávající výsledky v \texttt{ResultsProcessor resultProcessor}.
+Dále jsme třídě přidali metodu \texttt{PassResultProcessor}, která uloží odkaz na objekt zpracování do dané položky.
+To odpovídá návrhu z obrázku \ref{figure.diaStreamedQueryObjects}.
+Abychom mohli vykonávat zpracování v průběhu, tak nyní musíme upravit i samotné objekty prohledávání grafu.
+Řekli jsme, že původní třída části Match obsahuje odkaz na objekt prohledávání grafu a tabulku výsledků.
+Nyní vlastní pouze odkaz na objekt zpracování \texttt{ResultsProcessor} a odkaz na nový objekt algoritmu prohledávání grafu \texttt{DFSParallelPatternMatcherStreamed}.
+Objekt algoritmu musíme také upravit a předat mu odkaz na objekt zpracování.
+
+\subsubsection{Třída DFSParallelPatternMatcherStreamed}
+
+Tato třída představuje upravené chování třídy \texttt{DFSParallelPatternMatcher}.
+V konstruktoru se nepředává tabulka výsledků  \texttt{MatchFixedResults} a nedochází zde ke slévání výsledků.
+Při inicializaci objektů jednovláknového prohledávání grafu se vytvářejí nově instance třídy \texttt{DFSParallelPatternMatcherStreamed}. 
+Tyto instance obdrží nově \texttt{ID} na základě jejich pořadí vzniku.
+Samotná paralelizace zpracování prohledávání funguje totožně jako v původní třídě.
+Třídu jsme dále rozšířili o metodu \texttt{PassResultProcessor}, která předá odkaz na objekt zpracování instancím jednovláknového prohledávání.
+
+\subsubsection{DFSParallelPatternMatcherStreamed}
+
+Třída reprezentuje jednovláknový DFS algoritmus prohledávání.
+Třída je potomkem třídy \texttt{DFSPatternMatcherBase}.
+V konstruktoru očekává nově \texttt{ID} objektu \texttt{int matcherID}.
+To znamená, že implementuje stejný algoritmus prohledávání, ale přepisuje metodu zpracování výsledků \texttt{ProcessResult()}.
+Nově třída drží odkaz na objekt zpracování Order by a Group by v položce \texttt{ResultProcessor resultProcessor}.
+Třídě jsme opět přidali metodu \texttt{PassResultProcessor}, která uloží odkaz objektu zpracování do zmíněné položky.
+Finálně upravená metoda \texttt{ProcessResult()} vyvolá předání nalezeného výsledku (pole \texttt{Element[] scope} vzoru) spolu se svým \texttt{ID} pomocí metody \\*\texttt{ResultProcessor.ProcessResult(Element[] result, int matcherID)}.
+
+Toto propojení vyplává z sekce \ref{anal.improvement.con2}.
+Tímto jsme dokončili úpravu objektu části Match pro pozměněné zpracování.
+Nyní přistoupíme ke konkrétním implementacím zpracování a potomkům třídy \texttt{resultProcessor}.
+
+\subsection{Upravé Order by}
+
+
+
 
 
 %   \texttt{}
