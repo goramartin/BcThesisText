@@ -1336,7 +1336,7 @@ Rozhodli jsme dané řešení neimplementovat.
 \textit{Analyzovali jsme a navrhli úpravu řešení Group by a Single group Group by. 
 Nyní přejdeme k úpravě Order by.}
 
-\section{Úprava Order by}
+\section{Úprava Order by} \label{anal.improvement.orderby}
 
 Cílem Order by je setřídit výsledky prohledávání.
 V původním řešení jsme měli značnou výhodu, protože v moment začátku třídění jsme vlastnili všechny výsledky prohledávání (tj. kompletní tabulka výsledků).
@@ -1394,8 +1394,8 @@ Navíc, zvyšováním počtu mezer se pole značně zvětšuje, tj. roste pamě�
 \subsubsection{Vyhledávací stromy}
 
 Druhý přístup využívá vyhledávací stromy \citep[str. 177]{labyrint}.
-Chtěli bychom využít základní druhy vyhledávacích stromů jako binární vyhledávací stromy nebo $(a, b)$-stromy.
-Výhoda $(a, b)$-stromů je ta, že každý vrchol stromu obsahuje až $b-1$ klíčů, zatímco binární vyhledávací stromy drží pouze jeden klíč ve vrcholu.
+Chtěli bychom využít základní druhy vyhledávacích stromů jako binární vyhledávací stromy nebo (a, b)-stromy.
+Výhoda (a, b)-stromů je ta, že každý vrchol stromu obsahuje až $b-1$ klíčů, zatímco binární vyhledávací stromy drží pouze jeden klíč ve vrcholu.
 Pokud bychom implementovali řešení s vyhledávacími stromy, tak budeme ideálně chtít využít již stávajících knihoven.
 
 \subsubsection{Experiment pole vůči vyhledávácím stromům}
@@ -1459,24 +1459,24 @@ Hodnota za názvem testu představuje parametr \textit{m}.}
 
 \subsubsection{Experiment (a, 2a)-strom vůči SortedSet}
 
-Na základě výsledků jsme se rozhodli naimplementovat $(a, 2a)$-strom dle přednášky Datových struktur I \citep{dataLecture}.
+Na základě výsledků jsme se rozhodli naimplementovat (a, 2a)-strom dle přednášky Datových struktur I \citep{dataLecture}.
 Pro experiment jsme určili parametr $a=128$, protože jsme díky němu dosahovali nejrychlejších výsledků.
 Strom jsme porovnali vůči struktuře \texttt{SortedSet} při stejných testech, ale pouze pro nejvýšší řády počtu prvků stavby a vkládání.
 
 \subsubsection{Výsledky}
 
 Výsledky jsou zobrazeny v tabulce \ref{tab.orderbyexpr2}.
-Z tabulky vidíme, že při vkládání prvků je rychlejší $(a, 2a)$-strom.
+Z tabulky vidíme, že při vkládání prvků je rychlejší (a, 2a)-strom.
 Pro finální rozhodnutí, kterou strukturu zvolíme k zatřiďování, jsme rozhodli provést poslední experiment.
 Tentokrát budeme měřit první část vkládání $n$ prvků do prázdné struktury (test je označen \textit{build}).
 Výsledky jsou v tabulce \ref{tab.orderbyexpr3}.
 Vidíme, že v experimentu je rychlejší \texttt{SortedSet}.
-Sitauci si vysvětlujeme režií za operaci vložení do $(a, 2a)$-stromu, kdy dochází k častému překopírovávání prvků v moment vytváření nového vrcholu.
+Sitauci si vysvětlujeme režií za operaci vložení do (a, 2a)-stromu, kdy dochází k častému překopírovávání prvků v moment vytváření nového vrcholu.
 Nicméně, v průběhu experimentu jsme sledovali paměťové vytížení procesu pomocí nativního programu Windows 10 \texttt{Task Manager}.
-Ukázalo se, že v průběhu testu \texttt{SortedSet} dosahovalo využití paměti $6,8$\,GB, zatímco $(a, 2a)$-strom pouze $2,1$\,GB.
+Ukázalo se, že v průběhu testu \texttt{SortedSet} dosahovalo využití paměti $6,8$\,GB, zatímco (a, 2a)-strom pouze $2,1$\,GB.
 Daný jev je způsoben vytvářením nové třídy pro každý vložený prvek do struktury \texttt{SortedSet}.
 \textbf{Finálně jsme se rozhodli zatřiďování realizovat pomocí (a, 2a)-stromu.}
-
+\clearpage
 \begin{table}[!htb]
 \centering
 \begin{tabular}{lD{.}{,}{1.4}D{.}{,}{1.4}}
@@ -1508,15 +1508,15 @@ Hodnota za názvem testu představuje parametr \textit{m}.}
 \label{tab.orderbyexpr3}
 \end{table}
 
-\subsection{Ukládání prvků v (a, 2a)-stromu}
+\subsection{Ukládání prvků v (a, 2a)-stromu} \label{anal.improvement.orderby.storeindex}
 
-V minulé sekci jsme rozhodli, že zatřiďování nalezených prvků prohledávání provedeme pomocí $(a, 2a)$-stromu.
+V minulé sekci jsme rozhodli, že zatřiďování nalezených prvků prohledávání provedeme pomocí (a, 2a)-stromu.
 Musíme definovat chování, kdy nějaké dva prvky sdílí stejnou hodnotu třídění.
 Předpokládejme, že ve stromě existuje index s určitou hodnotou klíče.
 Prohledávání nalezne výsledek a uloží jej do tabulky a následně index řádku vloží k zatřídění do stromu.
 V takovém případě dva indexy se budou jevit jako shodné.
 Avšak, stále potřebuje mít indexy setříděné, čili v moment shodnosti klíčů třídění budeme třídit prvky pomocí samotných hodnot indexů.
-To můžeme, protože každý index řádku je pouze jeden v tabulce.
+To můžeme, protože každý index řádku existuje pouze jednou v tabulce.
 Čili nedojde k porušení setříděnosti.
 
 Nyní jsme si uvědomili jednu možnou optimalizaci.
@@ -1537,7 +1537,7 @@ Druhé bude využívat optimalizovaný strom (značení \textbf{ABTreeAcccumulat
 \textit{Nyní navrhneme způsob paralelizace tříděn pro naše módy zpracování.
 V průběhu návrhu se budeme snažit využít jíž získané informace z předchozí sekce.}
 
-\subsection{Half-Streamed}
+\subsection{Half-Streamed} \label{anal.improvement.orderby.halfstreamed}
 
 Samotný model zpracování \textbf{Half-Streamed} nám nabízí využít zatřiďování pomocí zmíněných stromů.
 V prvním kroku každé vlákno bude lokálně vytvářet svou tabulku výsledků a indexační strom.
@@ -1555,7 +1555,7 @@ To znamená, že pole obsahuje posloupnosti výsledků vláken.
 Následně se posloupnosti slévají po dvojicích, jako v zmiňovaném řešení Group by. 
 Nevýhoda tohoto řešení je nutnost čekat na dokončení práce prohledávaní grafu všech vláken.
  
-\subsection{Streamed}
+\subsection{Streamed} \label{anal.improvement.orderby.streamed}
 
 Zatřiďování do globální struktury je mnohem komplikovanější problém.
 Avšak, stále zde využijeme již navrhnuté principy tabulek a stromů.

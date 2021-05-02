@@ -730,6 +730,11 @@ Třída se jmenuje \texttt{IndexToRowProxyComparer}.
 Drží odkaz na tabulku \texttt{ResultTable} a zmíněnou \texttt{RowComparer}.
 Volání metody \texttt{int Compare(int x, int y)} na třídě dojde k získání proxy tříd řádků \texttt{x} a \texttt{y}.
 Následně dojde k jejich porovnání pomocí \texttt{RowComparer}.
+Implementaci třídy jsme dále rozšířili dle návrhu porovnávání řádků tabulky při vkládání řádků do vyhledávacího stromu z sekce analýzy \ref{anal.improvement.orderby.storeindex}.
+Existuje zde nově položka \texttt{bool allowDuplicities}.
+Pokud položka je nastavená na \texttt{false}, tak při určení shodnosti hodnot klíčů dvou řádků se výsledně použije k porovnání jejich index v tabulce (což jsou zde hodnoty \texttt{x} a \texttt{y}).
+Čili, položka nastavená na \texttt{true} porovnává pouze podle klíčů třídění.
+\texttt{true} je nastaveno tedy vždy, pokud je třída používá s vyhledávacími stromy. 
 
 \subsubsection{Řešení Normal: Merge sort}
 
@@ -1035,10 +1040,9 @@ Nyní pouze vytvoříme objekty \texttt{ResultProcessor} implementující nový 
 
 \subsubsection{Třída ResultProcessor}
 
-Části Order/Group by budou nyní reprezentovány třídou \texttt{ResultProcessor}.
-Třída definuje metody dle obrázku z analýzy \ref{figure.diaStreamedResultProcessor}.
+Části dotazu Order/Group by budou nyní reprezentovány potomky třídy \texttt{ResultProcessor}.
 Metody jsou použity ke zpracování výsledků v průběhu prohledávání grafu.
-Je navržena dle obrázku z analýzy \ref{figure.diaStreamedResultProcessor}.
+Třída definuje metody dle obrázku z analýzy \ref{figure.diaStreamedResultProcessor}.
 Definuje:
 \begin{itemize}
 \item Abstraktní metodu \texttt{void Process(int matcherID, Element[] result)}, která implementuje logiku zpracování jednoho výsledku prohledávání.
@@ -1047,8 +1051,14 @@ Očekává se, že instance algoritmu prohledávání grafu v moment dokončení
 Po této signalizaci může dojít k finálním úpravám výsledků.
 \item Absatraktní metodu \\*\texttt{RetrieveResults(out ITableResults t, out GroupByResults g)},\\* která získá finální zpracované výsledky v podobě tabulek. 
 \end{itemize}
-
-
+Z dané třídy dědí dvě abstraktní třídy.
+První je třída \texttt{OrderByResultProcessor} představující část dotazu Order by.
+Díváme se na ni jako na ekvivalent třídy \texttt{OrderByObject}. 
+Druhá je třída \texttt{GroupByResultProcessor} představující část dotazu Group by.
+Díváme se na ni jako na ekvivalent třídy \texttt{GroupByObject}.
+Samotná konstrukce daných tříd je rovněž totožná s původními.
+To znamená, že při konstrukci opět dochází k procházení parsovacích stromů a tvorbě totožných výsledných struktur.
+Rozdíl je ten, že potomci tříd specifikují algoritmy zpracování v metodě \texttt{ProcessResult}.   
 
 \subsubsection{Třída MatchObjectStreamed}
 
@@ -1070,7 +1080,7 @@ Tyto instance obdrží nově \texttt{ID} na základě jejich pořadí vzniku.
 Samotná paralelizace zpracování prohledávání funguje totožně jako v původní třídě.
 Třídu jsme dále rozšířili o metodu \texttt{PassResultProcessor}, která předá odkaz na objekt zpracování instancím jednovláknového prohledávání.
 
-\subsubsection{DFSParallelPatternMatcherStreamed}
+\subsubsection{Třída DFSPatternMatcherStreamed}
 
 Třída reprezentuje jednovláknový DFS algoritmus prohledávání.
 Třída je potomkem třídy \texttt{DFSPatternMatcherBase}.
@@ -1086,9 +1096,142 @@ Nyní přistoupíme ke konkrétním implementacím zpracování a potomkům tř�
 
 \subsection{Upravé Order by}
 
+Část dotazu order je reprezentována třídou \texttt{OrderByResultProcessor}.
+Potomci specifikují navržené přístupy zpracování dle sekce analýzy \ref{anal.improvement.orderby}.
+Nejdříve popíšeme implementaci použitých vyhledávacích stromů a následně konkrétní třídy zpracování.
 
+Implementovali jsme vlastní (a, 2a)-strom, protože jsme nedokázali nalézt již existující knihovnu.
+Obecně při zpracovávání budeme využívat dva druhy stromů.
+První je obecný (a, 2a)-strom a druhý je optimalizovaný strom z sekce \ref{anal.improvement.orderby.storeindex}, který seskupuje totožné prvky do pole místo aby je vložil do vrcholu.
+Oba stromy implementují rozhraní \texttt{IABTree<T>}, který definuje metodu vložení prvku \texttt{void Insert(T key)} a položku počtu prvků ve stromě \texttt{itn Count}.
+Toto rozhraní použijeme pro vytvoření obecného algoritmu zpracování, kterému budeme jednoduše moct změnit druh stromu.
+Při zpracování očekáváme, že vkládané prvky jsou indexy řádků tabulky.
+Potřebujeme setřídit i prvky se shodnými klíči, proto u všech řešení je použit \texttt{IndexToRowProxyComparer} s \texttt{allowDuplicities == false}.
+To způsobí porovnání při shodnosti klíčů pomocí indexů řádků a navíc \texttt{cacheResults == true}, protože se stromem vždy bude pracovat jedno vlákno.
 
+\subsubsection{Třída ABTree<T>}
 
+Třída představuje (a, 2a)-strom.
+Strom jsme implementovali dle přednášky Datových struktur I \citep[03. (a, b)-trees str. 6]{dataLecture}.
+\texttt{T} je zde typ vkládaných prvků.
+V konstruktoru obdrží parametr 2a.
+Struktura definuje:
+\begin{itemize}
+\item Metodu \texttt{void Insert(T key)}, která vloží prvek \texttt{key} do stromu.
+Prvky, které již jsou ve stromě nejsou vloženy.
+\item Položku \texttt{int Count}, která určuje počet prvků ve stromě.
+\end{itemize}
+Strom implementuje pouze metodu vkládání \texttt{Insert}, protože pro naše zpracování funkce mazání \texttt{Delete} není potřebná.
+Při vkládání je hledání správného podstromu realizováno binárním vyhledáváním.
+Strom je interně složen z tříd \texttt{ABTreeNode<T>}, reprezentující vrcholy stromu.
+Vrcholy obsahují odkaz na rodiče, abychom při iterování a procházení stromu nemuseli zaznamenávat cestu z kořene.
+Vrchol obsahuje:
+\begin{itemize}
+\item \texttt{List<ABTreeNode<T> > children} je pole potomků. Každý potomek je zde chápán jako podstrom.
+\item \texttt{List<T> keys} je pole vkládaných hodnot.
+\item \texttt{ABTreeNode<T> parent} je odkaz na rodiče vrcholu.
+\item \texttt{int index} je pozice vrcholu v jeho rodičovském vrcholu.
+\end{itemize}
+Třída implementuje rozhraní \texttt{IABTree<T>} a \texttt{IEnumerable<T>}.
+Rozhraní procházení \texttt{IEnumerable<T>} iteruje prvky stromu od nejmenšího po největší.
+
+\subsubsection{Třída ABTreeAccumulator<T>}
+
+Třída představuje optimalizovaný (a, 2a)-strom z sekce analýzy \ref{anal.improvement.orderby.storeindex}.
+Třída interně funguje totožně jako třída \texttt{ABTree} a implementuje \texttt{IABTree<T>}.
+Vrchol stromu \texttt{ABTreeNode<T>} nově vlastní položku \texttt{List<List<T> > accumulations}.
+Každému prvku v poli \texttt{keys} na indexu \texttt{i} náleží právě jedno pole v \texttt{accumulations} na stejném indexu.
+Metoda \texttt{Insert} chybějící prvek vloží do pole \texttt{keys} na index \texttt{i} a vytvoří prázdné pole v \texttt{accumulations} na indexu \texttt{i}.
+Pokud se v budoucnu vkládaný prvek rovná již vloženému prvku v poli \texttt{keys} na indexu \texttt{i}, tak je vkládaný prvek vložen do pole \texttt{accumulations[i]}.
+Třída implementuje rozhraní \texttt{IEnumerable<ValueAccumulation<T> >}.
+\texttt{ValueAccumulation<T>} je struktura, která obsahuje prvek z pole \texttt{keys} (\texttt{T value}) a jaho naležité pole v \texttt{accumulations} (\texttt{List<T> accumulation}).
+
+\subsubsection{Řešení Half-Streamed}
+
+Řešení je obsaženo v třídě \texttt{ABTreeSorterHalfStreamed} a odpovídá sekci analýzy \ref{anal.improvement.orderby.halfstreamed}.
+Třída je abstraktním potomkem \texttt{OrderByResultProcessor}.
+Potomci této třídy jsou řešení specialozované na druh vyhledávacího stromu.
+Definuje:
+\begin{itemize}
+\item Položku \texttt{SortJob[] sortJobs}, která obsahuje lokální výsledky vláken. \\*
+Každému vláknu v průběhu prohledávání grafu náleží objekt algoritmu DFS \texttt{DFSPatternMatcherStreamed} s identifikátorem v položce \texttt{int matcherID}.
+Tyto \texttt{ID} vznikly na základě pořadí vytvoření objektů.
+Tedy vlákno vždy při volání metody \texttt{ProcessResult} přistupuje k objektu \texttt{sortJobs[matcherID]}. 
+Objekt interně obsahuje \texttt{ITableResults resTable} (lokální tabulka výsledků prohledávání) a \texttt{IABTree<int> tree} (lokální indexační struktura).
+\item Položku \texttt{int sortJobsFinished}, která určuje kolik vláken již dokončilo prohledávání grafu.
+Vlákna při dokončení prohledávání grafu vyvolají atomické navýšení \texttt{Interlocked.Increment} na této položce.
+\item Metodu \texttt{SortJob CreateJob(..)}, kterou implemetují potomci a vytváří v ní specializovaný druh vyhledávacího stromu.
+\item Implementuje \texttt{ProcessResult(Element[] result, int matcherID)}.
+Lokální část pouze překopíruje výsledek \texttt{result} do tabulky \texttt{resTable} a zadtřídí index řádku (\texttt{tree.Insert(resTable.Count-1)}).
+V této části fungují obě optimalizace porovnání.
+Po dokončení prohledávání všech vláken dochází k paralelnímu dvoucestnému slévání.
+Slévání je implementováno v objektu \texttt{MergeObject<T>} v metodě \texttt{T[] Merge()}.
+Obsahuje dvě pole \texttt{T[] source} a \texttt{T[] destination}.
+\item Objekt \texttt{MergeObject<T>}, který implementuje paralelní dvoucestné slévání.
+Interně používá metodu knihovny HPCsharp \citep{hpcsharp}.
+Rozraní metody pracuje s dvěma poli (\texttt{source} a \texttt{destination}).
+V prvním kroku slévání dochází k překopírování výsledků uvnitř stromů do pole \texttt{source}.
+Na pole se tedy díváme jako na několik posloupností výsledků vláken.
+Posloupnosti jsou slévány knihovní metodou do pole \texttt{destination}.
+V této části nefunguje druhá optimalizace z důvodu paralelizace.
+\end{itemize}
+Toto je implementace obecné části.
+Z třídy \texttt{ABTreeSorterHalfStreamed} dědí dvě třídy, které představují dva řešení.
+Specifikují pouze implementaci \texttt{IABTree} a typ \texttt{T} třídy \texttt{MergeObject<T>}.
+Budeme se držet definovaného značení:
+\begin{itemize}
+\item Řešení \textbf{Half-Streamed: ABTree}: využívá \texttt{ABTree} jako \texttt{IABTree}.
+\texttt{T} třídy \texttt{MergeObject} je \texttt{RowProxy}, protože sléváme několik tabulek najednou a tedy použitím pouze \texttt{int} bychom nedokázali rozeznat, které tabulce index patří.
+Řešení je obsaženo v třídě \texttt{ABTreeGenSorterHalfStreamed}.
+
+\item Řešení \textbf{Half-Streamed: ABTreeAcccumulator}: využívá interně strom \texttt{ABTreeAccumulator} jako \texttt{IABTree}.
+\texttt{T} třídy \texttt{MergeObject} je \texttt{RowProxyAccum}.
+Jedná se o strukturu shodnou s \texttt{ValueAccumulation<int>}. 
+Jediný rozdíl je ten, že místo indexu řádku tabulky (\texttt{int value}) obsahuje proxy třídu daného řádku (\texttt{RowProxy row}).
+Takto sléváme pouze akumulované hodnoty a při porovnání dvou struktur porovnáváme pouze jejich položky \texttt{row}, protože indexy v poli struktury mají stejnou hodnotu klíčů porovnání.
+Řešení je obsaženo v třídě \texttt{ABTreeAccumSorterHalfStreamed}.
+
+\end{itemize}
+
+\subsubsection{Řešení Streamed}
+
+Řešení je obsaženo v třídě \texttt{ABTreeStreamedSorter<T>} a odpovídá řešení z sekce analýzy \ref{anal.improvement.orderby.streamed}.
+\texttt{T} je zde typ prvního klíče třídění, podle kterého budeme rozdělovat rozsahy přihrádkám.
+Potomci této třídy jsou řešení specializované na druh vyhledávacího stromu.
+Definuje:
+\begin{itemize}
+\item Položku \texttt{RangeBucket[] rangeBuckets}, která odpovídá definovaným přihrádkám.
+\texttt{RangeBucket} obsahuje strom \texttt{IABTree} a tabulku \texttt{ITableResults}.
+\item Položku \texttt{ExpressionReturnValue<T> firstKeyExpression} představující výraz prvního klíče třídění.
+Výraz se vypočte a následně se jeho hodnota použije k zjištění správné přihrádky.
+\item Položku \texttt{ExpressionComparer<T>[] firstKeyComparers}, která obsahuje odkaz na porovnávače prvních klíčů použitých ve stromech uvnitř přihrádek.
+V moment výpočtu prvního klíče nastavíme výslednou hodnotu výrazu položkám porovnávače, aby nedocházelo k opětovnému výpočtu výrazu.
+\item Metodu \texttt{RangeBucket CreateBucket()}, kterou implementují potomci a vytváří v ní specializovaný druh vyhledávacího stromu.
+\item Položku \texttt{TypeRangeHasher<T> firstKeyHasher}, která na základě hodnoty prvního klíče třídění určí správnou přihrádku výsledku (volání metody \texttt{int Hash(T value)}).
+\item Implementuje metodu \texttt{ProcessResult}.
+V moment nalezení výsledku vlákno vypočte hodnotu \texttt{firstKeyExpression} a určí přihrádku voláním \texttt{Hash} metody výše.
+Uzamkne přihrádku vloží výsledek do tabulky v přihrádce.
+Nastaví položky porovnávače uvnitř stromu a následně vloží index řádku do stromu. 
+\end{itemize}
+Výpočet indexu přihrádky je zpracován potomky třídy \texttt{TypeRangeHasher}.
+Třída pouze definuje Factory metodu \citep[str. 107]{patterns} \texttt{Factory(int threadCount, Type type)}.
+\texttt{threadCount} říká kolik vláken bude přistupovat k přihrádkám a je omezen dle analýzy na 64.
+\texttt{type} určuje jaký typ hodnoty třída zpracovává.
+Z třídy dědí abstraktní třída \texttt{TypeRangeHasher<T>}, která definuje abstraktní metodu \texttt{int Hash(T value)}.
+\texttt{T} je zde \texttt{type} z metody \texttt{Factory}.
+Dále definuje položku \texttt{int BucketCount}, který určuje počet existujících přihrádek.
+Potomek dané třídy je \texttt{IntRangeHasher}, která představuje rozdělení typu \texttt{Int32} dle analýzy.
+Dále třídě je potomkem třída \texttt{AsciiStringRangeHasher}, která představuje rozdělení typu \texttt{string} dle analýzy.
+
+Výsledně potomci \texttt{ABTreeSorterStreamed<T>} specializují použitý strom.
+\begin{itemize}
+\item Řešení \texttt{Streamed: ABTree}: využívá \texttt{ABTree} jako \texttt{IABTree}.
+Řešení je obsaženo v třídě \texttt{ABTreeGenSorterStreamed<T>}.
+\item Řešení \texttt{Streamed: ABTreeAcccumulator}: využívá interně strom\\* \texttt{ABTreeAccumulator} jako \texttt{IABTree}.
+Řešení je obsaženo v třídě\\* \texttt{ABTreeAccumSorterStreamed<T>}.
+\end{itemize}
+
+\subsection{Úprava Group by}
 
 %   \texttt{}
 %  \begin{itemize}
