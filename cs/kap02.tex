@@ -1231,7 +1231,7 @@ V obou případech se nemusí použít thread-safe logika agregačních funkcí 
 Módy se tedy liší jen způsobem paralelního zpracování.
 
 
-\section{Úprava Group by}
+\section{Úprava Group by} \label{anal.improvement.groupby}
 
 Group by má za úkol seskupit výsledky dle zadaných klíčů a vypočíst hodnoty zadaných agregačních funkcí.
 Při úpravě budeme využívat původní úložiště (List a Bucket) a logiku agregačních funkcí.
@@ -1239,7 +1239,7 @@ Opět budeme při zpracování chtít použít hašovací tabulku jako původní
 Přejdeme rovnou k návrhu zpracování módů \textbf{Streamed} a \textbf{Half-Streamed}.
 Budeme uvažovat paralelní řešení, protože jednovláknové zpracování je určitý případ paralelního.
 
-\subsection{Half-Streamed}
+\subsection{Half-Streamed} 
 
 V tomto módě chceme pouze upravit původní řešení Two-step z sekce \ref{anal.groupby.twostep}.
 Má totiž stejný průběh vykonání jako samotný model \textbf{Half-Streamed}.

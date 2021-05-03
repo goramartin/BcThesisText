@@ -593,9 +593,9 @@ To nám umožní v moment dokočení slévání pouze přesunou výsledky do kos
 \texttt{resTable[i]} je \textit{i}-tý sloupeček.
 \texttt{resTable[i][j]} je \textit{j}-tý blok ve sloupečku.
 \texttt{resTable[i][j][k]} je \textit{k}-tý výsledek v bloku.
-\item \texttt{Element[] tmpRow} představuje odkaz na pole elementů, ke kterému lze přistoupit skrze rozhraní tabulky, aniž by bylo pole elementů v tabulce.
+\item \texttt{Element[] temporaryRow} představuje odkaz na pole elementů, ke kterému lze přistoupit skrze rozhraní tabulky, aniž by bylo pole elementů v tabulce.
 \item Metoda \texttt{void StoreRow(Element[])} překopíruje hodnoty do tabulky. Funguje ekvivalentně jako \texttt{AddRow} ve třídě \texttt{MatcherFixedResultsInternal}.
-\item Metoda \texttt{void StoreTemporaryRow()} vyvolá metodu výše pro uložení pole \texttt{tmpRow} do tabulky.
+\item Metoda \texttt{void StoreTemporaryRow()} vyvolá metodu výše pro uložení pole \texttt{temporaryRow} do tabulky, tj. zavolá metodu \texttt{StoreRow(temporaryRow)}.
 \item Metoda indexeru \texttt{RowProxy this[int i]}, která vrátí proxy třídu řádku.
 \item Položka \texttt{int[] order} umožní definovat vlastní pořadí řádků v tabulce bez nutnosti přesouvat řádky.
 
@@ -1059,7 +1059,7 @@ Druhá je třída \texttt{GroupByResultProcessor} představující část dotazu
 Díváme se na ni jako na ekvivalent třídy \texttt{GroupByObject}.
 Samotná konstrukce daných tříd je rovněž totožná s původními.
 To znamená, že při konstrukci opět dochází k procházení parsovacích stromů a tvorbě totožných výsledných struktur.
-Rozdíl je ten, že potomci tříd specifikují algoritmy zpracování v metodě \texttt{ProcessResult}.   
+Rozdíl je ten, že potomci tříd specifikují algoritmy zpracování v metodě \texttt{Process}.   
 
 \subsubsection{Třída MatchObjectStreamed}
 
@@ -1089,15 +1089,15 @@ V konstruktoru očekává nově \texttt{ID} objektu \texttt{int matcherID}.
 To znamená, že implementuje stejný algoritmus prohledávání, ale přepisuje metodu zpracování výsledků \texttt{ProcessResult()}.
 Nově třída drží odkaz na objekt zpracování Order by a Group by v položce \texttt{ResultProcessor resultProcessor}.
 Třídě jsme opět přidali metodu \texttt{PassResultProcessor}, která uloží odkaz objektu zpracování do zmíněné položky.
-Finálně upravená metoda \texttt{ProcessResult()} vyvolá předání nalezeného výsledku (pole \texttt{Element[] scope} vzoru) spolu se svým \texttt{ID} pomocí metody \\*\texttt{ResultProcessor.ProcessResult(Element[] result, int matcherID)}.
+Finálně upravená metoda \texttt{ProcessResult()} vyvolá předání nalezeného výsledku (pole \texttt{Element[] scope} vzoru) spolu se svým \texttt{ID} pomocí metody \\*\texttt{ResultProcessor.Process(Element[] result, int matcherID)}.
 
 Toto propojení vyplává z sekce \ref{anal.improvement.con2}.
 Tímto jsme dokončili úpravu objektu části Match pro pozměněné zpracování.
 Nyní přistoupíme ke konkrétním implementacím zpracování a potomkům třídy \texttt{resultProcessor}.
 
-\subsection{Upravé Order by}
+\subsection{Úprava Order by}
 
-Část dotazu order je reprezentována třídou \texttt{OrderByResultProcessor}.
+Část dotazu Order by je reprezentována třídou \texttt{OrderByResultProcessor}.
 Potomci specifikují navržené přístupy zpracování dle sekce analýzy \ref{anal.improvement.orderby}.
 Nejdříve popíšeme implementaci použitých vyhledávacích stromů a následně konkrétní třídy zpracování.
 
@@ -1158,7 +1158,7 @@ Definuje:
 \item Položku \texttt{SortJob[] sortJobs}, která obsahuje lokální výsledky vláken. \\*
 Každému vláknu v průběhu prohledávání grafu náleží objekt algoritmu DFS \texttt{DFSPatternMatcherStreamed} s identifikátorem v položce \texttt{int matcherID}.
 Tyto \texttt{ID} vznikly na základě pořadí vytvoření objektů.
-Tedy vlákno vždy při volání metody \texttt{ProcessResult} přistupuje k objektu \texttt{sortJobs[matcherID]}. 
+Tedy vlákno vždy při volání metody \texttt{Process} přistupuje k objektu \texttt{sortJobs[matcherID]}. 
 Objekt interně obsahuje \texttt{ITableResults resTable} (lokální tabulka výsledků prohledávání) a \texttt{IABTree<int> tree} (lokální indexační struktura).
 
 \item Položku \texttt{int sortJobsFinished}, která určuje kolik vláken již dokončilo prohledávání grafu.
@@ -1167,12 +1167,13 @@ Poslení vlákno zahájí paralelní slévání výsledků.
 
 \item Metodu \texttt{SortJob CreateJob(..)}, kterou implemetují potomci a vytváří v ní specializovaný druh vyhledávacího stromu.
 
-\item Implementuje \texttt{ProcessResult(Element[] result, int matcherID)}.\\*
+\item Implementaci metody \texttt{Process(Element[] result, int matcherID)}.\\*
 V první části vlákno přistoupí k \texttt{sortJobs[matcherID]}. 
-Následně překopíruje výsledek \texttt{result} do tabulky \texttt{resTable} a zatřídí index nového řádku tabulky (\texttt{tree.Insert(resTable.RowCount-1)}).
+Následně překopíruje výsledek \texttt{result} do tabulky (\texttt{resTable.StoreRow(result)}) a zatřídí index nového řádku tabulky (\texttt{tree.Insert(resTable.RowCount-1)}).
 V této části fungují obě optimalizace porovnání.
 Po dokončení prohledávání všech vláken dochází k paralelnímu dvoucestnému slévání.
 Slévání je implementováno v objektu \texttt{MergeObject<T>} v metodě \texttt{T[] Merge()}.
+V jednovláknovém zpracování nedochází ke slévání.
 \item Objekt \texttt{MergeObject<T>}, který implementuje paralelní dvoucestné slévání.
 Interně používá metodu knihovny HPCsharp \citep{hpcsharp}.
 Rozraní metody pracuje s dvěma pol. 
@@ -1199,6 +1200,7 @@ Takto sléváme pouze akumulované hodnoty a při porovnání dvou struktur poro
 Řešení je obsaženo v třídě \texttt{ABTreeAccumSorterHalfStreamed}.
 
 \end{itemize}
+V jednovláknovém zpracování jsou řešení totožná, tj. třídí se pouze pomocí stromu a nedochází ke slévání.
 
 \subsubsection{Řešení Streamed}
 
@@ -1216,9 +1218,9 @@ Výraz se vypočte a následně se jeho hodnota použije k zjištění správné
 V moment výpočtu prvního klíče nastavíme výslednou hodnotu výrazu položkám porovnávače, aby nedocházelo k opětovnému výpočtu výrazu.
 \item Metodu \texttt{RangeBucket CreateBucket()}, kterou implementují potomci a vytváří v ní specializovaný druh vyhledávacího stromu.
 \item Položku \texttt{TypeRangeHasher<T> firstKeyHasher}, která na základě hodnoty prvního klíče třídění určí správnou přihrádku výsledku (volání metody \texttt{int Hash(T value)}).
-\item Implementuje metodu \texttt{ProcessResult}.
-V moment nalezení výsledku vlákno vypočte hodnotu \texttt{firstKeyExpression} a určí přihrádku voláním \texttt{Hash} metody výše.
-Uzamkne přihrádku vloží výsledek do tabulky v přihrádce.
+\item Implementaci metody \texttt{Process(Element[] result, int matcherID)}.
+V moment nalezení výsledku vlákno vypočte hodnotu \texttt{firstKeyExpression} pomocí \texttt{result} a určí přihrádku voláním \texttt{Hash} (metoda výše) s vypočtenou hodnotou výrazu.
+Uzamkne přihrádku a vloží výsledek do tabulky v přihrádce.
 Nastaví položky porovnávače uvnitř stromu a následně vloží index řádku do stromu. 
 \end{itemize}
 Výpočet indexu přihrádky je zpracován potomky třídy \texttt{TypeRangeHasher}.
@@ -1239,8 +1241,122 @@ Výsledně potomci \texttt{ABTreeSorterStreamed<T>} specializují použitý stro
 Řešení je obsaženo v třídě\\* \texttt{ABTreeAccumSorterStreamed<T>}.
 \end{itemize}
 
+V jednovláknovém zpracování jsou řešení totožná, tj. třídí se pouze pomocí jednoho stromu (je jen jedna přihrádka).
+Zároveň, v jednovláknovém zpracování se řešení shodují i s řešeními \textbf{Half-Streamed}.
+
 \subsection{Úprava Group by}
 
+Část dotazu Group by je reprezentována třídou \texttt{GroupByResultProcessor}.
+Potomci specifikují navržené přístupy zpracování dle sekce analýzy \ref{anal.improvement.groupby}.
+
+\subsubsection{Řešení Half-Streamed}
+
+V analýze jsme se rozhodli využít seskupování způsobem Two-step Group by.
+Vytvořili jsme dva ekvivalenty daného řešení, které se liší využitým úložištěm: 
+\begin{itemize}
+\item Řešení \textbf{Half-Streamed: Two-step (Bucket)}, které využívá Bucket jako úložiště a je obsaženo v třídě \texttt{TwoStepHalfStreamedBucket}.
+Je ekvivalentem řešení \textbf{Normal: Two-step (Bucket)}.
+\item Řešení \textbf{Half-Streamed: Two-step (List)}, které využívá List jako úložiště a je obsaženo v třídě \texttt{TwoStepHalfStreamedListBucket}.
+Je ekvivalentem řešení \textbf{Normal: Two-step (List)}.
+\end{itemize}
+Oba řešení ve výsledcích pro jednovláknové zpracování mají v názvu \textbf{SingleThreadSolution} místo \textbf{Two-step}.
+Řešení obecně fungují totožně jako jejich ekvivalenty a rovněž používájí stejná úložiště agregačních funkcí, proto popíšeme krátce rozložení třídy a hlavní rozdíly.
+Obě třídy definují:
+
+\begin{itemize}
+
+\item Položku \texttt{GroupJob[] groupJobs}, která představuje lokální výsledky vláken.
+Každému vláknu v průběhu prohledávání grafu náleží objekt algoritmu DFS \texttt{DFSParallelPatternMatcherStreamed} s identifikátorem v položce \texttt{int matcherID}.
+Tyto \texttt{ID} vznikly na základě poředí vytvoření objektů. 
+Tedy vlákno vždy při volání metody \texttt{Process} přistupuje k objektu \texttt{groupJobs[matcherID]}.
+Objekt obsahuje \texttt{ITableResults resTable} (lokální tabulka výsledků prohledávání) a \texttt{Dictionary<GroupDictKey, ...> groups} s úložištěm agregačních funkcí (lokální výsledky seskupování).
+
+\item Položku \\*\texttt{ConcurrentDictionary<GroupDictKeyFull, ...> globalGroups},\\* do které se slévají výsledky, když vlákno dokončí prohledávání grafu.
+Zde je první rozdíl s řešeními módu \textbf{Normal}.
+V původním řešení jsme použili při slévání výsledků do paralení hašovací tabulky strukturu \texttt{GroupDictKey} jako klíč seskupení.
+Nyní využíváme \texttt{GroupDictKeyFull}.
+Struktura rozšiřuje \texttt{GroupDictKey} tak, že místo indexu řádku obsahuje proxy třídu řádku.
+Využíváme danou strukturu, protože při slévání výsledků je sléváno několik tabulek \texttt{ITableResults}.
+Kdybychom použili původní strukturu, tak bychom nedokázali rozeznat, které tabulce řádek náleží.
+
+\item Implementaci metody \texttt{Process(Element[] result, int matcherID)}, ve které dochází v první části k lokálnímu seskupování.
+V moment kdy vlákno dokončí prohledávání grafu začně slévat své lokální výsledky do položky \texttt{globalGroups}.
+Slévání vykonává metoda \texttt{MergeResults(GroupJob job, int matcherID)}.
+V jednovláknovém zpracování nedochází ke slévání.
+\end{itemize}
+Hlavní rozdíl, kromě jiné struktury klíče při slévání, je způsob ukládání výsledků prohledávání do tabulky \texttt{ITableResults} v první části.
+Místo aby se výsledek \texttt{result} překopíroval prvně do tabulky (\texttt{resTable.StoreRow(result)}), tak je uložen do položky \texttt{resTable.temporaryRow}.
+Porovnání v hašovací tabulce vyvolá přístup k dané položce a ne hodnotám v tabulce.
+Pokud položka neexistuje v hašovací tabulce, tak je pole \texttt{temporaryRow} překopírováno do tabulky voláním metody \texttt{resTable.StoreTemporaryRow()}.
+V opačném případě je položka nastavena na \texttt{null}. To odpovídá návrhu z sekce analýzy \ref{anal.improvement.groupby}. 
+
+\subsubsection{Řešení Streamed}
+
+Řešení vychází z řešení Global Group by a pojmenovali jsme jej \textbf{Streamed: Global} a je implementováno třídou \texttt{GlobalGroupByStreamed}.
+V tomto řešení vlákna seskupují výsledky pomocí \texttt{ConcurrentDictionary<key, value>}.
+V jednovláknovém řešení je seskupováno pomocí \texttt{Dictionary<key, value>}.
+Hlavním rozdílem od původních řešení je typ \texttt{key} a \texttt{value}.
+Zde jsou oba rovny typu \texttt{AggregateBucketResult[]}.
+Metody vkládání jsou volány s odkazem na stejné pole v \texttt{key} i \texttt{value}.
+Ačkoliv je to zbytečné, nenašli jsme ekvivalent thread-safe struktury, který by umožnil práci pouze s jedním záznamem.
+Pro \texttt{Dictionary} existuje ekvivalent s jedním záznamem \texttt{HashSet}, ale protože již používáme původní paralelní hašovací tabulku, tak využijeme i \texttt{Dictionary}. 
+
+Hlavní myšlenka z analýzy byla mít pole obsahující v prvních $n$ položkách hodnoty klíčů seskupení a ve zbylých $m$ výsledky agregačních funkcí.
+To jsme realizovali zmíněným polem \texttt{AggregateBucketResult[]}.
+Objekty úložiště agregačních funkcí jsou totožná s již navrhnutými.
+Pro objekty hodnot klíčů jsme vytvořili nové objekty rozšířením třídy \texttt{AggregateBucketResult<T>}.
+
+\subsubsection{Třída AggregateBucketResultStreamed<T>}
+
+Třída reprezentuje hodnotu výrazu jednoho klíče seskupení a dědí z třídy \texttt{AggregateBucketResult<T>}.
+Hodnota klíče je uložena ve zděděné položce \texttt{T aggResult}.
+Definuje:
+\begin{itemize}
+\item Položku \texttt{bool isSet}, která určuje, zda výpočet výrazu byl úspěšný.
+Při neúspěchu \texttt{aggResult} obsahuje hodnotu \texttt{default}. 
+\item Imlementaci metody \texttt{int GetHashCode()}, která vyvolává stejnojmennou metodu na zděděném prvku \texttt{aggResult}.
+Metoda se používá k získání haše výsledku prohledávání při vkládání do hašovací tabulky.
+\end{itemize}
+Při vkládání pole do hašovací tabulky musíme prvky porovnant. 
+Implementovali statickou třídu \texttt{AggregateBucketResultStreamedComparers}.
+Třída má metodu \\*\texttt{bool Equals(Type type, aggBucket x, aggBucket y)}, kde \texttt{aggBucket} je roven \texttt{AggregateBucketResult}.
+Na základě \texttt{type} se přetypují prvky \texttt{x} a \texttt{y} na \texttt{AggregateBucketResultStreamed<T>}.
+Následně se vyvolá porovnání hodnot.
+
+\subsubsection{Třída BucketsKeyValueFactory a třída BucketKeyFactory}
+
+Třída vytváří pole \texttt{AggregateBucketResult[]}, které se vkládá do hašovací tabulky.
+Obsahuje:
+\begin{itemize}
+\item Položku \texttt{int keysCount}, která obsahuje počet klíčů v poli.
+\item Položku \texttt{Aggregate[] aggregates}, na základě které se vytváří úložiště hodnot agregačních funkcí.
+\item Položku \texttt{AggregateBucketResult[] lastBucketsKeyValue}, která je odkaz na poslední vytvořené pole.
+\item Metodu \texttt{AggregateBucketResult[] Create(Element[] result)}, která \\*vytváří pole objektů hodnot klíčů a úložišť agregačních funkcí.
+\item Položku \texttt{bool lastWasInserted}, která říká, zda poslední vytvořené pole bylo vloženo do hašovací tabulky.
+Pokud bylo vloženo, tak se při volání metody \texttt{Create} vytváří pole úplně nové.
+Pokud nebylo, tak se nevytváří pole nové, ale pouze se přepíšou hodnoty klíčů v prvních \texttt{keysCount} objektech.
+\item Položku \texttt{BucketKeyFactory[] factories}, je pole objektů, které vytvářejí objekty klíčů (\texttt{AggregateBucketResultStreamed<T>}).
+\end{itemize}
+Objekt \texttt{BucketKeyFactory} definuje metodu \\*\texttt{AggregateBucketResult Create(bool lastWasInserted, Element[] ..)}, \\*která vytváří jeden objekt úložiště klíče.
+Z třídy dědí \texttt{BucketKeyFactory<T>}, která obsahuje výraz \texttt{ExpressionReturnValue<T> expr} použitý k získání hodnoty jednoho klíče.
+Dále obsahuje odkaz na poslední vytvořený objekt hodnoty klíče \texttt{AggregateBucketResultStreamed<T> lastCreatedBucket}.
+Při volání metody \texttt{Create(..)} se buď vytvoří nový objekt nebo se přepíší jen jeho vnitřní hodnoty. 
+
+\subsubsection{Třída GlobalGroupByStreamed}
+
+Třída obsahuje implementaci řešení \textbf{Streamed: Global}.
+Třída definuje:
+\begin{itemize}
+\item Položku \texttt{ConcurrentDictionary<..., ...> parGroups}, která je použita k seskupování v paralelním řešení.
+\item Položku \texttt{Dictionary<..., ...> groups}, která je použita k seskupování v jednovláknovém řešení.
+\item Položku \texttt{BucketKeyFactory[] matcherBucketFactories}, kde každý záznam odpovídá třídě vytvářející pole vkládané do hašovací tabulky jednoho vlákna.
+To znamená, že každé vlákno má svůj objekt opět přístupný pomocí \texttt{matcherID}.
+Každé vlákno vlastní svůj objekt, protože při použití sdíleného objektu by vlákna přepisovala objekty univtř pole.
+\item Implementaci metody \texttt{Process(Element[] result, int matcherID)}.\\*
+Vlákno volající metodu vytvoří vkládané pole pomocí svého objektu \\*\texttt{matcherBucketFactories[matcherID]} a vloží jej do hašovací tabulky.
+\end{itemize}
+
+\subsection{Úprava Single group Group by}
 
 
 
