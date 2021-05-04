@@ -160,7 +160,7 @@ Poslední definuje dvě vlastnosti.
 Samotné vlastnosti se mohou opakovat, ale musí mít vždy stejný \texttt{propType}.
 Následně identicky pro schéma hran.
 Ačkoliv hrana i vrchol by mohli mít stejný \texttt{elType}, tak budeme vždy uvažovat, že jsou rozdílná.
-Nicméně dovolíme, aby vrchol i hrana mohli mít stejnou vlastnost vlastnosti.
+Nicméně dovolíme, aby vrchol i hrana mohli mít stejnou vlastnost.
 Nyní musíme říct, co konkrétně znamenají \texttt{integer} a \texttt{string}.
 Jedná se o dva různé \texttt{propType}.
 První budeme chápat jako 32-bitový integer (v C\# \texttt{Int32}).
@@ -652,7 +652,7 @@ Jedno vlákno by mohlo dostat vrholy nacházející se v oblasti s množstvím h
 Jelikož se rychle vyčerpaly startovní vrcholy, tak vlákno z řídké oblasti ukončí svou práci mnohem dříve něž vlákno první.
 Nyní se musí čekat na dokončení práce prvního vlákna.
 
-\subsection{Slévání výsledků prohledávání}
+\subsection{Slévání výsledků prohledávání} \label{anal.match.merge}
 
 Po dokončení prohledávání grafu je nutno vyřešit slévání výsledků jednotlivých vláken.
 Kdybychom ponechali výsledky bez úpravy, tak nedokážeme rovnoměrně rozdělit práci mezi vlákna v paralelních řešeních Order/Group by.
@@ -1189,7 +1189,7 @@ Při volání metody \texttt{ProcessResult} dojde ke zpracování výsledku nad 
 Po dokončení dojde ke slévání výsledků vláken.
 
 
-\section{Úprava Single group Group by}
+\section{Úprava Single group Group by} \label{anal.improvement.singlegroup}
 
 Single group Group by je mód, ve kterém uživatel zadal v dotazu výpočet agregačních funkcí, ale nezadal část Group by.
 V tomto případě všechny výsledky prohledávání náleží pouze do jedné skupiny, pro kterou se počítají dané agregační funkce.

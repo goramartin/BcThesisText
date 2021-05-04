@@ -73,19 +73,19 @@ Hlavní adresáře jsou:
 
 \begin{itemize}
 
-\item \texttt{DB}: obsahuje objekty grafových elementů, struktury reprezentace grafu, objekty vlastností elementů a objekty k načítání grafových dat. 
+\item \textit{DB}: obsahuje objekty grafových elementů, struktury reprezentace grafu, objekty vlastností elementů a objekty k načítání grafových dat. 
 
-\item \texttt{DataFiles}: obsahuje datové soubory, které se při překladu projektu ve Visual Studiu překopírují k binárním souborům.
+\item \textit{DataFiles}: obsahuje datové soubory, které se při překladu projektu ve Visual Studiu překopírují k binárním souborům.
 
-\item \texttt{Parser}: obsahuje metody parsování uživatelského dotazu, definované tokeny, objekty parsovacího stromu a objekty k procházení daného stromu.
+\item \textit{Parser}: obsahuje metody parsování uživatelského dotazu, definované tokeny, objekty parsovacího stromu a objekty k procházení daného stromu.
 
-\item \texttt{Query}: obsahuje objekty zpracování dotazu. 
+\item \textit{Query}: obsahuje objekty zpracování dotazu. 
 Obecně představuje část, která vykonává Group by a Order by po dokončení prohledávání grafu. 
 
-\item \texttt{QueryStreamed}: obsahuje objekty upraveného zpracování dotazu. 
+\item \textit{QueryStreamed}: obsahuje objekty upraveného zpracování dotazu. 
 Obecně představuje část, která vykonává Group by a Order by v průběhu prohledávání grafu.
-Adresář částečně kopíruje strukturu adresáře \texttt{Query}.
-Pokud jsou názvy složek stejné znamená to, že objekty ve složce rozšiřují právě objekty ze stejnojmenné složky uvnitř \texttt{Query}. 
+Adresář částečně kopíruje strukturu adresáře \textit{Query}.
+Pokud jsou názvy složek stejné znamená to, že objekty ve složce rozšiřují právě objekty ze stejnojmenné složky uvnitř \textit{Query}. 
 Obsahuje řešení pro Streamed i Half-Streamed módy.
 
 \end{itemize}
@@ -255,7 +255,7 @@ Obsahuje dále:
 \end{itemize}
 
 
-\subsection{Čtení vstupních souborů}
+\subsection{Čtení vstupních souborů} \label{impl.vstup}
 
 Máme imlementován graf a nyní jej potřebujeme načíst.
 Budeme vycházet z kapitoly analýzy sekce \ref{anal.vstup}.
@@ -475,7 +475,7 @@ Třída obsahuje:
 Potomci pak specifikují, jestli se jedná o \texttt{Vertex} (vrchol), \texttt{InEdge} (hrana vedouci do vrcholu), \texttt{OutEdge} (hrana vedouci z vrcholu) nebo \texttt{AnyEdge} (jakýkoliv druh hrany).
 Ještě než popíšeme struktury algoritmu prohledávání, tak popíšeme struktury pro ukládání výsledků vláken v průběhu prohledávání grafu.
 
-\subsubsection{Třída MatchFixedResultsInternal}
+\subsubsection{Třída MatchFixedResultsInternal} \label{impl.match.table}
 
 Máme implementován vzor a metody k procházení vzoru.
 Nyní popíšeme implementaci ukládání výsledků prohledávání.
@@ -536,8 +536,10 @@ Třída je potomkem třídy výše.
 Reprezentuje algoritmus prohledávání grafu, který ukládá výsledky do tabulky v moment jejich nalezení.
 V konstruktoru dostane tabulku \texttt{MatcherFixedResultsInternal}, kam ukládá své výsledky prohledávání.
 Metoda \texttt{ProcessResult} tedy ukládá výsledky do dané tabulky.
+V průběhu volání této metody taky dochází k počítání nalezených výsledků v položce \texttt{NumberOfMatchedElements}.
+Pokud uživatel zadal pouze \texttt{count(*)} v části Select, tak nedochází k ukládání výsledků do tabulky.
 
-\subsubsection{Třída DFSParallelPatternMatcher}
+\subsubsection{Třída DFSParallelPatternMatcher} \label{impl.match.parmatch}
 
 Třída představuje paralelní prohledávání grafu, které ukládá výsledky v moment nalezení do tabulky.
 Paralelizaci jsme popsali v sekci \ref{anal.matchPar}.
@@ -570,8 +572,9 @@ Slévání probíha voláním metody \texttt{MergeColumn} na instanci \texttt{re
 V moment dokončení slévání jsou finální výsledky v položce \texttt{results.FinalMerged}.
 Tato položka je předána konstruktoru \texttt{TableResults}, která implementuje rozhraní \texttt{ITableResults}.
 Třída představuje tabulku výsledků, kterou si objekty částí dotazu (\texttt{QueryObjekt}) předávají ke zpracování.
+Pokud dotaz obsahoval pouze \texttt{count(*)} v části Select, tak se výsledky neukládaly do tabulku a místo slévání výsledků dojde pouze ke slévání položek instancí DFS algoritmů \texttt{NumberOfMatchedElements}.
 
-\subsection{Tabulka výsledků}
+\subsection{Tabulka výsledků} \label{impl.table}
 
 Objekty exekučního plánu si předávají tabulku výsledků prohledávání rozhraním \texttt{ITableResults}.
 Ačkoliv jsme navrhli rozhraní, tak obecně používáme pouze jednu třídu \texttt{TableResults}, která rozhraní implementuje.
@@ -598,6 +601,8 @@ To nám umožní v moment dokočení slévání pouze přesunou výsledky do kos
 \item Metoda \texttt{void StoreTemporaryRow()} vyvolá metodu výše pro uložení pole \texttt{temporaryRow} do tabulky, tj. zavolá metodu \texttt{StoreRow(temporaryRow)}.
 \item Metoda indexeru \texttt{RowProxy this[int i]}, která vrátí proxy třídu řádku.
 \item Položka \texttt{int[] order} umožní definovat vlastní pořadí řádků v tabulce bez nutnosti přesouvat řádky.
+\item Položka \texttt{int NumberOfMatchedElements}, která udává počet nalezených výsledků, pokud bylo v části dotazu Select zadáno pouze \texttt{count(*)}.
+V takém případě nedocházelo k ukládání výsledků do tabulky, ale jen počítání jejich počtu.
 
 \end{itemize}
 V průběhu analýzy jsme navrhli způsob práce s řádky. 
@@ -894,7 +899,9 @@ Přičítání je implementováno shodně jako v \texttt{IntSum}.
 \item Třída \texttt{Count<T>: Aggregate<T>} představuje funkci \texttt{count}.
 Přebírá v definici parametr \texttt{T}, protože v případě nepoužití \texttt{count(*)} musí být schopna pracovat se všemi druhy návratových hodnot výrazů.
 Úložiště musí obsahovat počet správně vyhodnocených výrazů a v případě \texttt{count(*)} to je pouze počet prvků skupiny.
+V případě \texttt{count(*)} se nevyhodnocují žádné výrazu uvnitř metody zpracování, ale pouze navyšuje interní hodonta úložiště.
 Implementace metod je stejná jako u \texttt{IntSum}.
+
 \item Třída \texttt{MinMaxBase<T>: Aggregate<T>} představuje logiku funkcí \texttt{min} a \texttt{max}.
 Očekává se, že úložiště bude mít \texttt{bool}, který říká zda již byla hodnota inicializována.
 Dále má aktuální minimum nebo maximum hodnot výrazu. 
@@ -1019,7 +1026,7 @@ Výsledně existuje pouze jedna tabulka.
 Zde má značnou výhodu Bucket řešení, protože při slévání dochází k přesunutí odkazu na pole.
 Zatímco u List dochází překopírovávání prvků mezi poli. 
 
-\item \textbf{Normal: SingleGroupGroupBy} odpovídájí módu Single Group Group by zpracování z sekce \ref{anal.groupby.singlegroup}.
+\item \textbf{Normal: SingleGroup} odpovídájí módu Single Group Group by zpracování z sekce \ref{anal.groupby.singlegroup}.
 Řešení je v třídě \texttt{SingleGroupGroupBy}.
 Třída je využívaná pro jednovláknové i paralelní zpracování.
 Každé vlákno drží odkaz na lokální pole \texttt{AggregateBucketResult[]}, do kterého ukláda hodnoty funkcí.
@@ -1293,6 +1300,8 @@ V opačném případě je položka nastavena na \texttt{null}. To odpovídá ná
 \subsubsection{Řešení Streamed}
 
 Řešení vychází z řešení Global Group by a pojmenovali jsme jej \textbf{Streamed: Global} a je implementováno třídou \texttt{GlobalGroupByStreamed}.
+Jednovláknové zpracování je rovněž obsaženo v dané třídě.
+Pokud je řešení použito v jednovláknovém kontextu označíme jej \textbf{Streamed: SingleThreadSolution}.
 V tomto řešení vlákna seskupují výsledky pomocí \texttt{ConcurrentDictionary<key, value>}.
 V jednovláknovém řešení je seskupováno pomocí \texttt{Dictionary<key, value>}.
 Hlavním rozdílem od původních řešení je typ \texttt{key} a \texttt{value}.
@@ -1317,7 +1326,7 @@ Při neúspěchu \texttt{aggResult} obsahuje hodnotu \texttt{default}.
 \item Imlementaci metody \texttt{int GetHashCode()}, která vyvolává stejnojmennou metodu na zděděném prvku \texttt{aggResult}.
 Metoda se používá k získání haše výsledku prohledávání při vkládání do hašovací tabulky.
 \end{itemize}
-Při vkládání pole do hašovací tabulky musíme prvky porovnant. 
+Při vkládání pole do hašovací tabulky musíme prvky porovnat. 
 Implementovali statickou třídu \texttt{AggregateBucketResultStreamedComparers}.
 Třída má metodu \\*\texttt{bool Equals(Type type, aggBucket x, aggBucket y)}, kde \texttt{aggBucket} je roven \texttt{AggregateBucketResult}.
 Na základě \texttt{type} se přetypují prvky \texttt{x} a \texttt{y} na \texttt{AggregateBucketResultStreamed<T>}.
@@ -1334,13 +1343,16 @@ Obsahuje:
 \item Metodu \texttt{AggregateBucketResult[] Create(Element[] result)}, která \\*vytváří pole objektů hodnot klíčů a úložišť agregačních funkcí.
 \item Položku \texttt{bool lastWasInserted}, která říká, zda poslední vytvořené pole bylo vloženo do hašovací tabulky.
 Pokud bylo vloženo, tak se při volání metody \texttt{Create} vytváří pole úplně nové.
-Pokud nebylo, tak se nevytváří pole nové, ale pouze se přepíšou hodnoty klíčů v prvních \texttt{keysCount} objektech.
+Pokud nebylo, tak se nevytváří pole nové, ale pouze se přepíšou hodnoty klíčů v prvních \texttt{keysCount} objektech uvnitř pole \texttt{lastBucketsKeyValue}.
+Tímto vytváříme pole jen když je to nutné.
 \item Položku \texttt{BucketKeyFactory[] factories}, je pole objektů, které vytvářejí objekty klíčů (\texttt{AggregateBucketResultStreamed<T>}).
+Každý objekt v tomto poli vytváří jeden objekt hodnoty klíče pro výsledné pole uvnitř metody \texttt{Create(...)}.
 \end{itemize}
 Objekt \texttt{BucketKeyFactory} definuje metodu \\*\texttt{AggregateBucketResult Create(bool lastWasInserted, Element[] ..)}, \\*která vytváří jeden objekt úložiště klíče.
 Z třídy dědí \texttt{BucketKeyFactory<T>}, která obsahuje výraz \texttt{ExpressionReturnValue<T> expr} použitý k získání hodnoty jednoho klíče.
 Dále obsahuje odkaz na poslední vytvořený objekt hodnoty klíče \texttt{AggregateBucketResultStreamed<T> lastCreatedBucket}.
-Při volání metody \texttt{Create(..)} se buď vytvoří nový objekt nebo se přepíší jen jeho vnitřní hodnoty. 
+Tento objekt je obsažen v poli \texttt{lastBucketsKeyValue} uvnitř třídy \texttt{BucketsKeyValueFactory}.
+Při volání metody \texttt{Create(..)} se buď vytvoří nový objekt nebo se přepíší jen jeho vnitřní hodnoty na základě položky \texttt{lastWasInserted}.
 
 \subsubsection{Třída GlobalGroupByStreamed}
 
@@ -1358,7 +1370,227 @@ Vlákno volající metodu vytvoří vkládané pole pomocí svého objektu \\*\t
 
 \subsection{Úprava Single group Group by}
 
+Při úpravě Single group Group by jsme postupovali přesně podle analýzy.
+Vytvořili jsme dva řešení.
+Jedno řešení pro mód \textbf{Half-Streamed} a jedno pro mód \textbf{Streamed}.
+Řešení jsou:
+\begin{itemize}
+\item Řešení \textbf{Half-Streamed: SingleGroup} představuje Single\\* group Group by \textbf{Half-Streamed} módu.
+Je implementováno v třídě \\*\texttt{SingleGroupGroupByHalfStreamed}.
+\item Řešení \textbf{Streamed: SingleGroup} představuje \textbf{Streamed} Single group\\* Group by.
+Je iplementováno v třídě \texttt{SingleGroupGroupByStreamed}.
+\end{itemize}
+Řešení se líší pouze paralelním zpracování. 
+V jednovláknovém zpracování jsou totožná.
+U obou řešení se používá úložiště Bucket, protože se vždy jedná o jednu skupinu.
+Obě třídy dědí z třídy \texttt{GroupByResultProcessor}.
 
+\subsubsection{Třída SingleGroupGroupByHalfStreamed}
+
+Třída definuje hlavní položky:
+\begin{itemize}
+\item Položku \texttt{AggregateBucketResult[][] matcherNonAsterixResults} představující lokální úložiště agregačních funkcí vláken.
+Každé vlákno ukládá výsledky funkcí při volání metody \texttt{Process} do svého lokálního úložiště \texttt{matcherNonAsterixResults[matcherID]}.
+Tato položka neobsahuje úložiště pro funkci \texttt{count(*)}, abychom nemuseli vyvolávat metody logiky této funkce.
+\item Položku \texttt{int[] numberOfMatchedElements}, která obsahuje lokální úložiště pro výpočet funkce \texttt{count(*)}.
+Vlákna tedy při zpracování této funkce vykonají pouze vykonají navýšení této položky.
+\item Položku \texttt{AggregateBucketResult[] finalResults}, do kterého se budou výsledky vláken slévat.
+Tato položka obsahuje již úložiště pro \texttt{count(*)}.
+\item Implementaci metody \texttt{Process(Element[] result, int matcherID)}.\\*
+Matoda přistoupí k lokálnímu úložišti vlákna.
+Vlákno zpracuje výsledek logikou tříd \texttt{Aggregate} a následně výsledek zahodi, tj. neukládá ho do tabulky.
+Volají se zde normální funkce zpracování, protože se jedná o lokální výsledky.
+Vlákno po dokončení prohledávání slévá výsledky do položky \texttt{finalResults}, tj. nečeká až ostatní vlákna dokončí prohledávání.
+Při slévání se využívájí thread-safe verze zpracování.
+\end{itemize}
+
+\subsubsection{Třída SingleGroupGroupByStreamed}
+
+Třída definuje hlavní položky:
+\begin{itemize}
+\item Položku \texttt{AggregateBucketResult[] nonAsterixResults}, která představuje globální úložiště hodnot agregačních funkcí všech vláken.
+Neobsahuje úložiště pro funkci \texttt{count(*)}, abychom nemuseli vyvolávat metody logiky této funkce.
+\item Položku \texttt{int numberOfMatchedElements}, která představuje globální úložiště hodnot funkce \texttt{count(*)}.
+Vlákna tedy při zpracování této funkce vykonají pouze atomické navýšení této položky.
+\item Položku \texttt{AggregateBucketResult[] finalResults}, která obsahuje finální výsledky agregačních funkcí.
+Tyto výsledky již obsahují úložiště pro funkci \texttt{count(*)}.
+\item Položku \texttt{int matchersFinished} udávající počet vláken, která dokončila prohledávání grafu.
+\item Implementaci metody \texttt{Process(Element[] result, int matcherID)}.\\*
+Vlákno zpracuje výsledek do úložiště \texttt{nonAsterixResults} pomocí thread-safe verzí logiky funkcí.
+Výsledek se neukládá do tabulky, ale pouze zahodí.
+Poslední pracující vlákno vyvolá uložení výsledků z \texttt{nonAsterixResults} do položky \texttt{finalResults}.
+\end{itemize}
+
+\section{Překlad a spuštění enginu}
+
+V této sekci popíše krátce způsob překladu a pokyny pro spuštění enginu.
+
+\subsubsection{Překlad}
+
+Překlad se vykonává z prostředí aplikace Visual Studia 2019.
+K překladu je nutné volit Release mód a platformu x64.
+Předpokládáme, že aplikace se používá na systému Windows 10.
+Vstupní soubory v adresáři \textit{DataFiles} se při překladu překopírují do složky s přeloženou aplikací.
+
+\subsubsection{Vstupní soubory}
+
+Aplikace očekává čtyři vstupní soubory definované v sekcích \ref{anal.vstup} a \ref{impl.vstup} ve složce \textit{DataFiles}.
+Schéma hran v souboru \textit{NodeTypes.txt}.
+Schéma vrcholů v souboru \textit{EdgeTypes.txt}.
+Pro schémata jsme definovali JSON formát v sekci \ref{anal.vstup}.
+Obecně hrana a vrchol nemůžou mít stejný typ elementu v Property grafu.
+Typy vrcholů a hran mohou však sdílet vlastnost.
+Typy vlastností jsme definovali na \textbf{integer} a \textbf{string}. 
+Datový soubor hran v souboru \textit{Edges.txt}.
+Datový soubor vrcholů v souboru \textit{Nodes.txt}.
+Soubory mají formát definový formát v sekci \ref{anal.vstup} a \ref{impl.vstup}.
+Očekává se, že oddělovače sloupečků jsou mezery.
+Každé \texttt{ID} elementu musí být unikátní.
+Nedodržení formátu má za následek nedefinované chování.
+
+\subsubsection{Argumenty programu}
+
+Aplikace má celkově 9 argumentů.
+Prvních 7 je povinných a zbylé dva jsou povinné jen v určitých situacích.
+Následuje výpis argumentů.
+Pořadí výpisu určuje pořadí zadání při spuštění.
+
+\begin{enumerate}
+
+\item Povinný argument \textbf{Mode:} argument definuje mód zpracování dotazu. 
+Ve zbytku výpisu budeme využívat dané zkratky k označení módů.
+\begin{table}[!htb]
+\centering
+\begin{tabular}{lr}
+\toprule
+\mc{\textbf{Hodnota argumentu}} & \mc{\textbf{Mód}}\\
+\midrule
+n  &  Normal \\
+hs   &  Half-Streamed \\
+s   &  Streamed \\
+\bottomrule
+\end{tabular}
+\caption{Tabulka argumentu \textbf{Mode}.}
+\label{tab.argument.mode}
+\end{table}
+
+\item Povinný argument \textbf{SorterAlias:} argument definuje způsob zpracování části Order by.
+Každý mód má svá vlastní řešení.
+Názvy řešení odpovídají názvům z implementace.
+Hodnota ve sloupečku \textbf{Argument} udává hodnotu argumentu.
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{lll}
+\toprule
+\mc{\textbf{Mód}} & \mc{\textbf{Argument}} & \mc{\textbf{Řešení}}\\
+\midrule
+n & mergeSort  & Normal: Merge sort \\
+hs & abtreeHS & Half-Streamed: ABTree \\
+hs & abtreeAccumHS & Half-Streamed: ABTreeAcccumulator \\
+s & abtreeS  & Streamed: ABTree \\
+s & abtreeAccumS & Streamed: ABTreeAcccumulator \\
+\bottomrule
+\end{tabular}
+\caption{Tabulka argumentu \textbf{SorterAlias}.}
+\label{tab.argument.sorteralias}
+\end{table}
+
+\item Povinný argument \textbf{GrouperAlias:} argument definuje způsob zpracování části Group by.
+Každý mód má svá vlastní řešení.
+Názvy řešení odpovídají názvům z implementace.
+Hodnota ve sloupečku \textbf{Argument} udává hodnotu argumentu.
+Pokud bylo zadáno „refL“ nebo „refB“, pak je Group by vykonáno jedním vláknem i když bylo definováno paralelní zpracování v argumentu \textbf{ThreadCount}.
+Výběr zpracování Single group Group by zavísí pouze na výběru módu, protože každý mód má pravě jedno takové řešení.
+\begin{table}[!htb]
+\centering
+\begin{tabular}{lll}
+\toprule
+\mc{\textbf{Mód}} & \mc{\textbf{Argument}} & \mc{\textbf{Řešení}}\\
+\midrule
+n & refB  & Normal: SingleThreadSolution (Bucket) \\
+n & refL  & Normal: SingleThreadSolution (List) \\
+n & localB  & Normal: LocalGroupByLocalTwoWayMerge (Bucket) \\
+n & localL  & Normal: LocalGroupByLocalTwoWayMerge (List) \\
+n & globalB  & Normal: Global (Bucket) \\
+n & twpstepB  & Normal: Two-step (Bucket) \\
+n & twostepL  & Normal: Two-step (List) \\
+hs & twostepHSB & Half-Streamed: Two-step (Bucket) \\
+hs & twostepHSL & Half-Streamed: Two-step (List) \\
+s & globalS & Streamed: Global \\
+\bottomrule
+\end{tabular}
+\caption{Tabulka argumentu \textbf{GrouperAlias}.}
+\label{tab.argument.grouperalias}
+\end{table}
+
+\item Povinný argument \textbf{FixedArraySize:} definuje velikost bloků fixní velikost uvnitř tabulky výsledků
+(viz sekce \ref{anal.match.merge}, \ref{impl.table} a \ref{impl.match.table}).
+Argument má číselnou hodnotu.
+Minimální hodnota je 1 a maximální je \texttt{Int32.MaxValue}.
+
+\item Povinný argument \textbf{ThreadCount:} definuje počet použitých vláken k zpracování dotazu.
+Argument má číselnou hodnotu.
+Minimální počet je 1 a maximální počet je 64.
+
+\item Povinný argument \textbf{Printer:} definuje místo výpisu výsledků dotazu.
+Existují dvě možnosti: „console“ a „file“.
+První vypíše výsledky dotazu uživateli na konzoli aplikace.
+Druhý vypíše výsledky dotazu uživateli do souboru.
+Název souboru je definován jako poslední argument programu.
+
+\item Povinný argument \textbf{Formater:} definuje formát výpisu výsledků dotazu ve formě tabulky.
+Existují dvě možnosti: „simple“ a „markdown“.
+Hlavička tabulky obsahuje výrazy s Select části dotazu.
+První vypíše tabulku výsledků ve formátu, ve kterém jsou sloupečky odděleny mezerami.
+Druhý vypíše tabulku výsledků ve formátu Markdown\footnote{https://www.markdownguide.org/} tabulky.
+
+\item Nepovinný argument \textbf{VerticesPerThread:} argument je povinný, pokud je argument \textbf{ThreadCount} větší než jedna.
+Argument má číselnou hodnotu.
+Minimální hodnota je 1 a maximální je \texttt{Int32.MaxValue}.
+Argument udává počet vrcholů přidělených vláknům k prohledání v části Match (viz sekce \ref{anal.matchPar} a \ref{impl.match.parmatch} (\texttt{VertexDistributor})).
+
+\item Nepovinný argument \textbf{File:} argument je povinný, pokud je argument \textbf{Printer} roven „file“.
+Argument definuje jméno souboru, do kterého se vypíšou výsledky dotazu.
+Součástí jména není koncovka souboru (např. .txt nebo .cs).
+Koncovka souboru je určena na základě argumentu \textbf{Formater}.
+Při hodnotě „simple“ se vytvoří soubor s koncovkou .txt a při „markdown“ se vytvoří soubor s koncovkou .md. 
+\end{enumerate}
+
+Následuje příklad argumentů programu:
+\begin{code}
+Jednovláknové spuštění:
+./QueryEngine.exe n globalB mergeSort 4194304 1 console simple
+
+Paralelní spuštění:
+./QueryEngine.exe n globalB mergeSort 4194304 8 console simple 512
+
+Spuštění s výpisem do souboru:  
+./QueryEngine.exe n globalB mergeSort 4194304 1 file simple newfile
+
+Spuštění s výpisem do souboru + paralelní zpracování:
+./QueryEngine.exe n globalB mergeSort 4194304 8 file simple 512 newfile
+\end{code}
+
+\subsubsection{Zadání dotazu}
+
+Po spuštění aplikace se načtou vstupní soubory.
+Po načtení je uživatel vyzván aby zadal vstupní dotaz k vykonání:
+\begin{code}
+Enter Query:
+\end{code}
+Uživatel zadá dotaz jazykem PGQL z sekce \ref{req.pgql}.
+Každý dotaz musí být ukončen znakem „;“.
+Stisknutím tlačítka „Enter“ dojde k zahájení zpracování dotazu.
+Po dokončení je uživatel vyzván, aby zadal další dotaz nebo ukončil aplikaci:
+\begin{code}
+Do you want to continue with another query?
+    y/n (single character answer):
+\end{code}
+Program očekává odvěď jedním znakem.
+„y“ vyzve uživatele k zadání nového dotazu.
+„n“ ukončí aplikaci.
+Stistknutím „Enter“ se vykoná daná akce.
 
 %   \texttt{}
 %  \begin{itemize}
