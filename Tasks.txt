@@ -7,7 +7,7 @@ Perperty generator
 GraphData builder
 Prilohy namerenych dat:
 	odamazat duplicitni zaznamy z Q1 a nechat jen to pouzite v datovych souborech + prepis te promene v nazvu
-
+upravit vypis v aplikaci query engine.
 ------------------------------
 
 Uvod
@@ -15,18 +15,6 @@ Uvod
 graf
 Protpertz graf
 pgql
-
-
-Implementace
-
-rict jak vypada zakladni pohled na struktura
-moduly
-v cem se to psalo a tak
-asi rict ze jsme to implementovali skoro podobne podle analyzy
-popsat adresare
-pak jednotlive implementace tech sracek 
-
-
 
 ------------------------------
 
