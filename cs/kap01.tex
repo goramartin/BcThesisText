@@ -1,10 +1,81 @@
-%%% To do
-
-\chapter{Požadavky}
+\chapter{Předpoklady}
 \label{requirements}
 
-\section{Property graf}
+\section{Labeled-property datový model}
 \label{req.propGraph}
+
+Při zpracování této práce uvažujeme grafovou databázi, která pracuje s grafovým modelem \textbf{Labeled-property}\footnote{\url{https://en.wikipedia.org/wiki/Graph_database}}.
+V průběhu práce budeme daný model označovat jako \textbf{Property graf}.
+V této sekci popíšeme Property graf a jeho vlastnosti z pohledu grafové databáze.
+Překvapivě neexistuje standartní definice daného formátu, ačkoliv je značně využíván v moderních systémech.
+Proto budeme pracovat s popisem Property grafu systému Neo4j\footnote{\url{https://neo4j.com/developer/graph-database/}} a definicí jazyka PGQL\footnote{\url{https://pgql-lang.org/spec/1.2/\#property-graph-data-model}}.
+Na základě těchto popisů určíme klíčové vlastnosti Property grafu, které budeme uvažovat v naši práci.
+
+\subsubsection{Obecný popis Property grafu}
+Obecně grafová dazabáze pracující s daným modelem organizuje grafová data do tří částí:
+
+\begin{itemize}
+\item První část obsahuje množinu \textbf{vrcholů} (Vertices).
+Vrcholy zde představují entity nebo doménové komponenty grafu.
+Vrchol tedy reprezentuje objekt, osobu, myšlenku, dílo a podobně.
+
+\item Druhá část obsahuje množinu \textbf{hran} (Edges).
+Hrany jsou zde vždy orientované a spojují dva vrcholy.
+Hrany zde představují vztahy mezi vrcholy.
+Hrana tedy může být například vztah kamarádství dvou lidí (Karel \textit{se kamarádí s} Jirkou.), vztah zaměstnání člověka se zaměstnavatelem (Karel \textit{pracuje pro Google.}) a podobně.
+Vrcholy a hrany zde označíme za \textbf{elementy} grafu.
+\item Poslední třetí část představuje \textbf{vlastnosti} (Properties) a \textbf{štítky} (Labels), které jsou uloženy v elementech grafu.
+
+\begin{itemize}
+\item
+Štítek představuje označení určité skupiny nebo chování.
+Každému elementu může být přiděleno několik štítků.
+Na elementy, kterým byl přidělen stejný štítek, se můžeme dívat jako na skupinu.
+Pokud má nějaký element štítek, budeme o štítku hovořit jako o \textbf{typu elementu v Property grafu}.
+
+\item
+Vlastnosti definují dvojice (\texttt{název, hodnota}).
+První z dvojice \texttt{název} udává název vlastnosti a \texttt{hodnota} udává hodnotu dané vlastnosti.
+Hodnota vlastnosti má také vždy definován svůj skalární \textbf{typ} (například číselná hodnota nebo řetězec).
+Každému elementu může přináležet několik vlastností.
+Avšak, jeden element nemůže mít dvě dvojice sdílející název.
+Navíc pokud dva různé elementy sdílejí vlastnost (tj. mají stejný název), pak typy hodnoty vlastnosti musí být rovněž totožné.
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Omezení Property grafu}
+Popsali jsme obecně Property graf.
+Daný popis modelu je značně abstraktní, proto si určíme další zpřísňující vlastnosti, které budeme využívat v naši práci.
+
+\begin{enumerate}
+
+\item
+Každý element bude mít unikátní identifikátor (\texttt{ID}), abychom dokázali rozlišovat dané elementy.
+
+\item
+Každý element (vrchol/hrana) bude mít právě jeden štítek.
+Myslíme, že počet štítků není určující pro naši práci, protože primárně ovlivňuje prohledávání grafu a ne části Order by a Group by.
+
+\item
+Budeme uvažovat, že štítky vrcholů jsou vždy rozdílné od štítků hran.
+
+\item
+Každému typu elementu Property grafu přiřadíme výčet vlastností.
+To znamená, že štítek nemusí mít žádnou vlastnost nebo jich má určitý počet.
+
+\item
+Štítky mohou sdílet vlastnosti, ale vlastnosti musí mít stejný typ hodnoty.
+To znamená, že i štítek hrany se štítkem vrcholu může mít stejnou vlastnost, pokud mají stejný typ hodnoty.
+
+\end{enumerate}
+
+Samotná grafová data nebudeme nijak omezovat.
+To znamená, že v grafu mohou být cykly, dva vrcholy mohou být propojeny několika hranami, nemusí existovat žádná hrana ani vrchol, mohou existovat nepropojené vrcholy, hrana může mít totožný počáteční vrchol s koncovým vrcholem a podobně.
+
+\subsubsection{Příklad grafu splňující model}
+Nyní uvedeme příklad jednoduchého grafu splňující náš model
+
+
 
 \section{PGQL}
 \label{req.pgql}
