@@ -1575,14 +1575,16 @@ Spuštění s výpisem do souboru + paralelní zpracování:
 \subsubsection{Zadání dotazu}
 
 Po spuštění aplikace se načtou vstupní soubory.
-Po načtení je uživatel vyzván aby zadal vstupní dotaz k vykonání:
+Po načtení je uživatel vyzván pomocí zprávy, aby zadal vstupní dotaz k vykonání:
 \begin{code}
 Enter Query:
 \end{code}
-Uživatel zadá dotaz jazykem PGQL z sekce \ref{req.pgql}.
+Uživatel zadá dotaz pomocí jazyka PGQL z sekce \ref{req.pgql}.
+Názvy proměnných, elementů Property grafu a vlastností jsou citlivé na velikost písmene.
+Samotné názvy částí dotazu a funkcí nejsou citlivé na velikost písmene.
 Každý dotaz musí být ukončen znakem „;“.
-Stisknutím tlačítka „Enter“ dojde k zahájení zpracování dotazu.
-Po dokončení je uživatel vyzván, aby zadal další dotaz nebo ukončil aplikaci:
+Stisknutím klávesy „Enter“ dojde k zahájení zpracování dotazu.
+Po dokončení je uživatel vyzván pomocí zprávy, aby zadal další dotaz nebo ukončil aplikaci:
 \begin{code}
 Do you want to continue with another query?
     y/n (single character answer):
@@ -1590,7 +1592,7 @@ Do you want to continue with another query?
 Program očekává odvěď jedním znakem.
 „y“ vyzve uživatele k zadání nového dotazu.
 „n“ ukončí aplikaci.
-Stistknutím „Enter“ se vykoná daná akce.
+Stisknutím klávesy „Enter“ se vykoná daná akce.
 
 %   \texttt{}
 %  \begin{itemize}
