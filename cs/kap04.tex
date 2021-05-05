@@ -78,7 +78,7 @@ Soubor NodeTypes.txt:
 
 \end{code}
 
-Soubory obsahují datové schéma v JSON formátu definovaném v sekci (to do). 
+Soubory obsahují datové schéma v JSON formátu definovaném v sekci \ref{anal.vstup}. 
 Soubor \textit{EdgeTypes.txt} definuje jeden druh hrany \texttt{BasicEdge} bez vlastností.
 Soubor \textit{NodeTypes.txt} definuje jeden druh vrcholu \texttt{BasicNode} bez vlastností.
 
@@ -92,7 +92,7 @@ První obsahuje \verb+ID+ vrcholů a druhý obsahuje název typu.
 Soubor \textit{Edges.txt} je ekvivalentní, ale obsahuje \verb+ID+ hran a jejich typ.
 Zároveň pak obsahuje dva sloupečky navíc, které definují směr hrany.
 První sloupeček udává \verb+ID+ počátečního vrcholu a druhý sloupeček určuje \verb+ID+ koncového vrcholu.
-Formát je přesněji definovám v sekci (to do).
+Formát je přesněji definovám v sekci \ref{anal.vstup}.
 
 Následuje ukázka výstupních souborů transformace pro graf Amazon0601:  
 \begin{code}
@@ -397,7 +397,7 @@ Navíc, náš hardware a operační systém umožňují využití časovače s v
 
 \subsection{Volitelné argumenty konstruktoru dotazu}
 
-Pro měření argumenty \verb+FixedArraySize+ a \verb+VerticesPerThread+ (sekce to do) jsme volili následovně:
+Pro měření argumenty \verb+FixedArraySize+ a \verb+VerticesPerThread+ (sekce \ref{impl.arguments}) jsme volili následovně:
 
 \begin{table}[!htb]
 \centering
@@ -539,7 +539,7 @@ Nejprve shrneme základní koncepty použitých řešení.
 Každé řešení pracuje s tabulkou výsledků, kterou musí setřídit.
 Nikdy netřídíme samotné řádky tabulky, ale pouze indexy řádků.
 Výsledek třídění je indexační struktura nad tabulkou.
-Při porovnávání je nutné mít na paměti, že bežící části používájí cachování popsané v sekci (TODO).  
+Při porovnávání je nutné mít na paměti, že jednovláknově bežící části používájí cachování popsané v sekcích \ref{anal.orderby.opt1}, \ref{anal.orderby.opt2} a \ref{impl.orderby.opts}.  
 
 Mód Normal využívá k třídění Merge sort.
 Algoritmus je implementován v knihovně HPCsharp \citep{hpcsharp}.
@@ -580,14 +580,14 @@ Vylepšená paralelní zpracování aplikují použité verze (a, b)-stromů ze 
 Každé běžící vlákno v Half-Streamed řešení obsahuje lokální tabulku a indexační strom. 
 Po dokončení vyhledávání se obsahy stromů překopírují do pole a dojde k paralelnímu dvoucestnému slévání používající stejnou funkci jako paralelní Merge sort. 
 U Streamed řešení jsme navrhli sdílenou strukturu pro zatřizování výsledků.
-Struktura rozdělí rozsah hodnot prvního klíče třídění na rovnoměrné části (konkrétněji v sekci TODO)
+Struktura rozdělí rozsah hodnot prvního klíče třídění na rovnoměrné části (konkrétněji v sekci \ref{anal.improvement.orderby.streamed})
 Počet částí je heuristicky zvolen jako $m=t^2$, kde $t=\#vláken$. 
 Pro každou část rozsahu vytvoříme přihrádku obsahující zámek, tabulku a indexační strom.
 Při příchozím výsledku se získá hodnota prvního klíče třídění a určí se jeho patřičná přihrádka. 
 Do přihrádky vlákno přistoupí pomocí přiloženého zámku.
 Následně výsledek vloží do tabulky a index nového řádku tabulky do stromu.
 Rozdíl v řešeních je pak jen využitá stromová struktura.
-Při porovnávání je nutné mít na paměti, že lokálně bežící části používájí cachování popsané v sekci (TODO).  
+Při porovnávání je nutné mít na paměti, že lokálně bežící části používájí cachování popsané v sekcích \ref{anal.orderby.opt1}, \ref{anal.orderby.opt2} a \ref{impl.orderby.opts}.  
 
 \subsubsection{Výsledky paralelního zpracování}
 
@@ -822,7 +822,7 @@ Na největším grafu platí, že použité ukládání List je pomalejší než
 Na menších grafech rozdíly ustupují a dokonce nastavají situace, kdy je List rychlejší. 
 Přesněji u dotazů G\_Q4 a G\_Q5.
 Přehození rolí si u nich vysvětlujeme režií za množství vytvářených polí (tj. hodně alokací, málo přístupů), které se vyrovná použité indirekci.
-Na grafu Amazon0601 u  G\_Q4 a G\_Q5 dotazů je Streamed řešení pomalejší než Half-Streamed (List), protože také vytváří pole jako Bucket řešení (viz implementace TODO).
+Na grafu Amazon0601 u  G\_Q4 a G\_Q5 dotazů je Streamed řešení pomalejší než Half-Streamed (List), protože také vytváří pole jako Bucket řešení (viz implementace \ref{impl.improvement.groupby.streamed}).
 U dalších grafů je pak počet vytvářených polí mnohonosábně menší než počet přístupů k nim.
 
 \bigskip

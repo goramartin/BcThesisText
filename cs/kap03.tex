@@ -14,7 +14,7 @@ Dále také poskytuje nástroje pro práci ve vícevláknovém prostředí.
 Uvažovali jsme ještě o jazyku C++, který nabízí množství technik a možností optimalizace k získání rychlosti při vykonávání aplikace. 
 Nyní zmíníme, že hlavním cílem práce není vyvinou co nejrychlejší dotazovací engine, ale otestovat obecný koncept vykonávání Group by a Order by v průběhu prohledávání grafu.
 Myslíme, že tento koncept se dá implementovat v každém jazyce.
-Navíc, v průběhu analýzy jsme si zkoušeli již implementovat určité koncepty v daném jazyce C\#, abychom měli lepší předhled o způsobech vykonání.
+Navíc, v průběhu analýzy jsme si zkoušeli již implementovat určité koncepty v daném jazyce C\#, abychom měli lepší přehled o způsobech vykonání.
 Z tohoto důvodu jsme měli určité části již naimplementovány.
 Výsledně jsme se rozhodli z výše zmíněných důvodu použít C\# pro .NET Framework 4.8.
 
@@ -112,7 +112,7 @@ Podrobnější popis adresářové struktury:
 .2 Query.
 .3 Expression \DTcomment{Obsahuje logiku výrazů.}.
 .4 ExpressionComparer \DTcomment{Definuje porovnávání hodnot dvou výrazů.}.
-.4 Reference \DTcomment{Defunuje výrazy odkazů na proměnné, jejich vlastnosti a agregační funkce.}.
+.4 Reference \DTcomment{Definuje výrazy odkazů na proměnné, jejich vlastnosti a agregační funkce.}.
 .3 GroupBy \DTcomment{Definuje objekty důležité k vykonání Group by.}.
 .4 Aggregate.
 .5 AggregateFunction \DTcomment{Definuje logiku agregačních funkcí.}.
@@ -698,7 +698,7 @@ Definuje:
 Potomky třídy jsou třídy \texttt{ExpressionComparer<T>}, které představují porovnání konkrétních typů návratoých hodnot výrazů.
 Potomci budou také implementovat zmíněné optimalizace z sekce analýzy \ref{anal.orderby}.
 
-\subsubsection{Třída ExpressionComparer<T>}
+\subsubsection{Třída ExpressionComparer<T>} \label{impl.orderby.opts}
 
 Třída konkretizuje návratovou hodnotu výrazu porovnání v parametru \texttt{T}.
 Obsahuje výraz \texttt{ExpressionReturnValue<T>}, který se vyhodnotí porovnávanými řádky.
@@ -1207,7 +1207,8 @@ Takto sléváme pouze akumulované hodnoty a při porovnání dvou struktur poro
 Řešení je obsaženo v třídě \texttt{ABTreeAccumSorterHalfStreamed}.
 
 \end{itemize}
-V jednovláknovém zpracování jsou řešení totožná, tj. třídí se pouze pomocí stromu a nedochází ke slévání.
+Třídy řešení se využívají i k jednovláknovému zpracování.
+V takovém případě existuje pouze jedna tabulka a jedna stromová struktura.
 
 \subsubsection{Řešení Streamed}
 
@@ -1248,8 +1249,10 @@ Výsledně potomci \texttt{ABTreeSorterStreamed<T>} specializují použitý stro
 Řešení je obsaženo v třídě\\* \texttt{ABTreeAccumSorterStreamed<T>}.
 \end{itemize}
 
-V jednovláknovém zpracování jsou řešení totožná, tj. třídí se pouze pomocí jednoho stromu (je jen jedna přihrádka).
+Třídy řešení se využívají i k jednovláknovému zpracování.
+V takovém případě existuje pouze jedna tabulka a jedna stromová struktura.
 Zároveň, v jednovláknovém zpracování se řešení shodují i s řešeními \textbf{Half-Streamed}.
+Při prezentaci výsledků v kapitole \ref{expr} je na to duležité brát zřetel.
 
 \subsection{Úprava Group by}
 
@@ -1297,7 +1300,7 @@ Porovnání v hašovací tabulce vyvolá přístup k dané položce a ne hodnot�
 Pokud položka neexistuje v hašovací tabulce, tak je pole \texttt{temporaryRow} překopírováno do tabulky voláním metody \texttt{resTable.StoreTemporaryRow()}.
 V opačném případě je položka nastavena na \texttt{null}. To odpovídá návrhu z sekce analýzy \ref{anal.improvement.groupby}. 
 
-\subsubsection{Řešení Streamed}
+\subsubsection{Řešení Streamed} \label{impl.improvement.groupby.streamed}
 
 Řešení vychází z řešení Global Group by a pojmenovali jsme jej \textbf{Streamed: Global} a je implementováno třídou \texttt{GlobalGroupByStreamed}.
 Jednovláknové zpracování je rovněž obsaženo v dané třídě.
@@ -1448,7 +1451,7 @@ Očekává se, že oddělovače sloupečků jsou mezery.
 Každé \texttt{ID} elementu musí být unikátní.
 Nedodržení formátu má za následek nedefinované chování.
 
-\subsubsection{Argumenty programu}
+\subsubsection{Argumenty programu} \label{impl.arguments}
 
 Aplikace má celkově 9 argumentů.
 Prvních 7 je povinných a zbylé dva jsou povinné jen v určitých situacích.

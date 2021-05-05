@@ -1639,7 +1639,7 @@ Finálně pak sestavíme konkrétní rozsah náležící přihrádce.
 Označme \texttt{Int32.MinValue} jako $I_{min}$ a \texttt{Int32.MaxValue} jako $I_{max}$.
 Abychom vytvořili rozsah $R=[$0; $n$], tak přičteme ke každé hodnotě rozsahu $I$ kladnou hodnotu $I_{min}$.
 Hodnotu označme $I_{+min}$.
-Tímto vytvoříme rozsah $R=[0$; $I_{min}+I_{max}$$]=[0$; 4 294 967 295] a maximální hodnotu tohoto intervalu označme $R_{max}$.
+Tímto vytvoříme rozsah $R=[0$; $I_{+min}+I_{max}$$]=[0$; 4 294 967 295] a maximální hodnotu tohoto intervalu označme $R_{max}$.
 Z tohoto rozsahu nyní jednoduše určíme velikosti částí k rozdělení původního rozsahu $I$.
 Počet hodnot v intervalu je $R_{max}+1$.
 Velikost podintervalů je $d=(R_{max}+1)/t^2$, za předpokladu, že máme $t$ vláken.
