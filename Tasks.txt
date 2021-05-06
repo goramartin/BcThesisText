@@ -8,13 +8,11 @@ GraphData builder
 Prilohy namerenych dat:
 	odamazat duplicitni zaznamy z Q1 a nechat jen to pouzite v datovych souborech + prepis te promene v nazvu
 upravit vypis v aplikaci query engine.
+Pozor ze musim odestranit druhou stranu priloh
 ------------------------------
 
 Uvod
-
-graf
-Protpertz graf
-pgql
+Zaver
 
 ------------------------------
 
