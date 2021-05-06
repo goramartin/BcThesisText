@@ -7,7 +7,7 @@
 Při zpracování této práce uvažujeme grafovou databázi, která pracuje s grafovým modelem \textbf{Labeled-property}\footnote{\url{https://en.wikipedia.org/wiki/Graph_database}}.
 V průběhu práce budeme daný model označovat jako \textbf{Property graf}.
 V této sekci popíšeme Property graf a jeho vlastnosti z pohledu grafové databáze.
-Překvapivě neexistuje standartní definice daného formátu, ačkoliv je značně využíván v moderních systémech.
+Překvapivě neexistuje standartní definice daného modelu, ačkoliv je značně využíván v moderních systémech.
 Proto budeme pracovat s popisem Property grafu systému Neo4j\footnote{\url{https://neo4j.com/developer/graph-database/}} a definicí jazyka PGQL\footnote{\url{https://pgql-lang.org/spec/1.2/\#property-graph-data-model}}.
 Na základě těchto popisů určíme klíčové vlastnosti Property grafu, které budeme uvažovat v naši práci.
 
@@ -51,6 +51,7 @@ Daný popis modelu je značně abstraktní, proto si určíme další zpřísňu
 
 \item
 Každý element bude mít unikátní identifikátor (\texttt{ID}), abychom dokázali rozlišovat dané elementy.
+\texttt{ID} zde nechápeme jako vlastnost elementů, ale jako interní značení uvnitř grafu.
 
 \item
 Každý element (vrchol/hrana) bude mít právě jeden štítek.
@@ -75,10 +76,270 @@ To znamená, že v grafu mohou být cykly, dva vrcholy mohou být propojeny něk
 \subsubsection{Příklad grafu splňující model}
 Nyní uvedeme příklad jednoduchého grafu splňující náš model
 
+\begin{figure}[!htp]
+\includegraphics[width=100mm]{../img/propertyexample.pdf}\centering
+\caption{Příklad Property grafu.}
+\label{figure.propertygraphexample}
+\end{figure}
 
+Na obrázku \ref{figure.propertygraphexample} vidímě tři vrcholy se štítkem \textbf{Osoba}, které reprezentující fyzické osoby, a jeden vrchol se šítkem \textbf{Univerzita}, reprezentující vysokou školu.
+Štítku \textbf{Osoba} byly přiděleny dvě vlastnosti: \textit{Jméno} (řetězec) a \textbf{Věk} (číselná hodnota).
+Štítku \textbf{Univerzita} byla přidělena jedna vlastnost: \textit{Jméno}, která odpovídá stejné vlastnosti štítku \textbf{Osoba} a mají stejný typ hodnoty (řetězec).
+Mezi vrcholy fyzických osob existuje vztah \textbf{zná}, který určuje zda jedna (počáteční vrchol) osoba zná druhou (koncový vrchol).
+Vlasnost \textit{Od} definuje datum, kdy došlo k poznání osoby.
+Mezi vrcholy fyzických osob a vysokou školou existuje vzah \textbf{je studentem}, který říká zda osoba studuje na dané vysoké škole.
+Tento vztah nemá žádnou vlastnost.
+Samotně pak každý element má přiřazeno \texttt{ID}.
+Příklad vznikl na základě prvního grafu z dokumentace níže popisovaného PGQL.
 
-\section{PGQL}
+\section{Jazyk PGQL}
 \label{req.pgql}
 
-\section{Paralelismus}
-\label{req.paralel}
+V naši práci budeme používat dotazovací jazyk PGQL\footnote{\url{https://pgql-lang.org/spec/1.2/}} verze 1.2 k dotazování nad Property grafem.
+Protože je jazyk značné obsáhlý a k realizaci naši práce nepořebujeme všechny vlastnosti jazyka, tak jsme se rozhodli vybrat jen učitou podmnožinu jazyka.
+V naši práci budeme pracovat jen s částmi Select, Match, Group by a Order by.
+Ostatní části nebudeme používat.
+V každém dotazu musí být vždy přítomná část Select a Match.
+S části Match se pojí část From specifikující název grafu, nad kterým se má vykonat dotaz.
+Nicméně, v naši práci vždy budeme pracovat s jedním grafem a tedy jsme část vyřadili. 
+Zároveň v naši práci uvažujeme, že Order by a Group by nejsou zadány nikdy společně.
+
+\begin{itemize}
+\item \textbf{Match:} definuje podgraf, který bude vyhledán v grafu.
+Součástí definice podgrafu jsou proměnné, které jsou přístupné v ostatních částech dotazu.
+Proměnná zde reprezentuje jeden element podgrafu.
+
+\item \textbf{Select:} určuje vrácená data ve formě tabulky jako u tabulkových databazí.
+K jednomu výsledku tak můžeme vrátit výčet informací.
+Každá položka výčtu pak definuje jeden sloupeček tabulky.
+
+\item \textbf{Group by:} dovoluje seskupit výsledky dle zadaných klíčů a vypočítat agregační funkce pro výsledné skupiny.
+
+\item \textbf{Order by:} vykoná setřídění výsledků dle zadaných klíčů.
+\end{itemize}
+
+Nyní krátce popíšeme omezení a klíčové vlastnosti, s kterými budeme pracovat v naši práci.
+Pro komplexní popis odkazujeme na citovanou dokumentaci.
+
+\subsubsection{Match}
+
+Část Match se skládá z posloupností elementů definující hledaný podgraf.
+Posloupnosti jsou odděleny čárkou.
+Položky v posloupnosti jsou vrcholy a hrany.
+Položky vrcholů značíme pomocí \texttt{()} a položky hran pomocí šipek \texttt{->} (dopředná hrana), \texttt{<-} (zpětná hrana) a \texttt{-} (kombinace předchozích dvou).
+
+Každé položce je možno přidělit jméno (definice proměnné) a predikát štítku.
+Vrcholu přidělíme proměnnou vložením jména do kulatých závorek: \texttt{(jméno)}.
+Hraně přidělíme proměnnou vložením jména do hranatých závorek: \texttt{-[jméno]->}, \texttt{<-[jméno]-} a \texttt{-[jméno]-}.
+V části Match musí být vždy přítomna alespoň jedna proměnná.
+Pokud se v posloupnostech opakují proměnné zmená to, že v průběhu hledání musí dané položky obsahovat elementy se shodným \texttt{ID}.
+Nicméně, proměnné hran se nesmí opakovat.
+Pokud se dvě posloupnosti nemají společnou proměnnou, tak výsledek je skalární součin daných posloupností. 
+Predikát je vložen do závorek za jméno, pokud jméno chybí tak jen do závorek: \texttt{(jméno:štítek)}, \texttt{(:štítek)}, \texttt{-[jméno:štítek]->} a \texttt{-[:štítek]->}.
+Predikát určuje výběr elementů pouze s daným štítkem.
+Pokud se v posloupnostech opakuje proměnná se štítkem, pak štítek musejí mít i opakované definice proměnných.
+Protože v našem modelu elementy mají pouze jeden štítek, tak element posloupnosti může mít pouze jeden predikát.
+Navíc jsme vyřadili možnost aplikovat v predikátu operátor „|“ (logická operace nebo), tj. nelze použít \texttt{(jméno:štítek|štítekDva)}.
+Příklady Match části na grafu z obrázku \ref{figure.propertygraphexample} (bez Select):
+
+\begin{enumerate}
+\item
+\begin{code}
+match (x:Osoba) -> (y:Osoba)
+\end{code}
+Jsou zde dva vrcholy s názvy proměnných \texttt{x} a \texttt{y}.
+Oba mají predikát štítku \texttt{:Osoba}.
+To znamená, že do položek posloupnosti budou vybrány pouze elementy s daným štítkem.
+Match v průběhu hledání využívá pouze hrany vedoucí z proměnné \texttt{x}.
+Výsledeky hledání jsou dvojice vrcholů \texttt{x}-\texttt{y}: 2-1, 2-3, 3-2.
+Hodnoty jsou zde \texttt{ID} elementů.
+
+\item
+\begin{code}
+match (x:Osoba) <- (y:Osoba)
+\end{code}
+Match v průběhu hledání využívá pouze hrany vedoucí do proměnné \texttt{x}.
+Výsledky hledání jsou dvojice vrcholů \texttt{x}-\texttt{y}: 1-2, 2-3, 3-2.
+Hodnoty jsou zde \texttt{ID} elementů.
+
+\item
+\begin{code}
+match (x:Osoba), (x:Osoba) 
+\end{code}
+Zde vidíme dvě posloupnosti sdílející proměnnou \texttt{x}.
+Protože první měla predikát, tak i druhé opakování musí mít stejný predikát.
+Výsledky hledání jsou dvojice vrcholů \texttt{x}-\texttt{x}: 1-1, 2-2, 3-3.
+Hodnoty jsou zde \texttt{ID} elementů.
+
+\item
+\begin{code}
+match (x:Osoba), (y:Osoba) 
+\end{code}
+Zde vidíme dvě separátní posloupnosti bez sdílené proměnné, proto dojde ke vzniku skalárního součinu výsledků posloupností.
+Výsledky hledání jsou dvojice vrcholů \texttt{x}-\texttt{y}: 1-1, 1-2, 1-3, 2-1, 2-2, 2-3, 3-1, 3-2, 3-3.
+Hodnoty jsou zde \texttt{ID} elementů.
+
+\end{enumerate}
+
+\subsubsection{Výrazy}
+
+Zbylé části se skládají převážně z výrazů (např. \texttt{select x, y ...}, kde \texttt{x} a \texttt{y} jsou funkce vracející \texttt{ID} elementů).
+Samotné výrazy v jazyku PGQL mohou být značně komplikované, proto jsme vybrali tři základní výrazy, které budeme využívat.
+\begin{itemize}
+
+\item Funkce vracející \texttt{ID}. 
+V dotazu se reprezentuje použitím názvu proměnné.
+Lze zadat v jakékoliv části kromě Match.
+Například:
+\begin{code}
+select x, y match (x) -> (y).
+\end{code}
+Dotaz obsahuje dva výrazy \texttt{x} a \texttt{y} v části Select.
+Select část vytváří tabulku se dvěma sloupečky \text{x} a \texttt{y}, které obsahují \texttt{ID} elementů v daných proměnných.
+
+\item 
+Přístup k hodnotě vlastnosti elementu.
+Lze zadat v jakékoliv části kromě Match.
+V dotazu se reprezentuje použitím názvu proměnné s názvem vlastnosti sloučených pomocí tečky.
+Například: 
+\begin{code}
+select x.VlasnostJedna, y.VlastnostDva match (x) -> (y).
+\end{code}
+Dotaz obsahuje dva výrazy \texttt{x.VlasnostJedna} a \texttt{y.VlastnostDva} v části Select.
+Select část vytváří tabulku se dvěma sloupečky \text{x.VlasnostJedna} a \texttt{y.VlastnostDva}, které obsahují hodnoty vlastností elementů v daných proměnných.
+Tento výraz se například nemusí povést vyhodnotit, protože vlastnost nemusí existovat na daném elementu.
+V takovém případě budeme předpokládat, že výraz vrací nějakou konstantu definující selhání výpočtu.
+
+\item 
+Agregační funkce.
+Agregační funkce vypočítají výslednou hodnotu pro skupiny vytvořených při seskupování (Group by).
+Pokud nebylo zadáno Group by a je použita agregační funkce, pak ve zbylých částech kromě Match mohou být pouze agregační funkce.
+V takovém případě všechny výsledky patří do jedné skupiny.
+Agregační funkce povolíme pouze v části Select, protože Order by a Group by nemůžou být nikdy zadány společně.
+Nedovolíme rekurzivní používání daných funkcí, tj. agregační funkce nemůže mít na vstupu další agregační funkci.
+Funkce na vstupu mají hodnotu vypočteného výrazu (tj. \texttt{ID} nebo přístup k vlastnosti).
+Musíme brát v potaz, že při výpočtu výrazu může dojít k selhání a tedy funkce musí umět pracovat s konstantou definující selhání výpočtu.
+PGQL definuje pět funkcí:
+\begin{enumerate}
+\item Funkce minima vracející minimum z hodnot na vstupu. 
+\\*Značená \texttt{min(...)}.
+Pracuje s číselnými typy i řetězci.
+\item Funkce maxima vracející maximum z hodnot na vstupu. 
+\\*Značená \texttt{max(...)}.
+Pracuje s číselnými typy i řetězci.
+\item Funkce aritmetického průměru vracející aritmetický průměr hodnot na vstupu.
+Značená \texttt{avg(...)}.
+Pracuje pouze s číselnými typy.
+\item Funkce součtu vracející součet hodnot na vstupu, značená \texttt{sum(...)}.
+Pracuje pouze s číselnými typy.
+\item Funkce počtu vracející počet prvků na vstupu, značená \texttt{count(...)}.
+Pracuje s číselnými typy i řetězci.
+Funkce má dva módy.
+První mód je použití zápisu \texttt{count(výraz)}, kde \texttt{výraz} je přístup k \texttt{ID} nebo vlastnosti elementu.
+Druhý mód je použití zápisu \texttt{count(*)}.
+Tento zápis nepotřebuje vyhodnotit výrazy.
+Pokud byl napříkald zadán dotaz:
+\texttt{select count(*) match (x)}.
+V tomto dotaze pak nepotřebujeme znát elementy z části Match, ale stačí nám jejich počet.
+\end{enumerate}
+\end{itemize}
+
+\subsubsection{Select}
+
+Select část může obsahovat pouze výše zmíněné výrazy oddělené čárkami.
+V této části se dá pouze přístoupit k proměnným, které jsou definované v Match části.
+Existuje ještě speciální operátor \texttt{*}, který se dá zadat pouze v případě, pokud je v dotazu jen část Select a Match.
+V takovém případě se \texttt{*} nahradí všemi proměnnými z části Match.
+Příklad použití Select části:
+\begin{itemize}
+\item
+Použití obyčejných výrazů:
+\begin{code}
+select x, y, x.Vlastnost match (x) -> (y)
+\end{code}
+Dojde k návratu tabulky se třemi sloupečky.
+Sloupečky obsahují hodnoty daných výrazů.
+
+\item
+Použití operátoru \texttt{*}:
+\begin{code}
+select * match (x) -> (y)
+select x, y match (x) -> (y) 
+// dotazy jsou ekvivalentní
+\end{code} 
+
+\item
+Použití agregačních funkcí v Select bez Group by:
+\begin{code}
+select min(x.Vlastnost), avg(x.Vlastnost) match (x) -> (y)
+\end{code}
+V takovém případě je výsledkem dotazu pouze jedna dvojice výsledných hodnot dvou funkcí, protože všechny výsledky jsou seskupeny do jedné skupiny.
+Select zde tedy může zadávat pouze agregační funkce.
+
+\item
+Použití Select zároveň s Group by:
+\begin{code}
+select avg(x.Vlastnost), x match (x) -> (y) group by x
+\end{code}
+Select může obsahovat pouze výrazy agregačních funkcí nebo výrazy zadaných v části Group by.
+Výše zmíněný dotaz bez výrazu \texttt{x} v Select části a ponecháním pouze agregační funkce je správně.
+Rovněž odstraněním agregační funkce z Select části a zanecháním pouze druhého výrazu je správně.
+Výsledná tabulka má počet řádků rovný počtu vytvořených skupin.
+\end{itemize}
+
+\subsubsection{Order by}
+
+Order by definuje klíče (výrazy), podle kterých budou výsledky setříděny.
+Order by může přistupovat pouze k proměnným z Match části.
+Order by a Select nemusí mít shodné výrazy.
+Výrazy v této části jsou opět odděleny čárkami.
+Operátorem \texttt{asc}/\texttt{desc} za výrazem definuje zda jsou hodnoty tříděny vzestupně/sestupně.
+Pokud operátor chybí, tak je defaultně použito \texttt{asc}.
+Příklad použití Order by:
+\begin{itemize}
+\item
+Použití jednoho klíče:
+\begin{code}
+select x, y match (x) -> (y) order by x
+\end{code}
+Výsledky z Match jsou setříděny podle hodnot \texttt{x} vzestupně.
+
+\item
+Použití dvou klíčů:
+\begin{code}
+select x, y match (x) -> (y) order by x, y
+\end{code}
+Výsledky z Match jsou setříděny podle hodnot \texttt{x} vzestupně.
+Pokud se dva výsledky shodují v dané hodnotě, pak je použito porovnání hodnotou \texttt{y}.
+
+\item
+Použití operátoru \texttt{desc}:
+\begin{code}
+select x, y match (x) -> (y) order by x desc
+\end{code}
+Výsledky z Match jsou setříděny podle hodnot \texttt{x} sestupně.
+\end{itemize}
+
+\subsubsection{Group by}
+
+Group by definuje klíče seskupení (výrazy).
+Výrazy jsou odděleny čárkami.
+Součástí je i výpočet agregačních funkcí, pokud jsou zadány v části Select.
+Select část může obsahovat výrazy agregačních funkcí a výrazy klíčů seskupení.
+Příklad použití Group by:
+\begin{itemize}
+\item
+Použití jednoho klíče:
+\begin{code}
+select x match (x) -> (y) group by x
+\end{code}
+Výsledky z Match jsou setříděny podle hodnot \texttt{x} vzestupně.
+
+\item
+Použití dvou klíčů:
+\begin{code}
+select x, y match (x) -> (y) group by x, y
+\end{code}
+Výsledky z Match jsou seskupeny podle hodnot \texttt{x}.
+Pokud se dva výsledky shodují v dané hodnotě, pak je použito seskupení i podle hodnoty \texttt{y}.
+\end{itemize}

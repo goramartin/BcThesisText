@@ -90,88 +90,88 @@ Obsahuje řešení pro Streamed i Half-Streamed módy.
 
 \end{itemize}
 
-Podrobnější popis adresářové struktury:
-
-\clearpage
-\dirtree{%
-.1 /.
-.2 DB.
-.3 Creator \DTcomment{Definuje api čtení vstupních souborů.}. 
-.3 GraphElement \DTcomment{Definuje objekty elementů grafu.}.
-.3 Processor \DTcomment{Definuje tvorbu objektů grafu.}.
-.3 Table \DTcomment{Definuje typ v Property grafu.}.
-.4 Property \DTcomment{Definuje vlastnosti typu v Property grafu.}.
-.2 DataFiles. 
-.2 Parser.
-.3 ParsedPattern \DTcomment{Definuje objekty parsovaných posloupností části Match.}.
-.3 Parser.
-.4 ParseTree \DTcomment{Definuje objekty použité k tvorbě parsovacího stromu.}.
-.5 Visitor \DTcomment{Definuje objekty procházení parsovacího stromu.}.
-.4 ParserComponent \DTcomment{Definuje metody parsování tokenů dotazu.}.
-.3 Tokenizer \DTcomment{Definuje tokeny a způsob tokenizace vstupu.}.
-.2 Query.
-.3 Expression \DTcomment{Obsahuje logiku výrazů.}.
-.4 ExpressionComparer \DTcomment{Definuje porovnávání hodnot dvou výrazů.}.
-.4 Reference \DTcomment{Definuje výrazy odkazů na proměnné, jejich vlastnosti a agregační funkce.}.
-.3 GroupBy \DTcomment{Definuje objekty důležité k vykonání Group by.}.
-.4 Aggregate.
-.5 AggregateFunction \DTcomment{Definuje logiku agregačních funkcí.}.
-.4 AggregateInternalResults \DTcomment{Definuje úložiště hodnot agregačních funkcí.}.
-.4 MultiGroupGroupBy \DTcomment{Definuje řešení, pokud je zadano Group by.}.
-.5 EqualityComparer \DTcomment{Definuje porovnání záznamů v hašovací tabulce.}.
-.5 Hasher \DTcomment{Definuje hašování výrazů.}.
-.5 ParallelSolutions \DTcomment{Definuje paralelní vykonání Group by.}.
-.6 GlobalGroupBy.
-.6 LocalGroupByLocalTwoWayMerge.
-.6 TwoStepGroupBy.
-.5 ReferenceSingleThreadSolutions \DTcomment{Definuje jednovláknové vykonání Group by.}.
-.4 SingleGroupGroupBy \DTcomment{Definuje řešení, pokud není zadáno Group by.}.
-.3 Match \DTcomment{Definuje objekty důležité k vykonání Match.}.
-.4 DFSMatch \DTcomment{Definuje obejekty DFS prohledávání grafu.}.
-.5 BaseMatch \DTcomment{Definuje objekty vzoru.}.
-.5 Matcher \DTcomment{Definuje objekty algoritmu prohledávání grafu .}.
-.6 DFSParallelPatternMatcher \DTcomment{Definuje paralelní prohledávání grafu.}.
-.6 DFSPatternMatcher \DTcomment{Definuje jednovláknové prohledávání grafu.}.
-.5 Pattern \DTcomment{Definuje api vzoru.}.
-.4 MatchInternalResults \DTcomment{Definuje interní struktury Match pro ukládání výsledků prohledávání grafu.}.
-.3 OrderBy \DTcomment{Definuje objekty důležité k vykonání Order by.}.
-.4 Comparer \DTcomment{Definuje porovnání řádků tabulky pomocí proxy třídy.}.
-.5 Wrappers \DTcomment{Definuje porovnání řádků tabulky pomocí indexu.}.
-.4 Sorter \DTcomment{Definuje algoritmy třídění.}.
-.6 TableSorter \DTcomment{Definuje algoritmy třídění tabulky.}.
-.3 Results \DTcomment{Definuje tabulky výsledků.}.
-.4 GroupByResults \DTcomment{Definuje formát tabulky výsledků Group by.}.
-.4 TableResults \DTcomment{Definuje formát tabulky pouze pro elementy grafu.}.
-.3 Select \DTcomment{Definuje objekty důležité k vykonání Select.}.
-.4 ExpressionToStringWrapper  \DTcomment{Definuje objekt převodu hodnoty výrazu na řetězec.}.
-.4 Formater  \DTcomment{Definuje formát výstupu.}.
-.4 Printer  \DTcomment{Definuje kam se má výstup vypsat.}.
-.2 QueryStreamed.
-.3 GroupBy  \DTcomment{Definuje objekty důležité pro upravené vykonání Group by.}.
-.4 AggregateInternalResults  \DTcomment{Definuje upravené úložište agregačních funkcí pro Streamed mód.}.
-.4 MultiGroupGroupBy  \DTcomment{Definuje Streamed a Half-Streamed řešení, pokud je zadáno Group by.}.
-.5 BucketKeyValueFactory  \DTcomment{Definuje výrobu klíče hašovací tabulky pro Streamed mód.}.
-.5 Comparers  \DTcomment{Definuje porovnání využité Half-Streamed a Streamed módem.}.
-.4 SingleGroupGroupBy \DTcomment{Definuje Streamed a Half-Streamed vykonání, pokud není zadáno Group by.}.
-.3 Match  \DTcomment{Definuje objekty důležité pro upravené vykonání Group by.}.
-.4 DFSMatch  \DTcomment{Definuje pozměněná api pro předávání výsledků částem v průběhu prohledávání grafu.}.
-.5 Matcher.
-.6 DFSParallelPatternMatcher.
-.6 DFSPatternMatcher.
-.3 OrderBy \DTcomment{Definuje objekty důležité pro upravené vykonání Order by.}.
-.4 ABTree \DTcomment{Definuje použité vyhledávací stromy.}.
-.4 Sorter \DTcomment{Definuje Half-Streamed a Streamed vykonání pomocí vyhledávacích stromů.}.
-.5 ABTreeSorterHalfStreamed.
-.5 ABTreeSorterStreamed.
-.6 Comparer.
-.7 Wrapper \DTcomment{Definuje porovnání akumulovaných skupin pomocí proxy třídy.}.
-.4 TypeRangeHasher \DTcomment{Obsahuje objekty, které rozdělují rozsah typu na přihrádky.}.
-.3 Results \DTcomment{Definuje upravené fotmáty tabulek výsledků.}.
-.4 GroupByResults.
-.4 TableResults.
-.5 ABTree \DTcomment{Formát tabulky pro řešení s normálním (a, b)-stromem.}.
-.5 ABTreeAccum \DTcomment{Formát tabulky pro řešení s (a, b)-stromem, který akumuluje shodné řádky.}.
-}
+%%Podrobnější popis adresářové struktury:
+%%
+%%\clearpage
+%%\dirtree{%
+%%.1 /.
+%%.2 DB.
+%%.3 Creator \DTcomment{Definuje api čtení vstupních souborů.}. 
+%%.3 GraphElement \DTcomment{Definuje objekty elementů grafu.}.
+%%.3 Processor \DTcomment{Definuje tvorbu objektů grafu.}.
+%%.3 Table \DTcomment{Definuje typ v Property grafu.}.
+%%.4 Property \DTcomment{Definuje vlastnosti typu v Property grafu.}.
+%%.2 DataFiles. 
+%%.2 Parser.
+%%.3 ParsedPattern \DTcomment{Definuje objekty parsovaných posloupností části Match.}.
+%%.3 Parser.
+%%.4 ParseTree \DTcomment{Definuje objekty použité k tvorbě parsovacího stromu.}.
+%%.5 Visitor \DTcomment{Definuje objekty procházení parsovacího stromu.}.
+%%.4 ParserComponent \DTcomment{Definuje metody parsování tokenů dotazu.}.
+%%.3 Tokenizer \DTcomment{Definuje tokeny a způsob tokenizace vstupu.}.
+%%.2 Query.
+%%.3 Expression \DTcomment{Obsahuje logiku výrazů.}.
+%%.4 ExpressionComparer \DTcomment{Definuje porovnávání hodnot dvou výrazů.}.
+%%.4 Reference \DTcomment{Definuje výrazy odkazů na proměnné, jejich vlastnosti a agregační funkce.}.
+%%.3 GroupBy \DTcomment{Definuje objekty důležité k vykonání Group by.}.
+%%.4 Aggregate.
+%%.5 AggregateFunction \DTcomment{Definuje logiku agregačních funkcí.}.
+%%.4 AggregateInternalResults \DTcomment{Definuje úložiště hodnot agregačních funkcí.}.
+%%.4 MultiGroupGroupBy \DTcomment{Definuje řešení, pokud je zadano Group by.}.
+%%.5 EqualityComparer \DTcomment{Definuje porovnání záznamů v hašovací tabulce.}.
+%%.5 Hasher \DTcomment{Definuje hašování výrazů.}.
+%%.5 ParallelSolutions \DTcomment{Definuje paralelní vykonání Group by.}.
+%%.6 GlobalGroupBy.
+%%.6 LocalGroupByLocalTwoWayMerge.
+%%.6 TwoStepGroupBy.
+%%.5 ReferenceSingleThreadSolutions \DTcomment{Definuje jednovláknové vykonání Group by.}.
+%%.4 SingleGroupGroupBy \DTcomment{Definuje řešení, pokud není zadáno Group by.}.
+%%.3 Match \DTcomment{Definuje objekty důležité k vykonání Match.}.
+%%.4 DFSMatch \DTcomment{Definuje obejekty DFS prohledávání grafu.}.
+%%.5 BaseMatch \DTcomment{Definuje objekty vzoru.}.
+%%.5 Matcher \DTcomment{Definuje objekty algoritmu prohledávání grafu .}.
+%%.6 DFSParallelPatternMatcher \DTcomment{Definuje paralelní prohledávání grafu.}.
+%%.6 DFSPatternMatcher \DTcomment{Definuje jednovláknové prohledávání grafu.}.
+%%.5 Pattern \DTcomment{Definuje api vzoru.}.
+%%.4 MatchInternalResults \DTcomment{Definuje interní struktury Match pro ukládání výsledků prohledávání grafu.}.
+%%.3 OrderBy \DTcomment{Definuje objekty důležité k vykonání Order by.}.
+%%.4 Comparer \DTcomment{Definuje porovnání řádků tabulky pomocí proxy třídy.}.
+%%.5 Wrappers \DTcomment{Definuje porovnání řádků tabulky pomocí indexu.}.
+%%.4 Sorter \DTcomment{Definuje algoritmy třídění.}.
+%%.6 TableSorter \DTcomment{Definuje algoritmy třídění tabulky.}.
+%%.3 Results \DTcomment{Definuje tabulky výsledků.}.
+%%.4 GroupByResults \DTcomment{Definuje formát tabulky výsledků Group by.}.
+%%.4 TableResults \DTcomment{Definuje formát tabulky pouze pro elementy grafu.}.
+%%.3 Select \DTcomment{Definuje objekty důležité k vykonání Select.}.
+%%.4 ExpressionToStringWrapper  \DTcomment{Definuje objekt převodu hodnoty výrazu na řetězec.}.
+%%.4 Formater  \DTcomment{Definuje formát výstupu.}.
+%%.4 Printer  \DTcomment{Definuje kam se má výstup vypsat.}.
+%%.2 QueryStreamed.
+%%.3 GroupBy  \DTcomment{Definuje objekty důležité pro upravené vykonání Group by.}.
+%%.4 AggregateInternalResults  \DTcomment{Definuje upravené úložište agregačních funkcí pro Streamed mód.}.
+%%.4 MultiGroupGroupBy  \DTcomment{Definuje Streamed a Half-Streamed řešení, pokud je zadáno Group by.}.
+%%.5 BucketKeyValueFactory  \DTcomment{Definuje výrobu klíče hašovací tabulky pro Streamed mód.}.
+%%.5 Comparers  \DTcomment{Definuje porovnání využité Half-Streamed a Streamed módem.}.
+%%.4 SingleGroupGroupBy \DTcomment{Definuje Streamed a Half-Streamed vykonání, pokud není zadáno Group by.}.
+%%.3 Match  \DTcomment{Definuje objekty důležité pro upravené vykonání Group by.}.
+%%.4 DFSMatch  \DTcomment{Definuje pozměněná api pro předávání výsledků částem v průběhu prohledávání grafu.}.
+%%.5 Matcher.
+%%.6 DFSParallelPatternMatcher.
+%%.6 DFSPatternMatcher.
+%%.3 OrderBy \DTcomment{Definuje objekty důležité pro upravené vykonání Order by.}.
+%%.4 ABTree \DTcomment{Definuje použité vyhledávací stromy.}.
+%%.4 Sorter \DTcomment{Definuje Half-Streamed a Streamed vykonání pomocí vyhledávacích stromů.}.
+%%.5 ABTreeSorterHalfStreamed.
+%%.5 ABTreeSorterStreamed.
+%%.6 Comparer.
+%%.7 Wrapper \DTcomment{Definuje porovnání akumulovaných skupin pomocí proxy třídy.}.
+%%.4 TypeRangeHasher \DTcomment{Obsahuje objekty, které rozdělují rozsah typu na přihrádky.}.
+%%.3 Results \DTcomment{Definuje upravené fotmáty tabulek výsledků.}.
+%%.4 GroupByResults.
+%%.4 TableResults.
+%%.5 ABTree \DTcomment{Formát tabulky pro řešení s normálním (a, b)-stromem.}.
+%%.5 ABTreeAccum \DTcomment{Formát tabulky pro řešení s (a, b)-stromem, který akumuluje shodné řádky.}.
+%%}
 
 \section{Programátorská dokumentace}
 
@@ -1449,6 +1449,7 @@ Datový soubor vrcholů v souboru \textit{Nodes.txt}.
 Soubory mají formát definový formát v sekci \ref{anal.vstup} a \ref{impl.vstup}.
 Očekává se, že oddělovače sloupečků jsou mezery.
 Každé \texttt{ID} elementu musí být unikátní.
+Názvy vlastností a typů elementů v Property grafu nesmí obsahovat čísla.
 Nedodržení formátu má za následek nedefinované chování.
 
 \subsubsection{Argumenty programu} \label{impl.arguments}
@@ -1585,6 +1586,7 @@ Enter Query:
 Uživatel zadá dotaz pomocí jazyka PGQL z sekce \ref{req.pgql}.
 Názvy proměnných, elementů Property grafu a vlastností jsou citlivé na velikost písmene.
 Samotné názvy částí dotazu a funkcí nejsou citlivé na velikost písmene.
+Názvy proměnných nesmí obsahovat čísla.
 Každý dotaz musí být ukončen znakem „;“.
 Stisknutím klávesy „Enter“ dojde k zahájení zpracování dotazu.
 Po dokončení je uživatel vyzván pomocí zprávy, aby zadal další dotaz nebo ukončil aplikaci:
