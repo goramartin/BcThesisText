@@ -187,12 +187,12 @@ Zbylé části se skládají převážně z výrazů (např. \texttt{select x, y
 Samotné výrazy v jazyku PGQL mohou být značně komplikované, proto jsme vybrali tři základní výrazy, které budeme využívat.
 \begin{itemize}
 
-\item Funkce vracející \texttt{ID}. 
+\item Funkce vracející \texttt{ID} elementu. 
 V dotazu se reprezentuje použitím názvu proměnné.
 Lze zadat v jakékoliv části kromě Match.
 Například:
 \begin{code}
-select x, y match (x) -> (y).
+select x, y match (x) -> (y)
 \end{code}
 Dotaz obsahuje dva výrazy \texttt{x} a \texttt{y} v části Select.
 Select část vytváří tabulku se dvěma sloupečky \text{x} a \texttt{y}, které obsahují \texttt{ID} elementů v daných proměnných.
@@ -203,10 +203,10 @@ Lze zadat v jakékoliv části kromě Match.
 V dotazu se reprezentuje použitím názvu proměnné s názvem vlastnosti sloučených pomocí tečky.
 Například: 
 \begin{code}
-select x.VlasnostJedna, y.VlastnostDva match (x) -> (y).
+select x.VlasnostJedna, y.VlastnostDva match (x) -> (y)
 \end{code}
 Dotaz obsahuje dva výrazy \texttt{x.VlasnostJedna} a \texttt{y.VlastnostDva} v části Select.
-Select část vytváří tabulku se dvěma sloupečky \text{x.VlasnostJedna} a \texttt{y.VlastnostDva}, které obsahují hodnoty vlastností elementů v daných proměnných.
+Select část vytváří tabulku se dvěma sloupečky \texttt{x.VlasnostJedna} a \texttt{y.VlastnostDva}, které obsahují hodnoty vlastností elementů v daných proměnných.
 Tento výraz se například nemusí povést vyhodnotit, protože vlastnost nemusí existovat na daném elementu.
 V takovém případě budeme předpokládat, že výraz vrací nějakou konstantu definující selhání výpočtu.
 
@@ -230,7 +230,7 @@ Pracuje s číselnými typy i řetězci.
 \item Funkce aritmetického průměru vracející aritmetický průměr hodnot na vstupu.
 Značená \texttt{avg(...)}.
 Pracuje pouze s číselnými typy.
-\item Funkce součtu vracející součet hodnot na vstupu, značená \texttt{sum(...)}.
+\item Funkce součtu vracející součet hodnot na vstupu. Značená \texttt{sum(...)}.
 Pracuje pouze s číselnými typy.
 \item Funkce počtu vracející počet prvků na vstupu, značená \texttt{count(...)}.
 Pracuje s číselnými typy i řetězci.
@@ -238,7 +238,7 @@ Funkce má dva módy.
 První mód je použití zápisu \texttt{count(výraz)}, kde \texttt{výraz} je přístup k \texttt{ID} nebo vlastnosti elementu.
 Druhý mód je použití zápisu \texttt{count(*)}.
 Tento zápis nepotřebuje vyhodnotit výrazy.
-Pokud byl napříkald zadán dotaz:
+Pokud byl například zadán dotaz:
 \texttt{select count(*) match (x)}.
 V tomto dotaze pak nepotřebujeme znát elementy z části Match, ale stačí nám jejich počet.
 \end{enumerate}
@@ -247,10 +247,13 @@ V tomto dotaze pak nepotřebujeme znát elementy z části Match, ale stačí n�
 \subsubsection{Select}
 
 Select část může obsahovat pouze výše zmíněné výrazy oddělené čárkami.
-V této části se dá pouze přístoupit k proměnným, které jsou definované v Match části.
-Existuje ještě speciální operátor \texttt{*}, který se dá zadat pouze v případě, pokud je v dotazu jen část Select a Match.
+V této části lze přístoupit k proměnným, které jsou definované v Match části, nebo zadat výrazy agregačních funkcí.
+Výsledkem Select je tabulka.
+Sloupečky v tabulce představují výrazy zadané v dané části.
+Řádky tabulky jsou pak hodnoty výrazů pro výsledky z části Match nebo Group/Order by.
+Existuje ještě speciální operátor \texttt{*}, který lze zadat pouze v případě, pokud je v dotazu jen část Select a Match.
 V takovém případě se \texttt{*} nahradí všemi proměnnými z části Match.
-Příklad použití Select části:
+Následují příklady použití Select části:
 \begin{itemize}
 \item
 Použití obyčejných výrazů:
@@ -289,13 +292,13 @@ Výsledná tabulka má počet řádků rovný počtu vytvořených skupin.
 
 \subsubsection{Order by}
 
-Order by definuje klíče (výrazy), podle kterých budou výsledky setříděny.
+Order by definuje klíče (výrazy), podle kterých budou výsledky z části Match setříděny.
 Order by může přistupovat pouze k proměnným z Match části.
 Order by a Select nemusí mít shodné výrazy.
 Výrazy v této části jsou opět odděleny čárkami.
 Operátorem \texttt{asc}/\texttt{desc} za výrazem definuje zda jsou hodnoty tříděny vzestupně/sestupně.
-Pokud operátor chybí, tak je defaultně použito \texttt{asc}.
-Příklad použití Order by:
+Pokud operátor chybí, tak je jako výchozí operator použit \texttt{asc}.
+Následují příklady použití Order by části:
 \begin{itemize}
 \item
 Použití jednoho klíče:
@@ -323,10 +326,14 @@ Výsledky z Match jsou setříděny podle hodnot \texttt{x} sestupně.
 \subsubsection{Group by}
 
 Group by definuje klíče seskupení (výrazy).
+Výsledkem Group by je množina skupin.
+Skupiny obsahují výsledky prohledávání z části Match.
+Všechny výsledky v jedné skupině mají stejné hodnoty klíčů seskupení. 
 Výrazy jsou odděleny čárkami.
-Součástí je i výpočet agregačních funkcí, pokud jsou zadány v části Select.
 Select část může obsahovat výrazy agregačních funkcí a výrazy klíčů seskupení.
-Příklad použití Group by:
+Agregační funkce se vypočítají pro každou skupinu zvlášť.
+Pokud není zadána část Group by a dotaz obsahuje výrazy agregačních funkcí, pak se jedná o seskupení všech výsledků do jedné skupiny.
+Následují příklady použití Group by části:
 \begin{itemize}
 \item
 Použití jednoho klíče:

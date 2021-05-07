@@ -1,13 +1,49 @@
 \chapter{Závěr}
 %\addcontentsline{toc}{chapter}{Závěr}
 
-Tady ma byt text
+Vytvořili jsme dotazovací engine dle zadaných požadavků.
+Engine se skládá ze dvou částí.
+První část je statická grafová databáze využívající Labeled-property model grafových dat. 
+Druhá část obsahuje struktury a algoritmy pro vykonání uživatelských dotazů nad grafovou databází.
+Dotazy jsou zadány ve stanovené podmnožině jazyka PGQL.
+Vykonávání je možno provádět jednovláknově i paralelně.
+Všechna grafová data a data v průběhu zpracování dotazu jsou obsažena v hlavní paměti.
+
+Druhou část jsme rozdělili na dva bloky.
+V prvním bloku jsme navrhli řešení vykonávající Group/Order by po dokončení prohledávání grafu v části Match.
+Výsledky prohledávání byly ukládány do tabulky.
+Teprve po získání všech výsledků byly na nich aplikovány algoritmy Group/Order by. 
+V druhém bloku jsme upravili první blok a navrhli nová řešení zpracování dle zadání práce.
+Propojili jsme prohledávání grafu se zpracováním Group/Order by tak, aby engine seskupoval/setřiďoval výsledky prohledávání v moment jejich nalezení.
+Blok obsahoval dva módy: Streamed a Half-Streamed.
+
+Dva dané bloky jsme porovnali v rychlosti vykonávání dotazů pomocí experimentu.
+Experiment obsahoval množství dotazů, které byly vykonány nad třemi reálnými grafy s uměle vygenerovanými vlastnostmi.
+Otestovali jsme jednovláknové zpracování a paralelní zpracování využívající osm vláken.
+Při experimentu jsme měřili práci pouze Match části s Group/Order by, tj. výsledky neobsahují práci Select části.
+Následuje shrnutí výsledků:
+\begin{itemize}
+
+\item \textbf{Order by:} z výsledků Order by vyplynulo, že řešení druhého bloku využívající (a, 2a)-stromy jsou obecně pomalejší než řešení v prvním bloku využívající Merge sort.
+Nicméně, v paralelních řešeních druhého bloku jsme byli schopni navrhnout řešení, které předčilo paralelní Merge sort prvního bloku při třídění pomocí vlastností.
+
+\item \textbf{Single group Group by:} při experimentu s dotazem, který obsahuje pouze agregační funkce v části Select ale nemá část Group by, jsme zjistili, že řešení druhého bloku jsou obecně rychlejší než řešení prvního bloku, protože neukládají výsledky prohledávání. 
+Problematické zde bylo paralelní Streamed řešení, ve kterém docházelo ke zpomalení, kvůli značné režii za synchronizaci.
+
+\item \textbf{Group by:} u řešení Group by druhého bloku nedocházelo ke znatelnému zrychlení.
+Jedinou výjimkou bylo Streamed řešení druhého bloku v jednovláknovém zpracování, které bylo nejrychlejší.
+
+\end{itemize}
+
+Obecně jsme zjistili, že naše předpoklady o zpracovávání Group by a Order by v průběhu prohledávání grafu nabízí v určitých případech zrychlení vykonávání dotazů.
+\clearpage
+
+
 
 \section{Budoucí výzkum}
 
 
 \begin{enumerate}
-
 
 \item Rozšíření enginu o možnost zadat Order by a Group by společně.
 Agregování v průběhu hledání se dá rozdělit na dvě hlavní části.
@@ -22,7 +58,7 @@ V našem testování jsme sice volili reálne grafy, ale jejich Properties jsme 
 Normal přistup má vždy všechna data připravená v paměti a při zpracování je rovnoměrně rozděluje mezi vlákny.
 Vlákna tedy mají vždy stejný počet výsledků pro zpracování.
 Navíc díky kompletnosti dat lze data optimálněji zpracovávat a použít větší množství obecných algoritmů.
-Například při třídění jsme použili základní algoritmu Merge sort, který není možný aplikovat při třídění v průběhu vyhledávání.  
+Například při třídění jsme použili základní algoritmus Merge sort, který není možný aplikovat při třídění v průběhu vyhledávání.  
 Rozdělení práce vylepšených řešení závísí na počtu vyhledaných výsledků v každém vlákně.
 Mohou nastávát případy, kdy jedno vlákno má více výsledků ke zpracování než ostatní. 
 Daný problém jsme se v našem řešení prohledávání snažili vyřešit pomocí přidělování malých skupin vrcholů vláknum.
@@ -30,8 +66,8 @@ Vlákno po prohledání daných vrcholů zažádalo o další.
 Nicméně, dané řešení nemůže zaručit stoprocentně rovnoměrné rozdělení práce.
 Bylo by vhodné prozkoumat, jak daná situace ovlivňuje naše řešení.
 
-\item U Order by řešení jsme viděli značné zrychlení při třídění pomocí Properties v paralelizovaných řešeních.
-Bylo by vhodné prozkoumat možnosti vytvoření globálních statistik pro každou Property a podrobněji zjistit možnosti rozdělení rozsahů přihrádek.
+\item U Order by řešení jsme viděli značné zrychlení při třídění pomocí vlastností v paralelizovaných řešeních.
+Bylo by vhodné prozkoumat možnosti vytvoření globálních statistik pro každou vlastnost a podrobněji zjistit možnosti rozdělení rozsahů přihrádek.
 Samotné rozdělení přihrádek jsme pro řetězce zpracovali pouze s předpokladem, že se jedná o ASCII znaky.
 V budoucí práci je možné zkoumat rozdělování i pro složitější znakové sady.
 
