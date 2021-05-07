@@ -74,7 +74,7 @@ Samotná grafová data nebudeme nijak omezovat.
 To znamená, že v grafu mohou být cykly, dva vrcholy mohou být propojeny několika hranami, nemusí existovat žádná hrana ani vrchol, mohou existovat nepropojené vrcholy, hrana může mít totožný počáteční vrchol s koncovým vrcholem a podobně.
 
 \subsubsection{Příklad grafu splňující model}
-Nyní uvedeme příklad jednoduchého grafu splňující náš model
+Nyní uvedeme příklad jednoduchého grafu splňující náš model:
 
 \begin{figure}[!htp]
 \includegraphics[width=100mm]{../img/propertyexample.pdf}\centering
@@ -82,11 +82,11 @@ Nyní uvedeme příklad jednoduchého grafu splňující náš model
 \label{figure.propertygraphexample}
 \end{figure}
 
-Na obrázku \ref{figure.propertygraphexample} vidímě tři vrcholy se štítkem \textbf{Osoba}, které reprezentující fyzické osoby, a jeden vrchol se šítkem \textbf{Univerzita}, reprezentující vysokou školu.
+Na obrázku \ref{figure.propertygraphexample} vidímě tři vrcholy se štítkem \textbf{Osoba}, které reprezentující fyzické osoby, a jeden vrchol se šítkem \textbf{Univerzita} reprezentující vysokou školu.
 Štítku \textbf{Osoba} byly přiděleny dvě vlastnosti: \textit{Jméno} (řetězec) a \textbf{Věk} (číselná hodnota).
 Štítku \textbf{Univerzita} byla přidělena jedna vlastnost: \textit{Jméno}, která odpovídá stejné vlastnosti štítku \textbf{Osoba} a mají stejný typ hodnoty (řetězec).
-Mezi vrcholy fyzických osob existuje vztah \textbf{zná}, který určuje zda jedna (počáteční vrchol) osoba zná druhou (koncový vrchol).
-Vlasnost \textit{Od} definuje datum, kdy došlo k poznání osoby.
+Mezi vrcholy fyzických osob existuje vztah \textbf{zná}, který určuje zda jedna osoba (počáteční vrchol) zná druhou osobu (koncový vrchol).
+Vlastnost \textit{Od} definuje datum, kdy došlo k poznání osoby.
 Mezi vrcholy fyzických osob a vysokou školou existuje vzah \textbf{je studentem}, který říká zda osoba studuje na dané vysoké škole.
 Tento vztah nemá žádnou vlastnost.
 Samotně pak každý element má přiřazeno \texttt{ID}.
@@ -96,7 +96,7 @@ Příklad vznikl na základě prvního grafu z dokumentace níže popisovaného 
 \label{req.pgql}
 
 V naši práci budeme používat dotazovací jazyk PGQL\footnote{\url{https://pgql-lang.org/spec/1.2/}} verze 1.2 k dotazování nad Property grafem.
-Protože je jazyk značné obsáhlý a k realizaci naši práce nepořebujeme všechny vlastnosti jazyka, tak jsme se rozhodli vybrat jen učitou podmnožinu jazyka.
+Jazyk je značné obsáhlý a k realizaci naši práce nepořebujeme všechny jeho vlastnosti, proto jsme se rozhodli využít jeho podmnožinu.
 V naši práci budeme pracovat jen s částmi Select, Match, Group by a Order by.
 Ostatní části nebudeme používat.
 V každém dotazu musí být vždy přítomná část Select a Match.
@@ -118,7 +118,7 @@ Každá položka výčtu pak definuje jeden sloupeček tabulky.
 \item \textbf{Order by:} vykoná setřídění výsledků dle zadaných klíčů.
 \end{itemize}
 
-Nyní krátce popíšeme omezení a klíčové vlastnosti, s kterými budeme pracovat v naši práci.
+Nyní krátce popíšeme omezení a klíčové vlastnosti, s kterými budeme pracovat.
 Pro komplexní popis odkazujeme na citovanou dokumentaci.
 
 \subsubsection{Match}
@@ -195,7 +195,7 @@ Například:
 select x, y match (x) -> (y)
 \end{code}
 Dotaz obsahuje dva výrazy \texttt{x} a \texttt{y} v části Select.
-Select část vytváří tabulku se dvěma sloupečky \text{x} a \texttt{y}, které obsahují \texttt{ID} elementů v daných proměnných.
+Select část vytváří tabulku se dvěma sloupečky \texttt{x} a \texttt{y}, které obsahují \texttt{ID} elementů v daných proměnných.
 
 \item 
 Přístup k hodnotě vlastnosti elementu.
@@ -203,10 +203,10 @@ Lze zadat v jakékoliv části kromě Match.
 V dotazu se reprezentuje použitím názvu proměnné s názvem vlastnosti sloučených pomocí tečky.
 Například: 
 \begin{code}
-select x.VlasnostJedna, y.VlastnostDva match (x) -> (y)
+select x.VlastnostJedna, y.VlastnostDva match (x) -> (y)
 \end{code}
-Dotaz obsahuje dva výrazy \texttt{x.VlasnostJedna} a \texttt{y.VlastnostDva} v části Select.
-Select část vytváří tabulku se dvěma sloupečky \texttt{x.VlasnostJedna} a \texttt{y.VlastnostDva}, které obsahují hodnoty vlastností elementů v daných proměnných.
+Dotaz obsahuje dva výrazy \texttt{x.VlastnostJedna} a \texttt{y.VlastnostDva} v části Select.
+Select část vytváří tabulku se dvěma sloupečky \texttt{x.VlastnostJedna} a \texttt{y.VlastnostDva}, které obsahují hodnoty vlastností elementů v daných proměnných.
 Tento výraz se například nemusí povést vyhodnotit, protože vlastnost nemusí existovat na daném elementu.
 V takovém případě budeme předpokládat, že výraz vrací nějakou konstantu definující selhání výpočtu.
 
@@ -296,7 +296,7 @@ Order by definuje klíče (výrazy), podle kterých budou výsledky z části Ma
 Order by může přistupovat pouze k proměnným z Match části.
 Order by a Select nemusí mít shodné výrazy.
 Výrazy v této části jsou opět odděleny čárkami.
-Operátorem \texttt{asc}/\texttt{desc} za výrazem definuje zda jsou hodnoty tříděny vzestupně/sestupně.
+Operátor \texttt{asc}/\texttt{desc} za výrazem definuje zda jsou hodnoty tříděny vzestupně/sestupně.
 Pokud operátor chybí, tak je jako výchozí operator použit \texttt{asc}.
 Následují příklady použití Order by části:
 \begin{itemize}

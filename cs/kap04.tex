@@ -323,7 +323,7 @@ V dotazech G\_Q3 a G\_Q6 pak vlákna při slévání výsledků vytvářejí vž
 To nám umožní sledovat situaci, kdy vlákna vytvářejí navzájem rozdílné záznamy.
 
 Obecně dotazy G\_Q4/G\_Q5, G\_Q6, G\_Q7 a G\_Q8 nám umožní otestovat chování řešení při snižování počtu vytvářených skupin.
-Pro G\_Q3 a G\_Q6 bude navíc vidět režie za porovnání vlastnoti vůči \verb+ID+.
+Pro G\_Q3 a G\_Q6 bude navíc vidět režie za porovnání vlastnosti vůči \verb+ID+.
 
 Následuje shrnutí:
 \begin{itemize}
@@ -381,7 +381,7 @@ static void CleanGC()
 \subsection{Měření uběhlého času}
 
 Protože benchmark je implementovám v jazyce C\# pro .NET Framework 4.8, rozhodli jsme se využít nativních možností měření uběhlé doby.
-Existují dvě hlavní metody meření a to pomocí třídy \texttt{Stopwatch} nebo přísup k vlasnotsti \texttt{Process.TotalProcessorTime}.
+Existují dvě hlavní metody meření a to pomocí třídy \texttt{Stopwatch} nebo přísup k vlastnosti \texttt{Process.TotalProcessorTime}.
 První možnost je závíslá na instanci.
 Meří uběhlý čas mezi voláním metod \texttt{Start} a \texttt{Stop} na instanci bez ohledu v jakém vlákně byly metody volány.
 Měření probíhá pomocí počítání taktů časovače v podkladovém mechanismu hardwaru.
@@ -613,7 +613,7 @@ A vždy platí, že 67 108 863 $> \# $vrcholů v grafu (z tabulky \ref{tab.grafB
 Výsledná doba zpracování pak odpovídá jednovláknovému zpracování s přidanou režií za přístup k zámku.
 
 Naopak u dotazů O\_Q3 a O\_Q4 je tříděno pomocí hodnot vygenerovaných náhodně spadající do celého rozsahu typu klíče a zde Streamed řešení předčilo všechna ostatní. 
-Pro budoucí rozšíření by bylo nutné zvážit vytvoření statistik rozsahů jednotlivých vlasnotní, aby bylo možné lépe vytvořit rozdělení přihrádek.
+Pro budoucí rozšíření by bylo nutné zvážit vytvoření statistik rozsahů jednotlivých vlastností, aby bylo možné lépe vytvořit rozdělení přihrádek.
 
 \subsubsection{Zrychlení paralelních řešení pro O\_Q3 a O\_Q4 }
 
