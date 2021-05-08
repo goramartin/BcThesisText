@@ -2,3 +2,58 @@
 \addcontentsline{toc}{chapter}{Úvod}
 
 Tady ma byt text.
+
+\section*{Cíl práce}
+
+\begin{enumerate}
+
+\item
+Navrhnout dotazovací engine, který bude sloužit jako výchozí prostředí pro naši práci.
+Obsahuje dvě části:
+\begin{enumerate}
+\item První část obsahuje jednu \textbf{statickou grafovou databázi}, která pracuje s \textbf{Labeled-property} modelem (sekce \ref{req.propGraph}) grafových dat.
+Celá grafová databáze bude obsažena v hlavní paměti.
+
+\item Druhá část obsahuje algoritmy a struktury pro zpracování dotazu \textbf{podmnožiny jazyka PGQL} (sekce \ref{req.pgql}) nad danou grafovou databází:
+    \begin{enumerate}
+    \item Podmnožina jazyka PGQL bude obsahovat pouze hlavní částí dotazu: \textbf{Select}, \textbf{Match}, \textbf{Group by} a \textbf{Order by}.
+    \textbf{Nebude možno} zadat Group by a Order by společně.
+    \item Všechna data v průběhu zpracování dotazu budou obsažena v hlavní paměti.
+    \item Zpracování částí Group by a Order by bude provedeno \textbf{po dokončení prohledávání grafu} v části Match.
+    To znamená, že nejdříve dojde k nalezení všech výsledků prohledávání a teprve pak dojde k seskupení nebo setřídění daných výsledků.
+    \item Obecně engine bude schopen vykonat dotaz jednovláknově.
+    Části \textbf{Match}, \textbf{Group by} a \textbf{Order by} bude schopen vykonat i paralelně.
+    \end{enumerate}
+\end{enumerate}
+
+\item
+Upravit druhou část výše definovaného dotazovacího enginu po vzoru streamovacích sýstémů tak, aby vykonávání částí Group by a Order by probíhalo v průběhu prohledávání grafu časti Match:
+\begin{enumerate}
+
+\item
+V moment nalezení jednoho výsledku prohledávání grafu v části Match bude daný výsledek zpracován.
+Zpracováním zde rozumíme zatřídění do již setříděné posloupnosti výsledků nebo přiřazením výsledku do patřičné skupiny.
+
+\item 
+Engine po úpravě musí být schopen zpracovávat dotazy původním řešením i upraveným řešením.
+
+\item
+Upravená část bude pracovat se stejnou podmnožinou jazyka PGQL jako původní neupravená část.
+
+\item
+Všechna data v průběhu zpracování budou obsažena v hlavní paměti.
+
+\item
+Obecně upravená část bude schopna vykonat dotaz jednovláknově.
+Části \textbf{Match}, \textbf{Group by} a \textbf{Order by} bude schopna vykonat i paralelně.
+\end{enumerate}
+
+\item
+Vykonat experiment, který testuje původní zpracování (odrážka 1.b) vůči upravené části (odrážka 2.) v rychlosti vykonání dotazů:
+\begin{enumerate}
+\item Experiment bude proveden na několika reálných grafech s reálnými nebo uměle vygenerovanými vlastnostmi.
+\item V experimentu otestujeme všechna navrhnutá řešení.
+\item Každé řešení bude otestováno na několika vybraných dotazech.
+\item Experiment bude zakončen prezentací výsledků a diskuzí.
+\end{enumerate}
+\end{enumerate}
