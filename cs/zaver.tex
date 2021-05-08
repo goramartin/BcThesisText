@@ -13,7 +13,7 @@ Druhou část jsme rozdělili na dva bloky:
 \item
 V prvním bloku jsme navrhli řešení vykonávající Group/Order by po dokončení prohledávání grafu v části Match.
 Výsledky prohledávání byly ukládány do tabulky.
-Teprve po získání všech výsledků byly na nich aplikovány algoritmy Group/Order by.
+Teprve po získání všech výsledků byly na výsledcích aplikovány algoritmy Group/Order by.
 \begin{itemize}
 \item V části Order by jsme použili standartní algoritmus Merge sort pro jednovláknové i paralelní zpracování.
 \item V části Group by jsme výsledky seskupovali pomocí hašovací tabulky.
@@ -80,7 +80,7 @@ Navíc díky kompletnosti dat lze data optimálněji zpracovávat a použít vě
 Například při třídění jsme použili základní algoritmus Merge sort, který není možný aplikovat při třídění v průběhu vyhledávání.  
 Rozdělení práce vylepšených řešení závísí na počtu vyhledaných výsledků v každém vlákně.
 Mohou nastávát případy, kdy jedno vlákno má více výsledků ke zpracování než ostatní. 
-Daný problém jsme se v našem řešení prohledávání snažili vyřešit pomocí přidělování malých skupin vrcholů vláknum.
+Daný problém jsme se v našem řešení prohledávání snažili vyřešit pomocí přidělování malých skupin vrcholů vláknům.
 Vlákno po prohledání daných vrcholů zažádalo o další.
 Nicméně, dané řešení nemůže zaručit stoprocentně rovnoměrné rozdělení práce.
 Bylo by vhodné prozkoumat, jak daná situace ovlivňuje naše řešení.
@@ -91,6 +91,6 @@ Samotné rozdělení přihrádek jsme pro řetězce zpracovali pouze s předpokl
 V budoucí práci je možné zkoumat rozdělování i pro složitější znakové sady.
 
 \item V paralelních Group by řešeních by bylo vhodné prozkoumat podrobněji škálovatelnost daných řešení pro rozličné počty vláken.
-Pokud možno, také možnosti jiných paralelních map.
+Pokud možno, také možnosti jiných paralelních map/slovníků.
  
 \end{enumerate}
