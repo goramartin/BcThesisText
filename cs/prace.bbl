@@ -1,0 +1,112 @@
+\begin{thebibliography}{10}
+
+\bibitem{rdf}
+Yves Raimond and Guus Schreiber.
+\newblock {RDF} 1.1 primer.
+\newblock {W3C} note, W3C, June 2014.
+\newblock https://www.w3.org/TR/2014/NOTE-rdf11-primer-20140624/.
+
+\bibitem{graphAlg}
+Mark Needham and E.~Amy Hodler.
+\newblock {\em Graph Algorithms}.
+\newblock O'Reilly Media, Inc., May 2019.
+
+\bibitem{sparql}
+Andy Seaborne and Steven Harris.
+\newblock {SPARQL} 1.1 query language.
+\newblock {W3C} recommendation, W3C, March 2013.
+\newblock https://www.w3.org/TR/2013/REC-sparql11-query-20130321/.
+
+\bibitem{pgql}
+{\em Dokumentace jazyka PGQL 1.2}.
+\newblock \url{https://pgql-lang.org/spec/1.2/} [Dostupnost ověřena k datu
+  15.4.2021].
+
+\bibitem{streaming}
+Tyler Akidau, Slava Chernyak, and Reuven Lax.
+\newblock {\em Streaming Systems: The What, Where, When, and How of Large-Scale
+  Data Processing}.
+\newblock O'Reilly Media, Inc., 1st edition, 2018.
+
+\bibitem{graphstreaming}
+János~Dániel Bali.
+\newblock Streaming graph analytics framework design.
+\newblock Master's thesis, KTH, School of Information and Communication
+  Technology (ICT), 2015.
+\newblock
+  \url{http://kth.diva-portal.org/smash/record.jsf?pid=diva2%3A830662&dswid=-2589},
+  OAI=oai:DiVA.org:kth-170425, URN=urn:nbn:se:kth:diva-170425,
+  diva=diva2:830662.
+
+\bibitem{graphstreamalgorithms}
+Andrew McGregor.
+\newblock Graph stream algorithms: A survey.
+\newblock {\em SIGMOD Rec.}, 43(1):9–20, May 2014.
+
+\bibitem{graphsummary}
+Nan Tang, Qing Chen, and Prasenjit Mitra.
+\newblock Graph stream summarization: From big bang to big crunch.
+\newblock In {\em Proceedings of the 2016 International Conference on
+  Management of Data}, SIGMOD '16, page 1481–1496, New York, NY, USA, 2016.
+  Association for Computing Machinery.
+
+\bibitem{neopropertygraph}
+{\em Definice Property grafu Neo4j}.
+\newblock \url{https://neo4j.com/developer/graph-database/} [Dostupnost
+  ověřena k datu 15.4.2021].
+
+\bibitem{json}
+{\em Dokumentace jazyka JSON}.
+\newblock \url{https://www.json.org/} [Dostupnost ověřena k datu 15.4.2021].
+
+\bibitem{dragonBook}
+Alfred~V. Aho, Monica~S. Lam, Ravi Sethi, and Jeffrey~D. Ullman.
+\newblock {\em Compilers: Principles, Techniques, and Tools (2nd Edition)}.
+\newblock {Addison Wesley}, August 2006.
+
+\bibitem{patterns}
+Erich Gamma, Richard Helm, Ralph Johnson, and John~M. Vlissides.
+\newblock {\em Design Patterns: Elements of Reusable Object-Oriented Software}.
+\newblock Addison-Wesley Professional, 1 edition, 1994.
+
+\bibitem{patterns2}
+Frank Buschmann, Regine Meunier, Hans Rohnert, Peter Sommerlad, and Michael
+  Stal.
+\newblock {\em Pattern-oriented Software Architecture: A System of Patterns}.
+\newblock John Wiley \& Sons, Inc., New York, NY, USA, 1996.
+
+\bibitem{asyncPGX}
+Nicholas~P. Roth, Vasileios Trigonakis, Sungpack Hong, Hassan Chafi, Anthony
+  Potter, Boris Motik, and Ian Horrocks.
+\newblock Pgx.d/async: A scalable distributed graph pattern matching engine.
+\newblock In {\em Proceedings of the Fifth International Workshop on Graph
+  Data-Management Experiences and Systems}, GRADES'17, New York, NY, USA, 2017.
+  Association for Computing Machinery.
+
+\bibitem{labyrint}
+Martin Mareš and Tomáš Valla.
+\newblock {\em Průvodce labyrintem algoritmů}.
+\newblock CZ.NIC, z.s.p.o., 2017.
+
+\bibitem{dataLecture}
+Martin Mareš.
+\newblock Lecture notes on data structures.
+\newblock \url{http://mj.ucw.cz/vyuka/dsnotes/}, february 2020.
+\newblock [Online; accessed 1-January-2021].
+
+\bibitem{hpcsharp}
+Victor~J. Duvanenko.
+\newblock Hpcsharp.
+\newblock \url{https://github.com/DragonSpit/HPCsharp}, 2018.
+
+\bibitem{snapnets}
+Jure Leskovec and Andrej Krevl.
+\newblock {SNAP Datasets}: {Stanford} large network dataset collection.
+\newblock \url{http://snap.stanford.edu/data}, June 2014.
+
+\bibitem{microsoft}
+{\em Dokumentace jazyka C\# pro .NET Framework 4.8}.
+\newblock \url{https://docs.microsoft.com/en-us/dotnet/csharp/} [Dostupnost
+  ověřena k datu 15.4.2021].
+
+\end{thebibliography}

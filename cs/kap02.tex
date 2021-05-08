@@ -138,7 +138,7 @@ Schéma bude obsahovat informace o všech \verb+elType+ a jejich vlastností.
 Pro \verb+elType+ je důležitý název a výčet vlastností.
 Vlastnosti pak musí nést svůj název a \verb+propType+.
 Vidíme, že se jedná jen o výčet \verb+(Název/Hodnota)+ dvojic.
-V tomto případě se nám jeví nejvhodnější zvolit pro reprezentaci schémat formát JSON\footnote{\url{https://www.json.org/}}.
+V tomto případě se nám jeví nejvhodnější zvolit pro reprezentaci schémat formát JSON \citep{json}.
 \verb+elType+ bude reprezentován JSON objektem. 
 První položka objektu je \verb+Kind+, která představuje \texttt{Název} a její \texttt{Hodnota} udává jméno \verb+elType+.
 Za ní bude následovat výčet vlastností.
@@ -216,11 +216,11 @@ Například může dojít k přidaní částí Where a Having spolu s nutností 
 Proto se budeme snažit držet základních principů object oriented programming a volit vhodné návrhové vzory.
 
 K načtení uživatelského dotazu se nám jeví jako nejvhodnější způsob použít techniky známé z překladačů programovacích jazyků.
-Budeme vycházet ze základních principů knihy o překladačích \citep{dragoonBook}.
+Budeme vycházet ze základních principů knihy o překladačích \citep{dragonBook}.
 V prvním kroku dojde k lexikální analýze uživatelsky zadaného řetězce.
 Dojde k vytvoření tokenů.
 V druhém kroku dojde k syntaktické a semantické analýze tokenů.
-Metodou top-down parsing \citep[str. 217]{dragoonBook} se vytvoří stromová struktura reprezentující daný dotaz.
+Metodou top-down parsing \citep[str. 217]{dragonBook} se vytvoří stromová struktura reprezentující daný dotaz.
 Poslední krok provede vytvoření tříd reprezentující dotaz pomocí iterace stromové struktury.
 Iterace a sběr dat ze stromové struktury budou implementovány návrhovým vzorem Visitor \citep[str. 331]{patterns}.
 V naši představě bychom chtěli vygenerovat stromovou strukturu pro každou hlavní část dotazu (Match, Select, Order by a Group by).
@@ -557,8 +557,8 @@ Vlastnosti prohledávání grafu:
 Hledání podgrafu v grafu je obecně složitý problém. 
 Cílem této práce není navrhnout algoritmus pro vyhledávání vzoru, proto jsme se rozhodli inspirovat a použít obecný postup k řešení daného problému.
 Mezi základní postupy vyhledávání vzoru patří prohledávání do šířky (BFS) a prohledávání do hloubky (DFS) \citep[kap. 4]{graphAlg}. 
-Na základě 1. a 2. kapitoly článku \citet{asyncPGX} jsme vybrali algoritmus DFS, jelikož v průběhu prohledávání generuje menší množství mezivýsledků.
-To je dáno chováním BFS. 
+Na základě 1. a 2. kapitoly článku o distribuovaném zpracování PGQL dotazů \citep{asyncPGX} jsme vybrali algoritmus DFS, jelikož v průběhu prohledávání generuje menší množství mezivýsledků.
+To je dáno chováním BFS.
 BFS v každém kroku musí prozkoumat všechny sousedy políček z předešlého kroku.
 Toho se docílí vložením nových sousedů do fronty (obecná struktura \texttt{queue} FIFO).
 Fronta se tak rychle zvětšuje.
@@ -878,7 +878,7 @@ Výsledek se vloží do patřičné přihrádky.
 Pokud nastala kolize, tak se prvky musí porovnat.
 Při tomto porovnání se opět musí vypočíst hodnoty výrazů vkládané dvojice.
 Zde mužeme využít předchozího výpočtu haš hodnoty.
-Budeme uchovávávat hodnoty výrazů a následně je znovu použijeme při porovnání.
+Budeme uchovávat hodnoty výrazů a následně je znovu použijeme při porovnání.
 Nicméně, pravděpodobně budeme nutni vytvořit závislost mezi objektem počítajícím haš hodnotu a objektem provádějícím porovnání.
 Stejný princip jsme použili při optimalizaci porovnání v sekci \ref{anal.orderby.opt1}.
 Nastávají pro něj také stejné problémy v paralelním prostředí.
@@ -1211,7 +1211,7 @@ V tomto módu existuje pouze jedno sdílené úložiště hodnot agregačních f
 Vlákna v moment nalezení výsledku aplikují thread-safe agregační funkce.
 Výhoda tohoto řešení je, že zde nedochází ke slévání výsledků.
 Problém zde může nastat ve chvíli, kdy existuje velké množství přistupujících vláken.
-Tyto přístupy mohou mít za následek značné zpomalení zpracovávání, kvůli synchronizaci.
+Tyto přístupy mohou mít za následek značné zpomalení zpracování, kvůli synchronizaci.
 
 \smallskip
 Všimněme si také, že v jednovláknovém zpracování jsou módy totožné.
@@ -1251,7 +1251,7 @@ V moment nalezení výsledku se odkaz aktualizuje na daný výsledek a tabulka b
 Při přístupu k novému řádku se vytvoří obvyklá proxy třída řádku.
 Následný přístup k hodnotám řádku skrze proxy třídu vyvolá čtení hodnot z odkazu a nikoliv hodnot z tabulky.
 Proxy třída se použije ke zpracování výsledku prohledávání.
-Pokud byla proxy třída použita k vytvoření nové skupiny, tj. je vytvořen nový záznam v hašovací tabulce, tak je celý výsledek držený v odkazu překopírovan do tabulky.
+Pokud byla proxy třída použita k vytvoření nové skupiny, tj. je vytvořen nový záznam v hašovací tabulce, tak je celý výsledek držený v odkazu překopírován do tabulky.
 Tímto si zachováme pouze reprezentanty skupin a díky používání odkazu nemusíme každý výsledek prohledávání kopírovat do tabulky.
 
 \smallskip
@@ -1299,7 +1299,7 @@ Musíme si uvědomit, že budeme uchovávat pouze ta pole, která byla vložena 
 Obecně předpokládáme, že počet finálních skupin je mnohonásobně menší než počet výsledků prohledávání.
 Tedy bude zde existovat pouze malá množina polí.
 Otázka může být, proč jsme nezvolili daný postup i u ostatních řešení.
-V původním řešení jsme drželi všechny výsledky v paměti a vytváření dalších polí spolu s překopírovávání výsledků by ještě víc vytížil paměťovou spotřebu.
+V původním řešení jsme drželi všechny výsledky v paměti a vytváření dalších polí spolu s překopírováváním výsledků by ještě víc vytížil paměťovou spotřebu.
 V \textbf{Half-Streamed} řešení jsme způsob nepoužili, protože výsledky vláken se vytvářeli lokálně.
 Kdyby každé vlákno našlo kompletně stejné skupiny, pak by existovala totožná pole pro všechna vlákna.
 
@@ -1330,7 +1330,7 @@ V původním řešení jsme měli značnou výhodu, protože v moment začátku 
 Místo třídění samotných řádků tabulky jsme třídili pole indexů.
 Na pole indexů pak stačilo aplikovat zákládní třídíci algoritmus.
 Nyní nevlastníme všechny výsledky.
-Výsledky jsou generovány a zpracovávány postupně.
+Výsledky jsou generovány a zpracovány postupně.
 V následujících sekcích navrhneme způsob zpracování Order by v průběhu prohledávání grafu.
 
 \subsection{Obecný princip zpracování}

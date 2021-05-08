@@ -305,9 +305,9 @@ Například \texttt{ParseMatch(ref int position, List<Token> tokens)} parsuje č
 Během parsování tokenů se rekurzivně volájí další metody.
 Při rekurzi se používá parametr \texttt{position}, který udržuje pozici aktuálně parsovaného tokenu.
 
-Parsovací stromy jsou tvořeny potomky asbtraktní třídy \texttt{Node}, která implementuje návrhový vzor Visitor \citep[str. 331]{patterns}, tj. definuje metodu \texttt{Accept<T>(IVisitor<T> visitor)}.
+Parsovací stromy jsou tvořeny potomky asbtraktní třídy \texttt{Node}, která implementuje návrhový vzor Visitor \citep[str. 331]{patterns}, tj. definuje metodu \texttt{Accept<T>(...)}.
 Rozhraní \texttt{IVisitor<T>} implementuje druhou část vzoru, tj. metodu \texttt{Visit(...)}, kde vstupem ja každý neabstraktní potomek třídy \texttt{Node}.
-Každá část dotazu má svůj objekt implementující \texttt{IVisitor<T>}, například Match má objekt \texttt{MatchVisitor}.
+Každá část dotazu má svůj objekt implementující \texttt{IVisitor<T>}, například části Match přináleží objekt \texttt{MatchVisitor}.
 Parametr \texttt{T} je zde návratová hodnota procházení parsovacího stromu.
 Výstupem třídy \texttt{Parser} je množina všech vzniklých parsovacích stromů.
 Samotná tokenizace a parsování se provádí při inicializaci třídy \texttt{Query}.

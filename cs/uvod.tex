@@ -1,13 +1,82 @@
 \chapter*{Úvod}
 \addcontentsline{toc}{chapter}{Úvod}
 
+\section*{Grafové databáze}
 
+Grafové databáze zažívají v dnešní době rozkvět, například kvůli nutnosti analyzovat data na sociálních sítích, jsou flexibilnější než relační databáze při rozšiřování datového modelu a jednoduše ztvárňují informace o vztazích mezi entitami.
+Pro grafové databáze existují dva hlavní modely dat: \textbf{RDF} \citep{rdf} a \textbf{Labeled-property} (sekce \ref{req.propGraph}).
+RDF je převážně používán k popisu informací na internetu. 
+Labeled-property model se používá k obecnému popisu grafových dat.
+Grafové databáze poskytují dvě základní možnosti analýzy dat:
+\begin{itemize}
+\item
+První možnost je \textbf{spouštění algoritmů} nad uloženými grafovými daty.
+Samotná skupina používaných algoritmů obsahuje od jednoduchých algoritmů jako hledání nejkratší cesty až po komplexní algoritmy jako Community detection \citep[str. 115]{graphAlg}.
+Program, který poskytuje tuto možnost analýzy dat, budeme označovat jako \textbf{analytický engine}.
+\item
+Druhá možnost je \textbf{vykonávání dotazů} pomocí dotazovacího jazyka.
+Dotazy jsou zde podobné SQL dotazům.
+Pro RDF model to je například jazyk SPARQL \citep{sparql}.
+Pro Labeled-property to je PGQL \citep{pgql} nebo openCypher\footnote{\url{https://www.opencypher.org/} [dostupnost ověřena k datu 8.5.2021]}.
+Dotazy obsahují základní části se stejnou logikou z SQL jako Select, Order by, Group by, Having a podobně.
+Hlavní rozdíl těchto dotazovacích jazyků od SQL je ten, že specifikují výběr dat pomocí sekvence vrcholů a hran.
+Pro PGQL a openCypher to je část dotazu Match a pro SPARQL to je část dotazu Where.
+Tyto sekvence tvoří podgraf (vzor), který bude vyhledáván v grafu.
+V moment nalezení všech podgrafů jsou na výsledcích aplikovány další části jako Group by nebo Order by.
+Tomuto se říká vyhledávání vzoru, nebo-li pattern matching.
+Program, který poskytuje tuto možnost analýzy dat, budeme označovat jako \textbf{dotazovací engine}.
+\end{itemize}
 
+\section*{Proudové systémy}
 
+Na druhé straně množství dat ke zpracování poslední dobou značně roste a nastává problém při jejich zpracování, protože se všechny nevejdou do paměti nebo dochází k jejich velmi častým změnám.  
+Z tohoto důvodu začaly vznikat takzvané \textbf{proudové systémy} \citep{streaming}.
+Proudové systémy obecně pracují s daty, která jsou potencionálně nekonečná a nevlezou se do paměti.
+V takovém případě jsou data reprezentovány formou tekoucího „\textbf{proudu}“ (stream).
+Obecně uvnitř proudu mohou být jakákoliv data, například prováděné akce, události změn nebo transakce.
+Programy pracující s proudem dat sledují jen jeho určitý bod a zpracovávají data v moment kdy protékají daným bodem.
+Výsledně program vidí jen útržky všech dat.
+Zpracování takových dat pak probíhá po částech.
 
+Existují dva hlavní modely zpracování \citep{graphstreaming}.
+První model udržuje kondenzovaný stav při zpracování dat a nazývá se \textbf{synopsis}.
+Dobrým příkladem může být počítání sumy hodnot prvků v proudu.
+V takovém případě si program udržuje pouze sumu výsledků.
+Data v proudu pak nepotřebuje uchovávát.
+Druhý model si udržuje okno určitého počtu posledních prvků z proudu a nazývá se \textbf{windowing}.
+Prvky v okně tvoří skupinu, která se v určitý moment zpracuje najednou.
+
+Proudové systémy se uchytili v distribuovaných systémech, například Apache Flink\footnote{\url{https://ci.apache.org/projects/flink/flink-docs-release-1.13} [dostupnost ověřena k datu 8.5.2021]}.
+Nově se objevují proudové systémy pracující s grafovými daty.
+V proudu jsou pak obsaženy hrany nebo vrcholy. 
+Nad daným proudem vzniká nutnost analýzy grafových dat jako u grafových databází\footnote{Přehledovou práci základních algoritmů a principů zpracování je možno nalézt v článku „Graph Stream Algorithms: A Survey“ \citep{graphstreamalgorithms}.}.
+Mezi proudové systémy s grafovými daty patří například rozšíření pro Apache Flink Gelly\footnote{\url{https://ci.apache.org/projects/flink/flink-docs-release-1.13/docs/libs/gelly/overview/} [dostupnost ověřena k datu 8.5.2021]}.
+
+Proudové systémy s grafovými daty mají výhodu při \textbf{agregaci} prvků vůči grafovým databázím, protože při použití modelu \textbf{synopsis} jim stačí uchovávat pouze agregované prvky. 
+Agregací zde rozumíme akt seskupování prvků podle určitých klíčů (obecně část Group by v SQL, PGQL nebo SPARQL).
+Součástí agregace je i výpočet statických funkcí pro vzniklé skupiny.
+Tyto funkce označujeme jako agregační funkce.
+Mezi nejčastější agregační funkce patří funkce:
+\begin{itemize} 
+\item \texttt{min(...)}, která vrací minimum z hodnot ve skupině..
+\item \texttt{max(...)}, která vrací maximum z hodnot ve skupině..
+\item \texttt{count(...)}, která počet prvků ve skupině.
+\item \texttt{avg(...)}, která vrací aritmetický průměr z hodnot ve skupině..
+\item \texttt{sum(...)}, která vrací sumu z hodnot ve skupině.
+\end{itemize}
+Problémem je, že proudové systémy nedovolují vykonávat dotazy obsahující vyhledávání vzoru (část Match pro PGQL nebo Where pro SPARQL), protože grafová data čteme po částech a tak je vyhledávání vzoru prakticky nemožné.
+Jediným možným způsobem je vytvořit přehledovou strukturu grafu \citep{graphsummary}, na které vyhledávání proběhne.
+Avšak tím se ztratí všechny výhody proudových systémů.
+
+\section*{Spojení vyhledávání vzoru s proudovými systémy}
+
+tady bude co vlastne chceme delat na zaklade predchozi sekce.
+max jedna stranka a to je vsechno z uvodu.
+
+\clearpage
 \section*{Cíl práce}
 
-Hlavním cílem práce je určit zda úprava částí Group by a Order by dotazovacího enginu po vzoru streamovacích systémů dociluje rychlejšího zpracování dotazů než zpracování, které by dané části vykonávalo po získání všech výsledků prohledávání grafu.
+Hlavním cílem práce je určit zda úprava částí Group by a Order by dotazovacího enginu po vzoru proudových systémů dociluje rychlejšího zpracování dotazů než zpracování, které by dané části vykonávalo po získání všech výsledků prohledávání grafu.
 Kroky k dosažení cíle jsou následovné:
 \begin{enumerate}
 \item
@@ -30,7 +99,7 @@ Celá grafová databáze bude obsažena v hlavní paměti.
 \end{enumerate}
 
 \item
-Upravit druhou část výše definovaného dotazovacího enginu po vzoru streamovacích sýstémů tak, aby vykonávání částí Group by a Order by probíhalo v průběhu prohledávání grafu časti Match:
+Upravit druhou část výše definovaného dotazovacího enginu po vzoru proudových sýstémů tak, aby vykonávání částí Group by a Order by probíhalo v průběhu prohledávání grafu časti Match:
 \begin{enumerate}
 
 \item
@@ -53,7 +122,7 @@ Obecně upravená část bude schopna vykonat dotaz jednovláknově.
 
 \item
 Vykonat experiment, který testuje původní zpracování (odrážka 1.b) vůči upravené části (odrážka 2.) v rychlosti vykonání dotazů.
-Cílem experimentu je určit, zda úprava dotazovacího enginu po vzoru streamovacích systémů způsobí zrychlení vykonávání dotazu:
+Cílem experimentu je určit, zda úprava dotazovacího enginu po vzoru proudových systémů způsobí zrychlení vykonávání dotazu:
 \begin{enumerate}
 \item Experiment bude proveden na několika reálných grafech s reálnými nebo uměle vygenerovanými vlastnostmi.
 \item V experimentu otestujeme všechna navrhnutá řešení.

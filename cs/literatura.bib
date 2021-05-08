@@ -23,14 +23,22 @@
 
 @manual{microsoft,    
       title  = "Dokumentace jazyka C\# pro .NET Framework 4.8",
-      url    = "https://docs.microsoft.com/en-us/dotnet/csharp/",
-      note = "[Dostupnost ověřena k datu 15.4.2021]"
+      note    = {\url{https://docs.microsoft.com/en-us/dotnet/csharp/} [Dostupnost ověřena k datu 15.4.2021]}
 }
 
 @manual{json,    
       title  = "Dokumentace jazyka JSON",
-      url    = "https://www.json.org/",
-      note = "[Dostupnost ověřena k datu 15.4.2021]"
+      note = "\url{https://www.json.org/} [Dostupnost ověřena k datu 15.4.2021]"
+}
+
+@manual{pgql,    
+      title  = "Dokumentace jazyka PGQL 1.2",
+      note = "\url{https://pgql-lang.org/spec/1.2/} [Dostupnost ověřena k datu 15.4.2021]"
+}
+
+@manual{neopropertygraph,    
+      title  = "Definice Property grafu Neo4j",
+      note = "\url{https://neo4j.com/developer/graph-database/} [Dostupnost ověřena k datu 15.4.2021]"
 }
 
 
@@ -52,7 +60,7 @@
   commit = {86927fac19fdf279c0e69d81054c33b1ae3f5e81}
 }
 
-@book{dragoonBook,
+@book{dragonBook,
   abstract = {{<P style="MARGIN: 0px"><B></B> This book provides the foundation for understanding the theory and pracitce of compilers. Revised and updated, it reflects the current state of compilation. <B> </B>Every chapter has been completely revised to reflect developments in software engineering, programming languages, and computer architecture that have occurred since 1986, when the last edition published.  The authors, recognizing that few readers will ever go on to construct a compiler, retain their focus on the broader set of problems faced in software design and software development. <B></B> Computer scientists, developers, and aspiring students that want to learn how to build, maintain, and execute a compiler for a major programming language. </P>}},
   added-at = {2009-05-19T18:00:18.000+0200},
   author = {Aho, Alfred V. and Lam, Monica S. and Sethi, Ravi and Ullman, Jeffrey D.},
@@ -118,14 +126,21 @@
   month = {May}
 }
 
-@article{asyncPGX,
-    author =       {Roth, P. Nicholas and Trigonakis, Vasileios and Hong, Sungpack and Chafi, Hassan and Potter, Anthony and Motik, Boris and Horrocks, Ian},
-    title =        {PGX.D/Async: A Scalable Distributed Graph Pattern Matching Engine},
-    journal =      "GRADES'17: Proceedings of the Fifth International Workshop on Graph Data-management Experiences and Systems",
-    number =       "7",
-    pages =        "1--6",
-    year =         "2017",
-    DOI =          "https://doi.org/10.1145/3078447.3078454"
+@inproceedings{asyncPGX,
+author = {Roth, Nicholas P. and Trigonakis, Vasileios and Hong, Sungpack and Chafi, Hassan and Potter, Anthony and Motik, Boris and Horrocks, Ian},
+title = {PGX.D/Async: A Scalable Distributed Graph Pattern Matching Engine},
+year = {2017},
+isbn = {9781450350389},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3078447.3078454},
+doi = {10.1145/3078447.3078454},
+abstract = {Graph querying and pattern matching is becoming an important feature of graph processing as it allows data analysts to easily collect and understand information about their graphs in a way similar to SQL for databases. One of the key challenges in graph pattern matching is to process increasingly large graphs that often do not fit in the memory of a single machine. In this paper, we present PGX.D/Async, a scalable distributed pattern matching engine for property graphs that is able to handle very large datasets. PGX.D/Async implements pattern matching operations with asynchronous depth-first traversal, allowing for a high degree of parallelism and precise control over memory consumption. In PGX.D/Async, developers can query graphs with PGQL, an SQL-like query language for property graphs. Essentially, PGX.D/Async provides an intuitive, distributed, in-memory pattern matching engine for very large graphs.},
+booktitle = {Proceedings of the Fifth International Workshop on Graph Data-Management Experiences and Systems},
+articleno = {7},
+numpages = {6},
+location = {Chicago, IL, USA},
+series = {GRADES'17}
 }
 
 @book{labyrint,
@@ -134,4 +149,84 @@
   publisher = {CZ.NIC, z.s.p.o.},
   title = {Průvodce labyrintem algoritmů},
   year = {2017},
+}
+
+@TechReport{rdf,
+  author      = "Yves Raimond and Guus Schreiber",
+  title       = "{RDF} 1.1 Primer",
+  month       = jun,
+  note        = "https://www.w3.org/TR/2014/NOTE-rdf11-primer-20140624/",
+  year        = "2014",
+  bibsource   = "https://w2.syronex.com/jmr/w3c-biblio",
+  type        = "{W3C} Note",
+  institution = "W3C",
+}
+
+@TechReport{sparql,
+  author      = "Andy Seaborne and Steven Harris",
+  title       = "{SPARQL} 1.1 Query Language",
+  month       = mar,
+  note        = "https://www.w3.org/TR/2013/REC-sparql11-query-20130321/",
+  year        = "2013",
+  bibsource   = "https://w2.syronex.com/jmr/w3c-biblio",
+  type        = "{W3C} Recommendation",
+  institution = "W3C",
+}
+
+@book{streaming,
+author = {Akidau, Tyler and Chernyak, Slava and Lax, Reuven},
+title = {Streaming Systems: The What, Where, When, and How of Large-Scale Data Processing},
+year = {2018},
+isbn = {1492034142},
+publisher = {O'Reilly Media, Inc.},
+edition = {1st},
+}
+
+@mastersthesis{graphstreaming,
+  author       = {János Dániel Bali}, 
+  title        = {Streaming Graph Analytics Framework Design},
+  school       = {KTH, School of Information and Communication Technology (ICT)},
+  series       = {TRITA-ICT-EX ; 2015:169},
+  year         = 2015,
+  note         = {\url{http://kth.diva-portal.org/smash/record.jsf?pid=diva2%3A830662&dswid=-2589}, OAI=oai:DiVA.org:kth-170425, URN=urn:nbn:se:kth:diva-170425, diva=diva2:830662},
+  diva         = {diva2:830662},
+  urn          = {urn:nbn:se:kth:diva-170425},
+  oai          = {oai:DiVA.org:kth-170425}
+}
+
+@article{graphstreamalgorithms,
+author = {McGregor, Andrew},
+title = {Graph Stream Algorithms: A Survey},
+year = {2014},
+issue_date = {March 2014},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {43},
+number = {1},
+issn = {0163-5808},
+url = {https://doi.org/10.1145/2627692.2627694},
+doi = {10.1145/2627692.2627694},
+abstract = {Over the last decade, there has been considerable interest in designing algorithms for processing massive graphs in the data stream model. The original motivation was two-fold: a) in many applications, the dynamic graphs that arise are too large to be stored in the main memory of a single machine and b) considering graph problems yields new insights into the complexity of stream computation. However, the techniques developed in this area are now finding applications in other areas including data structures for dynamic graphs, approximation algorithms, and distributed and parallel computation. We survey the state-of-the-art results; identify general techniques; and highlight some simple algorithms that illustrate basic ideas.},
+journal = {SIGMOD Rec.},
+month = may,
+pages = {9–20},
+numpages = {12}
+}
+
+@inproceedings{graphsummary,
+author = {Tang, Nan and Chen, Qing and Mitra, Prasenjit},
+title = {Graph Stream Summarization: From Big Bang to Big Crunch},
+year = {2016},
+isbn = {9781450335317},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/2882903.2915223},
+doi = {10.1145/2882903.2915223},
+abstract = {A graph stream, which refers to the graph with edges being updated sequentially in a form of a stream, has important applications in cyber security and social networks. Due to the sheer volume and highly dynamic nature of graph streams, the practical way of handling them is by summarization. Given a graph stream G, directed or undirected, the problem of graph stream summarization is to summarize G as SG with a much smaller (sublinear) space, linear construction time and constant maintenance cost for each edge update, such that SG allows many queries over G to be approximately conducted efficiently. The widely used practice of summarizing data streams is to treat each stream element independently by e.g., hash- or sample-based methods, without maintaining the connections (or relationships) between elements. Hence, existing methods can only solve ad-hoc problems, without supporting diversified and complicated analytics over graph streams. We present TCM, a novel generalized graph stream summary. Given an incoming edge, it summarizes both node and edge information in constant time. Consequently, the summary forms a graphical sketch where edges capture the connections inside elements, and nodes maintain relationships across elements. We discuss a wide range of supported queries and establish some error bounds. In addition, we experimentally show that TCM can effectively and efficiently support analytics over graph streams, which demonstrates its potential to start a new line of research and applications in graph stream management.},
+booktitle = {Proceedings of the 2016 International Conference on Management of Data},
+pages = {1481–1496},
+numpages = {16},
+keywords = {sketch, summarization, data streams, graph streams},
+location = {San Francisco, California, USA},
+series = {SIGMOD '16}
 }

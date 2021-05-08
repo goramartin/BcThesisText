@@ -4,11 +4,11 @@
 \section{Labeled-property datový model}
 \label{req.propGraph}
 
-Při zpracování této práce uvažujeme grafovou databázi, která pracuje s grafovým modelem \textbf{Labeled-property}\footnote{\url{https://en.wikipedia.org/wiki/Graph_database}}.
+Při zpracování této práce uvažujeme grafovou databázi, která pracuje s grafovým modelem \textbf{Labeled-property}\footnote{\url{https://en.wikipedia.org/wiki/Graph_database} [dostupnost ověřena k datu 8.5.2021]}.
 V průběhu práce budeme daný model označovat jako \textbf{Property graf}.
 V této sekci popíšeme Property graf a jeho vlastnosti z pohledu grafové databáze.
 Překvapivě neexistuje standartní definice daného modelu, ačkoliv je značně využíván v moderních systémech.
-Proto budeme pracovat s popisem Property grafu systému Neo4j\footnote{\url{https://neo4j.com/developer/graph-database/}} a definicí jazyka PGQL\footnote{\url{https://pgql-lang.org/spec/1.2/\#property-graph-data-model}}.
+Proto budeme pracovat s popisem Property grafu systému Neo4j \citep{neopropertygraph} a definicí jazyka PGQL \citep{pgql}.
 Na základě těchto popisů určíme klíčové vlastnosti Property grafu, které budeme uvažovat v naši práci.
 
 \subsubsection{Obecný popis Property grafu}
@@ -95,7 +95,7 @@ Příklad vznikl na základě prvního grafu z dokumentace níže popisovaného 
 \section{Jazyk PGQL}
 \label{req.pgql}
 
-V naši práci budeme používat dotazovací jazyk PGQL\footnote{\url{https://pgql-lang.org/spec/1.2/}} verze 1.2 k dotazování nad Property grafem.
+V naši práci budeme používat dotazovací jazyk PGQL \citep{pgql} verze 1.2 k dotazování nad Property grafem.
 Jazyk je značné obsáhlý a k realizaci naši práce nepořebujeme všechny jeho vlastnosti, proto jsme se rozhodli využít jeho podmnožinu.
 V naši práci budeme pracovat jen s částmi Select, Match, Group by a Order by.
 Ostatní části nebudeme používat.
