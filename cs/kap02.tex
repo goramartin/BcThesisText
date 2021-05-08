@@ -71,7 +71,7 @@ Předek si bude pamatovat unikátní \verb+ID+, abychom elementy dokázali rozli
 Předek navíc bude znát svůj \verb+elType+. 
 Bude se jednat o ukazatel na třídu.
 Daná třída by reprezentovala pouze jeden \verb+elType+ a bude společná všem elementům majících daný \verb+elType+.
-V třídě by byl obsažen seznam \verb+IDs+ elementů daného typu, jejich pořadí (např: dle vkládání do seznamu) a vlastností v podobě polí s hodnotami.
+V třídě by byl obsažen seznam \verb+IDs+ elementů daného typu, jejich pořadí (např. dle vkládání do seznamu) a vlastností v podobě polí s hodnotami.
 V daných polích budou hodnoty vlastností každého elementu ležet na pozicích určených dle jejich pořadí.
 Pro náš případ nebudeme uvažovat situaci, kdy vlastnost pro nějaký element nemá definovanou hodnotu.
 Vlastnost musí být přístupná skrze mapu/slovník, abychom k ní mohli rychle přistoupit.
@@ -242,7 +242,7 @@ Proměnným pak můžeme přiřadit \verb+ID+.
 
 \subsection{Select, Order/Group by}
 
-Ostatní části Group by, Order by a Select obsahují výrazy proměnných (např: \texttt{order by x}), přístup k vlastnostem proměnných (např: \texttt{select x.PropOne}) a volání agregačních funkcí (\verb+min+, \verb+max+, \verb+avg+, \verb+sum+ a \verb+count+).
+Ostatní části Group by, Order by a Select obsahují výrazy proměnných (např. \texttt{order by x}), přístup k vlastnostem proměnných (např \texttt{select x.PropOne}) a volání agregačních funkcí (\verb+min+, \verb+max+, \verb+avg+, \verb+sum+ a \verb+count+).
 Proměnné zde představují elementy grafu.
 Výrazy se však musí evaluovat za běhu programu.
 Dalším problémem je, že výrazy mají různorodé návratové hodnoty.
