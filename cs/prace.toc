@@ -206,13 +206,13 @@
 \contentsline {subsubsection}{Nejrychlejší řešení}{109}{section*.109}%
 \contentsline {chapter}{\numberline {5}Závěr}{114}{chapter.5}%
 \contentsline {section}{\numberline {5.1}Budoucí výzkum}{115}{section.5.1}%
-\contentsline {chapter}{Seznam použité literatury}{116}{chapter*.110}%
-\contentsline {chapter}{Seznam obr\'azk\r {u}}{117}{chapter*.111}%
-\contentsline {chapter}{Seznam tabulek}{119}{chapter*.112}%
-\contentsline {chapter}{Seznam použitých zkratek}{120}{chapter*.113}%
-\contentsline {chapter}{\numberline {A}Přílohy}{121}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Zdrojové kódy}{121}{section.A.1}%
-\contentsline {section}{\numberline {A.2}Online Git repozitář}{121}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Použité grafy při experimentu}{121}{section.A.3}%
-\contentsline {section}{\numberline {A.4}Výsledky benchmarku pro jednotlivé grafy}{121}{section.A.4}%
-\contentsline {section}{\numberline {A.5}Benchmark stromy vůči polím}{121}{section.A.5}%
+\contentsline {chapter}{Seznam použité literatury}{117}{chapter*.110}%
+\contentsline {chapter}{Seznam obr\'azk\r {u}}{118}{chapter*.111}%
+\contentsline {chapter}{Seznam tabulek}{120}{chapter*.112}%
+\contentsline {chapter}{Seznam použitých zkratek}{121}{chapter*.113}%
+\contentsline {chapter}{\numberline {A}Přílohy}{122}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Zdrojové kódy}{122}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Online Git repozitář}{122}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Použité grafy při experimentu}{122}{section.A.3}%
+\contentsline {section}{\numberline {A.4}Výsledky benchmarku pro jednotlivé grafy}{122}{section.A.4}%
+\contentsline {section}{\numberline {A.5}Benchmark stromy vůči polím}{122}{section.A.5}%

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  7 MAY 2021 23:31
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  8 MAY 2021 14:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1161,9 +1161,7 @@ Kapitola 5.
 
 
 
-]) [115
-
-]
+] [115]) [116]
 \openout2 = `literatura.aux'.
 
  (./literatura.tex (./prace.bbl
@@ -1178,11 +1176,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 40--47
 p / 0201633612 /
  []
 
-)) [116
+)) [117
 
 
 
-] (./prace.lof [117
+] (./prace.lof [118
 
 
 ]
@@ -1201,7 +1199,7 @@ raf WebBerkStan |
 \tf@lof=\write7
 \openout7 = `prace.lof'.
 
- [118] (./prace.lot
+ [119] (./prace.lot
 Overfull \hbox (19.95248pt too wide) in paragraph at lines 6--6
  [][] [][]\T1/lmr/m/n/12 Výsledky testu stavby struk-tur v sekun-dách \T1/lmtt/
 m/n/12 SortedSet \T1/lmr/m/n/12 v·£i $\OT1/lmr/m/n/12 (128\OML/lmm/m/it/12 ; \O
@@ -1212,13 +1210,13 @@ T1/lmr/m/n/12 256)$\T1/lmr/m/n/12 - |
 \tf@lot=\write8
 \openout8 = `prace.lot'.
 
- [119
+ [120
 
-] [120
+] [121
 
 ]
 P\v {r}\'{\i }loha A.
-(./prilohy-prvnistrana.tex) [121
+(./prilohy-prvnistrana.tex) [122
 
 ]
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 181.
@@ -1237,10 +1235,10 @@ LaTeX Warning: There were multiply-defined labels.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 181.
  ) 
 Here is how much of TeX's memory you used:
- 16418 strings out of 481239
- 233362 string characters out of 5920376
- 482675 words of memory out of 5000000
- 30798 multiletter control sequences out of 15000+600000
+ 16422 strings out of 481239
+ 233406 string characters out of 5920376
+ 482733 words of memory out of 5000000
+ 30799 multiletter control sequences out of 15000+600000
  633484 words of font info for 96 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  44i,12n,41p,502b,2341s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1258,10 +1256,10 @@ mri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb></usr/share/texmf/
 fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy8.
 pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf/fonts/
 type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt12.pfb>
-Output written on prace.pdf (125 pages, 2109918 bytes).
+Output written on prace.pdf (126 pages, 2111577 bytes).
 PDF statistics:
- 2356 PDF objects out of 2487 (max. 8388607)
- 1975 compressed objects within 20 object streams
- 450 named destinations out of 1000 (max. 500000)
+ 2364 PDF objects out of 2487 (max. 8388607)
+ 1982 compressed objects within 20 object streams
+ 453 named destinations out of 1000 (max. 500000)
  1078 words of extra memory for PDF output out of 10000 (max. 10000000)
 

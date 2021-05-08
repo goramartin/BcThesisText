@@ -8,14 +8,37 @@ Druhá část obsahuje struktury a algoritmy pro vykonání uživatelských dota
 Dotazy jsou zadány ve stanovené podmnožině jazyka PGQL.
 Vykonávání je možno provádět jednovláknově i paralelně.
 Všechna grafová data a data v průběhu zpracování dotazu jsou obsažena v hlavní paměti.
-
-Druhou část jsme rozdělili na dva bloky.
+Druhou část jsme rozdělili na dva bloky:
+\begin{enumerate}
+\item
 V prvním bloku jsme navrhli řešení vykonávající Group/Order by po dokončení prohledávání grafu v části Match.
 Výsledky prohledávání byly ukládány do tabulky.
-Teprve po získání všech výsledků byly na nich aplikovány algoritmy Group/Order by. 
+Teprve po získání všech výsledků byly na nich aplikovány algoritmy Group/Order by.
+\begin{itemize}
+\item V části Order by jsme použili standartní algoritmus Merge sort pro jednovláknové i paralelní zpracování.
+\item V části Group by jsme výsledky seskupovali pomocí hašovací tabulky.
+Pro paralelní zpracování jsme zvolili tři řešení dle úrovně synchronizace (sekce \ref{anal.groupby.paralel}).
+V módu Single group Group by (dotaz obsahuje agregační funkce, ale neobsahuje část Group by) jsme využili lokálního zpracování, které je zakončeno sléváním.
+\end{itemize}
+
+\item
 V druhém bloku jsme upravili první blok a navrhli nová řešení zpracování dle zadání práce.
 Propojili jsme prohledávání grafu se zpracováním Group/Order by tak, aby engine seskupoval/setřiďoval výsledky prohledávání v moment jejich nalezení.
-Blok obsahoval dva módy: Streamed a Half-Streamed.
+Pro paralelní zpracování jsme navrhli dva módy: Streamed a Half-Streamed.
+Streamed zpracovával výsledky globálně.
+Half-Streamed zpracovával výsledky lokálně, následně docházelo ke slévání.
+\begin{itemize}
+\item V části Order by jsme pro jednovláknové zpracování použili standartní (a, 2a)-strom a upravenou verzi (a, 2a)-stromu, která omezila počet zatříďovaných výsledků.  
+Half-Streamed řešení zpracovávalo lokálně výsledky pomocí navržených stromů a následně došlo k dvoucestnému paralelnímu slévání.
+Streamed řešení vytvořilo přihrádky přistupné skrze zámek a každé přihrádce přiřadilo specifický rozsah hodnot.
+\item
+V části Group by jsme vycházeli z řešení prvního bloku.
+Jednovláknové a paralelní zpracování Half-Streamed používalo tabulku z prvního bloku.
+Obecně jsme u něj omezeli ukládané výsledky pouze na reprezentanty skupin.
+Jednovláknové a paralelní zpracování Streamed nepoužívalo žádnou tabulku.
+Zpracování Single group Group by neukládalo žádné výsledky, kromě výsledků agregačních funkcí.
+\end{itemize}
+\end{enumerate}
 
 Dva dané bloky jsme porovnali v rychlosti vykonávání dotazů pomocí experimentu.
 Experiment obsahoval množství dotazů, které byly vykonány nad třemi reálnými grafy s uměle vygenerovanými vlastnostmi.
@@ -25,9 +48,9 @@ Následuje shrnutí výsledků:
 \begin{itemize}
 
 \item \textbf{Order by:} z výsledků Order by vyplynulo, že řešení druhého bloku využívající (a, 2a)-stromy jsou obecně pomalejší než řešení v prvním bloku využívající Merge sort.
-Nicméně, v paralelních řešeních druhého bloku jsme byli schopni navrhnout řešení, které předčilo paralelní Merge sort prvního bloku při třídění pomocí vlastností.
+Nicméně, námi navržená paralelní řešení druhého bloku předčila paralelní Merge sort prvního bloku při třídění pomocí vlastností.
 
-\item \textbf{Single group Group by:} při experimentu s dotazem, který obsahuje pouze agregační funkce v části Select ale nemá část Group by, jsme zjistili, že řešení druhého bloku jsou obecně rychlejší než řešení prvního bloku, protože neukládají výsledky prohledávání. 
+\item \textbf{Single group Group by:} zde byla řešení druhého bloku rychlejší.
 Problematické zde bylo paralelní Streamed řešení, ve kterém docházelo ke zpomalení, kvůli značné režii za synchronizaci.
 
 \item \textbf{Group by:} u řešení Group by druhého bloku nedocházelo ke znatelnému zrychlení.
@@ -35,13 +58,9 @@ Jedinou výjimkou bylo Streamed řešení druhého bloku v jednovláknovém zpra
 
 \end{itemize}
 
-Obecně jsme zjistili, že naše předpoklady o zpracovávání Group by a Order by v průběhu prohledávání grafu nabízí v určitých případech zrychlení vykonávání dotazů.
-\clearpage
-
-
+Z výsledků experimentu můžeme konstatovat, že naše předpoklady o zpracovávání Group by a Order by v průběhu prohledávání grafu nabízí v určitých případech zrychlení vykonávání dotazů.
 
 \section{Budoucí výzkum}
-
 
 \begin{enumerate}
 
