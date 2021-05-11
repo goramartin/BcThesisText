@@ -1,11 +1,13 @@
 \chapter{Předpoklady}
 \label{requirements}
 
+V úvodu jsme uvedli, že budeme pracovat s \textbf{Labeled-property} grafovým modelem a dotazy nad daným modelem budou provedeny v jazyku PGQL.
+V této kapitole popíšeme konkrétněji daný model a jazyk.
+
 \section{Labeled-property datový model}
 \label{req.propGraph}
 
 Při zpracování této práce uvažujeme grafovou databázi, která pracuje s grafovým modelem \textbf{Labeled-property}\footnote{\url{https://en.wikipedia.org/wiki/Graph_database} [dostupnost ověřena k datu 8.5.2021]}.
-V průběhu práce budeme daný model označovat jako \textbf{Property graf}.
 V této sekci popíšeme Property graf a jeho vlastnosti z pohledu grafové databáze.
 Překvapivě neexistuje standartní definice daného modelu, ačkoliv je značně využíván v moderních systémech.
 Proto budeme pracovat s popisem Property grafu systému Neo4j \citep{neopropertygraph} a definicí jazyka PGQL \citep{pgql}.
@@ -31,7 +33,6 @@ Vrcholy a hrany zde označíme za \textbf{elementy} grafu.
 Štítek představuje označení určité skupiny nebo chování.
 Každému elementu může být přiděleno několik štítků.
 Na elementy, kterým byl přidělen stejný štítek, se můžeme dívat jako na skupinu.
-Pokud má nějaký element štítek, budeme o štítku hovořit jako o \textbf{typu elementu v Property grafu}.
 
 \item
 Vlastnosti definují dvojice (\texttt{název, hodnota}).
@@ -61,7 +62,7 @@ Myslíme, že počet štítků není určující pro naši práci, protože prim
 Budeme uvažovat, že štítky vrcholů jsou vždy rozdílné od štítků hran.
 
 \item
-Každému typu elementu Property grafu přiřadíme výčet vlastností.
+Každému štítku přiřadíme výčet vlastností.
 To znamená, že štítek nemusí mít žádnou vlastnost nebo jich má určitý počet.
 
 \item
@@ -87,10 +88,12 @@ Na obrázku \ref{figure.propertygraphexample} vidímě tři vrcholy se štítkem
 Štítku \textbf{Univerzita} byla přidělena jedna vlastnost: \textit{Jméno}, která odpovídá stejné vlastnosti štítku \textbf{Osoba} a mají stejný typ hodnoty (řetězec).
 Mezi vrcholy fyzických osob existuje vztah \textbf{zná}, který určuje zda jedna osoba (počáteční vrchol) zná druhou osobu (koncový vrchol).
 Vlastnost \textit{Od} definuje datum, kdy došlo k poznání osoby.
-Mezi vrcholy fyzických osob a vysokou školou existuje vzah \textbf{je studentem}, který říká zda osoba studuje na dané vysoké škole.
+Mezi vrcholy fyzických osob a vysokou školou existuje vztah \textbf{je studentem}, který říká zda osoba studuje na dané vysoké škole.
 Tento vztah nemá žádnou vlastnost.
 Samotně pak každý element má přiřazeno \texttt{ID}.
 Příklad vznikl na základě prvního grafu z dokumentace níže popisovaného PGQL.
+
+V průběhu práce budeme graf splňující daný model označovat jako \textbf{Property graf}.
 
 \section{Jazyk PGQL}
 \label{req.pgql}
@@ -126,7 +129,7 @@ Pro komplexní popis odkazujeme na citovanou dokumentaci.
 Část Match se skládá z posloupností elementů definující hledaný podgraf.
 Posloupnosti jsou odděleny čárkou.
 Položky v posloupnosti jsou vrcholy a hrany.
-Položky vrcholů značíme pomocí \texttt{()} a položky hran pomocí šipek \texttt{->} (dopředná hrana), \texttt{<-} (zpětná hrana) a \texttt{-} (kombinace předchozích dvou).
+Položky vrcholů značíme pomocí \texttt{()} a položky hran pomocí šipek \texttt{->} (dopředná hrana), \texttt{<-} (zpětná hrana) a \texttt{-} (libovólná hrana).
 
 Každé položce je možno přidělit jméno (definice proměnné) a predikát štítku.
 Vrcholu přidělíme proměnnou vložením jména do kulatých závorek: \texttt{(jméno)}.
@@ -135,12 +138,13 @@ V části Match musí být vždy přítomna alespoň jedna proměnná.
 Pokud se v posloupnostech opakují proměnné zmená to, že v průběhu hledání musí dané položky obsahovat elementy se shodným \texttt{ID}.
 Nicméně, proměnné hran se nesmí opakovat.
 Pokud dvě posloupnosti nemají společnou proměnnou, tak výsledek je skalární součin daných posloupností. 
+
 Predikát je vložen do závorek za jméno, pokud jméno chybí tak jen do závorek: \texttt{(jméno:štítek)}, \texttt{(:štítek)}, \texttt{-[jméno:štítek]->} a \texttt{-[:štítek]->}.
 Predikát určuje výběr elementů pouze s daným štítkem.
 Pokud se v posloupnostech opakuje proměnná se štítkem, pak štítek musejí mít i opakované definice proměnných.
 Protože v našem modelu elementy mají pouze jeden štítek, tak element posloupnosti může mít pouze jeden predikát.
 Navíc jsme vyřadili možnost aplikovat v predikátu operátor „|“ (logická operace nebo), tj. nelze použít \texttt{(jméno:štítek|štítekDva)}.
-Příklady Match části na grafu z obrázku \ref{figure.propertygraphexample} (bez Select):
+Následují příklady Match části na grafu z obrázku \ref{figure.propertygraphexample} (bez Select) a uvedné výsledky hledání rovněž odpovídají danému obrázku:
 
 \begin{enumerate}
 \item
@@ -314,6 +318,7 @@ select x, y match (x) -> (y) order by x, y
 \end{code}
 Výsledky z Match jsou setříděny podle hodnot \texttt{x} vzestupně.
 Pokud se dva výsledky shodují v dané hodnotě, pak je použito porovnání hodnotou \texttt{y}.
+Obecně se aplikuje stejný postup, pokud je tříděno podle více než dvou klíčů.
 
 \item
 Použití operátoru \texttt{desc}:
@@ -340,13 +345,13 @@ Použití jednoho klíče:
 \begin{code}
 select x match (x) -> (y) group by x
 \end{code}
-Výsledky z Match jsou setříděny podle hodnot \texttt{x} vzestupně.
+Výsledky z Match jsou seskupeny podle hodnot \texttt{x}.
 
 \item
 Použití dvou klíčů:
 \begin{code}
 select x, y match (x) -> (y) group by x, y
 \end{code}
-Výsledky z Match jsou seskupeny podle hodnot \texttt{x}.
-Pokud se dva výsledky shodují v dané hodnotě, pak je použito seskupení i podle hodnoty \texttt{y}.
+Výsledky jsou seskupeny dle uspořádané dvojice (\texttt{x}, \texttt{y}).
+Pokud obecně existuje více klíčů, pak jsou seskupeny dle uspořádané \textit{n}-tice.
 \end{itemize}

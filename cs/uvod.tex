@@ -3,7 +3,7 @@
 
 \section*{Grafové databáze}
 
-Grafové databáze zažívají v dnešní době rozkvět, například kvůli nutnosti analyzovat data na sociálních sítích, jsou flexibilnější než relační databáze při rozšiřování datového modelu a jednoduše ztvárňují informace o vztazích mezi entitami.
+Grafové databáze zažívají v dnešní době rozkvět, například kvůli nutnosti analyzovat data na sociálních sítích.
 Pro grafové databáze existují dva hlavní modely dat: \textbf{RDF} \citep{rdf} a \textbf{Labeled-property} (sekce \ref{req.propGraph}).
 RDF je převážně používán k popisu informací na internetu. 
 Labeled-property model se používá k obecnému popisu grafových dat.
@@ -45,8 +45,10 @@ V takovém případě si program udržuje pouze sumu výsledků.
 Data v proudu pak nepotřebuje uchovávát.
 Druhý model si udržuje okno určitého počtu posledních prvků z proudu a nazývá se \textbf{windowing}.
 Prvky v okně tvoří skupinu, která se v určitý moment zpracuje najednou.
-
 Proudové systémy se uchytili v distribuovaných systémech, například Apache Flink\footnote{\url{https://ci.apache.org/projects/flink/flink-docs-release-1.13} [dostupnost ověřena k datu 8.5.2021]}.
+
+\section*{Proudové systémy s grafovými daty}
+
 Nově se objevují proudové systémy pracující s grafovými daty.
 V proudu jsou pak obsaženy hrany nebo vrcholy. 
 Nad daným proudem vzniká nutnost analýzy grafových dat jako u grafových databází\footnote{Přehledovou práci základních algoritmů a principů zpracování je možno nalézt v článku „Graph Stream Algorithms: A Survey“ \citep{graphstreamalgorithms}.}.
@@ -60,7 +62,7 @@ Mezi nejčastější agregační funkce patří funkce:
 \begin{itemize} 
 \item \texttt{min(...)}, která vrací minimum z hodnot ve skupině..
 \item \texttt{max(...)}, která vrací maximum z hodnot ve skupině..
-\item \texttt{count(...)}, která počet prvků ve skupině.
+\item \texttt{count(...)}, která vrací počet prvků ve skupině.
 \item \texttt{avg(...)}, která vrací aritmetický průměr z hodnot ve skupině..
 \item \texttt{sum(...)}, která vrací sumu z hodnot ve skupině.
 \end{itemize}
