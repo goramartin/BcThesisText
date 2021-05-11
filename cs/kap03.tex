@@ -18,9 +18,8 @@ Navíc, v průběhu analýzy jsme si zkoušeli již implementovat určité konce
 Z tohoto důvodu jsme měli určité části již naimplementovány.
 Výsledně jsme se rozhodli z výše zmíněných důvodu použít C\# pro .NET Framework 4.8.
 
-\section{Značení módů}
+\section{Značení módů} \label{impl.engine.modes}
 
-Než přistoupíme k popisu aplikace, tak si musíme vyjasnit základní značení módů.
 Určili jsme, že engine bude pracovat v několika módech, které uživatel bude moct měnit.
 Jsou to módy:
 
@@ -43,11 +42,9 @@ V takovou chvíli na to upozorníme.
 V průběhu této kapitoly se budeme držet tohoto značení.
 
 
-
-
 \section{Rozložení aplikace}
 
-Při implementaci aplikace jsme vycházeli z analýzy a návrhu z předchozí kapitoly.
+Při implementaci aplikace jsme vycházeli z analýzy a návrhu předchozí kapitoly.
 Aplikaci jsme vyvíjeli jako projekt konzolové aplikace pro .NET Framework 4.8 v prostředí Visual Studia 2019.
 Samotný projekt je rozdělený na tři hlavní řešení:
 
@@ -60,14 +57,14 @@ Samotný projekt je rozdělený na tři hlavní řešení:
 \end{itemize}
 
 V průběhu celé kapitoly se budeme věnovat pouze řešení \texttt{QueryEngine}, protože obsahuje hlavní část práce.
-Řešení \texttt{Benchmark} je popsáno podrobněji v kapitole \ref{expr}. Experiment, ve které se věnujeme porovnání implementovaných řešení.
+Řešení \texttt{Benchmark} je popsáno podrobněji v kapitole Experiment \ref{expr}., ve které se věnujeme porovnání implementovaných řešení.
 Z \texttt{HPCsharp} řešení jsme využili pouze určité algoritmy při implementaci části Order by.
 Samotná implementace algoritmů lze nalézt v odkazu citovaného zdroje. 
 Nyní popíšeme podrobněji rozložení řešení \texttt{QueryEngine}.
 
 \subsection{Rozložení řešení QueryEngine}
 
-Řešení neobsahuje další podřešení, ale pouze adresáře.
+Řešení \texttt{QueryEngine} neobsahuje další podřešení, ale pouze adresáře.
 Níže popsané adresáře rozdělují engine práve na hlavní části výstavby z kapitoly analýzy.
 Hlavní adresáře jsou:
 
@@ -77,7 +74,7 @@ Hlavní adresáře jsou:
 
 \item \textit{DataFiles}: obsahuje datové soubory, které se při překladu projektu ve Visual Studiu překopírují k binárním souborům.
 
-\item \textit{Parser}: obsahuje metody parsování uživatelského dotazu, definované tokeny, objekty parsovacího stromu a objekty k procházení daného stromu.
+\item \textit{Parser}: obsahuje metody načítání uživatelského dotazu, definované tokeny, objekty syntaktického stromu a objekty k procházení daného stromu.
 
 \item \textit{Query}: obsahuje objekty zpracování dotazu. 
 Obecně představuje část, která vykonává Group by a Order by po dokončení prohledávání grafu. 
@@ -103,11 +100,11 @@ Obsahuje řešení pro Streamed i Half-Streamed módy.
 %%.4 Property \DTcomment{Definuje vlastnosti typu v Property grafu.}.
 %%.2 DataFiles. 
 %%.2 Parser.
-%%.3 ParsedPattern \DTcomment{Definuje objekty parsovaných posloupností části Match.}.
+%%.3 ParsedPattern \DTcomment{Definuje objekty syntaktického stromu posloupností části Match.}.
 %%.3 Parser.
-%%.4 ParseTree \DTcomment{Definuje objekty použité k tvorbě parsovacího stromu.}.
-%%.5 Visitor \DTcomment{Definuje objekty procházení parsovacího stromu.}.
-%%.4 ParserComponent \DTcomment{Definuje metody parsování tokenů dotazu.}.
+%%.4 ParseTree \DTcomment{Definuje objekty použité k tvorbě syntaktického stromu.}.
+%%.5 Visitor \DTcomment{Definuje objekty procházení syntaktického stromu.}.
+%%.4 ParserComponent \DTcomment{Definuje metody syntaktické analýzy tokenů dotazu.}.
 %%.3 Tokenizer \DTcomment{Definuje tokeny a způsob tokenizace vstupu.}.
 %%.2 Query.
 %%.3 Expression \DTcomment{Obsahuje logiku výrazů.}.
@@ -178,13 +175,14 @@ Obsahuje řešení pro Streamed i Half-Streamed módy.
 V této sekci popíšeme postupně klíčové objekty, položky a způsoby vypracování aplikace.  
 
 \subsection{Reprezentace grafu}
-V této sekci popíšeme hlavní objekty, které jsme použili k reprezentaci grafových dat.
+
+V této sekci popíšeme implementaci hlavních objektů, které jsme použili k reprezentaci grafových dat.
 Při implementaci jsme postupovali dle návrhu z sekce analýzy \ref{anal.grafrep}.
 
 \subsubsection{Třída Element}
 
 Všechny druhy elementů v grafu (vrchol a hrana) dědí od abstraktní třídy \texttt{Element}.
-Představuje obený základ všech elementů.
+Představuje obecný základ všech elementů.
 Hlavní vlastnosti jsou:
 \begin{itemize}
 \item \texttt{int ID} je unikátní identifikátor elementu. Definuje jej uživatel ve vstupním souboru. Není to vlastnost v Property grafu.
@@ -210,7 +208,7 @@ Celkově tedy třída \texttt{Graph} bude obsahovat pole \texttt{List<T>} pro ka
 
 \subsubsection{Třída Table}
 
-Třída \texttt{Table} určuje typ elementu v Property grafu.
+Třída \texttt{Table} určuje typ štítku.
 Hlavní vlastnosti jsou:
 \begin{itemize}
 \item Položka \texttt{string IRI} je název typu.
@@ -250,7 +248,7 @@ Obsahuje pole všech typů elementů. Tedy \texttt{List<Vertex>}, \texttt{List<I
 Obsahuje dále:
 \begin{itemize}
 \item \texttt{Dictionary<string, Table> nodeTables} všechny typy vrcholů Property grafu. To samé pro hrany v položce \texttt{edgeTables}.
-\item \texttt{Dictionary<string, Tuple<int, Type> > labels} mapa, kde klíč je název vlastnosti a \texttt{int} je její přiřaděný unikátní identifikátor, abychom nemuseli v enginu používat řetězce jako \texttt{ID} vlastnosti.
+\item \texttt{Dictionary<string, Tuple<int, Type> > labels} mapa, kde klíč je název vlastnosti a \texttt{int} je její přiřazený unikátní identifikátor, abychom nemuseli v enginu používat řetězce jako \texttt{ID} vlastnosti.
 \texttt{Type} je pak typ vlastnosti, slouží pro kontrolu, protože dvě stejnojmenné vlastnosti musí mít stejný typ. 
 \end{itemize}
 
@@ -258,14 +256,21 @@ Obsahuje dále:
 \subsection{Čtení vstupních souborů} \label{impl.vstup}
 
 Máme imlementován graf a nyní jej potřebujeme načíst.
+V této sekci popíšeme implementaci načítaní vstupních grafových dat.
 Budeme vycházet z kapitoly analýzy sekce \ref{anal.vstup}.
+
+\subsubsection{Vstupní soubory}
+
 Rozhodli jsme se použít totožný vstupní formát dat jako při analýze.
 Při spuštění program očekává čtyři soubory.
 Dva soubory se zmiňovaným JSON formátem \textit{EdgeTypes.txt} (schéma hran) a \textit{NodeTypes.txt} (schéma vrcholů), které definují typy Property grafu a jejich vlastnosti.
 Další dva soubory \textit{Edge.txt} (data hran) a \textit{Nodes.txt} (data vrcholů) obsahují samotná data s mezerami jako oddělovače.
+Soubory musí mít přesně stejná jména.
 Jediná úprava formátu je ta, že hrany v datovém souboru musí být seřazeny podle \texttt{ID} počátečního vrcholu hrany tak, jak jsou vrcholy seřazeny v jejich datovém souboru.
 To zmanená, že pokud máme v souboru vrcholů za sebou vrcholy s \texttt{ID} 1, 2 a 3, tak soubor hran musí nejdříve obsahovat hrany začínající vrcholem s \texttt{ID} 1, pak s \texttt{2} apod.
 Důvodem je zjednodušení procesu načítání.
+
+\subsubsection{Načítání vstupních souborů}
 
 Načítání je implementováno následovně.
 \texttt{interface Creator<T>} s metodou \texttt{T Create()} je rozhraní pro tvorbu objektů \texttt{T}.
@@ -279,10 +284,11 @@ A posledně čtením datového souboru \textit{Edges.txt} vytvoříme dva pole \
 Rozhraní \texttt{IProcessor} implementují všechny tyto třídy.
 Samotné čtení souborů je vyvoláno při inicializaci třídy \texttt{Graph}.
 
-\subsection{Parsování uživatelského dotazu} \label{impl.parsing}
+\subsection{Načítání uživatelského dotazu} \label{impl.parsing}
 
-Při parsování jsme vycházeli z sekce analýzy \ref{anal.parsing}.
-Nejdřive dojde k tokenizaci a následně vytváření parsovacího stromu.
+V této sekci popíšeme implementaci načítání uživatelského dotazu.
+Při načítání dotazu jsme vycházeli z sekce analýzy \ref{anal.parsing}.
+Nejdřive dojde k tokenizaci a následně vytváření syntaktického stromu.
 
 \subsubsection{Třída Tokenizer}
 
@@ -297,21 +303,20 @@ Pole tokenů se předá statické třídě \texttt{Parser}.
 
 \subsubsection{Třída Parser}
 
-Třída postupně z tokenů vytváří parsovací stromy každé hlavní části dotazu (Match, Select, Order by a Group by).
-Parsování se vyvolá veřejnou metodou \texttt{Parse(List<Token> tokens)}.
-Parsování tokenů probíhá po částech.
+Třída postupně z tokenů vytváří syntaktické stromy každé hlavní části dotazu (Match, Select, Order by a Group by).
+Syntaktická analýza se vyvolá veřejnou metodou \texttt{Parse(List<Token> tokens)} a probíhá po částech.
 Každá hlavní část dotazu má svou separátní metodu.
 Například \texttt{ParseMatch(ref int position, List<Token> tokens)} parsuje část Match. 
-Během parsování tokenů se rekurzivně volájí další metody.
-Při rekurzi se používá parametr \texttt{position}, který udržuje pozici aktuálně parsovaného tokenu.
+Během syntaktické analýzy tokenů se rekurzivně volájí další metody.
+Při rekurzi se používá parametr \texttt{position}, který udržuje pozici aktuálně zpracovávaného tokenu.
 
-Parsovací stromy jsou tvořeny potomky asbtraktní třídy \texttt{Node}, která implementuje návrhový vzor Visitor \citep[str. 331]{patterns}, tj. definuje metodu \texttt{Accept<T>(...)}.
+Syntaktické stromy jsou tvořeny potomky abstraktní třídy \texttt{Node}, která implementuje návrhový vzor Visitor \citep[str. 331]{patterns}, tj. definuje metodu \texttt{Accept<T>(...)}.
 Rozhraní \texttt{IVisitor<T>} implementuje druhou část vzoru, tj. metodu \texttt{Visit(...)}, kde vstupem ja každý neabstraktní potomek třídy \texttt{Node}.
 Každá část dotazu má svůj objekt implementující \texttt{IVisitor<T>}, například části Match přináleží objekt \texttt{MatchVisitor}.
-Parametr \texttt{T} je zde návratová hodnota procházení parsovacího stromu.
-Výstupem třídy \texttt{Parser} je množina všech vzniklých parsovacích stromů.
-Samotná tokenizace a parsování se provádí při inicializaci třídy \texttt{Query}.
-Procházení parsovacích stromů je rovněž prováděno při inicializaci dané třídy.
+Parametr \texttt{T} je zde návratová hodnota procházení syntaktického stromu.
+Výstupem třídy \texttt{Parser} je množina všech vzniklých syntaktických stromů.
+Samotná tokenizace a syntaktická analýza se provádí při inicializaci třídy \texttt{Query}.
+Procházení syntaktických stromů je rovněž prováděno při inicializaci dané třídy.
 
 \subsection{Reprezentace dotazu}
 Celý dotaz jsme reprezentovali třídou \texttt{Query}.
@@ -328,7 +333,7 @@ Metoda \texttt{Query Create(...)} vytváří dotaz.
 Daná metoda dostává množství argumentů, vypíšeme ty hlavní:
 \begin{itemize}
 \item \texttt{string/TextReader inputQuery}: definuje dotaz uživatele, který se má vykonat. \texttt{string} zde reprezentuje vstup jako řetězec. \texttt{TextReader} představuje vstup z konzole.
-\item \texttt{QueryMode mode}: definuje jaký mód vykonávání se má provádět.
+\item \texttt{QueryMode mode}: definuje jaký mód vykonávání se má provádět (sekce \ref{impl.engine.modes}).
 \item \texttt{Graph graph}: definuje graf, nad kterým se má dotaz provést.
 \item \texttt{ThreadCount threadCount}: definuje počet vláken, které se mají využít při vykonávání.
 \item \texttt{GrouperAlias grouperAlias}: definuje jaké řešení se má použít při vykonávání Group by.
@@ -337,15 +342,16 @@ Daná metoda dostává množství argumentů, vypíšeme ty hlavní:
 Při zavolání metody dojde k tokenizaci \texttt{inputQuery} a kontrole všech argumentů metodou \texttt{CheckArgs}.
 Zkontrolované argumenty a pole \texttt{List<Token>} se předají privátnímu konstruktoru třídy \texttt{Query}.
 Upravené módy sdílí konstruktor. Mód \textbf{Normal} má separátní konstruktor.
-Uvnitř obou konstruktorů dochází k parsování pole tokenů třídou \texttt{Parser}.
+Uvnitř obou konstruktorů dochází k syntaktické analýze pole tokenů třídou \texttt{Parser}.
 Výstupem jsou stromové struktury hlavních částí dotazu, které jsou dále použity k inicializaci privátních položek a exekučního plánu:
 \begin{itemize}
 \item \texttt{VariableMap variableMap} je seznam proměnných vyskytujících se v dotazu. Seznam obsahuje jejich přidělený identifikátor a typ, pokud byl definován.
 \item \texttt{QueryObject query} je exekuční plán. Obsahuje řetězec objektů, které postupně vykonávají dotaz.
-\item \texttt{QueryExecutionHelper qEhelper} obsahuje informace o způsobu vykonání dotazu. Převážne obsahuje argumenty konstruktoru. 
+\item \texttt{QueryExecutionHelper qEhelper} obsahuje informace o způsobu vykonání dotazu. 
 \item \texttt{QueryExpressionInfo exprInfo} obsahuje všechny výrazy (expressions) v dotazu.
 \end{itemize}
-Po inicializaci, v moment volání metody \texttt{Compute()} dojde k vyvolání metody \texttt{Compute(...)} na exekučním plánu.
+Po inicializaci, v moment volání metody \texttt{Compute()} dojde k vyvolání metody \texttt{Compute(...)} na položce \texttt{query}.
+Tímto se spustí vykonávání dotazu.
 
 \subsubsection{Třída QueryObject}
 
@@ -363,21 +369,26 @@ Všimněme si, že tato metoda definuje rozhraní pro předávání výsledků z
 \item Metodu \texttt{void AddToEnd(QueryObject queryObject)}, která připojí \\*poskytnutý objekt na konec řetězce.
 \end{itemize}
 Konkrétní potomci třídy jsou vytvářeny v konstruktoru třídy \texttt{Query}.
-Navíc, každý potomek očekává v konstruktoru parsovací strom.
+Navíc, každý potomek očekává v konstruktoru syntaktický strom.
 Uvnitř kontruktoru dojde k vytvoření adekvátního \texttt{IVisitor<T>} objektu.
 Návratová hodnota \texttt{T} se využije ke konstrukci privátních objektů pro vykonání dotazu.
 
-\subsection{Match}
+\subsection{Match} \label{impl.match}
 
-Budeme vzcházet z sekce analýzy \ref{anal.match}.
+V této sekci popíšeme implementaci části Match.
+Prvně popíšeme konstrukci vzoru a následně objekty algoritmu prohledávání.
+Budeme vycházet z sekce analýzy \ref{anal.match}.
+
+\subsubsection{Třída MatchObject}
+
 Třída \texttt{MatchObject} reprezentuje Match část dotazu.
-Je potomkem třídy \texttt{MatchObjectBase}, která dědí z \texttt{QueryObject}.
-Obecně třída \texttt{MatchObject} obsahuje odkaz na tabulku výsledků prohledávání \texttt{MatchFixedResults} a odkaz na objekt reprezentující DFS algoritmus prohledávání \texttt{DFSParallelPatternMatcher}.
+Je potomkem abstraktní třídy \texttt{MatchObjectBase}, která dědí z \texttt{QueryObject}.
+Obecně třída \texttt{MatchObject} obsahuje odkaz na tabulku výsledků prohledávání \texttt{MatchFixedResults} a odkaz na objekt DFS algoritmu prohledávání \texttt{DFSParallelPatternMatcher}.
 V konstruktoru třídy se vytváří vzor a objekt prohledávání.
-Objekt prohledávání obrží vzor a tabulku pro ukládání výsledků.
-Třída dědí z \texttt{MatchObjectBase}, protože objekt části Match upraveného zpracování používá stejnou metodu \texttt{ParsedPatternCorrectness} ke kontrole vzoru uživatele.
+Objekt prohledávání obdrží vzor a tabulku pro ukládání výsledků.
+Třída dědí z \texttt{MatchObjectBase}, protože objekt části Match upraveného zpracování používá stejnou metodu ke kontrole vzoru uživatele (metoda \texttt{ParsedPatternCorrectness}).
 Metoda kontroluje uživatelem zadaný vzor, jestli splňuje podmínky jazyka PGQL. 
-Metoda očekává na vstupu pole tříd, které je výstupem procházení parsovací stromové struktury objektem \texttt{MatchVisitor}. 
+Metoda očekává na vstupu pole tříd, které je výstupem procházení syntaktické stromové struktury objektem \texttt{MatchVisitor}. 
 
 \subsubsection{Třída ParsedPattern}
 
@@ -389,7 +400,8 @@ Třída obsahuje:
 \item Pole abstraktních tříd \texttt{List<ParsedPatternNode> pattern}.
 Abstraktní \\*třída reprezentuje jeden hledaný element v posloupnosti, tj. hrana  (\texttt{-[e]>}) nebo vrchol (\texttt{(x)}).
 Obsahuje položky \texttt{string Name}, pokud je element označen proměnnou (např. vrchol \texttt{(x)}), a \texttt{Table Table} pokud je definován typ elementu (např. vrchol \texttt{(:Type)}).
-Potomci specifikují konkrétní případy vrcholů a hran. Pokud vezmeme příklad výše \texttt{(x) -> (y)}, tak pole bude obsahovat tří třídy.
+Potomci specifikují konkrétní případy vrcholů a hran. 
+Například pro posloupnost výše \texttt{(x) -> (y)} bude pole obsahovat tři třídy.
 \texttt{pattern[0]} je třída vrcholu \texttt{x}, \texttt{pattern[1]} je třída \texttt{OutEdge} hrany a \texttt{pattern[2]} je třída vrcholu \texttt{y}.
 
 \item Položku \texttt{string splitBy}, která označuje jméno proměnné, podle které posloupnost budeme dělit na dvě posloupnosti v průběhu vytváření objektu vzoru.
@@ -418,9 +430,9 @@ Pole, která sdílejí proměnnou, seskupíme k sobě a samotné posloupnosti ro
 Výsledkem bude pole posloupností a souvislé komponenty v něm budou obsaženy postupně za sebou.
 Příklad seskupení a rozdělení:
 \begin{code}
-Původní List<ParsedPattern> a unitř List<ParsedPatternNode>:
+Původní List<ParsedPattern> a uvnitř List<ParsedPatternNode>:
 [[(x), ->, (z)], [(r), ->, (q)], [(y), ->, (x), ->, (w)]]
-Pole po zpracovní:
+Pole po zpracování:
 [[(x), ->, (z)], [(x), <-, (y)], [(x), ->, (w)], [(r), ->, (q)]]
 \end{code}
 Zde vidíme, že první tři posloupnosti po zpracování tvoří souvislou komponentu, protože sdílejí proměnnou \texttt{x}, ale původně nebyli v poli za sebou.
@@ -504,7 +516,7 @@ Očekává se, že \texttt{row} je položka \texttt{scope} vzoru.
 
 \subsubsection{Třída MatchFixedResults}
 
-Třída obsahuje lokální vabulky všech vláken v položce \texttt{matcherResults}.
+Třída obsahuje lokální tabulky všech vláken v položce \texttt{matcherResults}.
 Takto budeme moct přistoupit k lokálním výsledkům po dokončení prohledávání grafu.
 Třída zároveň poskytuje rozhraní pro slévání sloupečků tabulek vláken v metodě \texttt{void MergeColumn(int columnIndex)}, která slévá jeden sloupeček.
 Výsledky jsou slévány do položky \texttt{List<Element[]>[] FinalMerged}.
@@ -576,9 +588,13 @@ Pokud dotaz obsahoval pouze \texttt{count(*)} v části Select, tak se výsledky
 
 \subsection{Tabulka výsledků} \label{impl.table}
 
+V této sekci popíšeme implementaci tabulky výsledků, kterou si předávají objekty dotazu.
+Tabulku jsme implementovali dle sekce analýzy \ref{anal.tables}.
+
+\subsubsection{Třída TableResults}
+
 Objekty exekučního plánu si předávají tabulku výsledků prohledávání rozhraním \texttt{ITableResults}.
 Ačkoliv jsme navrhli rozhraní, tak obecně používáme pouze jednu třídu \texttt{TableResults}, která rozhraní implementuje.
-Tabulku jsme implementovali dle sekce analýzy \ref{anal.tables}.
 Zároveň jsme ji upravili rovnou k možnosti použití pro ukládání pouze reprezentantů skupin popsaném v sekci \ref{anal.uprava.Groupby.table}.
 Hlavní vlastnosti jsou:
 \begin{itemize}
@@ -624,7 +640,7 @@ Postupovali jsme přesně podle sekce analýzy \ref{anal.expressions}, proto pop
 
 \subsubsection{Tvorba výrazů}
 
-V části parsování dotazu \ref{impl.parsing} jsme uvedli, že výstupem parsování jsou parsovací stromy každé části dotazu.
+V části načítání dotazu \ref{impl.parsing} jsme uvedli, že výstupem načítání jsou syntaktické stromy každé části dotazu.
 Tyto stromy obsahují i podstromy výrazů.
 Každá část dotazu má svůj objekt implementující rozhraní \texttt{IVisitor<T>}, kterým se sbírají důležitá data.
 Pokud v průběhu procházení dojde k nalezení podstromu výrazu, tak dojde k vytvoření speciálního objektu \texttt{ExpressionVisitor}.
@@ -659,7 +675,7 @@ Druhá třída je \texttt{VariablePropertyReference<T>}, která představuje př
 Při implementaci výrazu agregační funkce jsme postupovali jako v analýze.
 Vytvořili jsme dva koncepty.
 První koncept představuje logiku agregační funkcí.
-Tu představuje asbtraktní třída \texttt{Aggregate}, jejíž potomci implementují specifickou logiku výpočtu funkcí. 
+Tu představuje abstraktní třída \texttt{Aggregate}, jejíž potomci implementují specifickou logiku výpočtu funkcí. 
 Druhý koncept představuje odkaz na vypočtenou hodnotu funkce, ke které se může přistupovat v jiných částech dotazu.
 Tento koncept představuje třída \texttt{AggregateReference<T>: ExpressionReturnValue<T>}.
 Třída reprezentuje hodnotu již vypočtené agregační funkce a typ hodnoty je parametr \texttt{T}.
@@ -672,12 +688,14 @@ Tato třída je používaná k předávání výrazů do funkcí a konstruktorů
 
 Implementovali jsme části nutné ke zpracování Order by a Group by.
 Nyní popíšeme implementaci jejich řešení.
-Začneme částí Order by.
-
+Začneme popisem části Order by.
 U implementace jsme vycházeli z sekce analýzy \ref{anal.orderby}.
+
+\subsubsection{Třída OrderByObject}
+
 Část Order by je reprezentována objektem \texttt{OrderByObject: QueryObject}.
 Order by musí setřídit tabulku \texttt{TableResults} pomocí výrazů zadaných uživatelem (klíčů třídění).
-Klíče jsou vytvořeny v konstruktoru objektu při procházení parsovacího stromu objektem \texttt{OrderByVisitor<List<ExpressionComparer> >}.
+Klíče jsou vytvořeny v konstruktoru objektu při procházení syntaktického stromu objektem \texttt{OrderByVisitor<List<ExpressionComparer> >}.
 Výstup procházení obsahuje pole porovnávačů, které se musí použít k porovnaní řádků tabulky.
 
 \subsubsection{Třída ExpressionComparer}
@@ -756,11 +774,15 @@ První slovo určuje mód, kterému řešení přináleží.
 
 \subsection{Group by}
 
+V této sekci popíšeme implementaci Group by.
 U implementace Group by jsme vycházeli z sekce analýzy \ref{anal.groupby}.
+
+\subsubsection{Třída GroupByObject}
+
 Část Group by je reprezentována objektem \texttt{GroupByObject: QueryObject}.
 Group by musí seskupit výsledky v tabulce prohledávání \texttt{TableResults} pomocí výrazů zadaných uživatelem (klíčů seskupení).
 Zároveň musí provést výpočet agregačních funkcí.
-Klíče seskupování jsou vytvořeny v kostruktoru objektu při procházení parsovacího stromu objektem \texttt{GroupByVisitor<List<ExpressionHolder> >}.
+Klíče jsou vytvořeny v kostruktoru objektu při procházení syntaktického stromu objektem \texttt{GroupByVisitor<List<ExpressionHolder> >}.
 Výsledné pole obsahuje výrazy, které se musí použít k seskupování.
 V průběhu sestavování dalších částí dotazu dochází k vytváření objektů logiky výpočtu agregačních funkcí.
 Logika je obsažena v potomcích objektu \texttt{Aggregate}.
@@ -861,7 +883,7 @@ Položka \texttt{bool cacheResults} určuje zda se má použít druhá optimaliz
 Implementovali jsme způsob seskupování.
 Nyní budeme implementovat objekty logiky agregačních funkcí.
 V sekci implementace výrazů jsme řekli, že logika je reprezentována abstraktní třídou \texttt{Aggregate}.
-Tyto třídy jsou tvořeny v průběhu procházení parsovacích podstromů výrazů a jsou uloženy v poli \texttt{List<Aggregate>} uvnitř třídy \texttt{QueryExpressionInfo}.
+Tyto třídy jsou tvořeny v průběhu procházení syntaktických podstromů výrazů a jsou uloženy v poli \texttt{List<Aggregate>} uvnitř třídy \texttt{QueryExpressionInfo}.
 Indexy funkcí v daném poli slouží jako \texttt{ID} daných funkcí.
 Každá funkce potřebuje úložiště hodnot.
 Úložiště pak musí být používány pro spravnou funkci na základě jejich \texttt{ID}.
@@ -1033,18 +1055,21 @@ Každé vlákno drží odkaz na lokální pole \texttt{AggregateBucketResult[]},
 Není zde úložiště List, protože pro každé vlákno existuje jen jedna skupina.
 
 \end{itemize}
-\textit{Implementovali jsme řešení, která zpracovávají výsledky po dokončení prohledávání grafu.
-Nyní budeme implementovat řešení, která vykonávají Order by a Group by v průběhu prohledávání grafu.}
 
 \subsection{Úprava propojení}
 
+Implementovali jsme řešení, která zpracovávají výsledky po dokončení prohledávání grafu.
+V této sekci popíšeme implementaci úprav dotazovacího enginu dle zadání práce.
 K realizaci zpracování v průběhu prohledávání grafu jsme postupovali podle sekce analýzy \ref{anal.improvement}.
-Celý dotaz je reprezentován již existující třídou \texttt{Query}.
+
+\subsubsection{Zahrnutí úprav do třídy Query}
+
+Celé upravané zpracování dotazu je reprezentováno již existující třídou \texttt{Query}.
 Samotný způsob vykonání se definuje v metodě \texttt{Create(...)}, kde jeden vstupní argument je mód.
 Při vybrání upravaného módu se spustí rozdílný privatní konstruktor.
 V konstruktoru dojde k vytvoření exekučního plánu.
 V analýze jsme určili, že objekt části Select s novým objektem Match části \texttt{MatchObjectStreamed} je propojen původním způsobem.
-Nyní pouze vytvoříme objekty \texttt{ResultProcessor} implementující nový způsob zpracování a nový objekt části Match \texttt{MatchObjectStreamed}. 
+Nyní pouze vytvoříme objekt \texttt{ResultProcessor} a nový objekt části Match \texttt{MatchObjectStreamed}. 
 
 \subsubsection{Třída ResultProcessor}
 
@@ -1065,7 +1090,7 @@ Díváme se na ni jako na ekvivalent třídy \texttt{OrderByObject}.
 Druhá je třída \texttt{GroupByResultProcessor} představující část dotazu Group by.
 Díváme se na ni jako na ekvivalent třídy \texttt{GroupByObject}.
 Samotná konstrukce daných tříd je rovněž totožná s původními.
-To znamená, že při konstrukci opět dochází k procházení parsovacích stromů a tvorbě totožných výsledných struktur.
+To znamená, že při konstrukci opět dochází k procházení syntaktických stromů a tvorbě totožných výsledných struktur.
 Rozdíl je ten, že potomci tříd specifikují algoritmy zpracování v metodě \texttt{Process}.   
 
 \subsubsection{Třída MatchObjectStreamed}
@@ -1104,13 +1129,16 @@ Nyní přistoupíme ke konkrétním implementacím zpracování a potomkům tř�
 
 \subsection{Úprava Order by}
 
-Část dotazu Order by je reprezentována třídou \texttt{OrderByResultProcessor}.
+V této sekci popíšeme implementaci úprav části dotazu Order by.
 Potomci specifikují navržené přístupy zpracování dle sekce analýzy \ref{anal.improvement.orderby}.
+Část dotazu Order by je reprezentována třídou \texttt{OrderByResultProcessor}.
 Nejdříve popíšeme implementaci použitých vyhledávacích stromů a následně konkrétní třídy zpracování.
 
-Implementovali jsme vlastní (a, 2a)-strom, protože jsme nedokázali nalézt již existující knihovnu.
+\subsubsection{Implementace (a, b)-stromu}
+
+Implementovali jsme vlastní $(a, b)$-strom, protože jsme nedokázali nalézt již existující knihovnu.
 Obecně při zpracovávání budeme využívat dva druhy stromů.
-První je obecný (a, 2a)-strom a druhý je optimalizovaný strom z sekce \ref{anal.improvement.orderby.storeindex}, který seskupuje totožné prvky do pole místo aby je vložil do vrcholu.
+První je obecný $(a, b)$-strom a druhý je optimalizovaný strom z sekce \ref{anal.improvement.orderby.storeindex}, který seskupuje totožné prvky do pole místo aby je vložil do vrcholu.
 Oba stromy implementují rozhraní \texttt{IABTree<T>}, který definuje metodu vložení prvku \texttt{void Insert(T key)} a položku počtu prvků ve stromě \texttt{itn Count}.
 Toto rozhraní použijeme pro vytvoření obecného algoritmu zpracování, kterému budeme jednoduše moct změnit druh stromu.
 Při zpracování očekáváme, že vkládané prvky jsou indexy řádků tabulky.
@@ -1119,10 +1147,9 @@ To způsobí porovnání při shodnosti klíčů pomocí indexů řádků a nav�
 
 \subsubsection{Třída ABTree<T>}
 
-Třída představuje (a, 2a)-strom.
-Strom jsme implementovali dle přednášky Datových struktur I \citep[03. (a, b)-trees str. 6]{dataLecture}.
+Třída představuje $(a, b)$-strom \citep[str. 190]{labyrint}, u kterého jsem upravili definici na $b=2a$.
 \texttt{T} je zde typ vkládaných prvků.
-V konstruktoru obdrží parametr 2a.
+V konstruktoru obdrží parametr $b$.
 Struktura definuje:
 \begin{itemize}
 \item Metodu \texttt{void Insert(T key)}, která vloží prvek \texttt{key} do stromu.
@@ -1145,7 +1172,7 @@ Rozhraní procházení \texttt{IEnumerable<T>} iteruje prvky stromu od nejmenš�
 
 \subsubsection{Třída ABTreeAccumulator<T>}
 
-Třída představuje optimalizovaný (a, 2a)-strom z sekce analýzy \ref{anal.improvement.orderby.storeindex}.
+Třída představuje optimalizovaný $(a, b)$-strom z sekce analýzy \ref{anal.improvement.orderby.storeindex}.
 Třída interně funguje totožně jako třída \texttt{ABTree<T>} a implementuje \texttt{IABTree<T>}.
 Vrchol stromu \texttt{ABTreeNode<T>} nově vlastní položku \texttt{List<List<T> > accumulations}.
 Každému prvku v poli \texttt{keys} na indexu \texttt{i} náleží právě jedno pole v \texttt{accumulations} na stejném indexu.
@@ -1256,6 +1283,7 @@ Při prezentaci výsledků v kapitole \ref{expr} je na to duležité brát zřet
 
 \subsection{Úprava Group by}
 
+V této sekci popíšeme implementaci úprav časti dotazu Group by.
 Část dotazu Group by je reprezentována třídou \texttt{GroupByResultProcessor}.
 Potomci specifikují navržené přístupy zpracování dle sekce analýzy \ref{anal.improvement.groupby}.
 
@@ -1373,7 +1401,8 @@ Vlákno volající metodu vytvoří vkládané pole pomocí svého objektu \\*\t
 
 \subsection{Úprava Single group Group by}
 
-Při úpravě Single group Group by jsme postupovali přesně podle analýzy.
+V této sekci popíšeme implementaci úprav módu Single group Group by.
+Při úpravě Single group Group by jsme postupovali přesně podle sekce analýzy \ref{anal.improvement.singlegroup}.
 Vytvořili jsme dva řešení.
 Jedno řešení pro mód \textbf{Half-Streamed} a jedno pro mód \textbf{Streamed}.
 Řešení jsou:
@@ -1441,7 +1470,7 @@ Aplikace očekává čtyři vstupní soubory definované v sekcích \ref{anal.vs
 Schéma hran v souboru \textit{NodeTypes.txt}.
 Schéma vrcholů v souboru \textit{EdgeTypes.txt}.
 Pro schémata jsme definovali JSON formát v sekci \ref{anal.vstup}.
-Obecně hrana a vrchol nemůžou mít stejný typ elementu v Property grafu.
+Obecně hrana a vrchol nemůžou mít stejný štítek.
 Typy vrcholů a hran mohou však sdílet vlastnost.
 Typy vlastností jsme definovali na \textbf{integer} a \textbf{string}. 
 Datový soubor hran v souboru \textit{Edges.txt}.

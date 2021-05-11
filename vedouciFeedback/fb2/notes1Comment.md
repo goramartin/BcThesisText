@@ -24,6 +24,8 @@ Pridavam muj komentar:
 - expression -> pouzivaji navrhovy vzor composite
 
 		Martin: Udelam
+		
+		DONE
 
 - ze jsi pouzil zakladni paralelizaci
 	  -- future work/improvmenet
@@ -49,6 +51,9 @@ Pridavam muj komentar:
 
 - nektere sekce obsahuji na zacatku summary, co tam obsahuji (napr. 3.4.1), nektere vubec (3.3.1) -> konzistence
 
+		Martin: Maji to jen sekce z dokumentace implementace aby se v tom lepe orientovalo.
+		U zbytku mi to neprislo jako nutnost.
+		U dokumentace je to konzistentni jinak.
 
 - je oddeleno dostatecne parsovani Pgql (kdyby to treba nekdo chtel zmenit na nejaky jiny jazyk) -> pripadne, slo by to pouzit jako C# knihovnu pro Pgql jazyk? Zminit kdyztak jako future work a prinos
 

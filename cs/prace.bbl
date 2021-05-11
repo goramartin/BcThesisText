@@ -88,12 +88,6 @@ Martin Mareš and Tomáš Valla.
 \newblock {\em Průvodce labyrintem algoritmů}.
 \newblock CZ.NIC, z.s.p.o., 2017.
 
-\bibitem{dataLecture}
-Martin Mareš.
-\newblock Lecture notes on data structures.
-\newblock \url{http://mj.ucw.cz/vyuka/dsnotes/}, february 2020.
-\newblock [Online; accessed 1-January-2021].
-
 \bibitem{hpcsharp}
 Victor~J. Duvanenko.
 \newblock Hpcsharp.

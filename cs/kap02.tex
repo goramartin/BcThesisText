@@ -21,10 +21,10 @@ Dané omezení jsme zvolili, protože hlavním cílem je testovat pouze části 
 Vytvořit reálnou grafovou databázi by zabralo netriviální časové období.
 
 Při obecném pohledu na engine jsme lokalizovali hlavní bloky výstavby, které musíme uvážit.
-Jsou to: reprezentace grafu, parsování uživatelského dotazu, výrazy (expressions) a dotaz/vykonání dotazu.
+Jsou to: reprezentace grafu, načítání uživatelského dotazu, výrazy (expressions) a dotaz/vykonání dotazu.
 Graf nám bude představovat grafovou databázi. 
 Samotně pak určuje formát objektů, nad kterými je vykonán uživatelský dotaz.
-Při parsování se načítá uživatelský dotaz do interní reprezentace.
+Uživatelský dotaz se musí načíst do interní reprezentace.
 Expressions slouží k výpočtu hodnot z uživatelsky zadaných výrazů.
 Například v části \texttt{order by x.PropOne}, musíme vědět, jak reprezentovat výraz \texttt{x.PropOne} a získat jeho hodnotu. 
 Na základě interní reprezentace se musí vytvořit struktury dotazu a definovat exekuční plán. 
@@ -44,7 +44,7 @@ Myslíme, že zde není nutné složité grafické rozhraní a proto budeme engi
 Musíme uvážit, jak reprezentovat graf.
 Graf bude představovat grafovou databázi.
 Z části \ref{requirements} jsou hlavními faktory námi zvolená podmnožina jazyku PGQL a že se jedná o Property graf.
-Pro případy nejednoznačnosti označíme \verb+elType+ jako typ elementu v Property grafu a \verb+propType+ jako typ hodnoty vlastnosti.
+Pro případy nejednoznačnosti označíme \verb+elType+ jako typ štítku a \verb+propType+ jako typ hodnoty vlastnosti.
 
 \subsection{Elementy grafu a jejich typ}
 
@@ -175,7 +175,7 @@ Dané dva druhy představují základní typy používané i v komerčních sfé
 \subsubsection{Datové soubory}
 
 Samotná data budou obsažena opět ve dvou separátních souborech pro hrany a vrcholy.
-Chtěli bychom reprezentovat konkrétní data pomocí jednoduchého .txt souboru.
+Chtěli bychom reprezentovat konkrétní data pomocí jednoduchého textového souboru.
 Každý řádek bude reprezentovat jednu hranu/vrchol.
 V první řadě řádek musí obsahovat unikatní \verb+ID+ elementu a jeho \verb+elType+. 
 Za \verb+elType+ následuje seznam hodnot vlastností v pořadí určených schématem.
@@ -183,7 +183,7 @@ To znamená, že první vlastnost v JSON objektu má hodnotu jako první v dané
 Pro hrany existuje na řádku navíc záznam \verb+ID+ vrcholů, které spojuje.
 Tedy \texttt{ID} počátečního vrcholu (\texttt{fromID}) a \texttt{ID} koncového vrcholu (\texttt{toID}). 
 Oddělovače mezi daty jsou implementační detail.
-Pro naše účely se jedná o dostačující formát a poskytuje nám jednoduché možnosti parsování.
+Pro naše účely se jedná o dostačující formát a poskytuje nám jednoduché možnosti načítání dat.
 Pokud by docházelo v budoucnu k rozšířením, například více slovné vlastnosti nebo XML vlastnosti, musí dojít k úpravě daných formátů.
 Pro výše zmíněné schéma by datové soubory mohly vypadat následovně:
 \begin{code}
@@ -203,17 +203,15 @@ ID elType Vlastnosti...
 ...
 \end{code}
 
-\bigskip
-\textit{Analyzovali a navrhli jsme způsob reprezentace grafu společně s formátem datových souborů.
+\section{Načítání uživatelského dotazu} \label{anal.parsing}
+
+Analyzovali a navrhli jsme způsob reprezentace grafu společně s formátem datových souborů.
 Samotné načítání je už implementační detail.
-Nyní musíme analyzovat způsob získání informací z uživatelem zadaného dotazu. }
-
-\section{Parsování uživatelského dotazu} \label{anal.parsing}
-
+Nyní musíme analyzovat způsob získání informací z uživatelem zadaného dotazu. 
 Uživatelský dotaz se pohybuje v rozsahu definovaném v sekci PGQL \ref{req.pgql}.
 Nicméně, je zde nutné přemýšlet i nad možnými rozšířeními.
 Například může dojít k přidaní částí Where a Having spolu s nutností porovnávání (\texttt{Where x.PropOne} \texttt{< 10}).
-Proto se budeme snažit držet základních principů object oriented programming a volit vhodné návrhové vzory.
+Proto se budeme snažit držet základních principů objektově orientovaného programování a volit vhodné návrhové vzory.
 
 K načtení uživatelského dotazu se nám jeví jako nejvhodnější způsob použít techniky známé z překladačů programovacích jazyků.
 Budeme vycházet ze základních principů knihy o překladačích \citep{dragonBook}.
@@ -236,7 +234,7 @@ Pole bude obsahovat třídy.
 Třída si musí pamatovat jakou proměnou reprezentuje, \verb+elType+ pokud je definován a jde-li o hranu nebo vrchol.
 Jedná se o všechny nutné informace, které můžeme následně využít k vytvoření vzoru prohledávání grafu.
 Všimnout si musíme faktu, že Match část definuje proměnné ve zbytku dotazu.
-Během parsování musíme určit zda se jedná o validní proměnnou a při vypočtech hodnot výrazů je nutné vědět přesně k jaké proměnné musíme přistoupit.
+Během načítání dotazu musíme určit zda se jedná o validní proměnnou a při výpočtech hodnot výrazů je nutné vědět přesně k jaké proměnné musíme přistoupit.
 Problém se dá řešit vytvořením mapy/slovníku přistupných proměnných pro zbytek dotazu.
 Proměnným pak můžeme přiřadit \verb+ID+.
 
@@ -244,7 +242,7 @@ Proměnným pak můžeme přiřadit \verb+ID+.
 
 Ostatní části Group by, Order by a Select obsahují výrazy proměnných (např. \texttt{order by x}), přístup k vlastnostem proměnných (např \texttt{select x.PropOne}) a volání agregačních funkcí (\verb+min+, \verb+max+, \verb+avg+, \verb+sum+ a \verb+count+).
 Proměnné zde představují elementy grafu.
-Výrazy se však musí evaluovat za běhu programu.
+Výrazy se však musí vyhodnotit za běhu programu.
 Dalším problémem je, že výrazy mají různorodé návratové hodnoty.
 Výraz \texttt{x} (\verb+ID+ vrcholu) lze chápat jako integer.
 Výraz \texttt{x.PropOne} má návratovou hodnotu dle \verb+propType+, který je definovám ve vstupním schématu.
@@ -262,7 +260,8 @@ Proto jsme byli nuceni vymyslet systém výrazů (expressions).
 Systém vytváření a vyhodnocování výrazů efektivně za běhu je obecně složitý problém.
 Omezíme se pouze na případy: přístup k proměnné, přístup k hodnotě vlastnosti proměnné a agregační funkce (\verb+min+, \verb+max+, \verb+avg+, \verb+sum+ a \verb+count+).
 
-Základní myšlenka je reprezentovat výraz pomocí stromové struktury. 
+Základní myšlenka je reprezentovat výraz pomocí stromové struktury.
+Obecně struktura bude využívat návrhový vzor Composite \citep[str. 163]{patterns}. 
 Každý vrchol stromové struktury bude reprezentovat určitou akci.
 Vrcholy budou výše vypsané výrazy. 
 Na struktuře bude existovat metoda pro vyhodnocení.
@@ -336,21 +335,6 @@ Druhý koncept představuje nový potomek třídy \texttt{Expression}.
 Daný potomek si pamatuje \verb+ID+ přistupované agregační funkce a na vstupu očekává strukturu reprezentující skupinu.
 K hodnotě počítané agregace přistoupíme pomocí její \verb+ID+.
 
-Následuje ukázka druhého konceptu:
-\begin{code}
-class GroupAggValueAccess<T>: ExpReturnValue<T> {
-  reaonly int accessedAggFuncID; 
-  public override bool TryEvaluate(Group group, out T retVal) {
-    retVal = group.GetAggValue<T>(accessedAggFuncID);
-    return true; }}
-\end{code}
-\verb+Group+ reprezentuje výsledky jedné skupiny.
-\verb+accessedAggFuncID+ je identifikátor vypočítané agregační funkce.
-Hodnota funkce se vrací pomocí \verb+GetAggValue<T>+.
-Obecně ale vždy nemusí dojít k úspěchu vyhodnocení.
-Při výpočtu se například vždy přistoupilo k neexistující vlastnosti u všech elementů.
-
-\clearpage
 Následuje ukázka prvního konceptu:
 \begin{code}
 abstract class Aggregation { }
@@ -367,10 +351,25 @@ public class Sum<T>: Aggregation<T>{
   }
 }
 \end{code}
-Zde vidíme položku \verb+expr+, která reprezentuje vstupní výraz agregační funkce.
+\clearpage
+\noindent Na ukázce výše vidíme položku \verb+expr+, která reprezentuje vstupní výraz agregační funkce.
 Funkce \verb+Apply+ je logikou funkce. 
 Vidíme funkci \verb+Sum+. 
-Logikou je přičtení vypočítané hodnoty do poskytnutého úložište, pokud dojde k úspěšné evaluaci výrazu.
+Logikou je přičtení vypočítané hodnoty do poskytnutého úložište, pokud dojde k úspěšnému vyhodnocení výrazu.
+
+Následuje ukázka druhého konceptu:
+\begin{code}
+class GroupAggValueAccess<T>: ExpReturnValue<T> {
+  reaonly int accessedAggFuncID; 
+  public override bool TryEvaluate(Group group, out T retVal) {
+    retVal = group.GetAggValue<T>(accessedAggFuncID);
+    return true; }}
+\end{code}
+\verb+Group+ reprezentuje výsledky jedné skupiny.
+\verb+accessedAggFuncID+ je identifikátor vypočítané agregační funkce.
+Hodnota funkce se vrací pomocí \verb+GetAggValue<T>+.
+Obecně ale vždy nemusí dojít k úspěchu vyhodnocení.
+Při výpočtu se například vždy přistoupilo k neexistující vlastnosti u všech elementů.
 Pomocí našeho návrhu pak můžeme vyřešit i budoucí rozšíření (např. zmíněné aritmetické operátory nebo porovnání).
 
 Třídy pro binární sčítání mohou vypadat takto:
@@ -379,8 +378,6 @@ class ExpressionBinOperation<T>: ExpressionReturnValue<T> {
   public ExpressionReturnValue<T> expr1;
   public ExpressionReturnValue<T> expr2;
 }
-\end{code}
-\begin{code}
 class ExpressionIntegerAdd: ExpressionBinOperation<int>{
   public override bool TryEvaluate(Element[] elms, out int retVal) {
     if (expr1.TryEvaluate(elms, out int expr1Val) &&
@@ -398,11 +395,10 @@ Zde \texttt{ExpressionIntegerAdd} rozšiřuje obecný binární operátor a urč
 V těle funkce \texttt{TryEvaluate} dojde k pokusu o vyhodnocení dvou podvýrazů.
 Při úspěchu dojde k vypočtení finální hodnoty a v opačném případě dojde k selhání vyhodnocení. 
 
-\bigskip
-\textit{Tímto jsme vyřešili problémy parsování a reprezentace expressions pro náš engine.
+Tímto jsme vyřešili problémy načítání a reprezentace expressions pro náš engine.
 Kód je pouze ilustrační a není finální.
 Použili jsme jej, protože poskytoval lepší možnosti vysvětlení konceptu než obrázek.
-Nyní přistoupíme k problémům vykonávání dotazu.}
+Nyní přistoupíme k problémům vykonávání dotazu.
 
 \clearpage
 
@@ -524,15 +520,14 @@ Pomocí řádků v tabulce se musí vyhodnotit výrazy v částech Group/Order b
 Vstupním argumentem expression by měl být pouze jeden řádek.
 Přesouvání řádku o více sloupcích je drahé.
 Pro docílení efektivní práce s řádky budeme řádek reprezentovat proxy třídou.
-Proxy třída bude návratová hodnota funkce indexeru tabulky (\texttt{ResultTable[i]}, kde \texttt{i} je index řádku).
+Proxy třída bude návratová hodnota funkce hranatých závorek na třídě tabulky (\texttt{tabulka[i]}, kde \texttt{i} je index řádku).
 Třída poskytne metody pro přístup k elementům nebo výsledkům agr. funkcí ve sloupečcích pro daný řádek tabulky.
 V ideálním případě si bude pamatovat pouze index reprezentujícího řádku a odkaz na tabulku.
 Nyní pokud budeme chtít vyhodnotit výraz pro $i$-tý řádek tabulky, tak zavoláním indexeru dostaneme proxy třídu a tu použijeme k vyhodnocení výrazu.
 
-\bigskip
-\textit{Analyzovali a navrhli jsme obecně způsob vykonání dotazu společně s formátem předávaných výsledků mezi částmi. 
+Analyzovali a navrhli jsme obecně způsob vykonání dotazu společně s formátem předávaných výsledků mezi částmi. 
 Nyní přejdeme k analýze jednotlivých částí dotazu. 
-V analýze jsme se rozhodli vychenat část Select, protože není podstatná pro naši práci.}
+V analýze jsme se rozhodli vynechat část Select, protože není podstatná pro naši práci.
 
 \section{Match a prohledávání grafu} \label{anal.match}
 
@@ -544,7 +539,7 @@ Na každý prvek posloupnosti se můžeme dívat jako na úložiště nějakého
 Vlastnosti prohledávání grafu:
 \begin{itemize}
 
-\item Výsledky prohledávání jsou podgrafy homomorfní se zadaným vzorem.
+\item Výsledky prohledávání jsou podgrafy izomorfní se zadaným vzorem.
 \item Hrana se může opakovat několikrát v rámci jednoho vzoru.
 \item Proměnná hrany ve vzoru se může použít pouze jednou.
 \item Dvě rozdílné proměnné mohou obsahovat stejný element.
@@ -588,8 +583,9 @@ match (x) -> (y), (x) -> (q)
 \end{code}
 
 Řetězce nám nyní budou sloužit k vytvoření vzoru.
-Abychom mohli efektivně hledat daný vzor, potřebujeme z řetězců vytvořit souvislou komponentu.
-Vytvoříme ji propojením řetězců pomocí opakujících se proměnných.
+Abychom mohli efektivně hledat daný vzor, potřebujeme z řetězců vytvořit souvislou komponentu
+(popis tvorby vzoru a komponent je blíže popsán v sekci \ref{impl.match}). 
+Obecně ji vytvoříme propojením řetězců pomocí opakujících se proměnných.
 Tedy dva řetězce jsou propojeny právě tehdy, obsahují-li stejnou proměnnou. 
 Propojením všech takových řetězců vytvoříme souvislou komponentu.
 Souvislá komponenta představuje hledaný vzor.
@@ -606,8 +602,17 @@ select x, y match (x), (y)
 
 \subsubsection{Finální výsledek}
 
-Součástí struktury musí být také aktuální pole elementů představující proměnné dotazu (např. z výše uvedeného dotazu proměnné \texttt{x} a \texttt{y}).
-Jedna položka v poli odpovídá jedné proměnné.
+V Match části dotazu je součástí definice hledaného vzoru i specifikace proměnných.
+Proměnné jsou přístupné v ostatních částech dotazu.
+Finálním výsledkem prohledávání grafu bude pole elementů představující proměnné dotazu.
+Toto pole bude obsaženo ve struktuře vzoru.
+Jedna položka v poli odpovídá právě jedné proměnné.
+Opakující se proměnné nemají více položek v poli.
+Příkladem může být \texttt{match (x) -> (y) -> (x), (k) <- (p)}.
+Tento hledaný vzor obsahuje čtyři proměnné: \texttt{x}, \texttt{y}, \texttt{k} a \texttt{p}.
+Pole tedy obsahuje čtyři položky v pořadí daném prvním výskytem proměnné v dotazu.
+Výsledně první položka v poli představuje proměnnou \texttt{x}, druhá položka proměnnou \texttt{y}, třetí \texttt{k} a poslední \texttt{p}.
+
 Bude existovat pouze jedno pole pro jeden vzor. 
 Nebudou se vytvářet další, ale budou se měnit pouze vnitřní elementy, protože chceme omezit režii za tvorbu polí.
 Pole bude sloužit k ověření, jestli držíme totožné elementy v moment opakující se proměnné v průběhu prohledávání grafu.
@@ -641,7 +646,7 @@ Vyhledávání bude reprezentováno objektem (\texttt{Matcher}).
 Každé vlákno bude vlastnit lokálně svůj \texttt{Matcher}, \texttt{Pattern} a svou tabulku výsledků.
 Všechna vlákna budou sdílet thread-safe objekt (\texttt{VertexDistributor}), který jim bude přidělovat vrcholy grafu.
 Vlákno vždy zažádá \texttt{VertexDistributor} o určitý počet vrcholů, ze kterých spustí lokálně prohledávání a výsledky uloží do své tabulky.
-Nikdy nenastave situace, kdy dva vlákna mají stejný startovní vrchol.
+Nikdy nenastave situace, kdy dvě vlákna mají stejný startovní vrchol.
 Po vyčerpání všech vrcholů grafu prohledávání končí.
 V jednovláknovém řešení jsou přiděleny všechny vrcholy najednou danému vláknu. 
 Rozložení objektů mezi vlákny je zobrazeno na obrázku \ref{figure.diaQueryObjectsMatchPar}. 
@@ -671,7 +676,7 @@ $log_2 n$ odpovídá počtu přealokování při plnění dynamického pole $n$ 
 Slévání bude probíhat opět paralelně.
 Nabízí se dva způsoby.
 Vlákno slévá pouze jeden totožný sloupeček všech výsledků vláken nebo dojde k dvoucestnému slévání výsledků vláken.
-Nyní je obtížné odhadnou správné řešení a proto jej ponecháme na dobu implementace.    
+Správné řešení ponecháme na dobu implementace.    
 
 \clearpage
 
@@ -682,11 +687,6 @@ Nyní je obtížné odhadnou správné řešení a proto jej ponecháme na dobu 
 \end{figure}
 
 \bigskip
-\textit{Zbývá nám analyzovat a navrhnout Group by a Order by.
-Je nutné si uvědomit potřebu analýzy daných částí.
-Analýza nám pomůže pochopit jejich fungování, což nám umožní je lépe porovnat s vylepšenými řešeními. 
-Zároveň také tvoří odrazový můstek pro návrh vylepšených řešení.}
-
 
 \section{Order by} \label{anal.orderby}
 
@@ -754,7 +754,10 @@ select x.PropOne match (x) -> (y) order by x.PropOne;
 \end{code}
 V takovém dotazu by prohledávání grafu mělo vygenerovat několik výsledků se stejným elementem v proměnné \texttt{x}.
 Počet takových výsledků zde odpovídá počtu hran vrcholů \texttt{x}.
-Abychom předešli opakovanému porovnávání hodnot vlastností stejných elementů, tak než přistoupíme k výpočtu výrazů porovnáme \texttt{ID} přistupovaných elementů.
+Pokud bychom porovnávali dané výsledky, museli bychom pro ně vždy vypočítat hodnoty výrazů, ačkoliv výsledky obsahují stejné elementy.
+Abychom předešli opakovanému výpočtu výrazů pro dané výsledky, vymysleli jsme optimalizaci.
+Výsledky nejdříve porovnáme pomocí \texttt{ID} jejich elementů a teprve pak pomocí výrazů.
+Tímto vyřadíme opakovaný výpočet výrazů pro výsledky se stejnými elementy.
 Tedy využijeme dvou optimalizací.
 Budeme si uchovávat poslední hodnoty výrazů a navíc omezíme porovnání výsledků se stejnými elementy.
 
@@ -805,7 +808,6 @@ Objekty představují úložiště výsledků funkcí.
 \item \textbf{List} - výsledky všech skupin jsou uchovávány v dvoudimenzionálním poli, tj. primitivní tabulce.
 Sloupeček představuje výsledky jedné agregační funkce.
 Jedné skupině pak přináleží řádek v daném poli.
-Každé skupině bude přidělen index daného řádku.
 Nyní pokud budeme chtít výsledky funkcí skupiny, stačí přistoupit skrze přidělený index ke chtěnému výsledku.
 \end{itemize}
 
@@ -820,6 +822,7 @@ class BucketResult {}
 class BucketResult<T>: BucketResult { T value; }
 
 List:
+\\ Jednoduchá tabulka výsledků ag. funkcí.
 ListResults groupsAggFuncResults;
 \\ Objekt primitivní tabulky výsledků ag. funkcí.
 class ListResults { ListHolder[] holders; }
@@ -831,7 +834,7 @@ class ListHolder<T> : ListHolder { List<T> values }
 
 První způsob je náročnější na paměť oproti druhému způsobu, neboť je zde nutnost vytvářet objekty a pole pro každou skupinu.
 Avšak, v druhém způsobu jsme nuceni přistupovat k výsledkům pomocí indirekce.
-Výhoda Bucket spočívá v jeho jednoduchém přemisťování (chápeme-li pole jako referenci) a izolaci od ostatních výsledků skupin.
+Výhoda Bucket spočívá v jeho jednoduchém přemisťování (chápeme-li pole jako odkaz) a izolaci od ostatních výsledků skupin.
 V takovém případě jsme schopni přesouvat výsledky skupiny aniž bychom museli kopírovat jejich hodnoty.
 Předpokládáme, že bucket bude výhodnější pro paralelní zpracování díky izolaci od ostatních výsledků, jelikož počet skupin není dopředu znám.
 V List budeme muset dynamicky rozšiřovat pole.
@@ -843,13 +846,19 @@ Ještě než přistoupíme k výběru zpracování musíme analyzovat logiku agr
 Logika pak ovlivňuje co a jak se bude ukládat v úložišti výsledků.
 
 \begin{itemize}
-\item \texttt{Min/Max:} výsledek funkce je minimum/maximum pro skupinu. Při výpočtu dojde k porovnání a následnému uložení hodnoty.
+\item \texttt{min/max:} výsledek funkce je minimum/maximum pro skupinu. 
+Při výpočtu dojde k porovnání a následnému uložení hodnoty.
 V objektu výsledku musíme znát aktuální minimum/maximum.
 Dále, byla-li hodnota již nastavena, protože musíme být schopni rozeznat prázdné úložiště po jeho vytvoření.
 
 
-\item \texttt{Count/Sum:} výsledek je počet výsledků/suma hodnot výsledků. Při výpočtu musíme přičítat hodnotu k hodnotě v úložišti.
-\item \texttt{Avg:} výsledek je aritmetický průměr. Chtěli bychom volit inkrementální metodu. Budeme si ukládat počet výsledků a sumu hodnot výsledků. Pro získání finální hodnoty dojde k vypočtení podílu sumy a počtu výsledků.
+\item \texttt{count/sum:} výsledek je počet výsledků/suma hodnot výsledků. 
+Při výpočtu musíme přičítat hodnotu k hodnotě v úložišti.
+
+\item \texttt{avg:} výsledek je aritmetický průměr.
+Při výpočtu si budeme ukládat počet výsledků a sumu hodnot výsledků.
+Dochází zde tedy k navýšení počtu výsledků a přičtení nové hodnoty ke stávající sumě.
+Pro získání finální hodnoty dojde k vypočtení podílu sumy a počtu výsledků.
 \end{itemize}
 
 \subsection{Jednovláknové zpracování} \label{anal.groupby.singlethread}
@@ -862,7 +871,7 @@ Z tohoto důvodu chceme využít strukturu, která bude interně použivát haš
 Záznam v tabulce bude dvojice \texttt{key/value}. 
 \texttt{key} je zde index do tabulky výsledků z Match části (nikoliv proxy třída).
 Chceme ukládat pouze index, abychom ušetřili paměť za ukazatel na tabulku.
-Porovnání vyvolá získání proxy třídy a následné evaluaci hodnot výrazů.
+Porovnání vyvolá získání proxy třídy a následně vyhodnocení výrazů.
 \texttt{value} obsahuje strukturu pro výsledky agregačních funkcí.
 Pro Bucket to bude pole objektů a pro List to bude index do tabulky výsledků agregačních funkcí.
 Pro výsledek bude vypočítána haš na základě hodnot klíču a následně použita při vložení do hašovací tabulky.
@@ -898,28 +907,28 @@ Specifika vykonání jsou popsána v následujících sekcích.
 \subsection{Thread-safe agregační funkce}
 
 Ještě než přistoupíme k popisu jednotlivých řešení, je důležité si uvědomit nutnost vytvořit thread-safe verzi objektů implementující logiku agregačních funkcí.
-Pro každou funkci bude existovat ekvivalent thread-safe \texttt{Apply} metody.
+Pro každou funkci bude existovat ekvivalent thread-safe metody zpracovávající logiku funkce.
 Samotně pak vyvstává nutnost implementovat thread-safe metody pro slévání výsledků agregačních funkcí.
 Problém vyřešeníme přidáním metod do objektů zpravující logiku agregačních funkcí.
 Pro úpravu logiky agregačních funkcí na thread-safe verze volíme tyto varianty:
 
 \begin{itemize}
 
-\item \texttt{Min/Max:} princip Compare and Exchange. V moment porovnání mohlo dojít ke změně hodnoty v úložišti.
+\item \texttt{min/max:} princip Compare and Exchange. V moment porovnání mohlo dojít ke změně hodnoty v úložišti.
 Musíme znovu provést porovnání.  
 
-\item \texttt{Sum/Count:} tyto metody implementují pouze přičítání. 
+\item \texttt{sum/count:} tyto metody implementují pouze přičítání. 
 V ideálním případě chceme použít atomické operace přičtění.
  
-\item \texttt{Avg:} tuto funkci lze implementovat iterativně. 
-Budeme si ukládat součet zpracovaných výsledků a jejich počet.
+\item \texttt{avg:} tuto funkci budeme implementovat stejně jako původní funkci. 
+Budeme si ukládat součet hodnot zpracovaných výsledků a jejich počet.
+Navýšení hodnot provedeme opět atomickým přičtením jako u funkcí \texttt{sum} a \texttt{count}.
 Finální hodnota pak bude podíl součtu a počtu hodnot.
-Tímto můžeme implementovat thread-safe funkci pomocí atomických operací, jako u funkcí \texttt{Sum/Count}.
 \end{itemize}
 
 \subsection{Global Group by} \label{anal.groupby.global}
 
-Všechna vlákna budou provádět ekvivalent jednovláknového zpracování pomocí thread-safe paralelní mapy/slovníku (C\# \texttt{ConcurrentDictionary, Java \texttt{ConcurrentHashMap}}).
+Všechna vlákna budou provádět ekvivalent jednovláknového zpracování pomocí thread-safe paralelní mapy/slovníku (C\# \texttt{ConcurrentDictionary}).
 Skupiny se vytváření globálně.
 Všimněme si nutnosti dvojité synchronizace.
 Prvě musí dojít k synchronizaci vytváření záznamů v mapě.
@@ -939,23 +948,24 @@ Vlákno se na přístup pokusí projít skrze semafor.
 Pokud je mu vstup zabráněn, tak dochází k rozšiřování tabulky.
 V opačném případě aktualizuje výslednou hodnotu agregační funkce.
 Postup s List může být však značně pomalý a proto budeme uvažovat, jestli přístup raději implementovat pouze pro Bucket.
-Global Group by je znázorněn na obrázku \ref{figure.diaGlobalGr}.
+Global Group by je znázorněn na obrázku \ref{figure.diaGlobalGr} na konci této sekce.
 
 \subsection{Two-step Group by} \label{anal.groupby.twostep}
 
 Tento přístup probíhá ve dvou krocích.
-Lokální část nasledovaná globální částí. 
+Lokální část následovaná globální částí. 
 V lokální části pro každé vlákno běží kompletně identický ekvivalent jednovláknového zpracování.
 Globální část nastane v moment dokončení této práce.
 Místo aby vlákno ukončilo běh, tak rovnou provede slévání svých výsledků do thread-safe paralelní mapy.
 To znamená, že vlákno nečeká na dokončení práce ostatních vláken, ale rovnou slévá své výsledky do paralelní mapy.
 Tento přístup kombinuje jednovláknové řešení společně s přístupem Global.
-Mínus je, že zde musí docházet ke slévání, ale v prvním kroku se využívají metody, které nemusí řešit synchoronizaci. 
+Mínus je, že zde musí docházet ke slévání.
+Plus je, že v prvním kroku se využívají metody, které neobsahují synchronizaci. 
 Problematická část je zde slévání výsledků s List úložištěm výsledků agregačních funkcí.
 První fáze nepředstavuje problém. 
 Druhá představuje problém jako u Global řešení, tedy platí vše, co jsme pro něj zmínili.
 Můžeme zkusit implementovat stejné řešení jako u Global pomocí semaforu.
-Two-step Group by je znázorněn na obrázku \ref{figure.diaTwoGr}.
+Two-step Group by je znázorněn na obrázku \ref{figure.diaTwoGr} na konci této sekce.
 
 \subsection{Local + dvoucestné slévání Group by} \label{anal.groupby.local}
 
@@ -971,11 +981,13 @@ U slévání využijeme paralelního zpracování.
 Při slévání vždy jedno vlákno ukončí běh, druhé z dvojice provede slévání a postoupí ke kořeni. 
 Hlavní výhody byly už zmíněny.
 Nevýhoda řešení je, že vlákna musejí čekat při slévání na dokončení práce druhého vlákna a teprve až pak může dojít ke slévání.
-Přístup je znázorněn na obrázku \ref{figure.diaLocalGr}.
+Další nevýhoda nastave v případě velkého počtu vláken.
+Strom slévání v tuto chvíli bude hloboký a tedy výsledky vláken se budou částo překopírovávat. 
+Přístup je znázorněn na obrázku \ref{figure.diaLocalGr} na konci této sekce.
 
 \subsection{Paralelizace Single group Group by} \label{anal.groupby.singlegroup}
 
-K paralelizaci Single group Group by se nám poskytuje využít jíž zmíněných principů.
+K paralelizaci Single group Group by využijeme jíž zmíněných principů.
 Konkrétně zde mají využítí všechny tři.
 Problémem Global přístupu je synchronizace mnoha vláken na jednom místě.
 Ideálnější je využít lokálního zpracování zbylých dvou přístupů.
@@ -984,6 +996,7 @@ V prvním kroku každé vlákno provádí ekvivalent jednovláknového zpracová
 Výsledky se následně musí slévat.
 K rozhodnutí, které řešení finálně použít použijeme fakt, že počet výsledků k slévání je roven počtu vláken.
 V takovém případě nebudeme implementovat paralelní slévání, ale pouze jedno vybrané vlákno provede sjednocení všech výsledků.
+
 
 \begin{figure}[!htp]
 \includegraphics{../img/diaGlobalGr.pdf}\centering
@@ -998,7 +1011,6 @@ V takovém případě nebudeme implementovat paralelní slévání, ale pouze je
 \end{figure}
 
 \clearpage
-
 \begin{figure}[!htp]
 \includegraphics{../img/diaLocalGr.pdf}\centering
 \caption{Diagram paralelizace Local + dvoucestné slévání Group by pro 4 vlákna.}
@@ -1006,10 +1018,10 @@ V takovém případě nebudeme implementovat paralelní slévání, ale pouze je
 \end{figure}
 
 \bigskip
-\textit{Analyzovali jsme a navrhli řešení vykonání částí Match, Group by a Order by.
+Analyzovali jsme a navrhli řešení vykonání částí Match, Group by a Order by.
 Tímto jsme dokončili analýzu a návrh dotazovacího enginu.
 Daná analýza a návrh nám poskytnou odrazový můstek při analýze úprav pro vykonání částí Group by a Order by v průběhu prohledávání grafu.
-}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Úprava enginu} \label{anal.improvement}
@@ -1054,7 +1066,7 @@ Otázkou je, co je zde předávaný výsledek.
 Budeme předpokládat, že předávaný výsledek ke zpracování je pole proměnných definované v sekci hledaného vzoru \ref{anal.match.res}.
 To znamená, že předané pole se nesmí měnit, protože pole náleží struktuře vzoru.
 Tedy pokud s ním chceme pracovat přímo, tak musíme vytvořit kopii.
-\textbf{Když budeme hovořit o výsledku prohledávání, tak máme na mysli dané pole proměnných.}
+Když budeme hovořit o výsledku prohledávání, tak máme na mysli dané pole proměnných.
 
 \subsection{Order/Group by část jako bariéra}
 
@@ -1111,7 +1123,6 @@ Finální propojení objektů je pak znázorněno na obrázku \ref{figure.diaStr
 \label{figure.diaStreamedQueryObjectsCon}
 \end{figure}
 
-
 \subsubsection{Propojení vyhledávání a zpracování výsledku} \label{anal.improvement.con2}
 
 Musíme ještě navrhnout způsob předávání výsledků částem Order/Group by v průběhu prohledávání grafu.
@@ -1139,10 +1150,8 @@ Další část by pouze zpracovávala výsledky z fronty.
 Myslíme, že tohle řešení by bylo neefektivní v našem případě, protože by muselo docházet k synchronizaci fronty, tj. problém producent a spotřebitel.
 V našem řešení jsme synchronizaci při předávání výsledků zcela vynechali.
 
-\bigskip
-\textit{
 Vytvořili jsme nové objekty částí Order by a Group by.
-Propojili jsme původní objekty s novými a nyní přejdeme k analýze a návrhu samotných způsobů vykonání Order by a Group by.}
+Propojili jsme původní objekty s novými a nyní přejdeme k analýze a návrhu samotných způsobů vykonání Order by a Group by.
 
 \subsection{Obecný model vykonání Order/Group by}
 
@@ -1153,23 +1162,13 @@ Musíme být schopni zpracovávat výsledky z množství vláken v jeden okamži
 Je nutné, aby docházelo k synchronizaci.
 Ještě než přistoupíme ke konkrétním návrhům algoritmů zpracování, tak navrhneme obecný model paralelního zpracování.
 Vymysleli jsme dva modely.
-Modely \textbf{Streamed} a \textbf{Half-Streamed}.
+Modely \textbf{Half-Streamed} a \textbf{Streamed}.
 Modely jsme vybrali na základě množství využívané synchronizace a množství slévání výsledků.
 Chceme vytvořit větší množství řešení, abychom mohli lépe porovnat výsledky v kapitole Experiment \ref{expr}.
 
-\subsubsection{Návrh Streamed}
-
-Prvním modelem vykonání je model \textbf{Streamed}.
-Myšlenkou tohoto návrhu je příchozí výsledky zpracovat globálně.
-Vycházíme z Global zpracování Group by z sekce \ref{anal.groupby.global}.
-Vytvoříme strukturu, která nám poskytne metody se synchronizací.
-Všechna vlákna v moment nalezení výsledku volají metodu \texttt{ProcessResult}, uvnitř které dojde k volání synchronních metod na struktuře.
-Výhoda tohoto přístupuje je odstranění nutnosti slévání výsledků vláken.
-Nevýhoda je, že zde dochází k volání metod se synchronizací.
-
 \subsubsection{Návrh Half-Streamed}
 
-Druhým modelem vykonání je model \textbf{Half-Streamed}.
+Prvním modelem vykonání je model \textbf{Half-Streamed}.
 Myšlenkou tohoto návrhu je příchozí výsledky zpracovat ve dvou krocích.
 V prvním kroku každé vlákno výsledky zpracovává lokálně.
 Po dokončení vyhledávání dojde ke slévání výsledků vláken.
@@ -1186,142 +1185,15 @@ Objekty Group by a Order by pak budou vlastnit lokální výsledky vláken, kter
 Při volání metody \texttt{ProcessResult} dojde ke zpracování výsledku nad danými lokálními výsledky.
 Po dokončení dojde ke slévání výsledků vláken.
 
-\section{Úprava Single group Group by} \label{anal.improvement.singlegroup}
+\subsubsection{Návrh Streamed}
 
-Single group Group by je mód, ve kterém uživatel zadal v dotazu výpočet agregačních funkcí, ale nezadal část Group by.
-V tomto případě všechny výsledky prohledávání náleží pouze do jedné skupiny, pro kterou se počítají dané agregační funkce.
-Stačí nám tedy navrhnout způsob vykonání pro naše dva módy \textbf{Streamed} a \textbf{Half-Streamed}.
-Budeme uvažovat pouze paralelní řešení, protože jednovláknové bude pouze určitý případ paralelního.
-Obecně si můžeme všimnout, že výsledky se nemusí ukládat do tabulky.
-Po nalezení výsledku dojde k aktualizaci hodnot agregačních funkcí a výsledek není dále potřeba.
-Ušetříme tedy spoustu paměti za tabulku výsledků.
-Samotný výpočet hodnot funkcí a úložiště hodnot budou totožné s původním řešením.
-
-\subsubsection{Half-Streamed}
-
-V tomto módu každé vlákno počítá hodnoty agregačních funkcí lokálně.
-Po nalezení výsledku dojde k aktualizování lokálních hodnot agregačních funkcí.
-V moment dokončení prohledávání grafu všemi vlákny dojde ke slévání výsledků vláken.
-Vlákno však nebude čekat na ukončení práce ostatních vláken, ale rovnou výsledky slévá do globální struktury.
-Výhoda tohoto řešení je vyřazení nutnosti používat thread-safe logiku agregačních funkcí v lokální části.
-
-\subsubsection{Streamed}
-
-V tomto módu existuje pouze jedno sdílené úložiště hodnot agregačních funkcí.
-Vlákna v moment nalezení výsledku aplikují thread-safe agregační funkce.
-Výhoda tohoto řešení je, že zde nedochází ke slévání výsledků.
-Problém zde může nastat ve chvíli, kdy existuje velké množství přistupujících vláken.
-Tyto přístupy mohou mít za následek značné zpomalení zpracování, kvůli synchronizaci.
-
-\smallskip
-Všimněme si také, že v jednovláknovém zpracování jsou módy totožné.
-V obou případech se nemusí použít thread-safe logika agregačních funkcí a existuje pouze jedno úložiště hodnot.
-Módy se tedy liší jen způsobem paralelního zpracování.
-
-\section{Úprava Group by} \label{anal.improvement.groupby}
-
-Group by má za úkol seskupit výsledky dle zadaných klíčů a vypočíst hodnoty zadaných agregačních funkcí.
-Při úpravě budeme využívat původní úložiště (List a Bucket) a logiku agregačních funkcí.
-Opět budeme při zpracování chtít použít hašovací tabulku jako původní řešení.
-Přejdeme rovnou k návrhu zpracování módů \textbf{Streamed} a \textbf{Half-Streamed}.
-Budeme uvažovat paralelní řešení, protože jednovláknové zpracování je určitý případ paralelního.
-
-\subsection{Half-Streamed} 
-
-V tomto módě chceme pouze upravit původní řešení Two-step z sekce \ref{anal.groupby.twostep}.
-Má totiž stejný průběh vykonání jako samotný model \textbf{Half-Streamed}.
-Oba pracují s myšlenkou práce ve dvou krocích.
-V prvním kroku dochází k lokálnímu vytváření skupin a po dokončení prohledávání grafu dojde ke slévání výsledků vláken.
-Vlákno po dokončení prohledávání nečeká na dokončení práce ostatních vláken, ale rovnou výsledky slévá do sdíleného úložiště.
-Zmiňovali jsme, že se jedná o paralelní mapu/slovník (C\# \texttt{ConcurrentDictionary}, Java \texttt{ConcurrentHashMap}).
-Nepoužijeme zde řešení Local + dvoucestné slévání, protože samotné slévání vytváří nutnost vláken čekat na dokončení práce jiného vlákna.
-Pomocí řešení Two-step se problému kompletně vyhneme.
-
-\subsubsection{Ukládání pouze reprezentantů skupin} \label{anal.uprava.Groupby.table}
-
-K upravení původního řešení musíme pouze vyřešit problém chybějící tabulky výsledků, protože v moment nalezení výsledku je výsledek předán části Group by a není tak uložen do tabulky.
-Mohli bychom výsledky opět ukládat do tabulky.
-V moment nalezení je výsledek překopírován do tabulky na nový řádek a proxy třídu řádku využijeme k jeho zpracování.
-Daný způsob nám příjde neefektivní, protože cílem Group by je vytvořit skupiny. 
-K vytvoření skupin nám stačí znát pouze reprezentant skupiny, tj. klíč v hašovací tabulce (proxy třída řádku v tabulce výsledků prohledávání).
-Nepotřebujeme znát všechny výsledky prohledávání, tedy nemusíme všechny výsledky kopírovat do tabulky.
-Abychom mohli pouze minimálně upravit vykonávání řešení Two-step, tak upravíme původní tabulku výsledků na základě tohoto poznatku.
-Tabulka bude nyní kromě samotných hodnot obsahovat položku držící odkaz na výsledek prohledávání.
-V moment nalezení výsledku se odkaz aktualizuje na daný výsledek a tabulka bude tento akt chápat jako přidání nového imaginárního řádku.
-Při přístupu k novému řádku se vytvoří obvyklá proxy třída řádku.
-Následný přístup k hodnotám řádku skrze proxy třídu vyvolá čtení hodnot z odkazu a nikoliv hodnot z tabulky.
-Proxy třída se použije ke zpracování výsledku prohledávání.
-Pokud byla proxy třída použita k vytvoření nové skupiny, tj. je vytvořen nový záznam v hašovací tabulce, tak je celý výsledek držený v odkazu překopírován do tabulky.
-Tímto si zachováme pouze reprezentanty skupin a díky používání odkazu nemusíme každý výsledek prohledávání kopírovat do tabulky.
-
-\smallskip
-Zbytek zpracování bude totožný s původním řešením Two-step.
-Úložiště hodnot agregačních funkcí bude implementováno rovněž totožně.
-Platí pro něj obdobné problémy, které jsme již zmínili v sekci popisu daného zpracování \ref{anal.groupby.twostep}. 
-
-
-\subsection{Streamed}
-
-Při tomto řešení budeme vycházet z přístupu Global Group by z sekce \ref{anal.groupby.global}, protože zpracovává výsledky stejným způsobem jako model \textbf{Streamed}.
-Existuje zde jedna sdílená thread-safe struktura, ke které přistupují všechna vlákna.
-Jedná se opět o paralelní mapu/slovník.
-Předpokládejme nyní, že budeme chtít stále používat tabulky výsledků a stejná úložiště agregačních funkcí.
-
-\subsubsection{Problém synchronizace tabulky výsledků}
-
-Vyvstává zde opět problém neexistující tabulky výsledků.
-Opět chceme ukládat pouze reprezentanty skupin.
-Nicméně, problém je zde komplikovanější, protože v minulé sekci jsme tabulky vytvářeli lokálně.
-Tedy v moment slévání byly tabulky již finální. 
-Aplikujeme-li nyní přístup lokálních tabulek, tak vyvstává další problém.
-Vlákna v průběhu vyvolávají porovnaní klíčů v hašovací tabulce.
-Klíč je zde proxy třída řádku v tabulce.
-Skrze proxy třídu vlákno přistoupí k elementům na řádku tabulky.
-V tuto chvíli však můžou přistupovat k hodnotám v tabulce i jiná vlákna a zároveň může docházet k rozšíření tabulky.
-Pokud by docházelo k rozšiřování tabulky, tak zde dojde k souběhu a přistoupení k nevalidní tabulce.
-Problém se dá řešit například použitím zámku.
-Při každém přistupu k tabulce by došlo k získání zámku, následnému vyvolání porovnání nebo rozšíření a nakonec uvólnění zámku.
-Řešení však přínáší nutnou režii za synchronizaci tabulky, proto jsme se od řešení pomocí tabulky rozhodli kompletně upustit.
-
-\subsubsection{Nový přístup ukládání výsledků}
-
-Úložiště hodnot agregačních funkcí budou pořád totožná.
-Místo ukládaní výsledků do tabulky vypočteme konkrétní hodnoty klíčů Group by.
-Hodnoty uložíme do pole, které následně použijeme jako klíč paralelní mapy.  
-Samotné pole elementů použijeme pouze k výpočtu hodnot klíčů a k aktualizaci hodnot agregačních funkcí.
-Následně jej zahodíme.
-Paralelní mapa bude ve výsledku obsahovat pole hodnot klíčů a pole hodnot agregačních funkcí.
-Samotné hodnoty klíčů jsou v moment vytvoření statické, tedy nikdy nedojde ke změně hodnot klíče.
-Vlákna mohou jednoduše vyvolat porovnání klíčů bez nutnosti synchronizace.
-
-Ačkoliv se může zdát, že vytvářením mnoha malých polí povede k značné paměťové zátěži.
-Musíme si uvědomit, že budeme uchovávat pouze ta pole, která byla vložena do paralelní mapy.
-Obecně předpokládáme, že počet finálních skupin je mnohonásobně menší než počet výsledků prohledávání.
-Tedy bude zde existovat pouze malá množina polí.
-Otázka může být, proč jsme nezvolili daný postup i u ostatních řešení.
-V původním řešení jsme drželi všechny výsledky v paměti a vytváření dalších polí spolu s překopírováváním výsledků by ještě víc vytížil paměťovou spotřebu.
-V \textbf{Half-Streamed} řešení jsme způsob nepoužili, protože výsledky vláken se vytvářeli lokálně.
-Kdyby každé vlákno našlo kompletně stejné skupiny, pak by existovala totožná pole pro všechna vlákna.
-
-Další otázka je proč jsme se rozhodli uchovávat hodnoty výrazů a ne elementy grafu.
-Hlavní příčina ukládání elementů jsme popsali v sekci návrhu tabulky výsledků prohledávání \ref{anal.tables}.
-Tento problém zde odpadá, protože ukládáme malé množství výsledků.
-Navíc, v ostatních částech dotazu se mohou vyskytnout pouze výrazy klíčů Group by a agregační funkce.
-Tedy v moment výpočtu daných výrazů a agregačních funkcí jsme získali všechny možné hodnoty, ke kterým se může přístoupit v jiných částech dotazu. 
-
-\subsubsection{Sloučení pole klíčů a pole úložiště agregačních funkcí}
-
-Nabízí se zde malá optimalizace za předpokladu, že budeme používat Bucket úložiště agregačních funkcí.
-Bucket úložiště je pole hodnot.
-Můžeme zde propojit pole hodnot klíčů a pole hodnot úložiště, protože oba pole pouze obsahují konkrétní hodnoty a logika zpracování agrgačních funkcí je obsažena v objektu mimo úložiště.
-Finálně bude existovat pouze jedno pole, ve kterém prvních $n$ hodnot představuje hodnoty klíčů a zbytek hodnot je považován za výsledky agregačních funkcí.
-Tímto dokážeme zmenšit počet vytvářených polí.
-Protože vycházíme z principu Global Group by \ref{anal.groupby.global}, tak je zde problémem úložiště List.
-Rozhodli jsme se výsledně dané řešení s úložištěm List neimplementovat.
-
-\bigskip
-\textit{Analyzovali jsme a navrhli úpravu řešení Group by a Single group Group by. 
-Nyní přejdeme k úpravě Order by.}
+Druhým modelem vykonání je model \textbf{Streamed}.
+Myšlenkou tohoto návrhu je příchozí výsledky zpracovat globálně.
+Vycházíme z Global zpracování Group by z sekce \ref{anal.groupby.global}.
+Vytvoříme strukturu, která nám poskytne metody se synchronizací.
+Všechna vlákna v moment nalezení výsledku volají metodu \texttt{ProcessResult}, uvnitř které dojde k volání synchronních metod na struktuře.
+Výhoda tohoto přístupuje je odstranění nutnosti slévání výsledků vláken.
+Nevýhoda je, že zde dochází k volání metod se synchronizací.
 
 \section{Úprava Order by} \label{anal.improvement.orderby}
 
@@ -1381,8 +1253,8 @@ Navíc, zvyšováním počtu mezer se pole značně zvětšuje, tj. roste pamě�
 \subsubsection{Vyhledávací stromy}
 
 Druhý přístup využívá vyhledávací stromy \citep[str. 177]{labyrint}.
-Chtěli bychom využít základní druhy vyhledávacích stromů jako binární vyhledávací stromy nebo (a, b)-stromy.
-Výhoda (a, b)-stromů je ta, že každý vrchol stromu obsahuje až $b-1$ klíčů, zatímco binární vyhledávací stromy drží pouze jeden klíč ve vrcholu.
+Chtěli bychom využít základní druhy vyhledávacích stromů jako binární vyhledávací stromy nebo $(a, b)$-stromy.
+Výhoda $(a, b)$-stromů je ta, že každý vrchol stromu obsahuje vícero klíčů, zatímco binární vyhledávací stromy drží pouze jeden klíč ve vrcholu.
 Pokud bychom implementovali řešení s vyhledávacími stromy, tak budeme ideálně chtít využít již stávajících knihoven.
 
 \subsubsection{Experiment pole vůči vyhledávácím stromům}
@@ -1390,7 +1262,7 @@ Pokud bychom implementovali řešení s vyhledávacími stromy, tak budeme ideá
 K porovnání dvou přístupů jsme se rozhodli provést jednoduchý experiment.
 Cílem testu je otestovat rychlost vkládání prvků do vybraných datových struktur.
 Test bude částečně simulovat reálnou činnost zatřiďování prvků do struktury.
-Experiment jsme naprogramovali v jazyce C\#.
+Experiment jsme naprogramovali v jazyce C\# jako konzolovou aplikaci Visual Studia 2019.
 Kód je součástí příloh \ref{prilohy.benchtreevsarray}.
 Kód jsme přeložili pro platformu Windows 10 x64 cílící na .NET Framework 4.8.
 Samotný hardware testovacího stroje je rozepsán v sekci metodiky \ref{expr.hw}.
@@ -1419,9 +1291,6 @@ Parametry $n$ a $m$ jsme volili tak, abychom byli schopni sledovat chování př
 
 \subsubsection{Výsledky}
 
-Výsledky se nacházejí v tabulce \ref{tab.orderbyexpr1}.
-Z tabulky vidíme, že vkládání prvků do pole pomocí binárního vyhledávání značně zaostává, proto jsme se rozhodli upustit od myšlenky pole s mezerami.
-\clearpage
 
 \begin{table}[!htb]
 \centering
@@ -1444,25 +1313,18 @@ Z tabulky vidíme, že vkládání prvků do pole pomocí binárního vyhledáv�
 Hodnota za názvem testu představuje parametr \textit{m}.}
 \label{tab.orderbyexpr1}
 \end{table}
-\subsubsection{Experiment (a, 2a)-strom vůči SortedSet}
 
-Na základě výsledků jsme se rozhodli naimplementovat (a, 2a)-strom dle přednášky Datových struktur I \citep{dataLecture}.
+Výsledky se nacházejí v tabulce \ref{tab.orderbyexpr1}.
+Z tabulky vidíme, že vkládání prvků do pole pomocí binárního vyhledávání značně zaostává, proto jsme se rozhodli upustit od myšlenky pole s mezerami.
+
+\subsubsection{Experiment (a, b)-strom vůči SortedSet}
+
+Na základě výsledků jsme se rozhodli naimplementovat $(a, b)$-strom \citep[str. 190]{labyrint}, u kterého jsme upravili definici na $b=2a$.
 Pro experiment jsme určili parametr $a=128$, protože jsme díky němu dosahovali nejrychlejších výsledků.
 Strom jsme porovnali vůči struktuře \texttt{SortedSet} při stejných testech, ale pouze pro nejvýšší řády počtu prvků stavby a vkládání.
 
 \subsubsection{Výsledky}
 
-Výsledky jsou zobrazeny v tabulce \ref{tab.orderbyexpr2}.
-Z tabulky vidíme, že při vkládání prvků je rychlejší (a, 2a)-strom.
-Pro finální rozhodnutí, kterou strukturu zvolíme k zatřiďování, jsme rozhodli provést poslední experiment.
-Tentokrát budeme měřit první část vkládání $n$ prvků do prázdné struktury (test je označen \textit{build}).
-Výsledky jsou v tabulce \ref{tab.orderbyexpr3}.
-Vidíme, že v experimentu je rychlejší \texttt{SortedSet}.
-Sitauci si vysvětlujeme režií za operaci vložení do (a, 2a)-stromu, kdy dochází k častému překopírovávání prvků v moment vytváření nového vrcholu.
-Nicméně, v průběhu experimentu jsme sledovali paměťové vytížení procesu pomocí nativního programu Windows 10 \texttt{Task Manager}.
-Ukázalo se, že v průběhu testu \texttt{SortedSet} dosahovalo využití paměti $6,8$\,GB, zatímco (a, 2a)-strom pouze $2,1$\,GB.
-Daný jev je způsoben vytvářením nové třídy pro každý vložený prvek do struktury \texttt{SortedSet}.
-\textbf{Finálně jsme se rozhodli zatřiďování realizovat pomocí (a, 2a)-stromu.}
 \begin{table}[!htb]
 \centering
 \begin{tabular}{lD{.}{,}{1.4}D{.}{,}{1.4}}
@@ -1494,9 +1356,21 @@ Hodnota za názvem testu představuje parametr \textit{m}.}
 \label{tab.orderbyexpr3}
 \end{table}
 
-\subsection{Ukládání prvků v (a, 2a)-stromu} \label{anal.improvement.orderby.storeindex}
+Výsledky jsou zobrazeny v tabulce \ref{tab.orderbyexpr2}.
+Z tabulky vidíme, že při vkládání prvků je rychlejší $(a, b)$-strom.
+Pro finální rozhodnutí, kterou strukturu zvolíme k zatřiďování, jsme rozhodli provést poslední experiment.
+Tentokrát budeme měřit první část vkládání $n$ prvků do prázdné struktury (test je označen \textit{build}).
+Výsledky jsou v tabulce \ref{tab.orderbyexpr3}.
+Vidíme, že v experimentu je rychlejší \texttt{SortedSet}.
+Sitauci si vysvětlujeme režií za operaci vložení do $(a, b)$-stromu, kdy dochází k častému překopírovávání prvků v moment vytváření nového vrcholu.
+Nicméně, v průběhu experimentu jsme sledovali paměťové vytížení procesu pomocí nativního nástroje \texttt{Memory Usage} Visual Studia 2019.
+Ukázalo se, že v průběhu testu \texttt{SortedSet} dosahovalo využití paměti $6,8$\,GB, zatímco $(a, b)$-strom pouze $2,1$\,GB.
+Daný jev je způsoben vytvářením nové třídy pro každý vložený prvek do struktury \texttt{SortedSet}.
+Finálně jsme se rozhodli zatřiďování realizovat pomocí $(a, b)$-stromu.
 
-V minulé sekci jsme rozhodli, že zatřiďování nalezených prvků prohledávání provedeme pomocí (a, 2a)-stromu.
+\subsection{Ukládání prvků v (a, b)-stromu} \label{anal.improvement.orderby.storeindex}
+
+V minulé sekci jsme rozhodli, že zatřiďování nalezených prvků prohledávání provedeme pomocí $(a, b)$-stromu.
 Musíme definovat chování, kdy nějaké dva prvky sdílí stejnou hodnotu třídění.
 Předpokládejme, že ve stromě existuje index s určitou hodnotou klíče.
 Prohledávání nalezne výsledek a uloží jej do tabulky a následně index řádku vloží k zatřídění do stromu.
@@ -1515,13 +1389,8 @@ Pole bude prázdné a položka \texttt{index} je index právě vkládaného řá
 Pokud vkládáme prvek, který už se nachází ve stromě, tak prvek pouze vložíme do příslušného pole.
 Tímto způsobem omezíme počet prvků ve stromě a tím i počet porovnání.
 
-Pro shrnutí jsme ustanovili, že v průběhu implementace vytvoříme dva řešení jednovláknového zpracování.
-První bude využívat prostý $(128, 256)$-stromu (značení \textbf{ABTree}).
-Druhé bude využívat optimalizovaný strom (značení \textbf{ABTreeAcccumulator}).
-
-\bigskip
-\textit{Nyní navrhneme způsob paralelizace třídění pro naše módy zpracování.
-V průběhu návrhu se budeme snažit využít jíž získané informace z předchozí sekce.}
+Nyní navrhneme způsob paralelizace třídění pro naše módy zpracování.
+V průběhu návrhu se budeme snažit využít jíž získané informace z předchozí sekce.
 
 \subsection{Half-Streamed} \label{anal.improvement.orderby.halfstreamed}
 
@@ -1532,7 +1401,7 @@ Informace zde jsou uloženy ve stromech.
 Všechny struktury bychom mohli průběžně iterovat a udržovat si minimum z aktuálních výsledků.
 Budeme vlastnit separátní pole, do kterého na jeho konec ukládáme minima v každém kroku iterace.
 Po dokončení iterace pole bude obsahovat výsledek slévání.
-Bohužel jsme nepřišli na způsob paralelizace tohoto řešení, proto jsme se rozhodli od něj upustit.
+Bohužel jsme nepřišli na jednoduchý způsob paralelizace tohoto řešení, proto jsme se rozhodli od něj upustit.
 
 Místo toho využijeme již několikrát zmiňované dvoucestné slévání (použili jsme jej při paralelizaci Group by v sekci Local + dvoucestné slévání \ref{anal.groupby.local}).
 V moment dokočení prohledávání všemi vlákny se vytvoří jedno pole a každé vlákno do něj překopíruje své výsledky.
@@ -1601,7 +1470,7 @@ Uvažujeme, že každý podinterval má alespoň jeden prvek, tedy $R$ obsahuje 
 Ideální počet přihrádek je těžké odhadnout.
 Obecně platí, čím více přihrádek tím je menší šance, že se dva vlákna setkají u jednoho zámku.
 Proto počáteční odhad přihrádek určíme jako $|P|=t^2$.
-Abychom nemuseli pracovat s obecným počtem přihrádek, omezili jsme počet vláken na 64.
+Abychom nemuseli pracovat s obecným počtem přihrádek, omezili jsme počet přihrádek na 4096 ($t=64$).
 
 \subsubsection{Rozdělování rozsahu}
 
@@ -1628,11 +1497,9 @@ Tímto vytvoříme rozsah $R=[0$; $I_{+min}+I_{max}$$]=[0$; 4 294 967 295] a max
 Z tohoto rozsahu nyní jednoduše určíme velikosti částí k rozdělení původního rozsahu $I$.
 Počet hodnot v intervalu je $R_{max}+1$.
 Velikost podintervalů je $d=(R_{max}+1)/t^2$, za předpokladu, že máme $t$ vláken.
-Operací / rozumíme celočíselné dělení. 
 Tedy každá přihrádka bude obsahovat právě $d$ hodnot, protože $R_{max}+1$ je dělitelné námi definovanými $t^2$.
 Nyní zbývá určit jak budou vypadat samotné rozsahy přihrádek.
 Pro každou přihrádku $p_i$ je rozsah $R_i=[i \cdot d; d+(i \cdot d)-1]$, což odpovídá $I_i=[I_{min}+(i \cdot d); I_{min}+d+(i \cdot d)-1]$.
-Operací $\cdot$ rozumíme celočíselné násobení.
 
 K nalezení indexu $i$ správné přihrádky nyní stačí použít celočíselné dělení.
 Předpokládejme, že nalezený výsledek má hodnotu prvního klíče třídění $k$.
@@ -1685,8 +1552,138 @@ Pokud $q\leq D_{max}$, pak $i=q/d'$, protože prvních $n$ rozsahů má o jednu 
 V opačném případě $i=n+((q-D_{max})/d)$, jelikož od $D_{max}$ jsou rozsahy původní velikosti a předcházelo jim $n$ přihrádek.
 Přičítáme $n$, protože přihrádky jsou číslované od nuly.
 
-\smallskip
 Tímto jsme dokončili návrh vykonávání paralelního Order by.
 Dělení popsané v předchozích kapitolách jsme určili na základě jazyka C\#.
 Myslíme, že dané principy se dají aplikovat i v dalších jazycích.
+
+\section{Úprava Group by} \label{anal.improvement.groupby}
+
+Group by má za úkol seskupit výsledky dle zadaných klíčů a vypočíst hodnoty zadaných agregačních funkcí.
+Při úpravě budeme využívat původní úložiště (List a Bucket) a logiku agregačních funkcí.
+Opět budeme při zpracování chtít použít hašovací tabulku jako původní řešení.
+Přejdeme rovnou k návrhu zpracování módů \textbf{Streamed} a \textbf{Half-Streamed}.
+Budeme uvažovat paralelní řešení, protože jednovláknové zpracování je určitý případ paralelního.
+
+\subsection{Half-Streamed} 
+
+V tomto módě chceme pouze upravit původní řešení Two-step z sekce \ref{anal.groupby.twostep}.
+Má totiž stejný průběh vykonání jako samotný model \textbf{Half-Streamed}.
+Oba pracují s myšlenkou práce ve dvou krocích.
+V prvním kroku dochází k lokálnímu vytváření skupin a po dokončení prohledávání grafu dojde ke slévání výsledků vláken.
+Vlákno po dokončení prohledávání nečeká na dokončení práce ostatních vláken, ale rovnou výsledky slévá do sdíleného úložiště.
+Zmiňovali jsme, že se jedná o paralelní mapu/slovník (C\# \texttt{ConcurrentDictionary}).
+Nepoužijeme zde řešení Local + dvoucestné slévání, protože samotné slévání vytváří nutnost vláken čekat na dokončení práce jiného vlákna.
+Pomocí řešení Two-step se problému kompletně vyhneme.
+
+\subsubsection{Ukládání pouze reprezentantů skupin} \label{anal.uprava.Groupby.table}
+
+K upravení původního řešení musíme pouze vyřešit problém chybějící tabulky výsledků, protože v moment nalezení výsledku je výsledek předán části Group by a není tak uložen do tabulky.
+Mohli bychom výsledky opět ukládat do tabulky.
+V moment nalezení je výsledek překopírován do tabulky na nový řádek a proxy třídu řádku využijeme k jeho zpracování.
+Daný způsob nám příjde neefektivní, protože cílem Group by je vytvořit skupiny. 
+K vytvoření skupin nám stačí znát pouze reprezentant skupiny, tj. klíč v hašovací tabulce (proxy třída řádku v tabulce výsledků prohledávání).
+Nepotřebujeme znát všechny výsledky prohledávání, tedy nemusíme všechny výsledky kopírovat do tabulky.
+Abychom mohli pouze minimálně upravit vykonávání řešení Two-step, tak upravíme původní tabulku výsledků na základě tohoto poznatku.
+Tabulka bude nyní kromě samotných hodnot obsahovat položku držící odkaz na výsledek prohledávání.
+V moment nalezení výsledku se odkaz aktualizuje na daný výsledek a tabulka bude tento akt chápat jako přidání nového imaginárního řádku.
+Při přístupu k novému řádku se vytvoří obvyklá proxy třída řádku.
+Následný přístup k hodnotám řádku skrze proxy třídu vyvolá čtení hodnot z odkazu a nikoliv hodnot z tabulky.
+Proxy třída se použije ke zpracování výsledku prohledávání.
+Pokud byla proxy třída použita k vytvoření nové skupiny, tj. je vytvořen nový záznam v hašovací tabulce, tak je celý výsledek držený v odkazu překopírován do tabulky.
+Tímto si zachováme pouze reprezentanty skupin a díky používání odkazu nemusíme každý výsledek prohledávání kopírovat do tabulky.
+
+Zbytek zpracování bude totožný s původním řešením Two-step.
+Úložiště hodnot agregačních funkcí bude implementováno rovněž totožně.
+Platí pro něj obdobné problémy, které jsme již zmínili v sekci popisu daného zpracování \ref{anal.groupby.twostep}. 
+
+\subsection{Streamed}
+
+Při tomto řešení budeme vycházet z přístupu Global Group by z sekce \ref{anal.groupby.global}, protože zpracovává výsledky stejným způsobem jako model \textbf{Streamed}.
+Existuje zde jedna sdílená thread-safe struktura, ke které přistupují všechna vlákna.
+Jedná se opět o paralelní mapu/slovník.
+Předpokládejme nyní, že budeme chtít stále používat tabulky výsledků a stejná úložiště agregačních funkcí.
+
+\subsubsection{Problém synchronizace tabulky výsledků}
+
+Vyvstává zde opět problém neexistující tabulky výsledků.
+Opět chceme ukládat pouze reprezentanty skupin.
+Nicméně, problém je zde komplikovanější, protože v minulé sekci jsme tabulky vytvářeli lokálně.
+Tedy v moment slévání byly tabulky již finální. 
+Aplikujeme-li nyní přístup lokálních tabulek, tak vyvstává další problém.
+Vlákna v průběhu vyvolávají porovnaní klíčů v hašovací tabulce.
+Klíč je zde proxy třída řádku v tabulce.
+Skrze proxy třídu vlákno přistoupí k elementům na řádku tabulky.
+V tuto chvíli však můžou přistupovat k hodnotám v tabulce i jiná vlákna a zároveň může docházet k rozšíření tabulky.
+Pokud by docházelo k rozšiřování tabulky, tak zde dojde k souběhu a přistoupení k nevalidní tabulce.
+Problém se dá řešit například použitím zámku.
+Při každém přistupu k tabulce by došlo k získání zámku, následnému vyvolání porovnání nebo rozšíření a nakonec uvólnění zámku.
+Řešení však přínáší nutnou režii za synchronizaci tabulky, proto jsme se od řešení pomocí tabulky rozhodli kompletně upustit.
+
+\subsubsection{Nový přístup ukládání výsledků}
+
+Úložiště hodnot agregačních funkcí budou pořád totožná.
+Místo ukládaní výsledků do tabulky vypočteme konkrétní hodnoty klíčů Group by.
+Hodnoty uložíme do pole, které následně použijeme jako klíč paralelní mapy.  
+Samotné pole elementů použijeme pouze k výpočtu hodnot klíčů a k aktualizaci hodnot agregačních funkcí.
+Následně jej zahodíme.
+Paralelní mapa bude ve výsledku obsahovat pole hodnot klíčů a pole hodnot agregačních funkcí.
+Samotné hodnoty klíčů jsou v moment vytvoření statické, tedy nikdy nedojde ke změně hodnot klíče.
+Vlákna mohou jednoduše vyvolat porovnání klíčů bez nutnosti synchronizace.
+
+Ačkoliv se může zdát, že vytvářením mnoha malých polí povede k značné paměťové zátěži.
+Musíme si uvědomit, že budeme uchovávat pouze ta pole, která byla vložena do paralelní mapy.
+V typickém případě platí, že počet finálních skupin je mnohonásobně menší než počet výsledků prohledávání.
+Tedy bude zde existovat pouze malá množina polí.
+Otázka může být, proč jsme nezvolili daný postup i u ostatních řešení.
+V původním řešení jsme drželi všechny výsledky v paměti a vytváření dalších polí spolu s překopírováváním výsledků by ještě víc vytížil paměťovou spotřebu.
+V \textbf{Half-Streamed} řešení jsme způsob nepoužili, protože výsledky vláken se vytvářeli lokálně.
+Kdyby každé vlákno našlo kompletně stejné skupiny, pak by existovala totožná pole pro všechna vlákna.
+
+Další otázka je proč jsme se rozhodli uchovávat hodnoty výrazů a ne elementy grafu.
+Hlavní příčina ukládání elementů jsme popsali v sekci návrhu tabulky výsledků prohledávání \ref{anal.tables}.
+Tento problém zde odpadá, protože ukládáme malé množství výsledků.
+Navíc, v ostatních částech dotazu se mohou vyskytnout pouze výrazy klíčů Group by a agregační funkce.
+Tedy v moment výpočtu daných výrazů a agregačních funkcí jsme získali všechny možné hodnoty, ke kterým se může přístoupit v jiných částech dotazu. 
+
+\subsubsection{Sloučení pole klíčů a pole úložiště agregačních funkcí}
+
+Nabízí se zde malá optimalizace za předpokladu, že budeme používat Bucket úložiště agregačních funkcí.
+Bucket úložiště je pole hodnot.
+Můžeme zde propojit pole hodnot klíčů a pole hodnot úložiště, protože oba pole pouze obsahují konkrétní hodnoty a logika zpracování agregačních funkcí je obsažena v objektu mimo úložiště.
+Finálně bude existovat pouze jedno pole, ve kterém prvních $n$ hodnot představuje hodnoty klíčů a zbytek hodnot je považován za výsledky agregačních funkcí.
+Tímto dokážeme zmenšit počet vytvářených polí.
+Protože vycházíme z principu Global Group by \ref{anal.groupby.global}, tak je zde problémem úložiště List.
+Rozhodli jsme se výsledně dané řešení s úložištěm List neimplementovat.
+
+
+\section{Úprava Single group Group by} \label{anal.improvement.singlegroup}
+
+Single group Group by je mód, ve kterém uživatel zadal v dotazu výpočet agregačních funkcí, ale nezadal část Group by.
+V tomto případě všechny výsledky prohledávání náleží pouze do jedné skupiny, pro kterou se počítají dané agregační funkce.
+Stačí nám tedy navrhnout způsob vykonání pro naše dva módy \textbf{Streamed} a \textbf{Half-Streamed}.
+Budeme uvažovat pouze paralelní řešení, protože jednovláknové bude pouze určitý případ paralelního.
+Obecně si můžeme všimnout, že výsledky se nemusí ukládat do tabulky.
+Po nalezení výsledku dojde k aktualizaci hodnot agregačních funkcí a výsledek není dále potřeba.
+Ušetříme tedy spoustu paměti za tabulku výsledků.
+Samotný výpočet hodnot funkcí a úložiště hodnot budou totožné s původním řešením.
+
+\subsubsection{Half-Streamed}
+
+V tomto módu každé vlákno počítá hodnoty agregačních funkcí lokálně.
+Po nalezení výsledku dojde k aktualizování lokálních hodnot agregačních funkcí.
+V moment dokončení prohledávání grafu všemi vlákny dojde ke slévání výsledků vláken.
+Vlákno však nebude čekat na ukončení práce ostatních vláken, ale rovnou výsledky slévá do globální struktury.
+Výhoda tohoto řešení je vyřazení nutnosti používat thread-safe logiku agregačních funkcí v lokální části.
+
+\subsubsection{Streamed}
+
+V tomto módu existuje pouze jedno sdílené úložiště hodnot agregačních funkcí.
+Vlákna v moment nalezení výsledku aplikují thread-safe agregační funkce.
+Výhoda tohoto řešení je, že zde nedochází ke slévání výsledků.
+Problém zde může nastat ve chvíli, kdy existuje velké množství přistupujících vláken.
+Tyto přístupy mohou mít za následek značné zpomalení zpracování, kvůli synchronizaci.
+
+Všimněme si také, že v jednovláknovém zpracování jsou módy totožné.
+V obou případech se nemusí použít thread-safe logika agregačních funkcí a existuje pouze jedno úložiště hodnot.
+Módy se tedy liší jen způsobem paralelního zpracování.
 

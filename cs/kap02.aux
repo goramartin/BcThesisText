@@ -16,11 +16,12 @@
 \citation{dragonBook}
 \citation{dragonBook}
 \citation{patterns}
-\@writefile{toc}{\contentsline {section}{\numberline {2.3}Parsování uživatelského dotazu}{19}{section.2.3}\protected@file@percent }
-\newlabel{anal.parsing}{{2.3}{19}{Parsování uživatelského dotazu}{section.2.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {2.3}Načítání uživatelského dotazu}{19}{section.2.3}\protected@file@percent }
+\newlabel{anal.parsing}{{2.3}{19}{Načítání uživatelského dotazu}{section.2.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3.1}Match a proměnné}{19}{subsection.2.3.1}\protected@file@percent }
 \newlabel{anal.mathcandvar}{{2.3.1}{19}{Match a proměnné}{subsection.2.3.1}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3.2}Select, Order/Group by}{19}{subsection.2.3.2}\protected@file@percent }
+\citation{patterns}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3.3}Expressions}{20}{subsection.2.3.3}\protected@file@percent }
 \newlabel{anal.expressions}{{2.3.3}{20}{Expressions}{subsection.2.3.3}{}}
 \@writefile{toc}{\contentsline {subsubsection}{Aggregační funkce}{21}{section*.18}\protected@file@percent }
@@ -57,7 +58,7 @@
 \@writefile{toc}{\contentsline {section}{\numberline {2.6}Order by}{29}{section.2.6}\protected@file@percent }
 \newlabel{anal.orderby}{{2.6}{29}{Order by}{section.2.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.6.1}Výběr algoritmů a paralelizace}{29}{subsection.2.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.6.2}Quick sort vs Merge sort}{30}{subsection.2.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.6.2}Quick sort vs Merge sort}{29}{subsection.2.6.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.6.3}Třídění pomocí indexů}{30}{subsection.2.6.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.6.4}Optimalizace porovnání vlastností hodnot}{30}{subsection.2.6.4}\protected@file@percent }
 \newlabel{anal.orderby.opt1}{{2.6.4}{30}{Optimalizace porovnání vlastností hodnot}{subsection.2.6.4}{}}
@@ -109,52 +110,52 @@
 \newlabel{figure.diaStreamedQueryObjectsCon}{{2.10}{40}{Diagram objektů upraveného vykonání představující části dotazu select x match (x) order by x. Plná šipka znázorňuje původní propojení a tečkovaná šipka představuje nové nové propojení}{figure.2.10}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.8.5}Alternativní řešení}{40}{subsection.2.8.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.8.6}Obecný model vykonání Order/Group by}{40}{subsection.2.8.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Návrh Streamed}{41}{section*.23}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Návrh Half-Streamed}{41}{section*.24}\protected@file@percent }
-\newlabel{anal.groupby.local}{{2.8.6}{41}{Návrh Half-Streamed}{section*.24}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {2.9}Úprava Single group Group by}{41}{section.2.9}\protected@file@percent }
-\newlabel{anal.improvement.singlegroup}{{2.9}{41}{Úprava Single group Group by}{section.2.9}{}}
-\@writefile{toc}{\contentsline {subsubsection}{Half-Streamed}{42}{section*.25}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Streamed}{42}{section*.26}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {2.10}Úprava Group by}{42}{section.2.10}\protected@file@percent }
-\newlabel{anal.improvement.groupby}{{2.10}{42}{Úprava Group by}{section.2.10}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.10.1}Half-Streamed}{42}{subsection.2.10.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Ukládání pouze reprezentantů skupin}{42}{section*.27}\protected@file@percent }
-\newlabel{anal.uprava.Groupby.table}{{2.10.1}{42}{Ukládání pouze reprezentantů skupin}{section*.27}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.10.2}Streamed}{43}{subsection.2.10.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Problém synchronizace tabulky výsledků}{43}{section*.28}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Nový přístup ukládání výsledků}{43}{section*.29}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Sloučení pole klíčů a pole úložiště agregačních funkcí}{44}{section*.30}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {2.11}Úprava Order by}{44}{section.2.11}\protected@file@percent }
-\newlabel{anal.improvement.orderby}{{2.11}{44}{Úprava Order by}{section.2.11}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Návrh Half-Streamed}{41}{section*.23}\protected@file@percent }
+\newlabel{anal.groupby.local}{{2.8.6}{41}{Návrh Half-Streamed}{section*.23}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Návrh Streamed}{41}{section*.24}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2.9}Úprava Order by}{41}{section.2.9}\protected@file@percent }
+\newlabel{anal.improvement.orderby}{{2.9}{41}{Úprava Order by}{section.2.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.9.1}Obecný princip zpracování}{41}{subsection.2.9.1}\protected@file@percent }
 \citation{labyrint}
 \citation{labyrint}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.11.1}Obecný princip zpracování}{45}{subsection.2.11.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.11.2}Jednovláknové zpracování}{45}{subsection.2.11.2}\protected@file@percent }
-\newlabel{anal.ordeby.single}{{2.11.2}{45}{Jednovláknové zpracování}{subsection.2.11.2}{}}
-\@writefile{toc}{\contentsline {subsubsection}{Pole indexů + binární vyhledávání}{45}{section*.31}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Vyhledávací stromy}{45}{section*.32}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Experiment pole vůči vyhledávácím stromům}{46}{section*.33}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Výsledky}{46}{section*.34}\protected@file@percent }
-\citation{dataLecture}
-\@writefile{lot}{\contentsline {table}{\numberline {2.1}{\ignorespaces Výsledky testu vkládání v sekundách \texttt  {List} vůči \texttt  {SortedSet}. Hodnota za názvem testu představuje parametr \textit  {m}.}}{47}{table.2.1}\protected@file@percent }
-\newlabel{tab.orderbyexpr1}{{2.1}{47}{Výsledky testu vkládání v sekundách \texttt {List} vůči \texttt {SortedSet}. Hodnota za názvem testu představuje parametr \textit {m}}{table.2.1}{}}
-\@writefile{toc}{\contentsline {subsubsection}{Experiment (a, 2a)-strom vůči SortedSet}{47}{section*.35}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Výsledky}{47}{section*.36}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {2.2}{\ignorespaces Výsledky testu vkládání v sekundách \texttt  {SortedSet} vůči $(128, 256)$-strom. Hodnota za názvem testu představuje parametr \textit  {m}.}}{47}{table.2.2}\protected@file@percent }
-\newlabel{tab.orderbyexpr2}{{2.2}{47}{Výsledky testu vkládání v sekundách \texttt {SortedSet} vůči $(128, 256)$-strom. Hodnota za názvem testu představuje parametr \textit {m}}{table.2.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {2.3}{\ignorespaces Výsledky testu stavby struktur v sekundách \texttt  {SortedSet} vůči $(128, 256)$-strom.}}{48}{table.2.3}\protected@file@percent }
-\newlabel{tab.orderbyexpr3}{{2.3}{48}{Výsledky testu stavby struktur v sekundách \texttt {SortedSet} vůči $(128, 256)$-strom}{table.2.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.11.3}Ukládání prvků v (a, 2a)-stromu}{48}{subsection.2.11.3}\protected@file@percent }
-\newlabel{anal.improvement.orderby.storeindex}{{2.11.3}{48}{Ukládání prvků v (a, 2a)-stromu}{subsection.2.11.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.11.4}Half-Streamed}{48}{subsection.2.11.4}\protected@file@percent }
-\newlabel{anal.improvement.orderby.halfstreamed}{{2.11.4}{48}{Half-Streamed}{subsection.2.11.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.11.5}Streamed}{49}{subsection.2.11.5}\protected@file@percent }
-\newlabel{anal.improvement.orderby.streamed}{{2.11.5}{49}{Streamed}{subsection.2.11.5}{}}
-\@writefile{toc}{\contentsline {subsubsection}{Počet přihrádek}{50}{section*.37}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Rozdělování rozsahu}{50}{section*.38}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Rozdělování typu Int32}{50}{section*.39}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Rozdělování typu string}{51}{section*.40}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.9.2}Jednovláknové zpracování}{42}{subsection.2.9.2}\protected@file@percent }
+\newlabel{anal.ordeby.single}{{2.9.2}{42}{Jednovláknové zpracování}{subsection.2.9.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Pole indexů + binární vyhledávání}{42}{section*.25}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Vyhledávací stromy}{42}{section*.26}\protected@file@percent }
+\citation{labyrint}
+\@writefile{toc}{\contentsline {subsubsection}{Experiment pole vůči vyhledávácím stromům}{43}{section*.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Výsledky}{43}{section*.28}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2.1}{\ignorespaces Výsledky testu vkládání v sekundách \texttt  {List} vůči \texttt  {SortedSet}. Hodnota za názvem testu představuje parametr \textit  {m}.}}{43}{table.2.1}\protected@file@percent }
+\newlabel{tab.orderbyexpr1}{{2.1}{43}{Výsledky testu vkládání v sekundách \texttt {List} vůči \texttt {SortedSet}. Hodnota za názvem testu představuje parametr \textit {m}}{table.2.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Experiment (a, b)-strom vůči SortedSet}{44}{section*.29}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Výsledky}{44}{section*.30}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2.2}{\ignorespaces Výsledky testu vkládání v sekundách \texttt  {SortedSet} vůči $(128, 256)$-strom. Hodnota za názvem testu představuje parametr \textit  {m}.}}{44}{table.2.2}\protected@file@percent }
+\newlabel{tab.orderbyexpr2}{{2.2}{44}{Výsledky testu vkládání v sekundách \texttt {SortedSet} vůči $(128, 256)$-strom. Hodnota za názvem testu představuje parametr \textit {m}}{table.2.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2.3}{\ignorespaces Výsledky testu stavby struktur v sekundách \texttt  {SortedSet} vůči $(128, 256)$-strom.}}{44}{table.2.3}\protected@file@percent }
+\newlabel{tab.orderbyexpr3}{{2.3}{44}{Výsledky testu stavby struktur v sekundách \texttt {SortedSet} vůči $(128, 256)$-strom}{table.2.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.9.3}Ukládání prvků v (a, b)-stromu}{44}{subsection.2.9.3}\protected@file@percent }
+\newlabel{anal.improvement.orderby.storeindex}{{2.9.3}{44}{Ukládání prvků v (a, b)-stromu}{subsection.2.9.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.9.4}Half-Streamed}{45}{subsection.2.9.4}\protected@file@percent }
+\newlabel{anal.improvement.orderby.halfstreamed}{{2.9.4}{45}{Half-Streamed}{subsection.2.9.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.9.5}Streamed}{45}{subsection.2.9.5}\protected@file@percent }
+\newlabel{anal.improvement.orderby.streamed}{{2.9.5}{45}{Streamed}{subsection.2.9.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Počet přihrádek}{46}{section*.31}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Rozdělování rozsahu}{46}{section*.32}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Rozdělování typu Int32}{47}{section*.33}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Rozdělování typu string}{47}{section*.34}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2.10}Úprava Group by}{48}{section.2.10}\protected@file@percent }
+\newlabel{anal.improvement.groupby}{{2.10}{48}{Úprava Group by}{section.2.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.10.1}Half-Streamed}{48}{subsection.2.10.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Ukládání pouze reprezentantů skupin}{49}{section*.35}\protected@file@percent }
+\newlabel{anal.uprava.Groupby.table}{{2.10.1}{49}{Ukládání pouze reprezentantů skupin}{section*.35}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.10.2}Streamed}{49}{subsection.2.10.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Problém synchronizace tabulky výsledků}{49}{section*.36}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Nový přístup ukládání výsledků}{50}{section*.37}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Sloučení pole klíčů a pole úložiště agregačních funkcí}{50}{section*.38}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2.11}Úprava Single group Group by}{50}{section.2.11}\protected@file@percent }
+\newlabel{anal.improvement.singlegroup}{{2.11}{50}{Úprava Single group Group by}{section.2.11}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Half-Streamed}{51}{section*.39}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Streamed}{51}{section*.40}\protected@file@percent }
 \@setckpt{kap02}{
 \setcounter{page}{52}
 \setcounter{equation}{0}
@@ -167,7 +168,7 @@
 \setcounter{part}{0}
 \setcounter{chapter}{2}
 \setcounter{section}{11}
-\setcounter{subsection}{5}
+\setcounter{subsection}{0}
 \setcounter{subsubsection}{0}
 \setcounter{paragraph}{0}
 \setcounter{subparagraph}{0}

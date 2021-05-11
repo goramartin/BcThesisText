@@ -548,9 +548,9 @@ Třídění probíhá po dokončení prohledávání grafu a třídí celou tabu
 Vylepšená řešení zpracovávájí vyhledané výsledky v moment jejich nalezení.
 Nalezený prvek se nejdříve vloží do tabulky na nový řádek. 
 Následně se index daného řádku vloží do indexační struktury. 
-Jako indexační strukturu nad tabulkou používáme (a, b)-strom \citep[03. (a, b)-trees]{dataLecture}, kde b=2a.
+Jako indexační strukturu nad tabulkou používáme $(a, b)$-strom \citep[str. 190]{labyrint}, u kterého jsme upravili definici na $b=2a$.
 V našem případě $b=256$.
-V řešení ABTree se jedná o obecný (a, b)-strom, zatímco řešení ABTreeValueAccumulator výsledky (indexy) mající stejnou hodnotu klíčů třídění, jako již vložené prvky, uloží do \verb+List<int>+.
+V řešení ABTree se jedná o obecný $(a, b)$-strom, zatímco řešení ABTreeValueAccumulator výsledky (indexy) mající stejnou hodnotu klíčů třídění, jako již vložené prvky, uloží do \verb+List<int>+.
 Tedy místo vytvoření nového záznamu ve stromě dojde pouze k vložení do patřičného pole.
 
 \subsubsection{Výsledky jednovláknového zpracování}
@@ -558,7 +558,7 @@ Tedy místo vytvoření nového záznamu ve stromě dojde pouze k vložení do p
 Začneme řešením běžícím v jednom vlákně, tj. grafy  \ref{figure.amazonOrderST} a \ref{figure.webberkstanOrderST}.
 Můžeme si všimnout, že výsledky vypadají v rámci daných grafů konzistentně pro každý dotaz.
 Ani jedno z vylepšených řešení nedokázalo porazit mód Normal, což odpovídá našim předpokladům. 
-Je to způsobeno značnou režii za \verb+Insert+ $\Theta(\log n \cdot (a/\log a))$ (\citet[03. (a, b)-trees str. 6]{dataLecture}) do stromu, kdy dochází k častému alokování nových vrcholů a překopírovávání prvků při splitu.
+Je to způsobeno značnou režií za metodu vložení (\verb+Insert+) do stromu, kdy dochází k častému alokování nových vrcholů a překopírovávání prvků při splitu.
 Nejproblematičtější část je množství tříděných výsledků, kdy počet samotných hodnot klíčů třídění je omezen počtem vrcholů v grafu (tabulka \ref{tab.grafBase}). 
 Daná situace vede k opakovanému zatřizování výsledků se stejnou hodnotou a tím navyšování velikosti stromu společně s počtem porovnání na \verb+Insert+.
 Celý problém jsme vyřešelili v řešení ABTreeValueAccumulator, kdy se duplicitní hodnoty ukládají do zmíněného pole a tím omezujeme velikost výsledného stromu. 
@@ -576,7 +576,7 @@ Je to způsobeno nutným přístupem k databázi, při kterém se ověřuje, jes
 Opět zde platí, že tabulka výsledků je tříděna pomocí indexů.
 Mód Normal používá paralelní Merge sort \citep{hpcsharp}.
 
-Vylepšená paralelní zpracování aplikují použité verze (a, b)-stromů ze zpracování pro jedno vlákno. 
+Vylepšená paralelní zpracování aplikují použité verze $(a, b)$-stromů ze zpracování pro jedno vlákno. 
 Každé běžící vlákno v Half-Streamed řešení obsahuje lokální tabulku a indexační strom. 
 Po dokončení vyhledávání se obsahy stromů překopírují do pole a dojde k paralelnímu dvoucestnému slévání používající stejnou funkci jako paralelní Merge sort. 
 U Streamed řešení jsme navrhli sdílenou strukturu pro zatřizování výsledků.
