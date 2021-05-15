@@ -10,6 +10,9 @@ Pridavam muj komentar:
 
 		Martin: Tohle bude v uvodu, mam to v planu
 
+		DONE
+		v uvodu jsem to popsal
+
 - exekucni plan -> zminit, minamlen jako future work, dela to hodne (zalezi, ktery vertex matchujes jako prvni)
 
 		Martin: Myslis exekucni plan toho prohledavani grafu? Ja myslel ze jsem ten způsob prohledavani popsal v kapitole analyzy sekce "Match" a pak konkretneji v kapitole implementace "Match". Ze vlastne vyhledavani vzoru je spusteno z kazdeho vrcholu grafu.

@@ -1,24 +1,24 @@
 \babel@toc {czech}{}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {2.1}{\ignorespaces Výsledky testu vkládání v sekundách \texttt {List} vůči \texttt {SortedSet}. Hodnota za názvem testu představuje parametr \textit {m}.}}{43}{table.2.1}%
-\contentsline {table}{\numberline {2.2}{\ignorespaces Výsledky testu vkládání v sekundách \texttt {SortedSet} vůči $(128, 256)$-strom. Hodnota za názvem testu představuje parametr \textit {m}.}}{44}{table.2.2}%
-\contentsline {table}{\numberline {2.3}{\ignorespaces Výsledky testu stavby struktur v sekundách \texttt {SortedSet} vůči $(128, 256)$-strom.}}{44}{table.2.3}%
+\contentsline {table}{\numberline {2.1}{\ignorespaces Výsledky testu vkládání v sekundách \texttt {List} vůči \texttt {SortedSet}. Hodnota za názvem testu představuje parametr \textit {m}.}}{44}{table.2.1}%
+\contentsline {table}{\numberline {2.2}{\ignorespaces Výsledky testu vkládání v sekundách \texttt {SortedSet} vůči $(128, 256)$-strom. Hodnota za názvem testu představuje parametr \textit {m}.}}{45}{table.2.2}%
+\contentsline {table}{\numberline {2.3}{\ignorespaces Výsledky testu stavby struktur v sekundách \texttt {SortedSet} vůči $(128, 256)$-strom.}}{45}{table.2.3}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces Tabulka argumentu \textbf {Mode}.}}{84}{table.3.1}%
-\contentsline {table}{\numberline {3.2}{\ignorespaces Tabulka argumentu \textbf {SorterAlias}.}}{85}{table.3.2}%
-\contentsline {table}{\numberline {3.3}{\ignorespaces Tabulka argumentu \textbf {GrouperAlias}.}}{85}{table.3.3}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces Tabulka argumentu \textbf {Mode}.}}{85}{table.3.1}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces Tabulka argumentu \textbf {SorterAlias}.}}{86}{table.3.2}%
+\contentsline {table}{\numberline {3.3}{\ignorespaces Tabulka argumentu \textbf {GrouperAlias}.}}{86}{table.3.3}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces Vybrané grafy pro experiment}}{87}{table.4.1}%
-\contentsline {table}{\numberline {4.2}{\ignorespaces Generované vlastností vrcholů}}{89}{table.4.2}%
-\contentsline {table}{\numberline {4.3}{\ignorespaces Inicializační hodnoty náhodného generátoru pro PropertyGenerator.cs}}{90}{table.4.3}%
-\contentsline {table}{\numberline {4.4}{\ignorespaces Dotazy Match}}{91}{table.4.4}%
-\contentsline {table}{\numberline {4.5}{\ignorespaces Dotazy Order by}}{91}{table.4.5}%
-\contentsline {table}{\numberline {4.6}{\ignorespaces Dotazy Group by}}{92}{table.4.6}%
-\contentsline {table}{\numberline {4.7}{\ignorespaces Výber argumentů konstruktoru dotazu pro grafy}}{94}{table.4.7}%
-\contentsline {table}{\numberline {4.8}{\ignorespaces Počet nalezených výsledků pro dotazy obsahující vzor (x) -> (y) -> (z) nad jednotlivými grafy.}}{96}{table.4.8}%
-\contentsline {table}{\numberline {4.9}{\ignorespaces Rozsah zrychlení paralelizovaných řešení pomocí osmi vláken pro dotazy \textit {Order by} nad grafem Amazon0601 (sekce \ref {tab.grafBase}). Tabulka zobrazuje podíl jednovláknového vůči paralelnímu zpracování.}}{103}{table.4.9}%
-\contentsline {table}{\numberline {4.10}{\ignorespaces Rozsah zrychlení paralelizovaných řešení pomocí osmi vláken pro dotazy \textit {Order by} nad grafem WebBerkStan (sekce \ref {tab.grafBase}). Tabulka zobrazuje podíl jednovláknového vůči paralelnímu zpracování.}}{103}{table.4.10}%
-\contentsline {table}{\numberline {4.11}{\ignorespaces Výsledky testování map v milisekundách.}}{109}{table.4.11}%
-\contentsline {table}{\numberline {4.12}{\ignorespaces Výsledky testování map v milisekundách.}}{109}{table.4.12}%
+\contentsline {table}{\numberline {4.1}{\ignorespaces Vybrané grafy pro experiment}}{88}{table.4.1}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces Generované vlastností vrcholů}}{90}{table.4.2}%
+\contentsline {table}{\numberline {4.3}{\ignorespaces Inicializační hodnoty náhodného generátoru pro PropertyGenerator.cs}}{91}{table.4.3}%
+\contentsline {table}{\numberline {4.4}{\ignorespaces Dotazy Match}}{92}{table.4.4}%
+\contentsline {table}{\numberline {4.5}{\ignorespaces Dotazy Order by}}{92}{table.4.5}%
+\contentsline {table}{\numberline {4.6}{\ignorespaces Dotazy Group by}}{93}{table.4.6}%
+\contentsline {table}{\numberline {4.7}{\ignorespaces Výber argumentů konstruktoru dotazu pro grafy}}{95}{table.4.7}%
+\contentsline {table}{\numberline {4.8}{\ignorespaces Počet nalezených výsledků pro dotazy obsahující vzor (x) -> (y) -> (z) nad jednotlivými grafy.}}{97}{table.4.8}%
+\contentsline {table}{\numberline {4.9}{\ignorespaces Rozsah zrychlení paralelizovaných řešení pomocí osmi vláken pro dotazy \textit {Order by} nad grafem Amazon0601 (sekce \ref {tab.grafBase}). Tabulka zobrazuje podíl jednovláknového vůči paralelnímu zpracování.}}{104}{table.4.9}%
+\contentsline {table}{\numberline {4.10}{\ignorespaces Rozsah zrychlení paralelizovaných řešení pomocí osmi vláken pro dotazy \textit {Order by} nad grafem WebBerkStan (sekce \ref {tab.grafBase}). Tabulka zobrazuje podíl jednovláknového vůči paralelnímu zpracování.}}{104}{table.4.10}%
+\contentsline {table}{\numberline {4.11}{\ignorespaces Výsledky testování map v milisekundách.}}{110}{table.4.11}%
+\contentsline {table}{\numberline {4.12}{\ignorespaces Výsledky testování map v milisekundách.}}{110}{table.4.12}%
 \addvspace {10\p@ }

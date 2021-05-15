@@ -9,5 +9,5 @@ Meritko je na tisice, ale ty odchylky jsou v ramci desitek.
 
 Future Work: 
 
-K alokovani vrcholu stromu.
+K alokovani vrcholu stromu. DONE
 Vylepseni agreganich funkcí

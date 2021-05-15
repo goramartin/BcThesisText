@@ -22,6 +22,11 @@ Andy Seaborne and Steven Harris.
 \newblock \url{https://pgql-lang.org/spec/1.2/} [Dostupnost ověřena k datu
   15.4.2021].
 
+\bibitem{openCypher}
+{\em Dokumentace jazyka openCypher}.
+\newblock \url{https://www.opencypher.org/} [Dostupnost ověřena k datu
+  15.4.2021].
+
 \bibitem{streaming}
 Tyler Akidau, Slava Chernyak, and Reuven Lax.
 \newblock {\em Streaming Systems: The What, Where, When, and How of Large-Scale
@@ -38,10 +43,21 @@ János~Dániel Bali.
   OAI=oai:DiVA.org:kth-170425, URN=urn:nbn:se:kth:diva-170425,
   diva=diva2:830662.
 
+\bibitem{apacheflink}
+{\em Apache Flink proudový systém}.
+\newblock \url{https://ci.apache.org/projects/flink/flink-docs-release-1.13}
+  [Dostupnost ověřena k datu 15.4.2021].
+
 \bibitem{graphstreamalgorithms}
 Andrew McGregor.
 \newblock Graph stream algorithms: A survey.
 \newblock {\em SIGMOD Rec.}, 43(1):9–20, May 2014.
+
+\bibitem{apacheflinkgelly}
+{\em Apache Flink Gelly proudový systém pro grafová data}.
+\newblock
+  \\url{https://ci.apache.org/projects/flink/flink-docs-release-1.13/docs/libs/gelly/overview/}
+  [Dostupnost ověřena k datu 15.4.2021].
 
 \bibitem{graphsummary}
 Nan Tang, Qing Chen, and Prasenjit Mitra.
@@ -51,9 +67,19 @@ Nan Tang, Qing Chen, and Prasenjit Mitra.
   Association for Computing Machinery.
 
 \bibitem{neopropertygraph}
-{\em Definice Property grafu Neo4j}.
+{\em Neo4j grafová databáze}.
 \newblock \url{https://neo4j.com/developer/graph-database/} [Dostupnost
   ověřena k datu 15.4.2021].
+
+\bibitem{neptune}
+{\em Neptune grafová databáze}.
+\newblock \url{https://aws.amazon.com/neptune/} [Dostupnost ověřena k datu
+  15.4.2021].
+
+\bibitem{dgraph}
+{\em Dgraph grafová databáze}.
+\newblock \url{https://github.com/dgraph-io/dgraph} [Dostupnost ověřena k
+  datu 15.4.2021].
 
 \bibitem{json}
 {\em Dokumentace jazyka JSON}.

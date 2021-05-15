@@ -4,7 +4,7 @@
 \section*{Grafové databáze}
 
 Grafové databáze zažívají v dnešní době rozkvět, například kvůli nutnosti analyzovat data na sociálních sítích.
-Pro grafové databáze existují dva hlavní modely dat: \textbf{RDF} \citep{rdf} a \textbf{Labeled-property} (sekce \ref{req.propGraph}).
+Pro grafové databáze existují dva hlavní modely dat: RDF \citep{rdf} a Labeled-property (sekce \ref{req.propGraph}).
 RDF je převážně používán k popisu informací na internetu. 
 Labeled-property model se používá k obecnému popisu grafových dat.
 Grafové databáze poskytují dvě základní možnosti analýzy dat:
@@ -17,7 +17,7 @@ Program, který poskytuje tuto možnost analýzy dat, budeme označovat jako \te
 Druhá možnost je \textbf{vykonávání dotazů} pomocí dotazovacího jazyka.
 Dotazy jsou zde podobné SQL dotazům.
 Pro RDF model to je například jazyk SPARQL \citep{sparql}.
-Pro Labeled-property to je PGQL \citep{pgql} nebo openCypher\footnote{\url{https://www.opencypher.org/} [dostupnost ověřena k datu 8.5.2021]}.
+Pro Labeled-property to je PGQL \citep{pgql} nebo openCypher \citep{openCypher}.
 Dotazy obsahují základní části se stejnou logikou z SQL jako \textit{Select}, \textit{Order by}, \textit{Group by}, \textit{Having} a podobně.
 Hlavní rozdíl těchto dotazovacích jazyků od SQL je ten, že specifikují výběr dat pomocí sekvence vrcholů a hran.
 Pro PGQL a openCypher to je část dotazu \textit{Match} a pro SPARQL to je část dotazu \textit{Where}.
@@ -45,16 +45,16 @@ V takovém případě si program udržuje pouze sumu výsledků.
 Data v proudu pak nepotřebuje uchovávát.
 Druhý model si udržuje okno určitého počtu posledních prvků z proudu a nazývá se \textbf{windowing}.
 Prvky v okně tvoří skupinu, která se v určitý moment zpracuje najednou.
-Proudové systémy se uchytili v distribuovaných systémech, například Apache Flink\footnote{\url{https://ci.apache.org/projects/flink/flink-docs-release-1.13} [dostupnost ověřena k datu 8.5.2021]}.
+Proudové systémy se uchytili v distribuovaných systémech, například Apache Flink \citep{apacheflink}.
 
 \section*{Proudové systémy s grafovými daty}
 
 Nově se objevují proudové systémy pracující s grafovými daty.
 V proudu jsou pak obsaženy hrany nebo vrcholy. 
 Nad daným proudem vzniká nutnost analýzy grafových dat jako u grafových databází\footnote{Přehledovou práci základních algoritmů a principů zpracování je možno nalézt v článku „Graph Stream Algorithms: A Survey“ \citep{graphstreamalgorithms}.}.
-Mezi proudové systémy s grafovými daty patří například rozšíření pro Apache Flink Gelly\footnote{\url{https://ci.apache.org/projects/flink/flink-docs-release-1.13/docs/libs/gelly/overview/} [dostupnost ověřena k datu 8.5.2021]}.
+Mezi proudové systémy s grafovými daty patří například rozšíření pro Apache Flink Gelly \citep{apacheflinkgelly}.
 
-Proudové systémy s grafovými daty mají výhodu při \textbf{agregaci} prvků vůči grafovým databázím, protože při použití modelu \textbf{synopsis} jim stačí uchovávat pouze agregované prvky. 
+Proudové systémy s grafovými daty mají výhodu při agregaci prvků vůči grafovým databázím, protože při použití modelu synopsis jim stačí uchovávat pouze agregované prvky. 
 Agregací zde rozumíme akt seskupování prvků podle určitých klíčů (obecně část \textit{Group by} v SQL, PGQL nebo SPARQL).
 Součástí agregace je i výpočet statických funkcí pro vzniklé skupiny.
 Tyto funkce označujeme jako agregační funkce.
@@ -66,16 +66,52 @@ Mezi nejčastější agregační funkce patří funkce:
 \item \texttt{avg(...)}, která vrací aritmetický průměr z hodnot ve skupině..
 \item \texttt{sum(...)}, která vrací sumu z hodnot ve skupině.
 \end{itemize}
-Problémem je, že proudové systémy nedovolují vykonávat dotazy obsahující vyhledávání vzoru (část \textit{Match} pro PGQL nebo Where pro SPARQL), protože grafová data čteme po částech a tak je vyhledávání vzoru prakticky nemožné.
+Problémem je, že proudové systémy nedovolují vykonávat dotazy obsahující vyhledávání vzoru (část \textit{Match} pro PGQL nebo \textit{Where} pro SPARQL), protože grafová data čteme po částech a tak je vyhledávání vzoru prakticky nemožné.
 Jediným možným způsobem je vytvořit přehledovou strukturu grafu \citep{graphsummary}, na které vyhledávání proběhne.
-Avšak tím se ztratí všechny výhody proudových systémů.
+Avšak, tím se ztratí všechny výhody proudových systémů.
 
-\section*{Spojení vyhledávání vzoru s proudovými systémy}
+\section*{Spojení dotazovacího enginu s proudovým systémem}
 
-tady bude co vlastne chceme delat na zaklade predchozi sekce.
-max jedna stranka a to je vsechno z uvodu.
+Na základě poznatků z předchozí sekce v této práci provedeme úpravu dotazovacího enginu po vzoru proudových systémů.
+Konkrétně upravíme části zabývající se agregací dat, tj. části \textit{Group by} a \textit{Order by}.
+%\textit{Order by} ma za úkol setřídit výsledky prohledávání dle zadaných klíčů.
+Ačkoliv \textit{Order by} nespadá konkrétně pod definici agregace, tak z našeho pohledu provádí „primitivní seskupení“.
+V takovém případě výsledky se stejnými hodnotami klíčů třídění ve výstupu tvoří souvislou posloupnost (tj. leží u sebe), protože taková posloupnost nemůže obsahovat prvek, který má rozdílné hodnoty klíčů od hodnot klíčů prvků v dané posloupnosti.
+Kdyby takový prvek existoval, pak by se nejednalo o setříděnou posloupnost.   
+Z tohoto důvodu v naší práci budeme upravovat i část \textit{Order by}.
+Výsledně rozdíl mezi \textit{Group by} a \textit{Order by} je ten, že v \textit{Group by} jsou výše zmíněné posloupnosti sloučeny do jednoho prvku (tj. skupiny) a lze pro ně vypočítat agregační funkce. 
+Avšak, zaměříme se pouze na jejich separátní použití a nebudeme uvažovat situaci, ve které jsou obě části zadány společně.
+Dále také budeme uvažovat, že dotaz vždy bude obsahovat pouze části \textit{Select}, \textit{Match} (PGQL a openCypher)/\textit{Where} (RDF) a následně \textit{Group/Order by}.
 
-\clearpage
+Při úpravě dotazovacího enginu využijeme principů zpracování dat proudových systémů.
+Místo abychom výsledky prohledávání grafu agregovali až v moment získání všech výsledků, tak nalezené výsledky budeme agregovat již v moment jejich nalezení.
+V takovém případě se na část \textit{Match} můžeme dívat jako na proud dat, který obsahuje nalezené výsledky prohledávání grafu.
+Prvek je vložen do proudu v moment jeho nalezení.
+Následně části \textit{Order by} a \textit{Group by} zpracovávají data v proudu.
+Cílem a motivací této práce je zjistit, zda danou úpravou docílíme zrychlení vykonávání dotazů provádějící agregaci dat (tj. dotazy obsahující část \textit{Group/Order by}).
+
+\section*{Výběr dotazovacího enginu}
+
+K provedení této práce potřebujeme upravit dotazovací engine nad grafovou databází.
+Při našem průzkumu jsme zjistili, že využití již existujících dotazovacích enginů v naší práci by bylo netriviálně náročné.
+Děje se tak ze dvou hlavních důvodů.
+Komerční dotazovací enginy, například Neo4j \citep{neopropertygraph} nebo Neptune \citep{neptune}, jsou nepřístupné veřejnosti.
+Nalezené dotazovací enginy s otevřeným zdrojovým kódem, například dgraph \citep{dgraph}, jsou značně komplexní a pouze pochopení všech důležitých aspektů k vykonání zmíněných úprav by zabralo netriviální časové období.
+Protože cílem této práce je pouze otestovat obecný koncept propojení dotazovacího enginu s proudovými systémy, rozhodli jsme se vytvořit vlastní dotazovací engine s jednoduchou grafovou databází.
+
+Námi vytvořená grafová databáze bude využívat Labeled-property (sekce \ref{req.propGraph}) datový model, protože nám umožní pracovat s obecnými grafovými daty.
+Samotně bude pouze statická a bude celá obsažena v hlavní paměti, jelikož návrhnout komplexní databázi by opět zabralo netriviální časové období.
+Statickou databází zde rozumíme databázi, ve které nedochází za běhu k úpravě uložených dat (např. nelze přidat nebo odebrat nový vrchol).
+Dotazovací engine bude zpracovávat dotazy nad danou grafovou databází.
+K dotazování využijeme podmnožinu jazyka PGQL \citep{pgql}, jelikož obsahuje jednodužší skladbu jazyka z hlediska načítání dotazu narozdíl od jazyka openCypher \citep{openCypher}.
+Daný jazyk má navíc spoustu funkcí, které v naši práci nepovažujeme za vitální, proto jsme vybrali jen jeho určitou podmnožinu (podmnožina je blíže popsána v sekci \ref{req.pgql}).
+Samotný vývoj dotazovacího enginu bude probíhat ve dvou krocích.
+V prvním kroku musíme vyvinou řešení, která vykonávají agregace po dokončení prohledávání grafu.
+V tomto bodě se budeme snažit využít již existujících a hojně využívaných algoritmů (např. pro třídění algoritmus Merge sort). 
+V druhém kroku dojde k úpravě vykonávání dotazů dle zadání práce.
+Při vývoji budeme klást důraz na jednovláknové i paralelní zpracování.
+Nakonec provedeme experiment, který otestuje vytvořená řešení v prvním kroku vůči nově navrhnutým řešením v druhém kroku.
+
 \section*{Cíl práce}
 
 Hlavním cílem práce je určit zda úprava částí \textit{Group by} a \textit{Order by} dotazovacího enginu po vzoru proudových systémů dociluje rychlejšího zpracování dotazů než zpracování, které by dané části vykonávalo po získání všech výsledků prohledávání grafu.
@@ -101,7 +137,7 @@ Celá grafová databáze bude obsažena v hlavní paměti.
 \end{enumerate}
 
 \item
-Upravit druhou část výše definovaného dotazovacího enginu po vzoru proudových sýstémů tak, aby vykonávání částí \textit{Group by} a \textit{Order by} probíhalo v průběhu prohledávání grafu časti Match:
+Upravit druhou část výše definovaného dotazovacího enginu po vzoru proudových sýstémů tak, aby vykonávání částí \textit{Group by} a \textit{Order by} probíhalo v průběhu prohledávání grafu časti \textit{Match}:
 \begin{enumerate}
 
 \item
