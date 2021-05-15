@@ -1666,7 +1666,7 @@ Po nalezení výsledku dojde k aktualizaci hodnot agregačních funkcí a výsle
 Ušetříme tedy spoustu paměti za tabulku výsledků.
 Samotný výpočet hodnot funkcí a úložiště hodnot budou totožné s původním řešením.
 
-\subsubsection{Řešení Half-Streamed}
+\subsection{Řešení Half-Streamed}
 
 V tomto módu každé vlákno počítá hodnoty agregačních funkcí lokálně.
 Po nalezení výsledku dojde k aktualizování lokálních hodnot agregačních funkcí.
@@ -1674,7 +1674,7 @@ V moment dokončení prohledávání grafu všemi vlákny dojde ke slévání v�
 Vlákno však nebude čekat na ukončení práce ostatních vláken, ale rovnou výsledky slévá do globální struktury.
 Výhoda tohoto řešení je vyřazení nutnosti používat thread-safe logiku agregačních funkcí v lokální části.
 
-\subsubsection{Řešení Streamed}
+\subsection{Řešení Streamed}
 
 V tomto módu existuje pouze jedno sdílené úložiště hodnot agregačních funkcí.
 Vlákna v moment nalezení výsledku aplikují thread-safe agregační funkce.
