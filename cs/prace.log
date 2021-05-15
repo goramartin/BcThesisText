@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  15 MAY 2021 19:39
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  16 MAY 2021 00:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -755,7 +755,7 @@ d PDF version <1.7>, but at most version <1.5> allowed
 <../img/propertyexample.pdf, id=712, 252.945pt x 213.6783pt>
 File: ../img/propertyexample.pdf Graphic file (type pdf)
 <use ../img/propertyexample.pdf>
-Package pdftex.def Info: ../img/propertyexample.pdf  used on input line 81.
+Package pdftex.def Info: ../img/propertyexample.pdf  used on input line 82.
 (pdftex.def)             Requested size: 284.52756pt x 240.36139pt.
 [10 <../img/propertyexample.pdf>] [11] [12] [13] [14]) [15]
 \openout2 = `kap02.aux'.
@@ -1304,10 +1304,10 @@ ri12.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/f
 onts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.p
 fb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/t
 ype1/public/lm/lmtt12.pfb>
-Output written on prace.pdf (130 pages, 2114096 bytes).
+Output written on prace.pdf (130 pages, 2114567 bytes).
 PDF statistics:
- 2428 PDF objects out of 2487 (max. 8388607)
- 2043 compressed objects within 21 object streams
+ 2429 PDF objects out of 2487 (max. 8388607)
+ 2044 compressed objects within 21 object streams
  502 named destinations out of 1000 (max. 500000)
  1086 words of extra memory for PDF output out of 10000 (max. 10000000)
 

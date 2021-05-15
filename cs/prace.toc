@@ -2,8 +2,8 @@
 \contentsline {chapter}{Úvod}{4}{chapter*.2}%
 \contentsline {chapter}{\numberline {1}Předpoklady}{9}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Labeled-property datový model}{9}{section.1.1}%
-\contentsline {subsubsection}{Obecný popis Property grafu}{9}{section*.9}%
-\contentsline {subsubsection}{Omezení Property grafu}{10}{section*.10}%
+\contentsline {subsubsection}{Obecný popis Labeled-property modelu}{9}{section*.9}%
+\contentsline {subsubsection}{Omezení Labeled-property modelu}{10}{section*.10}%
 \contentsline {subsubsection}{Příklad grafu splňující Labelel-property model}{10}{section*.11}%
 \contentsline {section}{\numberline {1.2}Jazyk PGQL}{11}{section.1.2}%
 \contentsline {subsubsection}{Match}{11}{section*.12}%

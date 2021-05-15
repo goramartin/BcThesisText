@@ -24,18 +24,18 @@ V módu \textit{Single group Group by} (dotaz obsahuje agregační funkce, ale n
 \item
 V druhém bloku jsme upravili první blok a navrhli nová řešení zpracování dle zadání práce.
 Propojili jsme prohledávání grafu se zpracováním \textit{Group/Order by} tak, aby engine seskupoval/setřiďoval výsledky prohledávání v moment jejich nalezení.
-Pro paralelní zpracování jsme navrhli dva módy: Streamed a Half-Streamed.
-Streamed zpracovával výsledky globálně.
-Half-Streamed zpracovával výsledky lokálně, následně docházelo ke slévání.
+Pro paralelní zpracování jsme navrhli dva módy: \textbf{Streamed} a \textbf{Half-Streamed}.
+\textbf{Streamed} zpracovával výsledky globálně.
+\textbf{Half-Streamed} zpracovával výsledky lokálně, následně docházelo ke slévání.
 \begin{itemize}
-\item V části \textit{Order by} jsme pro jednovláknové zpracování použili standartní (a, 2a)-strom a upravenou verzi (a, 2a)-stromu, která omezila počet zatříďovaných výsledků.  
-Half-Streamed řešení zpracovávalo lokálně výsledky pomocí navržených stromů a následně došlo k dvoucestnému paralelnímu slévání.
-Streamed řešení vytvořilo přihrádky přistupné skrze zámek a každé přihrádce přiřadilo specifický rozsah hodnot.
+\item V části \textit{Order by} jsme pro jednovláknové zpracování použili standartní $(a, 2a)$-strom a upravenou verzi $(a, 2a)$-stromu, která omezila počet zatříďovaných výsledků.  
+\textbf{Half-Streamed} řešení zpracovávalo lokálně výsledky pomocí navržených stromů a následně došlo k dvoucestnému paralelnímu slévání.
+\textbf{Streamed} řešení vytvořilo přihrádky přistupné skrze zámek a každé přihrádce přiřadilo specifický rozsah hodnot.
 \item
 V části \textit{Group by} jsme vycházeli z řešení prvního bloku.
-Jednovláknové a paralelní zpracování Half-Streamed používalo tabulku z prvního bloku.
+Jednovláknové a paralelní zpracování \textbf{Half-Streamed} používalo tabulku z prvního bloku.
 Obecně jsme u něj omezeli ukládané výsledky pouze na reprezentanty skupin.
-Jednovláknové a paralelní zpracování Streamed nepoužívalo žádnou tabulku.
+Jednovláknové a paralelní zpracování \textbf{Streamed} nepoužívalo žádnou tabulku.
 Zpracování \textit{Single group Group by} neukládalo žádné výsledky, kromě výsledků agregačních funkcí.
 \end{itemize}
 \end{enumerate}
@@ -47,14 +47,14 @@ Při experimentu jsme měřili práci pouze \textit{Match} části s \textit{Gro
 Následuje shrnutí výsledků:
 \begin{itemize}
 
-\item \textit{Order by:} z výsledků \textit{Order by} vyplynulo, že řešení druhého bloku využívající (a, 2a)-stromy jsou obecně pomalejší než řešení v prvním bloku využívající Merge sort.
+\item \textit{Order by:} z výsledků \textit{Order by} vyplynulo, že řešení druhého bloku využívající $(a, 2a)$-stromy jsou obecně pomalejší než řešení v prvním bloku využívající Merge sort.
 Nicméně, námi navržená paralelní řešení druhého bloku předčila paralelní Merge sort prvního bloku při třídění pomocí vlastností.
 
 \item \textit{Single group Group by:} zde byla řešení druhého bloku rychlejší.
-Problematické zde bylo paralelní Streamed řešení, ve kterém docházelo ke zpomalení, kvůli značné režii za synchronizaci.
+Problematické zde bylo paralelní \textbf{Streamed} řešení, ve kterém docházelo ke zpomalení, kvůli značné režii za synchronizaci.
 
 \item \textit{Group by:} u řešení \textit{Group by} druhého bloku nedocházelo ke znatelnému zrychlení.
-Jedinou výjimkou bylo Streamed řešení druhého bloku v jednovláknovém zpracování, které bylo nejrychlejší.
+Jedinou výjimkou bylo \textbf{Streamed} řešení druhého bloku v jednovláknovém zpracování, které bylo nejrychlejší.
 
 \end{itemize}
 
@@ -98,7 +98,7 @@ Bylo by vhodné prozkoumat možnosti vytvoření globálních statistik pro kaž
 V našem řešení jsme rozdělení přihrádek pro řetězce zpracovali pouze s předpokladem, že se jedná o ASCII znaky.
 V budoucí práci je možné zkoumat rozdělování i pro složitější znakové sady.
 \item
-Obecně \textit{Order by} řešení využívaly k třídění implementaci \textit{(a, 2a)}-stromu.
+Obecně \textit{Order by} řešení využívaly implementaci $(a, 2a)$-stromu.
 Daná implementace má značnou režii za metodu \texttt{Insert}, při které dochází k časté alokaci nových vrcholů.
 V budoucích rozšířeních je možné vyzkoušet předalokovat určitou množinu vrcholů stromu, které se následně využijí v dané metodě.
 \end{enumerate}

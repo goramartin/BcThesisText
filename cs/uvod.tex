@@ -85,26 +85,26 @@ Dále také budeme uvažovat, že dotaz vždy bude obsahovat pouze části \text
 
 Při úpravě dotazovacího enginu využijeme principů zpracování dat proudových systémů.
 Místo abychom výsledky prohledávání grafu agregovali až v moment získání všech výsledků, tak nalezené výsledky budeme agregovat již v moment jejich nalezení.
-V takovém případě se na část \textit{Match} můžeme dívat jako na proud dat, který obsahuje nalezené výsledky prohledávání grafu.
+V takovém případě se na část \textit{Match}/\textit{Where} můžeme dívat jako na proud dat, který obsahuje nalezené výsledky prohledávání grafu.
 Prvek je vložen do proudu v moment jeho nalezení.
 Následně části \textit{Order by} a \textit{Group by} zpracovávají data v proudu.
 Cílem a motivací této práce je zjistit, zda danou úpravou docílíme zrychlení vykonávání dotazů provádějící agregaci dat (tj. dotazy obsahující část \textit{Group/Order by}).
 
 \section*{Výběr dotazovacího enginu}
 
-K provedení této práce potřebujeme upravit dotazovací engine nad grafovou databází.
+K provedení této práce potřebujeme upravit dotazovací engine.
 Při našem průzkumu jsme zjistili, že využití již existujících dotazovacích enginů v naší práci by bylo netriviálně náročné.
 Děje se tak ze dvou hlavních důvodů.
-Komerční dotazovací enginy, například Neo4j \citep{neopropertygraph} nebo Neptune \citep{neptune}, jsou nepřístupné veřejnosti.
-Nalezené dotazovací enginy s otevřeným zdrojovým kódem, například dgraph \citep{dgraph}, jsou značně komplexní a pouze pochopení všech důležitých aspektů k vykonání zmíněných úprav by zabralo netriviální časové období.
-Protože cílem této práce je pouze otestovat obecný koncept propojení dotazovacího enginu s proudovými systémy, rozhodli jsme se vytvořit vlastní dotazovací engine s jednoduchou grafovou databází.
+Komerční dotazovací enginy, například Neo4j \citep{neopropertygraph} nebo Neptune \citep{neptune}, jsou vólně přístupné.
+Nalezené dotazovací enginy s veřejným zdrojovým kódem, například dgraph \citep{dgraph}, jsou značně komplexní a pouze pochopení všech důležitých aspektů k vykonání zmíněných úprav by zabralo netriviální časové období.
+Protože cílem této práce je pouze otestovat obecný koncept propojení dotazovacího enginu s proudovým systémem, rozhodli jsme se vytvořit vlastní dotazovací engine s jednoduchou grafovou databází.
 
 Námi vytvořená grafová databáze bude využívat Labeled-property (sekce \ref{req.propGraph}) datový model, protože nám umožní pracovat s obecnými grafovými daty.
 Samotně bude pouze statická a bude celá obsažena v hlavní paměti, jelikož návrhnout komplexní databázi by opět zabralo netriviální časové období.
 Statickou databází zde rozumíme databázi, ve které nedochází za běhu k úpravě uložených dat (např. nelze přidat nebo odebrat nový vrchol).
 Dotazovací engine bude zpracovávat dotazy nad danou grafovou databází.
-K dotazování využijeme podmnožinu jazyka PGQL \citep{pgql}, jelikož obsahuje jednodužší skladbu jazyka z hlediska načítání dotazu narozdíl od jazyka openCypher \citep{openCypher}.
-Daný jazyk má navíc spoustu funkcí, které v naši práci nepovažujeme za vitální, proto jsme vybrali jen jeho určitou podmnožinu (podmnožina je blíže popsána v sekci \ref{req.pgql}).
+K dotazování využijeme podmnožinu jazyka PGQL \citep{pgql}, jelikož obsahuje jednodušší skladbu jazyka narozdíl od jazyka openCypher \citep{openCypher} a umožní nám tak jednodušší načítání dotazů.
+Daný jazyk má spoustu funkcí, které v naši práci nepovažujeme za vitální, proto jsme vybrali jen jeho určitou podmnožinu (podmnožina je blíže popsána v sekci \ref{req.pgql}).
 Samotný vývoj dotazovacího enginu bude probíhat ve dvou krocích.
 V prvním kroku musíme vyvinou řešení, která vykonávají agregace po dokončení prohledávání grafu.
 V tomto bodě se budeme snažit využít již existujících a hojně využívaných algoritmů (např. pro třídění algoritmus Merge sort). 

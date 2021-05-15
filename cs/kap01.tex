@@ -8,12 +8,13 @@ V této kapitole popíšeme konkrétněji daný model a jazyk.
 \label{req.propGraph}
 
 Při zpracování této práce uvažujeme grafovou databázi, která pracuje s grafovým modelem Labeled-property\footnote{\url{https://en.wikipedia.org/wiki/Graph_database} [dostupnost ověřena k datu 8.5.2021]}.
-V této sekci popíšeme Property graf a jeho vlastnosti z pohledu grafové databáze.
+V této sekci popíšeme daný model a jeho vlastnosti z pohledu grafové databáze.
 Překvapivě neexistuje standartní definice daného modelu, ačkoliv je značně využíván v moderních systémech.
-Proto budeme pracovat s popisem Property grafu systému Neo4j \citep{neopropertygraph} a definicí jazyka PGQL \citep{pgql}.
-Na základě těchto popisů určíme klíčové vlastnosti Property grafu, které budeme uvažovat v naši práci.
+Proto budeme vycházet z definice modelu systému Neo4j \citep{neopropertygraph} a jazyka PGQL \citep{pgql}.
+Na základě těchto definic určíme klíčové vlastnosti modelu, které budeme uvažovat v naši práci.
 
-\subsubsection{Obecný popis Property grafu}
+\subsubsection{Obecný popis Labeled-property modelu}
+
 Obecně grafová dazabáze pracující s daným modelem organizuje grafová data do tří částí:
 
 \begin{itemize}
@@ -44,8 +45,8 @@ Navíc pokud dva různé elementy sdílejí vlastnost (tj. mají stejný název)
 \end{itemize}
 \end{itemize}
 
-\subsubsection{Omezení Property grafu}
-Popsali jsme obecně Property graf.
+\subsubsection{Omezení Labeled-property modelu}
+Popsali jsme obecně Labeled-property model.
 Daný popis modelu je značně abstraktní, proto si určíme další zpřísňující vlastnosti, které budeme využívat v naši práci.
 
 \begin{enumerate}
