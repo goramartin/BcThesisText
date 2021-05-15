@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  15 MAY 2021 14:07
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  15 MAY 2021 14:45
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1292,8 +1292,8 @@ LaTeX Warning: There were multiply-defined labels.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 181.
  ) 
 Here is how much of TeX's memory you used:
- 17779 strings out of 481239
- 252758 string characters out of 5920376
+ 17780 strings out of 481239
+ 252765 string characters out of 5920376
  500829 words of memory out of 5000000
  32101 multiletter control sequences out of 15000+600000
  630689 words of font info for 95 fonts, out of 8000000 for 9000
@@ -1313,10 +1313,10 @@ ri12.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/f
 onts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.p
 fb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/t
 ype1/public/lm/lmtt12.pfb>
-Output written on prace.pdf (129 pages, 2108983 bytes).
+Output written on prace.pdf (129 pages, 2109975 bytes).
 PDF statistics:
- 2404 PDF objects out of 2487 (max. 8388607)
- 2020 compressed objects within 21 object streams
- 497 named destinations out of 1000 (max. 500000)
+ 2405 PDF objects out of 2487 (max. 8388607)
+ 2021 compressed objects within 21 object streams
+ 498 named destinations out of 1000 (max. 500000)
  1070 words of extra memory for PDF output out of 10000 (max. 10000000)
 

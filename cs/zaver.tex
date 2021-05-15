@@ -106,4 +106,19 @@ V budoucích rozšířeních je možné vyzkoušet předalokovat určitou množi
 \item V paralelních \textit{Group by} řešeních by bylo vhodné prozkoumat podrobněji škálovatelnost daných řešení pro rozličné počty vláken.
 Pokud možno, také možnosti jiných paralelních map/slovníků.
  
+\item
+Dotazy v našem dotazovacím enginu jsou zadávány pomocí podmnožiny jazyka PGQL.
+Při implementaci jsme se snažili oddělit načítání dotazu od zpracování dotazu.
+K tokenizaci jsme použili třídu \texttt{Tokenizer}, pro vytvoření syntaktických stromů jsme použili třídu \texttt{Parser} a k procházení vzniklých stromů jsme implementovali rozhraní \texttt{IVisitor}.
+Procházením stromů vznikají struktury, které se následně využijí při zpracování dotazu.
+Obecně tokenizace a vytvoření syntaktických stromů je odděleno od zpracování dotazu.
+Při použití jiného jazyka stačí implementovat dané dvě části separátně.
+Problém nastave v rozhraní \texttt{IVisitor} a vzniku struktur dotazu, protože konstruktory tříd \texttt{Query} a \texttt{QueryObject} očekávají stávající formát.
+Nicméně, dané konstruktory a rozhraní \texttt{IVisitor} se dají jednoduše upravit k použití nového formátu.
+Přínosem je pak možnost využít i jiné dotazovací jazyky za cenu malých úprav.
+Dalším přínosem je také možnost využít třídu \texttt{Tokenizer} a \texttt{Parser} jako separátní knihovnu k načítání PGQL dotazu.
+
 \end{enumerate}
+
+
+

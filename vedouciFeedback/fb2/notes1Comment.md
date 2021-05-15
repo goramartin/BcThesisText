@@ -70,6 +70,9 @@ Pridavam muj komentar:
 
 			Martin: zkusim neco vymyslet.
 
+			DONE
+			udelal jsem odstavec ve future work.
+
 Implementace:
 - je strasne slozite to sledovat, UML/schema by mozna bylo lepsi
 
