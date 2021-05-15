@@ -56,7 +56,7 @@ Každý element bude mít unikátní identifikátor (\texttt{ID}), abychom doká
 
 \item
 Každý element (vrchol/hrana) bude mít právě jeden štítek.
-Myslíme, že počet štítků není určující pro naši práci, protože primárně ovlivňuje prohledávání grafu a ne části Order by a Group by.
+Myslíme, že počet štítků není určující pro naši práci, protože primárně ovlivňuje prohledávání grafu a ne části \textit{Order by} nebo \textit{Group by}.
 
 \item
 Budeme uvažovat, že štítky vrcholů jsou vždy rozdílné od štítků hran.
@@ -100,25 +100,25 @@ V průběhu práce budeme graf splňující daný model označovat jako \textbf{
 
 V naši práci budeme používat dotazovací jazyk PGQL \citep{pgql} verze 1.2 k dotazování nad Property grafem.
 Jazyk je značné obsáhlý a k realizaci naši práce nepořebujeme všechny jeho vlastnosti, proto jsme se rozhodli využít jeho podmnožinu.
-V naši práci budeme pracovat jen s částmi Select, Match, Group by a Order by.
+V naši práci budeme pracovat jen s částmi \textit{Select}, \textit{Match}, \textit{Group by} a \textit{Order by}.
 Ostatní části nebudeme používat.
-V každém dotazu musí být vždy přítomná část Select a Match.
-S části Match se pojí část From specifikující název grafu, nad kterým se má vykonat dotaz.
+V každém dotazu musí být vždy přítomná část \textit{Select} a \textit{Match}.
+S části \textit{Match} se pojí část \textit{From} specifikující název grafu, nad kterým se má vykonat dotaz.
 Nicméně, v naši práci vždy budeme pracovat s jedním grafem a tedy jsme část vyřadili. 
-Zároveň v naši práci uvažujeme, že Order by a Group by nejsou zadány nikdy společně.
+Zároveň v naši práci uvažujeme, že \textit{Order by} a \textit{Group by} nejsou zadány nikdy společně.
 
 \begin{itemize}
-\item \textbf{Match:} definuje podgraf, který bude vyhledán v grafu.
+\item \textit{Match:} definuje podgraf, který bude vyhledán v grafu.
 Součástí definice podgrafu jsou proměnné, které jsou přístupné v ostatních částech dotazu.
 Proměnná zde reprezentuje jeden element podgrafu.
 
-\item \textbf{Select:} určuje vrácená data ve formě tabulky jako u tabulkových databazí.
+\item \textit{Select:} určuje vrácená data ve formě tabulky jako u tabulkových databazí.
 K jednomu výsledku tak můžeme vrátit výčet informací.
 Každá položka výčtu pak definuje jeden sloupeček tabulky.
 
-\item \textbf{Group by:} dovoluje seskupit výsledky dle zadaných klíčů a vypočítat agregační funkce pro výsledné skupiny.
+\item \textit{Group by:} dovoluje seskupit výsledky dle zadaných klíčů a vypočítat agregační funkce pro výsledné skupiny.
 
-\item \textbf{Order by:} vykoná setřídění výsledků dle zadaných klíčů.
+\item \textit{Order by:} vykoná setřídění výsledků dle zadaných klíčů.
 \end{itemize}
 
 Nyní krátce popíšeme omezení a klíčové vlastnosti, s kterými budeme pracovat.
@@ -126,7 +126,7 @@ Pro komplexní popis odkazujeme na citovanou dokumentaci.
 
 \subsubsection{Match}
 
-Část Match se skládá z posloupností elementů definující hledaný podgraf.
+Část \textit{Match} se skládá z posloupností elementů definující hledaný podgraf.
 Posloupnosti jsou odděleny čárkou.
 Položky v posloupnosti jsou vrcholy a hrany.
 Položky vrcholů značíme pomocí \texttt{()} a položky hran pomocí šipek \texttt{->} (dopředná hrana), \texttt{<-} (zpětná hrana) a \texttt{-} (libovólná hrana).
@@ -134,7 +134,7 @@ Položky vrcholů značíme pomocí \texttt{()} a položky hran pomocí šipek \
 Každé položce je možno přidělit jméno (definice proměnné) a predikát štítku.
 Vrcholu přidělíme proměnnou vložením jména do kulatých závorek: \texttt{(jméno)}.
 Hraně přidělíme proměnnou vložením jména do hranatých závorek: \texttt{-[jméno]->}, \texttt{<-[jméno]-} a \texttt{-[jméno]-}.
-V části Match musí být vždy přítomna alespoň jedna proměnná.
+V části \textit{Match} musí být vždy přítomna alespoň jedna proměnná.
 Pokud se v posloupnostech opakují proměnné zmená to, že v průběhu hledání musí dané položky obsahovat elementy se shodným \texttt{ID}.
 Nicméně, proměnné hran se nesmí opakovat.
 Pokud dvě posloupnosti nemají společnou proměnnou, tak výsledek je skalární součin daných posloupností. 
@@ -144,7 +144,7 @@ Predikát určuje výběr elementů pouze s daným štítkem.
 Pokud se v posloupnostech opakuje proměnná se štítkem, pak štítek musejí mít i opakované definice proměnných.
 Protože v našem modelu elementy mají pouze jeden štítek, tak element posloupnosti může mít pouze jeden predikát.
 Navíc jsme vyřadili možnost aplikovat v predikátu operátor „|“ (logická operace nebo), tj. nelze použít \texttt{(jméno:štítek|štítekDva)}.
-Následují příklady Match části na grafu z obrázku \ref{figure.propertygraphexample} (bez Select) a uvedné výsledky hledání rovněž odpovídají danému obrázku:
+Následují příklady \textit{Match} části na grafu z obrázku \ref{figure.propertygraphexample} (bez \textit{Select}) a uvedné výsledky hledání rovněž odpovídají danému obrázku:
 
 \begin{enumerate}
 \item
@@ -154,7 +154,7 @@ match (x:Osoba) -> (y:Osoba)
 Jsou zde dva vrcholy s názvy proměnných \texttt{x} a \texttt{y}.
 Oba mají predikát štítku \texttt{:Osoba}.
 To znamená, že do položek posloupnosti budou vybrány pouze elementy s daným štítkem.
-Match v průběhu hledání využívá pouze hrany vedoucí z proměnné \texttt{x}.
+Část \textit{Match} v průběhu hledání využívá pouze hrany vedoucí z proměnné \texttt{x}.
 Výsledeky hledání jsou dvojice vrcholů \texttt{x}-\texttt{y}: 2-1, 2-3, 3-2.
 Hodnoty jsou zde \texttt{ID} elementů.
 
@@ -162,7 +162,7 @@ Hodnoty jsou zde \texttt{ID} elementů.
 \begin{code}
 match (x:Osoba) <- (y:Osoba)
 \end{code}
-Match v průběhu hledání využívá pouze hrany vedoucí do proměnné \texttt{x}.
+Část \textit{Match} v průběhu hledání využívá pouze hrany vedoucí do proměnné \texttt{x}.
 Výsledky hledání jsou dvojice vrcholů \texttt{x}-\texttt{y}: 1-2, 2-3, 3-2.
 Hodnoty jsou zde \texttt{ID} elementů.
 
@@ -193,33 +193,33 @@ Samotné výrazy v jazyku PGQL mohou být značně komplikované, proto jsme vyb
 
 \item Funkce vracející \texttt{ID} elementu. 
 V dotazu se reprezentuje použitím názvu proměnné.
-Lze zadat v jakékoliv části kromě Match.
+Lze zadat v jakékoliv části kromě \textit{Match}.
 Například:
 \begin{code}
 select x, y match (x) -> (y)
 \end{code}
-Dotaz obsahuje dva výrazy \texttt{x} a \texttt{y} v části Select.
-Select část vytváří tabulku se dvěma sloupečky \texttt{x} a \texttt{y}, které obsahují \texttt{ID} elementů v daných proměnných.
+Dotaz obsahuje dva výrazy \texttt{x} a \texttt{y} v části \textit{Select}.
+\textit{Select} část vytváří tabulku se dvěma sloupečky \texttt{x} a \texttt{y}, které obsahují \texttt{ID} elementů v daných proměnných.
 
 \item 
 Přístup k hodnotě vlastnosti elementu.
-Lze zadat v jakékoliv části kromě Match.
+Lze zadat v jakékoliv části kromě \textit{Match}.
 V dotazu se reprezentuje použitím názvu proměnné s názvem vlastnosti sloučených pomocí tečky.
 Například: 
 \begin{code}
 select x.VlastnostJedna, y.VlastnostDva match (x) -> (y)
 \end{code}
-Dotaz obsahuje dva výrazy \texttt{x.VlastnostJedna} a \texttt{y.VlastnostDva} v části Select.
-Select část vytváří tabulku se dvěma sloupečky \texttt{x.VlastnostJedna} a \texttt{y.VlastnostDva}, které obsahují hodnoty vlastností elementů v daných proměnných.
+Dotaz obsahuje dva výrazy \texttt{x.VlastnostJedna} a \texttt{y.VlastnostDva} v části \textit{Select}.
+\textit{Select} část vytváří tabulku se dvěma sloupečky \texttt{x.VlastnostJedna} a \texttt{y.VlastnostDva}, které obsahují hodnoty vlastností elementů v daných proměnných.
 Tento výraz se například nemusí povést vyhodnotit, protože vlastnost nemusí existovat na daném elementu.
 V takovém případě budeme předpokládat, že výraz vrací nějakou konstantu definující selhání výpočtu.
 
 \item 
 Agregační funkce.
-Agregační funkce vypočítají výslednou hodnotu pro skupiny vytvořených při seskupování (Group by).
-Pokud nebylo zadáno Group by a je použita agregační funkce, pak ve zbylých částech kromě Match mohou být pouze agregační funkce.
+Agregační funkce vypočítají výslednou hodnotu pro skupiny vytvořených při seskupování (\textit{Group by}).
+Pokud nebylo zadáno \textit{Group by} a je použita agregační funkce, pak ve zbylých částech kromě \textit{Match} mohou být pouze agregační funkce.
 V takovém případě všechny výsledky patří do jedné skupiny.
-Agregační funkce povolíme pouze v části Select, protože Order by a Group by nemůžou být nikdy zadány společně.
+Agregační funkce povolíme pouze v části \textit{Select}, protože \textit{Order by} a \textit{Group by} nemůžou být nikdy zadány společně.
 Nedovolíme rekurzivní používání daných funkcí, tj. agregační funkce nemůže mít na vstupu další agregační funkci.
 Funkce na vstupu mají hodnotu vypočteného výrazu (tj. \texttt{ID} nebo přístup k vlastnosti).
 Musíme brát v potaz, že při výpočtu výrazu může dojít k selhání a tedy funkce musí umět pracovat s konstantou definující selhání výpočtu.
@@ -244,20 +244,20 @@ Druhý mód je použití zápisu \texttt{count(*)}.
 Tento zápis nepotřebuje vyhodnotit výrazy.
 Pokud byl například zadán dotaz:
 \texttt{select count(*) match (x)}.
-V tomto dotaze pak nepotřebujeme znát elementy z části Match, ale stačí nám jejich počet.
+V tomto dotaze pak nepotřebujeme znát elementy z části \textit{Match}, ale stačí nám jejich počet.
 \end{enumerate}
 \end{itemize}
 
 \subsubsection{Select}
 
-Select část může obsahovat pouze výše zmíněné výrazy oddělené čárkami.
-V této části lze přístoupit k proměnným, které jsou definované v Match části, nebo zadat výrazy agregačních funkcí.
-Výsledkem Select je tabulka.
+\textit{Select} část může obsahovat pouze výše zmíněné výrazy oddělené čárkami.
+V této části lze přístoupit k proměnným, které jsou definované v \textit{Match} části, nebo zadat výrazy agregačních funkcí.
+Výsledkem části \textit{Select} je tabulka.
 Sloupečky v tabulce představují výrazy zadané v dané části.
-Řádky tabulky jsou pak hodnoty výrazů pro výsledky z části Match nebo Group/Order by.
-Existuje ještě speciální operátor \texttt{*}, který lze zadat pouze v případě, pokud je v dotazu jen část Select a Match.
-V takovém případě se \texttt{*} nahradí všemi proměnnými z části Match.
-Následují příklady použití Select části:
+Řádky tabulky jsou pak hodnoty výrazů pro výsledky z části \textit{Match} nebo \textit{Group/Order by}.
+Existuje ještě speciální operátor \texttt{*}, který lze zadat pouze v případě, pokud je v dotazu jen část \textit{Select} a \textit{Match}.
+V takovém případě se \texttt{*} nahradí všemi proměnnými z části \textit{Match}.
+Následují příklady použití \textit{Select} části:
 \begin{itemize}
 \item
 Použití obyčejných výrazů:
@@ -276,47 +276,47 @@ select x, y match (x) -> (y)
 \end{code} 
 
 \item
-Použití agregačních funkcí v Select bez Group by:
+Použití agregačních funkcí v \textit{Select} bez části \textit{Group by}:
 \begin{code}
 select min(x.Vlastnost), avg(x.Vlastnost) match (x) -> (y)
 \end{code}
 V takovém případě je výsledkem dotazu pouze jedna dvojice výsledných hodnot dvou funkcí, protože všechny výsledky jsou seskupeny do jedné skupiny.
-Select zde tedy může zadávat pouze agregační funkce.
+Část \textit{Select} zde tedy může zadávat pouze agregační funkce.
 
 \item
-Použití Select zároveň s Group by:
+Použití části \textit{Select} zároveň s částí \textit{Group by}:
 \begin{code}
 select avg(x.Vlastnost), x match (x) -> (y) group by x
 \end{code}
-Select může obsahovat pouze výrazy agregačních funkcí nebo výrazy zadaných v části Group by.
-Výše zmíněný dotaz bez výrazu \texttt{x} v Select části a ponecháním pouze agregační funkce je správně.
-Rovněž odstraněním agregační funkce z Select části a zanecháním pouze druhého výrazu je správně.
+Část textit{Select} může obsahovat pouze výrazy agregačních funkcí nebo výrazy zadaných v části \textit{Group by}.
+Výše zmíněný dotaz bez výrazu \texttt{x} v \textit{Select} části a ponecháním pouze agregační funkce je správně.
+Rovněž odstraněním agregační funkce z \textit{Select} části a zanecháním pouze druhého výrazu je správně.
 Výsledná tabulka má počet řádků rovný počtu vytvořených skupin.
 \end{itemize}
 
 \subsubsection{Order by}
 
-Order by definuje klíče (výrazy), podle kterých budou výsledky z části Match setříděny.
-Order by může přistupovat pouze k proměnným z Match části.
-Order by a Select nemusí mít shodné výrazy.
+\textit{Order by} definuje klíče (výrazy), podle kterých budou výsledky z části \textit{Match} setříděny.
+\textit{Order by} může přistupovat pouze k proměnným z \textit{Match} části.
+\textit{Order by} a \textit{Select} části nemusí mít shodné výrazy.
 Výrazy v této části jsou opět odděleny čárkami.
 Operátor \texttt{asc}/\texttt{desc} za výrazem definuje zda jsou hodnoty tříděny vzestupně/sestupně.
 Pokud operátor chybí, tak je jako výchozí operator použit \texttt{asc}.
-Následují příklady použití Order by části:
+Následují příklady použití \textit{Order by} části:
 \begin{itemize}
 \item
 Použití jednoho klíče:
 \begin{code}
 select x, y match (x) -> (y) order by x
 \end{code}
-Výsledky z Match jsou setříděny podle hodnot \texttt{x} vzestupně.
+Výsledky z \textit{Match} jsou setříděny podle hodnot \texttt{x} vzestupně.
 
 \item
 Použití dvou klíčů:
 \begin{code}
 select x, y match (x) -> (y) order by x, y
 \end{code}
-Výsledky z Match jsou setříděny podle hodnot \texttt{x} vzestupně.
+Výsledky z části \textit{Match} jsou setříděny podle hodnot \texttt{x} vzestupně.
 Pokud se dva výsledky shodují v dané hodnotě, pak je použito porovnání hodnotou \texttt{y}.
 Obecně se aplikuje stejný postup, pokud je tříděno podle více než dvou klíčů.
 
@@ -325,33 +325,33 @@ Použití operátoru \texttt{desc}:
 \begin{code}
 select x, y match (x) -> (y) order by x desc
 \end{code}
-Výsledky z Match jsou setříděny podle hodnot \texttt{x} sestupně.
+Výsledky z části \textit{Match} jsou setříděny podle hodnot \texttt{x} sestupně.
 \end{itemize}
 
 \subsubsection{Group by}
 
-Group by definuje klíče seskupení (výrazy).
-Výsledkem Group by je množina skupin.
-Skupiny obsahují výsledky prohledávání z části Match.
+\textit{Group by} definuje klíče seskupení (výrazy).
+Výsledkem \textit{Group by} je množina skupin.
+Skupiny obsahují výsledky prohledávání z části \textit{Match}.
 Všechny výsledky v jedné skupině mají stejné hodnoty klíčů seskupení. 
 Výrazy jsou odděleny čárkami.
-Select část může obsahovat výrazy agregačních funkcí a výrazy klíčů seskupení.
+\textit{Select} část může obsahovat výrazy agregačních funkcí a výrazy klíčů seskupení.
 Agregační funkce se vypočítají pro každou skupinu zvlášť.
-Pokud není zadána část Group by a dotaz obsahuje výrazy agregačních funkcí, pak se jedná o seskupení všech výsledků do jedné skupiny.
-Následují příklady použití Group by části:
+Pokud není zadána část \textit{Group by} a dotaz obsahuje výrazy agregačních funkcí, pak se jedná o seskupení všech výsledků do jedné skupiny.
+Následují příklady použití \textit{Group by} části:
 \begin{itemize}
 \item
 Použití jednoho klíče:
 \begin{code}
 select x match (x) -> (y) group by x
 \end{code}
-Výsledky z Match jsou seskupeny podle hodnot \texttt{x}.
+Výsledky z části \textit{Match} jsou seskupeny podle hodnot \texttt{x}.
 
 \item
 Použití dvou klíčů:
 \begin{code}
 select x, y match (x) -> (y) group by x, y
 \end{code}
-Výsledky jsou seskupeny dle uspořádané dvojice (\texttt{x}, \texttt{y}).
+Výsledky z části \textit{Match} jsou seskupeny dle uspořádané dvojice (\texttt{x}, \texttt{y}).
 Pokud obecně existuje více klíčů, pak jsou seskupeny dle uspořádané \textit{n}-tice.
 \end{itemize}

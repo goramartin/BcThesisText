@@ -12,7 +12,7 @@ K výběru jazyka jsme měli několik důvodů.
 Framework nabízí množství knihoven, modulů a základních datových struktur.
 Dále také poskytuje nástroje pro práci ve vícevláknovém prostředí.
 Uvažovali jsme ještě o jazyku C++, který nabízí množství technik a možností optimalizace k získání rychlosti při vykonávání aplikace. 
-Nyní zmíníme, že hlavním cílem práce není vyvinou co nejrychlejší dotazovací engine, ale otestovat obecný koncept vykonávání Group by a Order by v průběhu prohledávání grafu.
+Nyní zmíníme, že hlavním cílem práce není vyvinou co nejrychlejší dotazovací engine, ale otestovat obecný koncept vykonávání \textit{Group by} a \textit{Order by} v průběhu prohledávání grafu.
 Myslíme, že tento koncept se dá implementovat v každém jazyce.
 Navíc, v průběhu analýzy jsme si zkoušeli již implementovat určité koncepty v daném jazyce C\#, abychom měli lepší přehled o způsobech vykonání.
 Z tohoto důvodu jsme měli určité části již naimplementovány.
@@ -27,7 +27,7 @@ Jsou to módy:
 
 \item \textbf{Normal:} reprezentuje původní způsob vykonávání.
 V prvním kroku dojde k prohledání grafu a uložení výsledků do tabulky.
-Teprve po dokončení dojde vykonání Group by a Order by.
+Teprve po dokončení dojde vykonání \textit{Group by} a \textit{Order by}.
 
 \item \textbf{Half-Streamed:} Reprezentuje upravené vykonávání. 
 Tento mód v paralelním vykonání ukládá výsledky nejdříve lokálně a po dokončení dojde ke slévání.
@@ -58,7 +58,7 @@ Samotný projekt je rozdělený na tři hlavní řešení:
 
 V průběhu celé kapitoly se budeme věnovat pouze řešení \texttt{QueryEngine}, protože obsahuje hlavní část práce.
 Řešení \texttt{Benchmark} je popsáno podrobněji v kapitole Experiment \ref{expr}., ve které se věnujeme porovnání implementovaných řešení.
-Z \texttt{HPCsharp} řešení jsme využili pouze určité algoritmy při implementaci části Order by.
+Z \texttt{HPCsharp} řešení jsme využili pouze určité algoritmy při implementaci části \textit{Order by}.
 Samotná implementace algoritmů lze nalézt v odkazu citovaného zdroje. 
 Nyní popíšeme podrobněji rozložení řešení \texttt{QueryEngine}.
 
@@ -77,10 +77,10 @@ Hlavní adresáře jsou:
 \item \textit{Parser}: obsahuje metody načítání uživatelského dotazu, definované tokeny, objekty syntaktického stromu a objekty k procházení daného stromu.
 
 \item \textit{Query}: obsahuje objekty zpracování dotazu. 
-Obecně představuje část, která vykonává Group by a Order by po dokončení prohledávání grafu. 
+Obecně představuje část, která vykonává \textit{Group by} a \textit{Order by} po dokončení prohledávání grafu. 
 
 \item \textit{QueryStreamed}: obsahuje objekty upraveného zpracování dotazu. 
-Obecně představuje část, která vykonává Group by a Order by v průběhu prohledávání grafu.
+Obecně představuje část, která vykonává \textit{Group by} a \textit{Order by} v průběhu prohledávání grafu.
 Adresář částečně kopíruje strukturu adresáře \textit{Query}.
 Pokud jsou názvy složek stejné znamená to, že objekty ve složce rozšiřují právě objekty ze stejnojmenné složky uvnitř \textit{Query}. 
 Obsahuje řešení pro Streamed i Half-Streamed módy.
@@ -100,7 +100,7 @@ Obsahuje řešení pro Streamed i Half-Streamed módy.
 %%.4 Property \DTcomment{Definuje vlastnosti typu v Property grafu.}.
 %%.2 DataFiles. 
 %%.2 Parser.
-%%.3 ParsedPattern \DTcomment{Definuje objekty syntaktického stromu posloupností části Match.}.
+%%.3 ParsedPattern \DTcomment{Definuje objekty syntaktického stromu posloupností části \textit{Match}.}.
 %%.3 Parser.
 %%.4 ParseTree \DTcomment{Definuje objekty použité k tvorbě syntaktického stromu.}.
 %%.5 Visitor \DTcomment{Definuje objekty procházení syntaktického stromu.}.
@@ -123,14 +123,14 @@ Obsahuje řešení pro Streamed i Half-Streamed módy.
 %%.6 TwoStepGroupBy.
 %%.5 ReferenceSingleThreadSolutions \DTcomment{Definuje jednovláknové vykonání Group by.}.
 %%.4 SingleGroupGroupBy \DTcomment{Definuje řešení, pokud není zadáno Group by.}.
-%%.3 Match \DTcomment{Definuje objekty důležité k vykonání Match.}.
+%%.3 Match \DTcomment{Definuje objekty důležité k vykonání \textit{Match}.}.
 %%.4 DFSMatch \DTcomment{Definuje obejekty DFS prohledávání grafu.}.
 %%.5 BaseMatch \DTcomment{Definuje objekty vzoru.}.
 %%.5 Matcher \DTcomment{Definuje objekty algoritmu prohledávání grafu .}.
 %%.6 DFSParallelPatternMatcher \DTcomment{Definuje paralelní prohledávání grafu.}.
 %%.6 DFSPatternMatcher \DTcomment{Definuje jednovláknové prohledávání grafu.}.
 %%.5 Pattern \DTcomment{Definuje api vzoru.}.
-%%.4 MatchInternalResults \DTcomment{Definuje interní struktury Match pro ukládání výsledků prohledávání grafu.}.
+%%.4 MatchInternalResults \DTcomment{Definuje interní struktury \textit{Match} pro ukládání výsledků prohledávání grafu.}.
 %%.3 OrderBy \DTcomment{Definuje objekty důležité k vykonání Order by.}.
 %%.4 Comparer \DTcomment{Definuje porovnání řádků tabulky pomocí proxy třídy.}.
 %%.5 Wrappers \DTcomment{Definuje porovnání řádků tabulky pomocí indexu.}.
@@ -139,7 +139,7 @@ Obsahuje řešení pro Streamed i Half-Streamed módy.
 %%.3 Results \DTcomment{Definuje tabulky výsledků.}.
 %%.4 GroupByResults \DTcomment{Definuje formát tabulky výsledků Group by.}.
 %%.4 TableResults \DTcomment{Definuje formát tabulky pouze pro elementy grafu.}.
-%%.3 Select \DTcomment{Definuje objekty důležité k vykonání Select.}.
+%%.3 Select \DTcomment{Definuje objekty důležité k vykonání \textit{Select}.}.
 %%.4 ExpressionToStringWrapper  \DTcomment{Definuje objekt převodu hodnoty výrazu na řetězec.}.
 %%.4 Formater  \DTcomment{Definuje formát výstupu.}.
 %%.4 Printer  \DTcomment{Definuje kam se má výstup vypsat.}.
@@ -303,16 +303,16 @@ Pole tokenů se předá statické třídě \texttt{Parser}.
 
 \subsubsection{Třída Parser}
 
-Třída postupně z tokenů vytváří syntaktické stromy každé hlavní části dotazu (Match, Select, Order by a Group by).
+Třída postupně z tokenů vytváří syntaktické stromy každé hlavní části dotazu (\textit{Match}, \textit{Select}, \textit{Order by} a \textit{Group by}).
 Syntaktická analýza se vyvolá veřejnou metodou \texttt{Parse(List<Token> tokens)} a probíhá po částech.
 Každá hlavní část dotazu má svou separátní metodu.
-Například \texttt{ParseMatch(ref int position, List<Token> tokens)} parsuje část Match. 
+Například \texttt{ParseMatch(ref int position, List<Token> tokens)} parsuje část \textit{Match}. 
 Během syntaktické analýzy tokenů se rekurzivně volájí další metody.
 Při rekurzi se používá parametr \texttt{position}, který udržuje pozici aktuálně zpracovávaného tokenu.
 
 Syntaktické stromy jsou tvořeny potomky abstraktní třídy \texttt{Node}, která implementuje návrhový vzor Visitor \citep[str. 331]{patterns}, tj. definuje metodu \texttt{Accept<T>(...)}.
 Rozhraní \texttt{IVisitor<T>} implementuje druhou část vzoru, tj. metodu \texttt{Visit(...)}, kde vstupem ja každý neabstraktní potomek třídy \texttt{Node}.
-Každá část dotazu má svůj objekt implementující \texttt{IVisitor<T>}, například části Match přináleží objekt \texttt{MatchVisitor}.
+Každá část dotazu má svůj objekt implementující \texttt{IVisitor<T>}, například části \textit{Match} přináleží objekt \texttt{MatchVisitor}.
 Parametr \texttt{T} je zde návratová hodnota procházení syntaktického stromu.
 Výstupem třídy \texttt{Parser} je množina všech vzniklých syntaktických stromů.
 Samotná tokenizace a syntaktická analýza se provádí při inicializaci třídy \texttt{Query}.
@@ -336,8 +336,8 @@ Daná metoda dostává množství argumentů, vypíšeme ty hlavní:
 \item \texttt{QueryMode mode}: definuje jaký mód vykonávání se má provádět (sekce \ref{impl.engine.modes}).
 \item \texttt{Graph graph}: definuje graf, nad kterým se má dotaz provést.
 \item \texttt{ThreadCount threadCount}: definuje počet vláken, které se mají využít při vykonávání.
-\item \texttt{GrouperAlias grouperAlias}: definuje jaké řešení se má použít při vykonávání Group by.
-\item \texttt{SorterAlias sorterAlias}: definuje jaké řešení se má puužít při vykonávání Order by.
+\item \texttt{GrouperAlias grouperAlias}: definuje jaké řešení se má použít při vykonávání \textit{Group by}.
+\item \texttt{SorterAlias sorterAlias}: definuje jaké řešení se má puužít při vykonávání \textit{Order by}.
 \end{itemize}
 Při zavolání metody dojde k tokenizaci \texttt{inputQuery} a kontrole všech argumentů metodou \texttt{CheckArgs}.
 Zkontrolované argumenty a pole \texttt{List<Token>} se předají privátnímu konstruktoru třídy \texttt{Query}.
@@ -364,8 +364,8 @@ Obsahuje:
 \item Metodu \texttt{void Compute(out ITableResults r,} \texttt{out GroupByResults g)}, která rekurzivné volá stejnou metodu na dalším objektu v \texttt{next}.
 Každý potomek třídy si implementuje vlastní logiku zpracování této metody.
 Všimněme si, že tato metoda definuje rozhraní pro předávání výsledků zpracování.
-\texttt{ITableResults} definuje obecné rozhraní tabulky výsledků prohledávání, pokud není zadáno Group by.
-\texttt{GroupByResults} definuje formát výsledků Group by.
+\texttt{ITableResults} definuje obecné rozhraní tabulky výsledků prohledávání, pokud není zadáno \textit{Group by}.
+\texttt{GroupByResults} definuje formát výsledků \textit{Group by}.
 \item Metodu \texttt{void AddToEnd(QueryObject queryObject)}, která připojí \\*poskytnutý objekt na konec řetězce.
 \end{itemize}
 Konkrétní potomci třídy jsou vytvářeny v konstruktoru třídy \texttt{Query}.
@@ -375,25 +375,25 @@ Návratová hodnota \texttt{T} se využije ke konstrukci privátních objektů p
 
 \subsection{Match} \label{impl.match}
 
-V této sekci popíšeme implementaci části Match.
+V této sekci popíšeme implementaci části \textit{Match}.
 Prvně popíšeme konstrukci vzoru a následně objekty algoritmu prohledávání.
 Budeme vycházet z sekce analýzy \ref{anal.match}.
 
 \subsubsection{Třída MatchObject}
 
-Třída \texttt{MatchObject} reprezentuje Match část dotazu.
+Třída \texttt{MatchObject} reprezentuje \textit{Match} část dotazu.
 Je potomkem abstraktní třídy \texttt{MatchObjectBase}, která dědí z \texttt{QueryObject}.
 Obecně třída \texttt{MatchObject} obsahuje odkaz na tabulku výsledků prohledávání \texttt{MatchFixedResults} a odkaz na objekt DFS algoritmu prohledávání \texttt{DFSParallelPatternMatcher}.
 V konstruktoru třídy se vytváří vzor a objekt prohledávání.
 Objekt prohledávání obdrží vzor a tabulku pro ukládání výsledků.
-Třída dědí z \texttt{MatchObjectBase}, protože objekt části Match upraveného zpracování používá stejnou metodu ke kontrole vzoru uživatele (metoda \texttt{ParsedPatternCorrectness}).
+Třída dědí z \texttt{MatchObjectBase}, protože objekt části \textit{Match} upraveného zpracování používá stejnou metodu ke kontrole vzoru uživatele (metoda \texttt{ParsedPatternCorrectness}).
 Metoda kontroluje uživatelem zadaný vzor, jestli splňuje podmínky jazyka PGQL. 
 Metoda očekává na vstupu pole tříd, které je výstupem procházení syntaktické stromové struktury objektem \texttt{MatchVisitor}. 
 
 \subsubsection{Třída ParsedPattern}
 
 \texttt{MatchVisitor} vytváří procházením stromu pole tříd \texttt{List<ParsedPattern>}.
-Třída \texttt{ParsedPattern} reprezentuje jednu vyhledávací posloupnost Match části (např. \texttt{(x) -> (y)}).
+Třída \texttt{ParsedPattern} reprezentuje jednu vyhledávací posloupnost \textit{Match} části (např. \texttt{(x) -> (y)}).
 V poli je tolik tříd, kolik je v dotazu posloupností oddělených čárkou.
 Třída obsahuje:
 \begin{itemize}
@@ -418,7 +418,7 @@ Rozdělení se nemusí provést, pokud je rozdělováno podle první položky \t
 Pokud je rozdělováno podle poslední, posloupnost se pouze převrátí.
 
 \end{itemize}
-Z daného formátu se během vytváření struktur Match části vytvoří finální hledaný vzor \texttt{DFSPattern} s pomocí zmíněný metod a položek.
+Z daného formátu se během vytváření struktur \textit{Match} části vytvoří finální hledaný vzor \texttt{DFSPattern} s pomocí zmíněný metod a položek.
 
 \subsubsection{Třída DFSPattern}
 
@@ -549,7 +549,7 @@ Reprezentuje algoritmus prohledávání grafu, který ukládá výsledky do tabu
 V konstruktoru dostane tabulku \texttt{MatcherFixedResultsInternal}, kam ukládá své výsledky prohledávání.
 Metoda \texttt{ProcessResult} tedy ukládá výsledky do dané tabulky.
 V průběhu volání této metody taky dochází k počítání nalezených výsledků v položce \texttt{NumberOfMatchedElements}.
-Pokud uživatel zadal pouze \texttt{count(*)} v části Select, tak nedochází k ukládání výsledků do tabulky.
+Pokud uživatel zadal pouze \texttt{count(*)} v části \textit{Select}, tak nedochází k ukládání výsledků do tabulky.
 
 \subsubsection{Třída DFSParallelPatternMatcher} \label{impl.match.parmatch}
 
@@ -584,7 +584,7 @@ Slévání probíha voláním metody \texttt{MergeColumn} na instanci \texttt{re
 V moment dokončení slévání jsou finální výsledky v položce \texttt{results.FinalMerged}.
 Tato položka je předána konstruktoru \texttt{TableResults}, která implementuje rozhraní \texttt{ITableResults}.
 Třída představuje tabulku výsledků, kterou si objekty částí dotazu (\texttt{QueryObjekt}) předávají ke zpracování.
-Pokud dotaz obsahoval pouze \texttt{count(*)} v části Select, tak se výsledky neukládaly do tabulku a místo slévání výsledků dojde pouze ke slévání položek instancí DFS algoritmů \texttt{NumberOfMatchedElements}.
+Pokud dotaz obsahoval pouze \texttt{count(*)} v části \textit{Select}, tak se výsledky neukládaly do tabulku a místo slévání výsledků dojde pouze ke slévání položek instancí DFS algoritmů \texttt{NumberOfMatchedElements}.
 
 \subsection{Tabulka výsledků} \label{impl.table}
 
@@ -617,7 +617,7 @@ To nám umožní v moment dokočení slévání pouze přesunou výsledky do kos
 \item Metoda \texttt{void StoreTemporaryRow()} vyvolá metodu výše pro uložení pole \texttt{temporaryRow} do tabulky, tj. zavolá metodu \texttt{StoreRow(temporaryRow)}.
 \item Metoda indexeru \texttt{RowProxy this[int i]}, která vrátí proxy třídu řádku.
 \item Položka \texttt{int[] order} umožní definovat vlastní pořadí řádků v tabulce bez nutnosti přesouvat řádky.
-\item Položka \texttt{int NumberOfMatchedElements}, která udává počet nalezených výsledků, pokud bylo v části dotazu Select zadáno pouze \texttt{count(*)}.
+\item Položka \texttt{int NumberOfMatchedElements}, která udává počet nalezených výsledků, pokud bylo v části dotazu \textit{Select} zadáno pouze \texttt{count(*)}.
 V takém případě nedocházelo k ukládání výsledků do tabulky, ale jen počítání jejich počtu.
 
 \end{itemize}
@@ -634,7 +634,7 @@ Na struktuře existuje statická metoda \texttt{AreIdenticalVars}, která porovn
 
 \subsection{Expressions}
 
-Než přistoupíme k implementaci Order by a Group by musíme implementovat způsob vyhodnocení výrazů.
+Než přistoupíme k implementaci \textit{Order by} a \textit{Group by} musíme implementovat způsob vyhodnocení výrazů.
 K výpočtu výrazů jsme implementovali vlastní jednochý systém.
 Postupovali jsme přesně podle sekce analýzy \ref{anal.expressions}, proto popíšeme jen tvorbu a základní objekty.
 
@@ -686,15 +686,15 @@ Tato třída je používaná k předávání výrazů do funkcí a konstruktorů
 
 \subsection{Order by}
 
-Implementovali jsme části nutné ke zpracování Order by a Group by.
+Implementovali jsme části nutné ke zpracování \textit{Order by} a \textit{Group by}.
 Nyní popíšeme implementaci jejich řešení.
-Začneme popisem části Order by.
+Začneme popisem části \textit{Order by}.
 U implementace jsme vycházeli z sekce analýzy \ref{anal.orderby}.
 
 \subsubsection{Třída OrderByObject}
 
-Část Order by je reprezentována objektem \texttt{OrderByObject: QueryObject}.
-Order by musí setřídit tabulku \texttt{TableResults} pomocí výrazů zadaných uživatelem (klíčů třídění).
+Část \textit{Order by} je reprezentována objektem \texttt{OrderByObject: QueryObject}.
+\textit{Order by} musí setřídit tabulku \texttt{TableResults} pomocí výrazů zadaných uživatelem (klíčů třídění).
 Klíče jsou vytvořeny v konstruktoru objektu při procházení syntaktického stromu objektem \texttt{OrderByVisitor<List<ExpressionComparer> >}.
 Výstup procházení obsahuje pole porovnávačů, které se musí použít k porovnaní řádků tabulky.
 
@@ -774,19 +774,19 @@ První slovo určuje mód, kterému řešení přináleží.
 
 \subsection{Group by}
 
-V této sekci popíšeme implementaci Group by.
-U implementace Group by jsme vycházeli z sekce analýzy \ref{anal.groupby}.
+V této sekci popíšeme implementaci \textit{Group by}.
+U implementace \textit{Group by} jsme vycházeli z sekce analýzy \ref{anal.groupby}.
 
 \subsubsection{Třída GroupByObject}
 
-Část Group by je reprezentována objektem \texttt{GroupByObject: QueryObject}.
-Group by musí seskupit výsledky v tabulce prohledávání \texttt{TableResults} pomocí výrazů zadaných uživatelem (klíčů seskupení).
+Část \textit{Group by} je reprezentována objektem \texttt{GroupByObject: QueryObject}.
+\textit{Group by} musí seskupit výsledky v tabulce prohledávání \texttt{TableResults} pomocí výrazů zadaných uživatelem (klíčů seskupení).
 Zároveň musí provést výpočet agregačních funkcí.
 Klíče jsou vytvořeny v kostruktoru objektu při procházení syntaktického stromu objektem \texttt{GroupByVisitor<List<ExpressionHolder> >}.
 Výsledné pole obsahuje výrazy, které se musí použít k seskupování.
 V průběhu sestavování dalších částí dotazu dochází k vytváření objektů logiky výpočtu agregačních funkcí.
 Logika je obsažena v potomcích objektu \texttt{Aggregate}.
-Výsledný objekt části Match tedy obsahuje pole výrazů a pole objektů logiky agregačních funkcí.
+Výsledný objekt části \textit{Match} tedy obsahuje pole výrazů a pole objektů logiky agregačních funkcí.
 Nejdříve popíšeme implementaci seskupování a následně implementaci agregačních funkcí.
 
 \subsubsection{Dictionary a ConcurrentDictionary}
@@ -846,7 +846,7 @@ Nastavujeme položky argumentu \texttt{y} (dle metody \texttt{Compare(x, y)}), p
 Toto odpovída navržené optimalizaci z sekce analýzy \ref{anal.groupby.opt1}.
 \end{enumerate}
 Problémem u druhé optimalizace je opět sdílení položek v paralelním prostředí.
-Jelikož jsme se v předchozí sekci Order by rozhodli nevyužívat při paralelním zpracování optimalizaci ukládání výsledků výrazů.
+Jelikož jsme se v předchozí sekci \textit{Order by} rozhodli nevyužívat při paralelním zpracování optimalizaci ukládání výsledků výrazů.
 Tak ani zde ji nebudeme implementovat pro paralelní zpracování. 
 
 \subsubsection{Třída ExpressionHasher a třídy ExpressionHasher<T>}
@@ -984,7 +984,7 @@ Zde navíc uvedeme za název řešení do závorky druh úložiště, tj. Bucket
 Začneme jednovláknovým zpracováním (sekce analýzy \ref{anal.groupby.singlethread}):
 \begin{itemize}
 
-\item Řešení \textbf{Normal: SingleThreadSolution (Bucket)} odpovídá jednovláknovému zpracování Group by pomocí úložiště Bucket.
+\item Řešení \textbf{Normal: SingleThreadSolution (Bucket)} odpovídá jednovláknovému zpracování \textit{Group by} pomocí úložiště Bucket.
 Řešení je v třídě \texttt{GroupByWithBuckets}.
 K seskupení je použit \texttt{Dictionary<key, value>}, proto je zde využit \texttt{GroupDictKey} jako \texttt{key}.
 \texttt{value} je zde odkaz na pole úložiště \texttt{AggregateBucketResult[]}.
@@ -992,7 +992,7 @@ Pole úložiště hodnot agregačních funkcí se vytváří pouze v momentě, k
 \texttt{RowEqualityComparerGroupDictKey} je zde rozhraní pro určení rovnosti skupin.
 Využívají se obě optimalizace.
 
-\item  Řešení \textbf{Normal: SingleThreadSolution (List)} odpovídá jednovláknovému zpracování Group by pomocí úložiště List.
+\item  Řešení \textbf{Normal: SingleThreadSolution (List)} odpovídá jednovláknovému zpracování \textit{Group by} pomocí úložiště List.
 Řešení je obsaženo v třídě \texttt{GroupByWithList}.
 Řešení využívá \texttt{Dictionary<key, value>}, tudíž je zdě opět \texttt{GroupDictKey} jako \texttt{key}.
 Úložiště výsledků agregačních funkcí je vytvořeno na začátku v položce \texttt{aggResults}.
@@ -1048,7 +1048,7 @@ Výsledně existuje pouze jedna tabulka.
 Zde má značnou výhodu Bucket řešení, protože při slévání dochází k přesunutí odkazu na pole.
 Zatímco u List dochází překopírovávání prvků mezi poli. 
 
-\item \textbf{Normal: SingleGroup} odpovídájí módu Single Group Group by zpracování z sekce \ref{anal.groupby.singlegroup}.
+\item \textbf{Normal: SingleGroup} odpovídájí módu \textit{Single Group Group by} zpracování z sekce \ref{anal.groupby.singlegroup}.
 Řešení je v třídě \texttt{SingleGroupGroupBy}.
 Třída je využívaná pro jednovláknové i paralelní zpracování.
 Každé vlákno drží odkaz na lokální pole \texttt{AggregateBucketResult[]}, do kterého ukláda hodnoty funkcí.
@@ -1068,12 +1068,12 @@ Celé upravané zpracování dotazu je reprezentováno již existující třído
 Samotný způsob vykonání se definuje v metodě \texttt{Create(...)}, kde jeden vstupní argument je mód.
 Při vybrání upravaného módu se spustí rozdílný privatní konstruktor.
 V konstruktoru dojde k vytvoření exekučního plánu.
-V analýze jsme určili, že objekt části Select s novým objektem Match části \texttt{MatchObjectStreamed} je propojen původním způsobem.
-Nyní pouze vytvoříme objekt \texttt{ResultProcessor} a nový objekt části Match \texttt{MatchObjectStreamed}. 
+V analýze jsme určili, že objekt části \textit{Select} s novým objektem \textit{Match} části \texttt{MatchObjectStreamed} je propojen původním způsobem.
+Nyní pouze vytvoříme objekt \texttt{ResultProcessor} a nový objekt části \textit{Match} \texttt{MatchObjectStreamed}. 
 
 \subsubsection{Třída ResultProcessor}
 
-Části dotazu Order/Group by budou nyní reprezentovány potomky třídy \texttt{ResultProcessor}.
+Části dotazu \textit{Order/Group by} budou nyní reprezentovány potomky nové třídy \texttt{ResultProcessor}.
 Metody jsou použity ke zpracování výsledků v průběhu prohledávání grafu.
 Třída definuje metody dle obrázku z analýzy \ref{figure.diaStreamedResultProcessor}.
 Definuje:
@@ -1085,9 +1085,9 @@ Po této signalizaci může dojít k finálním úpravám výsledků.
 \item Absatraktní metodu \\*\texttt{RetrieveResults(out ITableResults t, out GroupByResults g)},\\* která získá finální zpracované výsledky v podobě tabulek. 
 \end{itemize}
 Z dané třídy dědí dvě abstraktní třídy.
-První je třída \texttt{OrderByResultProcessor} představující část dotazu Order by.
+První je třída \texttt{OrderByResultProcessor} představující část dotazu \textit{Order by}.
 Díváme se na ni jako na ekvivalent třídy \texttt{OrderByObject}. 
-Druhá je třída \texttt{GroupByResultProcessor} představující část dotazu Group by.
+Druhá je třída \texttt{GroupByResultProcessor} představující část dotazu \textit{Group by}.
 Díváme se na ni jako na ekvivalent třídy \texttt{GroupByObject}.
 Samotná konstrukce daných tříd je rovněž totožná s původními.
 To znamená, že při konstrukci opět dochází k procházení syntaktických stromů a tvorbě totožných výsledných struktur.
@@ -1100,7 +1100,7 @@ Třídě jsme přídali položku držící odkaz na třídu zpracovávající v�
 Dále jsme třídě přidali metodu \texttt{PassResultProcessor}, která uloží odkaz na objekt zpracování do dané položky.
 To odpovídá návrhu z obrázku \ref{figure.diaStreamedQueryObjects}.
 Abychom mohli vykonávat zpracování v průběhu, tak nyní musíme upravit i samotné objekty prohledávání grafu.
-Řekli jsme, že původní třída části Match obsahuje odkaz na objekt prohledávání grafu a tabulku výsledků.
+Řekli jsme, že původní třída části \textit{Match} obsahuje odkaz na objekt prohledávání grafu a tabulku výsledků.
 Nyní vlastní pouze odkaz na objekt zpracování \texttt{ResultsProcessor} a odkaz na nový objekt algoritmu prohledávání grafu \texttt{DFSParallelPatternMatcherStreamed}.
 Objekt algoritmu musíme také upravit a předat mu odkaz na objekt zpracování.
 
@@ -1119,19 +1119,19 @@ Třída reprezentuje jednovláknový DFS algoritmus prohledávání.
 Třída je potomkem třídy \texttt{DFSPatternMatcherBase}.
 V konstruktoru očekává nově \texttt{ID} objektu \texttt{int matcherID}.
 To znamená, že implementuje stejný algoritmus prohledávání, ale přepisuje metodu zpracování výsledků \texttt{ProcessResult()}.
-Nově třída drží odkaz na objekt zpracování Order by a Group by v položce \texttt{ResultProcessor resultProcessor}.
+Nově třída drží odkaz na objekt zpracování \textit{Order by} a \textit{Group by} v položce \texttt{ResultProcessor resultProcessor}.
 Třídě jsme opět přidali metodu \texttt{PassResultProcessor}, která uloží odkaz objektu zpracování do zmíněné položky.
 Finálně upravená metoda \texttt{ProcessResult()} vyvolá předání nalezeného výsledku (pole \texttt{Element[] scope} vzoru) spolu se svým \texttt{ID} pomocí metody \\*\texttt{ResultProcessor.Process(Element[] result, int matcherID)}.
 
 Toto propojení vyplává z sekce \ref{anal.improvement.con2}.
-Tímto jsme dokončili úpravu objektu části Match pro pozměněné zpracování.
+Tímto jsme dokončili úpravu objektu části \textit{Match} pro pozměněné zpracování.
 Nyní přistoupíme ke konkrétním implementacím zpracování a potomkům třídy \texttt{resultProcessor}.
 
 \subsection{Úprava Order by}
 
-V této sekci popíšeme implementaci úprav části dotazu Order by.
+V této sekci popíšeme implementaci úprav části dotazu \textit{Order by}.
 Potomci specifikují navržené přístupy zpracování dle sekce analýzy \ref{anal.improvement.orderby}.
-Část dotazu Order by je reprezentována třídou \texttt{OrderByResultProcessor}.
+Část dotazu \textit{Order by} je reprezentována třídou \texttt{OrderByResultProcessor}.
 Nejdříve popíšeme implementaci použitých vyhledávacích stromů a následně konkrétní třídy zpracování.
 
 \subsubsection{Implementace (a, b)-stromu}
@@ -1283,13 +1283,13 @@ Při prezentaci výsledků v kapitole \ref{expr} je na to duležité brát zřet
 
 \subsection{Úprava Group by}
 
-V této sekci popíšeme implementaci úprav časti dotazu Group by.
-Část dotazu Group by je reprezentována třídou \texttt{GroupByResultProcessor}.
+V této sekci popíšeme implementaci úprav časti dotazu \textit{Group by}.
+Část dotazu \textit{Group by} je reprezentována třídou \texttt{GroupByResultProcessor}.
 Potomci specifikují navržené přístupy zpracování dle sekce analýzy \ref{anal.improvement.groupby}.
 
 \subsubsection{Řešení Half-Streamed}
 
-V analýze jsme se rozhodli využít seskupování způsobem Two-step Group by.
+V analýze jsme se rozhodli využít seskupování způsobem Two-step \textit{Group by}.
 Vytvořili jsme dva ekvivalenty daného řešení, které se liší využitým úložištěm: 
 \begin{itemize}
 \item Řešení \textbf{Half-Streamed: Two-step (Bucket)}, které využívá Bucket jako úložiště a je obsaženo v třídě \texttt{TwoStepHalfStreamedBucket}.
@@ -1330,7 +1330,7 @@ V opačném případě je položka nastavena na \texttt{null}. To odpovídá ná
 
 \subsubsection{Řešení Streamed} \label{impl.improvement.groupby.streamed}
 
-Řešení vychází z řešení Global Group by a pojmenovali jsme jej \textbf{Streamed: Global} a je implementováno třídou \texttt{GlobalGroupByStreamed}.
+Řešení vychází z řešení Global \textit{Group by} a pojmenovali jsme jej \textbf{Streamed: Global} a je implementováno třídou \texttt{GlobalGroupByStreamed}.
 Jednovláknové zpracování je rovněž obsaženo v dané třídě.
 Pokud je řešení použito v jednovláknovém kontextu označíme jej \textbf{Streamed: SingleThreadSolution}.
 V tomto řešení vlákna seskupují výsledky pomocí \texttt{ConcurrentDictionary<key, value>}.
@@ -1401,15 +1401,15 @@ Vlákno volající metodu vytvoří vkládané pole pomocí svého objektu \\*\t
 
 \subsection{Úprava Single group Group by}
 
-V této sekci popíšeme implementaci úprav módu Single group Group by.
-Při úpravě Single group Group by jsme postupovali přesně podle sekce analýzy \ref{anal.improvement.singlegroup}.
+V této sekci popíšeme implementaci úprav módu \textit{Single group Group by}.
+Při úpravě \textit{Single group Group by} jsme postupovali přesně podle sekce analýzy \ref{anal.improvement.singlegroup}.
 Vytvořili jsme dva řešení.
 Jedno řešení pro mód \textbf{Half-Streamed} a jedno pro mód \textbf{Streamed}.
 Řešení jsou:
 \begin{itemize}
-\item Řešení \textbf{Half-Streamed: SingleGroup} představuje Single\\* group Group by \textbf{Half-Streamed} módu.
+\item Řešení \textbf{Half-Streamed: SingleGroup} představuje \textit{Single}\\* \textit{group Group by} \textbf{Half-Streamed} módu.
 Je implementováno v třídě \\*\texttt{SingleGroupGroupByHalfStreamed}.
-\item Řešení \textbf{Streamed: SingleGroup} představuje \textbf{Streamed} Single group\\* Group by.
+\item Řešení \textbf{Streamed: SingleGroup} představuje \textbf{Streamed} \textit{Single group}\\* \textit{Group by}.
 Je iplementováno v třídě \texttt{SingleGroupGroupByStreamed}.
 \end{itemize}
 Řešení se líší pouze paralelním zpracování. 
@@ -1454,8 +1454,6 @@ Poslední pracující vlákno vyvolá uložení výsledků z \texttt{nonAsterixR
 \end{itemize}
 
 \section{Překlad a spuštění enginu}
-
-V této sekci popíše krátce způsob překladu a pokyny pro spuštění enginu.
 
 \subsubsection{Překlad}
 
@@ -1507,7 +1505,7 @@ s   &  Streamed \\
 \label{tab.argument.mode}
 \end{table}
 
-\item Povinný argument \textbf{SorterAlias:} argument definuje způsob zpracování části Order by.
+\item Povinný argument \textbf{SorterAlias:} argument definuje způsob zpracování části \textit{Order by}.
 Každý mód má svá vlastní řešení.
 Názvy řešení odpovídají názvům z implementace.
 Hodnota ve sloupečku \textbf{Argument} udává hodnotu argumentu.
@@ -1529,12 +1527,12 @@ s & abtreeAccumS & Streamed: ABTreeAcccumulator \\
 \label{tab.argument.sorteralias}
 \end{table}
 
-\item Povinný argument \textbf{GrouperAlias:} argument definuje způsob zpracování části Group by.
+\item Povinný argument \textbf{GrouperAlias:} argument definuje způsob zpracování části \textit{Group by}.
 Každý mód má svá vlastní řešení.
 Názvy řešení odpovídají názvům z implementace.
 Hodnota ve sloupečku \textbf{Argument} udává hodnotu argumentu.
-Pokud bylo zadáno „refL“ nebo „refB“, pak je Group by vykonáno jedním vláknem i když bylo definováno paralelní zpracování v argumentu \textbf{ThreadCount}.
-Výběr zpracování Single group Group by zavísí pouze na výběru módu, protože každý mód má pravě jedno takové řešení.
+Pokud bylo zadáno „refL“ nebo „refB“, pak je \textit{Group by} vykonáno jedním vláknem i když bylo definováno paralelní zpracování v argumentu \textbf{ThreadCount}.
+Výběr zpracování \textit{Single group Group by} zavísí pouze na výběru módu, protože každý mód má pravě jedno takové řešení.
 \begin{table}[!htb]
 \centering
 \begin{tabular}{lll}
@@ -1574,14 +1572,14 @@ Název souboru je definován jako poslední argument programu.
 
 \item Povinný argument \textbf{Formater:} definuje formát výpisu výsledků dotazu ve formě tabulky.
 Existují dvě možnosti: „simple“ a „markdown“.
-Hlavička tabulky obsahuje výrazy s Select části dotazu.
+Hlavička tabulky obsahuje výrazy s \textit{Select} části dotazu.
 První vypíše tabulku výsledků ve formátu, ve kterém jsou sloupečky odděleny mezerami.
 Druhý vypíše tabulku výsledků ve formátu Markdown\footnote{\url{https://www.markdownguide.org/}} tabulky.
 
 \item Nepovinný argument \textbf{VerticesPerThread:} argument je povinný, pokud je argument \textbf{ThreadCount} větší než jedna.
 Argument má číselnou hodnotu.
 Minimální hodnota je 1 a maximální je \texttt{Int32.MaxValue}.
-Argument udává počet vrcholů přidělených vláknům k prohledání v části Match (viz sekce \ref{anal.matchPar} a \ref{impl.match.parmatch} (\texttt{VertexDistributor})).
+Argument udává počet vrcholů přidělených vláknům k prohledání v části \textit{Match} (viz sekce \ref{anal.matchPar} a \ref{impl.match.parmatch} (\texttt{VertexDistributor})).
 
 \item Nepovinný argument \textbf{File:} argument je povinný, pokud je argument \textbf{Printer} roven „file“.
 Argument definuje jméno souboru, do kterého se vypíšou výsledky dotazu.
@@ -1592,15 +1590,13 @@ Při hodnotě „simple“ se vytvoří soubor s koncovkou .txt a při „markdo
 
 Následuje příklad argumentů programu:
 \begin{code}
-Jednovláknové spuštění:
+Jednovláknové spuštění s výpisem do konzole:
 ./QueryEngine.exe n globalB mergeSort 4194304 1 console simple
-
-Paralelní spuštění:
+Paralelní spuštění s výpisem do konzole:
 ./QueryEngine.exe n globalB mergeSort 4194304 8 console simple 512
 
 Spuštění s výpisem do souboru:  
 ./QueryEngine.exe n globalB mergeSort 4194304 1 file simple newfile
-
 Spuštění s výpisem do souboru + paralelní zpracování:
 ./QueryEngine.exe n globalB mergeSort 4194304 8 file simple 512 newfile
 \end{code}

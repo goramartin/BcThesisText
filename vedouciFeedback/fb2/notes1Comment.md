@@ -4,6 +4,8 @@ Pridavam muj komentar:
 
 		Martin: Udelam
 
+		DONE
+
 - napsat proc delat vlastni databazi?
 
 		Martin: Tohle bude v uvodu, mam to v planu
@@ -20,6 +22,8 @@ Pridavam muj komentar:
 - mozna pridat definice na zacatek,co je graf, vrchol, hrana -> nejak v rychlosti
 
 		Martin: Martin Mareš s Ježkem říkali, že tyhle obecne definice nemusime popisovat.
+
+		Takze DONE 
 
 - expression -> pouzivaji navrhovy vzor composite
 
@@ -54,6 +58,10 @@ Pridavam muj komentar:
 		Martin: Maji to jen sekce z dokumentace implementace aby se v tom lepe orientovalo.
 		U zbytku mi to neprislo jako nutnost.
 		U dokumentace je ten summary u vsech sekci konzistentni.
+
+		DONE
+		Nyni summary maji jen sekce z dokumentace implementace aby clovek vedel k cemu ty samotne tridy patri a z ceho se vychazi :)
+		
 
 - je oddeleno dostatecne parsovani Pgql (kdyby to treba nekdo chtel zmenit na nejaky jiny jazyk) -> pripadne, slo by to pouzit jako C# knihovnu pro Pgql jazyk? Zminit kdyztak jako future work a prinos
 

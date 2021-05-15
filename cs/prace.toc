@@ -169,57 +169,57 @@
 \contentsline {subsubsection}{Vstupní soubory}{84}{section*.95}%
 \contentsline {subsubsection}{Argumenty programu}{84}{section*.96}%
 \contentsline {subsubsection}{Zadání dotazu}{86}{section*.97}%
-\contentsline {chapter}{\numberline {4}Experiment}{88}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Příprava dat}{88}{section.4.1}%
-\contentsline {subsection}{\numberline {4.1.1}Transformace grafových dat}{89}{subsection.4.1.1}%
-\contentsline {subsection}{\numberline {4.1.2}Generování vlastností vrcholů}{90}{subsection.4.1.2}%
-\contentsline {section}{\numberline {4.2}Výběr dotazů}{91}{section.4.2}%
-\contentsline {subsection}{\numberline {4.2.1}Dotazy Match}{92}{subsection.4.2.1}%
-\contentsline {subsection}{\numberline {4.2.2}Dotazy Order by}{92}{subsection.4.2.2}%
-\contentsline {subsection}{\numberline {4.2.3}Dotazy Group by}{93}{subsection.4.2.3}%
-\contentsline {section}{\numberline {4.3}Metodika}{94}{section.4.3}%
-\contentsline {subsection}{\numberline {4.3.1}Měření uběhlého času}{95}{subsection.4.3.1}%
-\contentsline {subsection}{\numberline {4.3.2}Volitelné argumenty konstruktoru dotazu}{95}{subsection.4.3.2}%
-\contentsline {subsection}{\numberline {4.3.3}Hardwarová specifikace}{96}{subsection.4.3.3}%
-\contentsline {subsection}{\numberline {4.3.4}Příprava hardwaru}{96}{subsection.4.3.4}%
-\contentsline {subsection}{\numberline {4.3.5}Překlad}{96}{subsection.4.3.5}%
-\contentsline {section}{\numberline {4.4}Výsledky}{96}{section.4.4}%
-\contentsline {subsection}{\numberline {4.4.1}Match}{96}{subsection.4.4.1}%
-\contentsline {subsubsection}{Paralelizace prohledávání grafu}{97}{section*.98}%
-\contentsline {subsubsection}{Paralelizace slévání výsledků}{97}{section*.99}%
-\contentsline {subsubsection}{Zpomalení paralelních řešení sléváním}{97}{section*.100}%
-\contentsline {subsection}{\numberline {4.4.2}Order by}{99}{subsection.4.4.2}%
-\contentsline {subsubsection}{Obecné shrnutí jednovláknových řešení}{99}{section*.101}%
-\contentsline {subsubsection}{Výsledky jednovláknového zpracování}{100}{section*.102}%
-\contentsline {subsubsection}{Třídění pomocí vlastnosti vůči \texttt {ID}}{100}{section*.103}%
-\contentsline {subsubsection}{Obecné shrnutí paralelních řešení}{100}{section*.104}%
-\contentsline {subsubsection}{Výsledky paralelního zpracování}{100}{section*.105}%
-\contentsline {subsubsection}{Zrychlení paralelních řešení pro O\_Q3 a O\_Q4 }{101}{section*.106}%
-\contentsline {subsubsection}{Rozsah zrychlení paralelních řešení}{101}{section*.107}%
-\contentsline {subsection}{\numberline {4.4.3}Group by}{104}{subsection.4.4.3}%
-\contentsline {subsubsection}{Obecné shrnutí jednovláknových řešení}{104}{section*.108}%
-\contentsline {subsubsection}{Výsledky jednovláknového zpracování}{105}{section*.109}%
-\contentsline {subsubsection}{Zpomalení jednovláknového Half-Streamed řešení}{105}{section*.110}%
-\contentsline {subsubsection}{Porovnání výsledků úložišť List/Bucket jednovláknového zpracování}{105}{section*.111}%
-\contentsline {subsubsection}{Obecné shrnutí paralelních řešení}{109}{section*.112}%
-\contentsline {subsubsection}{Výsledky paralelního zpracování}{109}{section*.113}%
-\contentsline {subsubsection}{Test režie paralelní mapy (jedno vlákno)}{109}{section*.114}%
-\contentsline {subsubsection}{Výsledek testu režie paralelní mapy (jedno vlákno)}{110}{section*.115}%
-\contentsline {subsubsection}{Test režie paralelní mapy (osm vláken)}{110}{section*.116}%
-\contentsline {subsubsection}{Výsledek testu režie paralelní mapy (osm vláken)}{110}{section*.117}%
-\contentsline {subsubsection}{Paralelní Streamed řešení vs paralelní Normal: Global řešení}{111}{section*.118}%
-\contentsline {subsubsection}{Aplikace poznatků jednovláknového zpracování při paralelním zpracování}{111}{section*.119}%
-\contentsline {subsubsection}{Nejrychlejší paralelní řešení}{111}{section*.120}%
-\contentsline {subsubsection}{Obecné shrnutí Single group Group by řešení}{115}{section*.121}%
-\contentsline {subsubsection}{Výsledky Single group Group by zpracování}{116}{section*.122}%
-\contentsline {chapter}{Závěr}{117}{chapter*.123}%
-\contentsline {chapter}{Seznam použité literatury}{120}{chapter*.125}%
-\contentsline {chapter}{Seznam obr\'azk\r {u}}{122}{chapter*.126}%
-\contentsline {chapter}{Seznam tabulek}{124}{chapter*.127}%
-\contentsline {chapter}{Seznam použitých zkratek}{125}{chapter*.128}%
-\contentsline {chapter}{\numberline {A}Přílohy}{126}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Zdrojové kódy}{126}{section.A.1}%
-\contentsline {section}{\numberline {A.2}Online Git repozitář}{126}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Použité grafy při experimentu}{126}{section.A.3}%
-\contentsline {section}{\numberline {A.4}Výsledky benchmarku pro jednotlivé grafy}{126}{section.A.4}%
-\contentsline {section}{\numberline {A.5}Benchmark stromy vůči polím}{126}{section.A.5}%
+\contentsline {chapter}{\numberline {4}Experiment}{87}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Příprava dat}{87}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Transformace grafových dat}{88}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Generování vlastností vrcholů}{89}{subsection.4.1.2}%
+\contentsline {section}{\numberline {4.2}Výběr dotazů}{90}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Dotazy Match}{91}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Dotazy Order by}{91}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}Dotazy Group by}{92}{subsection.4.2.3}%
+\contentsline {section}{\numberline {4.3}Metodika}{93}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Měření uběhlého času}{94}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Volitelné argumenty konstruktoru dotazu}{94}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Hardwarová specifikace}{95}{subsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.3.4}Příprava hardwaru}{95}{subsection.4.3.4}%
+\contentsline {subsection}{\numberline {4.3.5}Překlad}{95}{subsection.4.3.5}%
+\contentsline {section}{\numberline {4.4}Výsledky}{95}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Match}{95}{subsection.4.4.1}%
+\contentsline {subsubsection}{Paralelizace prohledávání grafu}{96}{section*.98}%
+\contentsline {subsubsection}{Paralelizace slévání výsledků}{96}{section*.99}%
+\contentsline {subsubsection}{Zpomalení paralelních řešení sléváním}{96}{section*.100}%
+\contentsline {subsection}{\numberline {4.4.2}Order by}{98}{subsection.4.4.2}%
+\contentsline {subsubsection}{Obecné shrnutí jednovláknových řešení}{98}{section*.101}%
+\contentsline {subsubsection}{Výsledky jednovláknového zpracování}{99}{section*.102}%
+\contentsline {subsubsection}{Třídění pomocí vlastnosti vůči \texttt {ID}}{99}{section*.103}%
+\contentsline {subsubsection}{Obecné shrnutí paralelních řešení}{99}{section*.104}%
+\contentsline {subsubsection}{Výsledky paralelního zpracování}{99}{section*.105}%
+\contentsline {subsubsection}{Zrychlení paralelních řešení pro O\_Q3 a O\_Q4 }{100}{section*.106}%
+\contentsline {subsubsection}{Rozsah zrychlení paralelních řešení}{100}{section*.107}%
+\contentsline {subsection}{\numberline {4.4.3}Group by}{103}{subsection.4.4.3}%
+\contentsline {subsubsection}{Obecné shrnutí jednovláknových řešení}{103}{section*.108}%
+\contentsline {subsubsection}{Výsledky jednovláknového zpracování}{104}{section*.109}%
+\contentsline {subsubsection}{Zpomalení jednovláknového Half-Streamed řešení}{104}{section*.110}%
+\contentsline {subsubsection}{Porovnání výsledků úložišť List/Bucket jednovláknového zpracování}{104}{section*.111}%
+\contentsline {subsubsection}{Obecné shrnutí paralelních řešení}{108}{section*.112}%
+\contentsline {subsubsection}{Výsledky paralelního zpracování}{108}{section*.113}%
+\contentsline {subsubsection}{Test režie paralelní mapy (jedno vlákno)}{108}{section*.114}%
+\contentsline {subsubsection}{Výsledek testu režie paralelní mapy (jedno vlákno)}{109}{section*.115}%
+\contentsline {subsubsection}{Test režie paralelní mapy (osm vláken)}{109}{section*.116}%
+\contentsline {subsubsection}{Výsledek testu režie paralelní mapy (osm vláken)}{109}{section*.117}%
+\contentsline {subsubsection}{Paralelní Streamed řešení vs paralelní Normal: Global řešení}{110}{section*.118}%
+\contentsline {subsubsection}{Aplikace poznatků jednovláknového zpracování při paralelním zpracování}{110}{section*.119}%
+\contentsline {subsubsection}{Nejrychlejší paralelní řešení}{110}{section*.120}%
+\contentsline {subsubsection}{Obecné shrnutí Single group Group by řešení}{114}{section*.121}%
+\contentsline {subsubsection}{Výsledky Single group Group by zpracování}{115}{section*.122}%
+\contentsline {chapter}{Závěr}{116}{chapter*.123}%
+\contentsline {chapter}{Seznam použité literatury}{119}{chapter*.125}%
+\contentsline {chapter}{Seznam obr\'azk\r {u}}{121}{chapter*.126}%
+\contentsline {chapter}{Seznam tabulek}{123}{chapter*.127}%
+\contentsline {chapter}{Seznam použitých zkratek}{124}{chapter*.128}%
+\contentsline {chapter}{\numberline {A}Přílohy}{125}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Zdrojové kódy}{125}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Online Git repozitář}{125}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Použité grafy při experimentu}{125}{section.A.3}%
+\contentsline {section}{\numberline {A.4}Výsledky benchmarku pro jednotlivé grafy}{125}{section.A.4}%
+\contentsline {section}{\numberline {A.5}Benchmark stromy vůči polím}{125}{section.A.5}%

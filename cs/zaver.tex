@@ -11,64 +11,64 @@ Všechna grafová data a data v průběhu zpracování dotazu jsou obsažena v h
 Druhou část jsme rozdělili na dva bloky:
 \begin{enumerate}
 \item
-V prvním bloku jsme navrhli řešení vykonávající Group/Order by po dokončení prohledávání grafu v části Match.
+V prvním bloku jsme navrhli řešení vykonávající \textit{Group/Order by} po dokončení prohledávání grafu v části \textit{Match}.
 Výsledky prohledávání byly ukládány do tabulky.
-Teprve po získání všech výsledků byly na výsledcích aplikovány algoritmy Group/Order by.
+Teprve po získání všech výsledků byly na výsledcích aplikovány algoritmy \textit{Group/Order by}.
 \begin{itemize}
-\item V části Order by jsme použili standartní algoritmus Merge sort pro jednovláknové i paralelní zpracování.
-\item V části Group by jsme výsledky seskupovali pomocí hašovací tabulky.
+\item V části \textit{Order by} jsme použili standartní algoritmus Merge sort pro jednovláknové i paralelní zpracování.
+\item V části \textit{Group by} jsme výsledky seskupovali pomocí hašovací tabulky.
 Pro paralelní zpracování jsme zvolili tři řešení dle úrovně synchronizace (sekce \ref{anal.groupby.paralel}).
-V módu Single group Group by (dotaz obsahuje agregační funkce, ale neobsahuje část Group by) jsme využili lokálního zpracování, které je zakončeno sléváním.
+V módu \textit{Single group Group by} (dotaz obsahuje agregační funkce, ale neobsahuje část \textit{Group by}) jsme využili lokálního zpracování, které je zakončeno sléváním.
 \end{itemize}
 
 \item
 V druhém bloku jsme upravili první blok a navrhli nová řešení zpracování dle zadání práce.
-Propojili jsme prohledávání grafu se zpracováním Group/Order by tak, aby engine seskupoval/setřiďoval výsledky prohledávání v moment jejich nalezení.
+Propojili jsme prohledávání grafu se zpracováním \textit{Group/Order by} tak, aby engine seskupoval/setřiďoval výsledky prohledávání v moment jejich nalezení.
 Pro paralelní zpracování jsme navrhli dva módy: Streamed a Half-Streamed.
 Streamed zpracovával výsledky globálně.
 Half-Streamed zpracovával výsledky lokálně, následně docházelo ke slévání.
 \begin{itemize}
-\item V části Order by jsme pro jednovláknové zpracování použili standartní (a, 2a)-strom a upravenou verzi (a, 2a)-stromu, která omezila počet zatříďovaných výsledků.  
+\item V části \textit{Order by} jsme pro jednovláknové zpracování použili standartní (a, 2a)-strom a upravenou verzi (a, 2a)-stromu, která omezila počet zatříďovaných výsledků.  
 Half-Streamed řešení zpracovávalo lokálně výsledky pomocí navržených stromů a následně došlo k dvoucestnému paralelnímu slévání.
 Streamed řešení vytvořilo přihrádky přistupné skrze zámek a každé přihrádce přiřadilo specifický rozsah hodnot.
 \item
-V části Group by jsme vycházeli z řešení prvního bloku.
+V části \textit{Group by} jsme vycházeli z řešení prvního bloku.
 Jednovláknové a paralelní zpracování Half-Streamed používalo tabulku z prvního bloku.
 Obecně jsme u něj omezeli ukládané výsledky pouze na reprezentanty skupin.
 Jednovláknové a paralelní zpracování Streamed nepoužívalo žádnou tabulku.
-Zpracování Single group Group by neukládalo žádné výsledky, kromě výsledků agregačních funkcí.
+Zpracování \textit{Single group Group by} neukládalo žádné výsledky, kromě výsledků agregačních funkcí.
 \end{itemize}
 \end{enumerate}
 
 Dva dané bloky jsme porovnali v rychlosti vykonávání dotazů pomocí experimentu.
 Experiment obsahoval množství dotazů, které byly vykonány nad třemi reálnými grafy s uměle vygenerovanými vlastnostmi.
 Otestovali jsme jednovláknové zpracování a paralelní zpracování využívající osm vláken.
-Při experimentu jsme měřili práci pouze Match části s Group/Order by, tj. výsledky neobsahují práci Select části.
+Při experimentu jsme měřili práci pouze \textit{Match} části s \textit{Group/Order by}, tj. výsledky neobsahují práci \textit{Select} části.
 Následuje shrnutí výsledků:
 \begin{itemize}
 
-\item \textbf{Order by:} z výsledků Order by vyplynulo, že řešení druhého bloku využívající (a, 2a)-stromy jsou obecně pomalejší než řešení v prvním bloku využívající Merge sort.
+\item \textit{Order by:} z výsledků \textit{Order by} vyplynulo, že řešení druhého bloku využívající (a, 2a)-stromy jsou obecně pomalejší než řešení v prvním bloku využívající Merge sort.
 Nicméně, námi navržená paralelní řešení druhého bloku předčila paralelní Merge sort prvního bloku při třídění pomocí vlastností.
 
-\item \textbf{Single group Group by:} zde byla řešení druhého bloku rychlejší.
+\item \textit{Single group Group by:} zde byla řešení druhého bloku rychlejší.
 Problematické zde bylo paralelní Streamed řešení, ve kterém docházelo ke zpomalení, kvůli značné režii za synchronizaci.
 
-\item \textbf{Group by:} u řešení Group by druhého bloku nedocházelo ke znatelnému zrychlení.
+\item \textit{Group by:} u řešení \textit{Group by} druhého bloku nedocházelo ke znatelnému zrychlení.
 Jedinou výjimkou bylo Streamed řešení druhého bloku v jednovláknovém zpracování, které bylo nejrychlejší.
 
 \end{itemize}
 
-Z výsledků experimentu můžeme konstatovat, že naše předpoklady o zpracovávání Group by a Order by v průběhu prohledávání grafu nabízí v určitých případech zrychlení vykonávání dotazů.
+Z výsledků experimentu můžeme konstatovat, že naše předpoklady o zpracovávání \textit{Group by} a \textit{Order by} v průběhu prohledávání grafu nabízí v určitých případech zrychlení vykonávání dotazů.
 
 \section*{Budoucí výzkum}
 
 \begin{enumerate}
 
-\item Rozšíření enginu o možnost zadat Order by a Group by společně.
+\item Rozšíření enginu o možnost zadat \textit{Order by} a \textit{Group by} společně.
 Agregování v průběhu hledání se dá rozdělit na dvě hlavní části.
 V první části lze navrhnout řešení pro dotazy, které obsahují třídění pouze podle klíčů skupin.
 V druhé části je nutné vyřešit problém třídění pomocí výsledků agregačních funkcí.
-Zde je největší problém fakt, že výsledky agregačních funkcí jsou známy pouze po dokončení Group by.
+Zde je největší problém fakt, že výsledky agregačních funkcí jsou známy pouze po dokončení \textit{Group by}.
 
 \item Testování daných řešení na grafech s reálnými Properties.
 V našem testování jsme sice volili reálne grafy, ale jejich Properties jsme uměle vygenerovali.
@@ -85,12 +85,12 @@ Vlákno po prohledání daných vrcholů zažádalo o další.
 Nicméně, dané řešení nemůže zaručit stoprocentně rovnoměrné rozdělení práce.
 Bylo by vhodné prozkoumat, jak daná situace ovlivňuje naše řešení.
 
-\item U Order by řešení jsme viděli značné zrychlení při třídění pomocí vlastností v paralelizovaných řešeních.
+\item U \textit{Order by} řešení jsme viděli značné zrychlení při třídění pomocí vlastností v paralelizovaných řešeních.
 Bylo by vhodné prozkoumat možnosti vytvoření globálních statistik pro každou vlastnost a podrobněji zjistit možnosti rozdělení rozsahů přihrádek.
 Samotné rozdělení přihrádek jsme pro řetězce zpracovali pouze s předpokladem, že se jedná o ASCII znaky.
 V budoucí práci je možné zkoumat rozdělování i pro složitější znakové sady.
 
-\item V paralelních Group by řešeních by bylo vhodné prozkoumat podrobněji škálovatelnost daných řešení pro rozličné počty vláken.
+\item V paralelních \textit{Group by} řešeních by bylo vhodné prozkoumat podrobněji škálovatelnost daných řešení pro rozličné počty vláken.
 Pokud možno, také možnosti jiných paralelních map/slovníků.
  
 \end{enumerate}

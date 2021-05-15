@@ -10,7 +10,7 @@ Kapitolu zakončíme prezentací výsledků.
 \label{expr.graphs}
 
 Pro náš experiment jsme použili tři orientované grafy z databáze SNAP \citep{snapnets}.
-Grafy jsme primárně vybírali na základě počtu nalezených výsledků z testovaného dotazu Match části (sekce \ref{expr.matchDotazy}).
+Grafy jsme primárně vybírali na základě počtu nalezených výsledků z testovaného dotazu \textit{Match} části (sekce \ref{expr.matchDotazy}).
 Počet vygenerovaných výsledku je zobrazen v sekci výsledků \ref{matchResults}.
 Cíl byl nalézt grafy, které vygenerují počet výsledků v řádech $10^7$ až $10^8$, abychom mohli sledovat chování řešení při zpracování velkého množství dat.
 Zároveň jsme vybrali grafy pro které platí, že mají minimálně dojnásobný počet výsledků vůči již vybraným grafům, což nám umožní sledovat chování řešení při zvyšování počtu zpracovaných výsledků.
@@ -144,11 +144,11 @@ PropFour & integer   & \verb+Int32+ s rozsahem $[0; 1000]$ \\
 
 \end{itemize}
 
-Vlastnosti \textbf{PropOne}, \textbf{PropTwo} a \textbf{PropFour} jsme vybrali primárně k otestování části Group by.
-Použijeme je jako klíč Group by.
+Vlastnosti \textbf{PropOne}, \textbf{PropTwo} a \textbf{PropFour} jsme vybrali primárně k otestování části \textit{Group by}.
+Použijeme je jako klíč \textit{Group by}.
 Tímto omezíme počet vytvářených skupin během zpracování.
-Detailnější vysvětlení je podáno v následující sekci výběru dotazů Group by \ref{expr.groupDotazy}.
-\textbf{PropThree} využijeme v části Order by, abychom mohli sledovat rozdílnost třídění řetězců vůči číselným hodnotám.
+Detailnější vysvětlení je podáno v následující sekci výběru dotazů \textit{Group by} \ref{expr.groupDotazy}.
+\textbf{PropThree} využijeme v části \textit{Order by}, abychom mohli sledovat rozdílnost třídění řetězců vůči číselným hodnotám.
 \clearpage
 Na základě tabulky generovaných vlastností \ref{tab.grafProps} následuje ukázka upraveného souboru JSON schématu pro vrcholy:
 \begin{code}
@@ -202,8 +202,8 @@ Výsledné datové soubory jsou obsahem přílohy grafů pro experiment \ref{pri
 \section{Výběr dotazů}
 \label{expr.dotazy}
 
-Dotazy použité při experimentu dělíme do tří kategorií a to Match, Order by a Group by.
-Pro připomenutí zmíníme, že proměnné použité v jiných částech než Match způsobují ukládání daných proměnných do tabulky.
+Dotazy použité při experimentu dělíme do tří kategorií a to \textit{Match}, \textit{Order by} a \textit{Group by}.
+Pro připomenutí zmíníme, že proměnné použité v jiných částech než \textit{Match} způsobují ukládání daných proměnných do tabulky.
 Přidělené zkratky dotazům budou uváděny ve výsledcích experimentu namísto celých dotazů. 
 
 \subsection{Dotazy Match} \label{expr.matchDotazy}
@@ -298,15 +298,15 @@ Thread-safe verze používá mechanismus \textit{Compare and Exchange}.
 Funkce \verb+avg+ provádí dvě přičtení proměnné. 
 Thread-safe verze používá atomická přičtení. 
 Otestujeme i samotné seskupování na dotazech G\_Q2 až G\_Q8. 
-V dotazech nahradíme Select část prvním klíčem Group by. 
+V dotazech nahradíme \textit{Select} část prvním klíčem \textit{Group by}. 
 Dané dotazy značíme symbolem $'$ (např. G\_Q7$'$ je \texttt{select x.PropOne match (x) -> (y) -> (z) group by x.PropOne}).
 
-U vybraných dotazů je nutné si uvědomit, co znamenají klíče v části Group by.
+U vybraných dotazů je nutné si uvědomit, co znamenají klíče v části \textit{Group by}.
 Každý klíč má svůj rozsah hodnot.
 Konkrétní hodnoty klíčů jsou uloženy v našem případě ve vrcholech.
-Pokud by každý vrchol měl unikátní hodnotu klíče, pak počet vytvářených skupin v části Group by je shora omezen počtem vrcholů v grafu.
+Pokud by každý vrchol měl unikátní hodnotu klíče, pak počet vytvářených skupin v části \textit{Group by} je shora omezen počtem vrcholů v grafu.
 To se děje pro dotazy G\_Q2, G\_Q3 a G\_Q6.
-Zvolíme-li dva takové klíče za klíče Group by, pak maximální počet skupin je shora omezen skalárním součinem jejich rozsahů.
+Zvolíme-li dva takové klíče za klíče \textit{Group by}, pak maximální počet skupin je shora omezen skalárním součinem jejich rozsahů.
 To nastává pro dotazy  G\_Q4 a G\_Q5.
 Posledním případem jsou klíče vlastností \textbf{PropOne} a \textbf{PropFour}.
 Dané vlastnosti obsahují hodnoty dle tabulky rozsahů \ref{tab.grafProps}.
@@ -327,7 +327,7 @@ Pro G\_Q3 a G\_Q6 bude navíc vidět režie za porovnání vlastnosti vůči \ve
 Následuje shrnutí:
 \begin{itemize}
 
-\item G\_Q1 testuje Single group Group by. Vše je agregováno pouze do jedné skupiny. 
+\item G\_Q1 testuje \textit{Single group Group by}. Vše je agregováno pouze do jedné skupiny. 
 \item G\_Q2 a G\_Q3  testuje vytváření skupin podle \verb+ID+ vrcholů. Rozdíl mezi nimi je ten, že proměnná x je při paralelním zpracování přístupná pouze jednomu vláknu za celý běh vyhledávání. Maximální počet skupin je ze shora omezen počtem vrcholů v grafu.
 \item G\_Q4 a G\_Q5 přidávájí režii za ukládání a zpracovávání (hash + compare) další proměnné. Počet skupin je ze shora omezen počtem hran v grafu. Tyto dotazy obsahují nejvíce skupin mezi zbylými dotazy.
 \item G\_Q6 testuje vytváření skupin náhodně vygenerovaných hodnot z celého rozsahu \verb+Int32+ (viz \ref{tab.grafProps}). Počet skupin je ze shora omezen počtem vrcholů v grafu.
@@ -365,7 +365,7 @@ Hlavní smyčka benchmarku se skládá z 5-ti opakování warm up fáze následo
 Warm up fáze vykonává identickou práci jako část měřená, tj. úplně stejný dotaz. 
 Měřená část obaluje pouze vykonání dotazu bez konstrukce dotazu. 
 V konstruktoru \verb+Query.Create(..., false)+ argument \verb+false+ způsobuje, že vykonávaný dotaz neprovede \verb+select+ část dotazu, která není cílem testování.
-Výsledná doba je tedy čas strávený částí Match (výhledávání vzoru) společně s částí Group/Order by. 
+Výsledná doba je tedy čas strávený částí \textit{Match} (výhledávání vzoru) společně s částí \textit{Group/Order by}. 
 
 Před měřením dochází vždy k úklidu haldy. 
 \begin{code}
@@ -440,24 +440,24 @@ Benchmark společně s dotazovacím enginem a potřebnými knihovnami byl přelo
 \section{Výsledky}
 
 V této sekci prezentujeme naměřená data pro všechny tři grafy (\ref{expr.graphs}), které jsme podrobili dotazům z sekce \ref{expr.dotazy}.
-U grafů Group/Order by se držíme značení odpovídající z kapitoly implementace.
+U grafů \textit{Group/Order by} se držíme značení odpovídající z kapitoly implementace.
 Značení se skládá ze tří částí.
-Prvních dvě jsou obsaženy vždy a poslední je použit popuze v paralelní části Group by.
+Prvních dvě jsou obsaženy vždy a poslední je použit popuze v paralelní části \textit{Group by}.
 Značení výpadá následovně:
 \begin{code}
 [Mód enginu]:  [Název řešení] [způsob ukládání výsledků u Group by]
 \end{code}
 
 Pokud řešení obsahuje kombinaci módů, pak řešení pro dané módy jsou totožná.
-Pro připomenutí zmíníme, že mód \textbf{Normal} vykonává Group/Order by až po dokončení prohledávání grafu a vylepšené módy \textbf{Streamed}/\textbf{Half-Streamed} je vykonávájí v průběhu prohledávání grafu.
+Pro připomenutí zmíníme, že mód \textbf{Normal} vykonává \textit{Group/Order by} až po dokončení prohledávání grafu a vylepšené módy \textbf{Streamed}/\textbf{Half-Streamed} je vykonávájí v průběhu prohledávání grafu.
 U paralelního řešení \textbf{Streamed} jsou výsledky zpracovány globálně, zatímco u \textbf{Half-Streamed} řešení dochází k lokálnímu zpracování, které je zakončené sléváním.
 Zopakování hlavních konceptů řešení a způsob ukládání ponecháme jako úvod jednotlivých částí.
 
 \subsection{Match}
 \label{matchResults}
 
-Stávající a vylepšené verze Group/Order by jsou značně ovlivněny vyhledáváním vzoru. 
-Proto uvádíme výsledky a analýzu dotazů Match zvlášť, aby bylo možné sledovat čas výhradně strávený vyhledáváním a uložením všech nalezených výsledků do tabulky.
+Stávající a vylepšené verze \textit{Group/Order by} jsou značně ovlivněny vyhledáváním vzoru. 
+Proto uvádíme výsledky a analýzu dotazů \textit{Match} zvlášť, aby bylo možné sledovat čas výhradně strávený vyhledáváním a uložením všech nalezených výsledků do tabulky.
 Počet nalezených výsledků při prohledávání jednotlivých grafů je zobrazen v tabulce \ref{tab.matchCount}.
 Všechny výsledky měření prohledávání grafu jsou zobrazeny na obrázcích na konci této sekce.
 
@@ -482,7 +482,7 @@ Zbytek sekce věnujeme popisu obrázků \ref{figure.amazonMatch}, \ref{figure.we
 Paralelizace startovního prohledávacího vrcholu (tj. každé vlákno dostává opakovaně množství vrcholů k prohledání určené argumentem \verb+VerticesPerThread+, dokud se nevyčerpají všechny vrcholy grafu) dociluje zrychlení v rozmezí $[4,17; 5,56]$-krát pro všechny grafy.
 Výsledky pro jednotlivé dotazy dopadly podle našeho očekávání. 
 Dotaz M\_Q1 provádí pouze vyhledávání výsledků bez ukládání do tabulky a je nejrychlejší. 
-Všechny ostatní dotazy dosahují zpomalení závíslé na počtu ukládaných proměnných (počet ukládaných proměnných definuje část Select), tedy čím více proměnných k uložení tím je vykonání pomalejší a to platí i pro paralelní verzi. 
+Všechny ostatní dotazy dosahují zpomalení závíslé na počtu ukládaných proměnných (počet ukládaných proměnných definuje část \textit{Select}), tedy čím více proměnných k uložení tím je vykonání pomalejší a to platí i pro paralelní verzi. 
 U jednovláknového zpracování si navíc můžeme všimnout až lineárního přírustku při navýšení počtu ukládaných promenných.
 Pro představu, každá proměnná (element grafu) je uložena do vlastního sloupečku, který je lokální pro vlákno (\verb+List<Element[FixedArraySize]>+). 
 
@@ -508,26 +508,26 @@ Každý sloupeček je zde zarovnán jedním vláknem.
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonMatch.pdf}\centering
-\caption{Doba vykonání dotazů Match pro graf Amazon0601 (sekce \ref{tab.grafBase}). Jedno vlákno vůči osmi vláknům.}
+\caption{Doba vykonání dotazů \textit{Match} pro graf Amazon0601 (sekce \ref{tab.grafBase}). Jedno vlákno vůči osmi vláknům.}
 \label{figure.amazonMatch}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanMatch.pdf}\centering
-\caption{Doba vykonání dotazů Match pro graf WebBerkStan (sekce \ref{tab.grafBase}). Jedno vlákno vůči osmi vláknům}
+\caption{Doba vykonání dotazů \textit{Match} pro graf WebBerkStan (sekce \ref{tab.grafBase}). Jedno vlákno vůči osmi vláknům}
 \label{figure.webberkstanMatch}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/skitterMatch.pdf}\centering
-\caption{Doba vykonání dotazů Match pro graf As-Skitter (sekce \ref{tab.grafBase}). Jedno vlákno vůči osmi vláknům.}
+\caption{Doba vykonání dotazů \textit{Match} pro graf As-Skitter (sekce \ref{tab.grafBase}). Jedno vlákno vůči osmi vláknům.}
 \label{figure.skitterMatch}
 \end{figure}
 
 
 \subsection{Order by}
 
-Z důvodu časové a prostorové složitosti třídění na grafu As-Skitter jsme se rozhodli jej vynechat pro Order by dotazy.
+Z důvodu časové a prostorové složitosti třídění na grafu As-Skitter jsme se rozhodli jej vynechat pro \textit{Order by} dotazy.
 Všechny výsledky měření třídění jsou zobrazeny na obrázcích na konci této sekce.
 
 \subsubsection{Obecné shrnutí jednovláknových řešení}
@@ -632,23 +632,23 @@ U vylepšených řešení běži jedna metoda pro každé vlákno po dobu celéh
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonOrderByST.pdf}\centering
-\caption{Doba vykonání dotazů Order by pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
+\caption{Doba vykonání dotazů \textit{Order by} pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
 \label{figure.amazonOrderST}
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonOrderByPar.pdf}\centering
-\caption{Doba vykonání dotazů Order by pro graf Amazon0601 (sekce \ref{tab.grafBase}).  Běh osmi vláken.}
+\caption{Doba vykonání dotazů \textit{Order by} pro graf Amazon0601 (sekce \ref{tab.grafBase}).  Běh osmi vláken.}
 \label{figure.amazonOrderPar}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanOrderByST.pdf}\centering
-\caption{Doba vykonání dotazů Order by pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
+\caption{Doba vykonání dotazů \textit{Order by} pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
 \label{figure.webberkstanOrderST}
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanOrderByPar.pdf}\centering
-\caption{Doba vykonání dotazů Order by pro graf WebBerkStan (sekce \ref{tab.grafBase}).  Běh osmi vláken.}
+\caption{Doba vykonání dotazů \textit{Order by} pro graf WebBerkStan (sekce \ref{tab.grafBase}).  Běh osmi vláken.}
 \label{figure.webberkstanOrderPar}
 \end{figure}
 
@@ -668,7 +668,7 @@ Streamed: ABTreeValueAccumulator        & 0,86	& 0,84 &	5,30 &	5,25 \\
 \bottomrule
 \end{tabular}
 
-\caption{Rozsah zrychlení paralelizovaných řešení pomocí osmi vláken pro dotazy Order by nad grafem Amazon0601 (sekce \ref{tab.grafBase}). Tabulka zobrazuje podíl jednovláknového vůči paralelnímu zpracování.}
+\caption{Rozsah zrychlení paralelizovaných řešení pomocí osmi vláken pro dotazy \textit{Order by} nad grafem Amazon0601 (sekce \ref{tab.grafBase}). Tabulka zobrazuje podíl jednovláknového vůči paralelnímu zpracování.}
 \label{tab.OrderByZrychleniAmazon}
 \end{table}
 
@@ -686,7 +686,7 @@ Streamed: ABTreeValueAccumulator        & 0,79	& 0,78	& 5,15 &	5,29 \\
 \bottomrule
 \end{tabular}
 
-\caption{Rozsah zrychlení paralelizovaných řešení pomocí osmi vláken pro dotazy Order by nad grafem WebBerkStan (sekce \ref{tab.grafBase}). Tabulka zobrazuje podíl jednovláknového vůči paralelnímu zpracování.}
+\caption{Rozsah zrychlení paralelizovaných řešení pomocí osmi vláken pro dotazy \textit{Order by} nad grafem WebBerkStan (sekce \ref{tab.grafBase}). Tabulka zobrazuje podíl jednovláknového vůči paralelnímu zpracování.}
 \label{tab.OrderByZrychleniWebBerkStan}
 \end{table}
 
@@ -702,9 +702,9 @@ Jestli by pomocí předalokování nastalo zrychlení, které by předčilo ře�
 \subsubsection{Obecné shrnutí jednovláknových řešení}
 
 Než postoupíme dál připomeneme hlavní rozdíly řešení a značení u zobrazených grafů. 
-Každé řešení používá k Group by mapu (\verb+Dictionary<key, value>+).
-\textbf{Normal} řešení ukládá všechny výsledky vyhledávání vzoru do tabulky a po dokončení vykoná Group by. 
-\textbf{Half-Streamed} řešení vykonává Group by v průběhu prohledávání a ukládá do tabulky pouze výsledky, pro které ještě neexistuje skupina v použité mapě.
+Každé řešení používá k \textit{Group by} mapu (\verb+Dictionary<key, value>+).
+\textbf{Normal} řešení ukládá všechny výsledky vyhledávání vzoru do tabulky a po dokončení vykoná \textit{Group by}. 
+\textbf{Half-Streamed} řešení vykonává \textit{Group by} v průběhu prohledávání a ukládá do tabulky pouze výsledky, pro které ještě neexistuje skupina v použité mapě.
 Pro zmíněná řešení se jako \verb+key+ používá index do tabulky a skrze něj se následně vypočtou hodnoty klíče.
 \textbf{Streamed} řešení nepoužívá tabulku, ale hodnoty klíče ukládá rovnou do mapy. 
 Objevující se značení Bucket a List určuje způsob ukládání výsledků agregačních funkcí (\verb+min+, \verb+avg+...) jako \verb+value+ záznam v mapě.
@@ -714,9 +714,9 @@ Výsledky jednovláknového seskupování jsou zobrazeny na obrázcích před sh
 \subsubsection{Výsledky jednovláknového zpracování}
 
 Na obrázcích \ref{figure.amazonGroupByST}, \ref{figure.webberkstanGroupByST} a \ref{figure.skitterGroupByST} vidíme výsledky Group by pro běh v jednom vlákně.
-Výsledky na obrázcích \ref{figure.amazonGroupBySTNoAgg}, \ref{figure.webberkstanGroupBySTNoAgg} a \ref{figure.skitterGroupBySTNoAgg} představují dotazy bez agregačních funkcí v části Select.
+Výsledky na obrázcích \ref{figure.amazonGroupBySTNoAgg}, \ref{figure.webberkstanGroupBySTNoAgg} a \ref{figure.skitterGroupBySTNoAgg} představují dotazy bez agregačních funkcí v části \textit{Select}.
 Dvojice G\_Q4/G\_Q5, G\_Q2/G\_Q3 a trojice G\_Q6/G\_Q7/G\_Q8 dotazů jsou pouze mírně rozličné a můžeme u nich vidět konzistenci výsledků pro použité grafy.
-Řešení vykonávající Group by v průběhu vyhledávání překonávají \textbf{Normal} řešení.
+Řešení vykonávající \textit{Group by} v průběhu vyhledávání překonávají \textbf{Normal} řešení.
 S růstem počtu výsledku se rozdíly mezi módy prohlubují. 
 Například, zrychlení \textbf{Streamed} řešení je znatelnější u grafu As-Skitter než u grafu Amazon0601. 
 Obecně nejznačnější zrychlení nastává u \textbf{Streamed} řešení, kdy není použita tabulka výsledků.
@@ -749,39 +749,39 @@ Na grafu Amazon0601 u  G\_Q4 a G\_Q5 dotazů je \textbf{Streamed} řešení poma
 U dalších grafů je pak počet vytvářených polí mnohonosábně menší než počet přístupů k nim.
 
 \bigskip
-Z výsledků můžeme vyvodit, že vylepšená jednovláknová \textbf{Streamed} řešení Group by jsou výhodnější z hlediska rychlosti vykonávání než řešení \textbf{Normal}. 
+Z výsledků můžeme vyvodit, že vylepšená jednovláknová \textbf{Streamed} řešení \textit{Group by} jsou výhodnější z hlediska rychlosti vykonávání než řešení \textbf{Normal}. 
 Nyní přejdeme k výsledkům paralelizace.
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonGroupByST.pdf}\centering
-\caption{Doba vykonání dotazů Group by pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
+\caption{Doba vykonání dotazů \textit{Group by} pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
 \label{figure.amazonGroupByST}
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonGroupBySTNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
+\caption{Doba vykonání dotazů \textit{Group by} bez agr. funkcí pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
 \label{figure.amazonGroupBySTNoAgg}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanGroupByST.pdf}\centering
-\caption{Doba vykonání dotazů Group by pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
+\caption{Doba vykonání dotazů \textit{Group by} pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
 \label{figure.webberkstanGroupByST}
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanGroupBySTNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
+\caption{Doba vykonání dotazů \textit{Group by} bez agr. funkcí pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
 \label{figure.webberkstanGroupBySTNoAgg}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/skitterGroupByST.pdf}\centering
-\caption{Doba vykonání dotazů Group by pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
+\caption{Doba vykonání dotazů \textit{Group by} pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
 \label{figure.skitterGroupByST}
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/skitterGroupBySTNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
+\caption{Doba vykonání dotazů \textit{Group by} bez agr. funkcí pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
 \label{figure.skitterGroupBySTNoAgg}
 \end{figure}
 
@@ -798,7 +798,7 @@ Paralelní řešení používají doposud zmíněná značení.
 \textbf{LocalGroupByLocalTwoWayMerge} řešení seskupuje lokálně a následně slévá výsledky vláken po dvojicích. 
 Toto slévání si můžeme představit jako binární strom. 
 Listy jsou výsledky vláken a vnitřní vrcholy jsou akce slévány.
-Výsledky paralelního seskupování jsou zobrazeny na obrázcích před shrnutím výsledků Single group Group by v sekci \ref{expr.results.groupby.sinleGroup}.
+Výsledky paralelního seskupování jsou zobrazeny na obrázcích před shrnutím výsledků \textit{Single group Group by} v sekci \ref{expr.results.groupby.sinleGroup}.
 
 \subsubsection{Výsledky paralelního zpracování}
 
@@ -873,7 +873,7 @@ Samostatné čtení náhodně generovaných hodnot, které existují v mapě, je
 
 Provedli jsme další test. 
 Test bude simulovat vkládání náhodných prvků do paralelní mapy osmi vlákny.
-Daná situace je velmi podobná naší situaci v Group by.
+Daná situace je velmi podobná naší situaci v \textit{Group by}.
 Výsledek porovnáme s výsledky režie normální mapy z tabulky \ref{tab.mapsInsert}.
 
 Následuje příklad kódu použitého při testu (označíme jej \textit{ParIcode}):
@@ -954,34 +954,34 @@ Z výsledků usuzujeme, že vylepšená řešení pro náš případ paralelizac
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonGroupByPar.pdf}\centering
-\caption{Doba vykonání dotazů Group by pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken.}
+\caption{Doba vykonání dotazů \textit{Group by} pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken.}
 \label{figure.amazonGroupByPar}
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonGroupByParNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken.}
+\caption{Doba vykonání dotazů \textit{Group by} bez agr. funkcí pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken.}
 \label{figure.amazonGroupByParNoAgg}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanGroupByPar.pdf}\centering
-\caption{Doba vykonání dotazů Group by pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh osmi vláken.}
+\caption{Doba vykonání dotazů \textit{Group by} pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh osmi vláken.}
 \label{figure.webberkstanGroupByPar}
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanGroupByParNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh osmi vláken.}
+\caption{Doba vykonání dotazů \textit{Group by} bez agr. funkcí pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh osmi vláken.}
 \label{figure.webberkstanGroupByParNoAgg}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/skitterGroupByPar.pdf}\centering
-\caption{Doba vykonání dotazů Group by pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh osmi vláken.}
+\caption{Doba vykonání dotazů \textit{Group by} pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh osmi vláken.}
 \label{figure.skitterGroupByPar}
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/skitterGroupByParNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů Group by bez agr. funkcí pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh osmi vláken.}
+\caption{Doba vykonání dotazů \textit{Group by} bez agr. funkcí pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh osmi vláken.}
 \label{figure.skitterGroupByParNoAgg}
 \end{figure}
 \bigskip
@@ -989,7 +989,7 @@ Z výsledků usuzujeme, že vylepšená řešení pro náš případ paralelizac
 \subsubsection{Obecné shrnutí Single group Group by řešení} \label{expr.results.groupby.sinleGroup}
 
 Analýzu výsledků dotazu G\_Q1 uvádíme samostatně, protože testuje pouze agregační funkce a nikoliv seskupování.
-Daný mód Group by předpokládá, že všechny výsledky patří do stejné skupiny a tedy nedochází k seskupování ale pouze k výpočtu agregačních funkcí.
+Daný mód \textit{Group by} předpokládá, že všechny výsledky patří do stejné skupiny a tedy nedochází k seskupování ale pouze k výpočtu agregačních funkcí.
 Jednovláknové \textbf{Normal} řešeni iteruje skrze všechny výsledky po dokončení vyhledávání a vypočte agregační funkce.
 Jednovláknové \textbf{Half-Streamed} a \textbf{Streamed} řešení jsou totožná.
 V průběhu prohledávání aktualizují hodnotu agregační funkce a výsledek zahodí. 
