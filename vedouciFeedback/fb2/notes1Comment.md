@@ -48,6 +48,9 @@ Pridavam muj komentar:
 
 		Martin: Jsem to dal jako future work na konci. Ze hlavni problem je trideni podle vzsledku agregacnich funkci, protoze jsou finalni az po dokonceni group by. Ale jestli to ma byt i v textu, tak bych to mohl kratce popsat na konci analyzy.
 
+		DONE
+		Udelal jsem to kratce jako future work. 
+
 - jak paralel OB udelat obecne?
 
 		Martin: Nevim co myslis obecne?

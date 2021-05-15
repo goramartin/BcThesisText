@@ -807,7 +807,7 @@ Byli jsme překvapeni, že vylepšená řešení se mnohdy nevyrovnala původní
 Danou situaci si vysvětlujeme synchronizací. 
 Prvni vrstva synchronizace nastává u přistupu k paralelní mapě a čtení/vložení záznamu.
 Po získání \verb+value+ z mapy následuje druhá vrstva, která obsahuje volání thread-safe funkcí pro výpočet agregovaných hodnot pro danou skupinu.
-Z obrázků \ref{figure.amazonGQ1Par}, \ref{figure.webberkstanGQ1Par} a \ref{figure.skitterGQ1Par} (\textbf{Streamed} řešení) jsme viděli cenu za synchronizaci na agregačních funkcích při přístupu osmi vláken.
+Z obrázků \ref{figure.amazonGQ1Par}, \ref{figure.webberkstanGQ1Par} a \ref{figure.skitterGQ1Par} (paralelní \textbf{Streamed} řešení) v sekci \ref{expr.results.groupby.sinleGroup} je pak vidět značnou režii za synchronizaci za thread-safe agregační funkce při přístupu osmi vláken.
 
 \subsubsection{Test režie paralelní mapy (jedno vlákno)}
 
@@ -930,7 +930,7 @@ Děje se tak ve dvou grafech.
 První je graf As-Skitter u dotazů  G\_3/G\_3$'$ a  G\_6/G\_6$'$.
 Druhý graf je Amazon0601 na dotazech G\_4/G\_4$'$ a  G\_5/G\_5$'$.
 Myslíme si, že se jedná o specifické situace pro dané grafy a nedokážeme je plně zodpovědět, jelikož navzájem a pro graf WebBerkStan nenastávají.
-Obecně pro dotazy G\_6/G\_6$'$ až G\_8/G\_8$'$ vidíme mírné zrychlení \textbf{Streamed} řešení, protože šetří drahou réžii za vytváření nových skupin.
+Obecně pro dotazy G\_6/G\_6$'$ až G\_8/G\_8$'$ vidíme mírné zrychlení \textbf{Streamed} řešení, protože šetří drahou režii za vytváření nových skupin.
 Pro \textbf{Normal: Global} nastává zpomalení, jelikož se při vkládání do mapy častěji vyvolá drahé porovnání klíčů pomocí vlastností skrze tabulku výsledků. 
 
 \subsubsection{Aplikace poznatků jednovláknového zpracování při paralelním zpracování}

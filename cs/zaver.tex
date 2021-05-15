@@ -3,7 +3,7 @@
 
 Vytvořili jsme dotazovací engine dle zadaných požadavků.
 Engine se skládá ze dvou částí.
-První část je statická grafová databáze využívající Labeled-property model grafových dat. 
+První část je statická grafová databáze využívající \textbf{Labeled-property} model grafových dat. 
 Druhá část obsahuje struktury a algoritmy pro vykonání uživatelských dotazů nad grafovou databází.
 Dotazy jsou zadány ve stanovené podmnožině jazyka PGQL.
 Vykonávání je možno provádět jednovláknově i paralelně.
@@ -60,18 +60,21 @@ Jedinou výjimkou bylo Streamed řešení druhého bloku v jednovláknovém zpra
 
 Z výsledků experimentu můžeme konstatovat, že naše předpoklady o zpracovávání \textit{Group by} a \textit{Order by} v průběhu prohledávání grafu nabízí v určitých případech zrychlení vykonávání dotazů.
 
-\section*{Budoucí výzkum}
+\section*{Budoucí výzkum a rozšíření}
 
 \begin{enumerate}
 
-\item Rozšíření enginu o možnost zadat \textit{Order by} a \textit{Group by} společně.
+\item 
+Rozšíření enginu o možnost zadat \textit{Order by} a \textit{Group by} společně.
 Agregování v průběhu hledání se dá rozdělit na dvě hlavní části.
-V první části lze navrhnout řešení pro dotazy, které obsahují třídění pouze podle klíčů skupin.
-V druhé části je nutné vyřešit problém třídění pomocí výsledků agregačních funkcí.
+V první části lze navrhnout řešení pro dotazy, ve kterých část \textit{Order by} obsahuje pouze výrazy seskupování z části \textit{Group by}.
+Zde lze například aplikovat podobný přístup řešení \textbf{ABTreeValueAccumulator} části \textit{Order by}, ve kterém se výsledky se stejnými klíči třídění seskupovaly do pole.
+Nyní místo seskupování do pole bude stromová struktura obsahovat pouze reprezentanty skupin a jejich úložiště hodnot agregačních funkcí.
+V druhé části je nutné vyřešit dotazy, které v části \textit{Order by} obsahují výrazy agregačních funkcí.
 Zde je největší problém fakt, že výsledky agregačních funkcí jsou známy pouze po dokončení \textit{Group by}.
 
-\item Testování daných řešení na grafech s reálnými Properties.
-V našem testování jsme sice volili reálne grafy, ale jejich Properties jsme uměle vygenerovali.
+\item Testování daných řešení na grafech s reálnými vlastnostmi.
+V našem experimentu jsme sice volili reálne grafy, ale jejich vlastnosti jsme uměle vygenerovali.
 
 \item Sledování obecného problému rozdělení dat při paralelizaci vylepšených řešení. 
 Normal přistup má vždy všechna data připravená v paměti a při zpracování je rovnoměrně rozděluje mezi vlákny.
@@ -85,10 +88,20 @@ Vlákno po prohledání daných vrcholů zažádalo o další.
 Nicméně, dané řešení nemůže zaručit stoprocentně rovnoměrné rozdělení práce.
 Bylo by vhodné prozkoumat, jak daná situace ovlivňuje naše řešení.
 
-\item U \textit{Order by} řešení jsme viděli značné zrychlení při třídění pomocí vlastností v paralelizovaných řešeních.
-Bylo by vhodné prozkoumat možnosti vytvoření globálních statistik pro každou vlastnost a podrobněji zjistit možnosti rozdělení rozsahů přihrádek.
-Samotné rozdělení přihrádek jsme pro řetězce zpracovali pouze s předpokladem, že se jedná o ASCII znaky.
+\item \textit{Order by}:
+\begin{enumerate}
+
+\item
+U paralelního řešení jsme viděli značné zrychlení při třídění pomocí vlastností.
+Bylo by vhodné prozkoumat možnosti vytvoření globálních statistik pro každou vlastnost a podrobněji zjistit možnosti rozdělení rozsahů použitým přihrádkám.
+\item
+V našem řešení jsme rozdělení přihrádek pro řetězce zpracovali pouze s předpokladem, že se jedná o ASCII znaky.
 V budoucí práci je možné zkoumat rozdělování i pro složitější znakové sady.
+\item
+Obecně \textit{Order by} řešení využívaly k třídění implementaci \textit{(a, 2a)}-stromu.
+Daná implementace má značnou režii za metodu \texttt{Insert}, při které dochází k časté alokaci nových vrcholů.
+V budoucích rozšířeních je možné vyzkoušet předalokovat určitou množinu vrcholů stromu, které se následně využijí v dané metodě.
+\end{enumerate}
 
 \item V paralelních \textit{Group by} řešeních by bylo vhodné prozkoumat podrobněji škálovatelnost daných řešení pro rozličné počty vláken.
 Pokud možno, také možnosti jiných paralelních map/slovníků.
