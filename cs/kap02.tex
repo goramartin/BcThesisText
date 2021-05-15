@@ -495,9 +495,8 @@ Tedy se vytváří nutnost vytvářet sloupečky hodnot v moment, kdy se nepotř
 Příkladem může být dotaz: 
 \begin{code}
 select x.P1, ..., x.Pn match (x) -> (y) order by y.P1, ..., y.Pm  
-n, m belongs to N and n, m > 1
+n a m jsou přirozená čísla větší než 1
 \end{code}
-
 Zde vidíme množství výrazů.
 Pokud bychom aplikovali první variantu, tak v Match části musíme vygenerovat $m + n$ sloupců hodnot.
 Z tohoto důvodu chceme zvolit jinou variantu.
@@ -671,7 +670,7 @@ V kroku slévání nyní pouze překopírujeme odkazy na pole místo samotných 
 Avšak, pořád nám zůstává nutnost překopírovat výsledky v posledních polích sloupečků, která jsou nezaplněná.
 Volbou vhodné hodnoty \texttt{FixedArraySize} se bude překopírovávat pouze malé množství výsledků.
 Konkrétní volba hodnoty je heuristická a vyplývá z vlastností grafu a počtu nalezených výsledků.
-Pro naše učely během implementace zkusíme zvolit prvně $n/\log_2 n$ ($n = $ \#výsledků prohledávání) pro jednovláknové zpracování a pro paralelní zpracování $(n/\log_2 n)/\#threads$.
+Pro naše učely během implementace zkusíme zvolit prvně $n/\log_2 n$ ($n = $ \#výsledků prohledávání) pro jednovláknové zpracování a pro paralelní zpracování $(n/\log_2 n)/\#vláken$.
 $log_2 n$ odpovídá počtu přealokování při plnění dynamického pole $n$ položkami.
 Slévání bude probíhat opět paralelně.
 Nabízí se dva způsoby.
@@ -814,7 +813,7 @@ Nyní pokud budeme chtít výsledky funkcí skupiny, stačí přistoupit skrze p
 Následuje ukázka možné implementace dle popisu výše v jazyce C\#:
 \begin{code}
 Bucket:
-\\ Pole výsledků ag. funkcí.
+\\ Pole výsledků agregačních funkcí.
 BucketResult[] groupAggFuncResults; 
 \\ Objekt úložiště. 
 class BucketResult {} 
@@ -822,9 +821,9 @@ class BucketResult {}
 class BucketResult<T>: BucketResult { T value; }
 
 List:
-\\ Jednoduchá tabulka výsledků ag. funkcí.
+\\ Jednoduchá tabulka výsledků agregačních funkcí.
 ListResults groupsAggFuncResults;
-\\ Objekt primitivní tabulky výsledků ag. funkcí.
+\\ Objekt primitivní tabulky výsledků agregačních funkcí.
 class ListResults { ListHolder[] holders; }
 \\ Objekt jednoho sloupečku tabulky.
 class ListHolder {}
@@ -914,7 +913,7 @@ Pro úpravu logiky agregačních funkcí na thread-safe verze volíme tyto varia
 
 \begin{itemize}
 
-\item \texttt{min/max:} princip Compare and Exchange. V moment porovnání mohlo dojít ke změně hodnoty v úložišti.
+\item \texttt{min/max:} princip \textit{Compare and Exchange}. V moment porovnání mohlo dojít ke změně hodnoty v úložišti.
 Musíme znovu provést porovnání.  
 
 \item \texttt{sum/count:} tyto metody implementují pouze přičítání. 
@@ -1392,7 +1391,7 @@ Tímto způsobem omezíme počet prvků ve stromě a tím i počet porovnání.
 Nyní navrhneme způsob paralelizace třídění pro naše módy zpracování.
 V průběhu návrhu se budeme snažit využít jíž získané informace z předchozí sekce.
 
-\subsection{Half-Streamed} \label{anal.improvement.orderby.halfstreamed}
+\subsection{Řešení Half-Streamed} \label{anal.improvement.orderby.halfstreamed}
 
 Samotný model zpracování \textbf{Half-Streamed} nám nabízí využít zatřiďování pomocí zmíněných stromů.
 V prvním kroku každé vlákno bude lokálně vytvářet svou tabulku výsledků a indexační strom.
@@ -1410,7 +1409,7 @@ To znamená, že pole obsahuje posloupnosti výsledků vláken.
 Následně se posloupnosti slévají po dvojicích, jako ve zmiňovaném řešení Group by. 
 Nevýhoda tohoto řešení je nutnost čekat na dokončení práce prohledávaní grafu všech vláken.
  
-\subsection{Streamed} \label{anal.improvement.orderby.streamed}
+\subsection{Řešení Streamed} \label{anal.improvement.orderby.streamed}
 
 Zatřiďování do globální struktury je mnohem komplikovanější problém.
 Avšak, stále zde využijeme již navrhnuté principy tabulek a stromů.
@@ -1511,7 +1510,7 @@ V opačném případě je $i=(I_{+min}+k)/d$.
 
 Nyní musíme rozdělit rozsah typu \texttt{string}.
 Pracujeme pouze se základními znaky ASCII, ordinální hodnoty jsou v rozsahu [0; 127].
-Ordinální hodnotu jednoho znaku pak budeme značit $[x]$, kde $x$ je ordinální hodnota znaku, zároveň $x\leq 127$ a $x\geq 0$.
+Ordinální hodnotu jednoho znaku pak budeme značit $[x]$, kde $x$ je ordinální hodnota znaku, zároveň $0\leq x\leq 127$.
 Pokud budeme mluvit o hodnotě znaku, tak máme namysli ordinální hodnotu znaku.
 Dále budeme postupovat jako v minulé sekci.
 
@@ -1554,7 +1553,7 @@ Přičítáme $n$, protože přihrádky jsou číslované od nuly.
 
 Tímto jsme dokončili návrh vykonávání paralelního Order by.
 Dělení popsané v předchozích kapitolách jsme určili na základě jazyka C\#.
-Myslíme, že dané principy se dají aplikovat i v dalších jazycích.
+Dané principy se dají aplikovat i v dalších jazycích.
 
 \section{Úprava Group by} \label{anal.improvement.groupby}
 
@@ -1564,7 +1563,7 @@ Opět budeme při zpracování chtít použít hašovací tabulku jako původní
 Přejdeme rovnou k návrhu zpracování módů \textbf{Streamed} a \textbf{Half-Streamed}.
 Budeme uvažovat paralelní řešení, protože jednovláknové zpracování je určitý případ paralelního.
 
-\subsection{Half-Streamed} 
+\subsection{Řešení Half-Streamed} 
 
 V tomto módě chceme pouze upravit původní řešení Two-step z sekce \ref{anal.groupby.twostep}.
 Má totiž stejný průběh vykonání jako samotný model \textbf{Half-Streamed}.
@@ -1596,7 +1595,7 @@ Zbytek zpracování bude totožný s původním řešením Two-step.
 Úložiště hodnot agregačních funkcí bude implementováno rovněž totožně.
 Platí pro něj obdobné problémy, které jsme již zmínili v sekci popisu daného zpracování \ref{anal.groupby.twostep}. 
 
-\subsection{Streamed}
+\subsection{Řešení Streamed}
 
 Při tomto řešení budeme vycházet z přístupu Global Group by z sekce \ref{anal.groupby.global}, protože zpracovává výsledky stejným způsobem jako model \textbf{Streamed}.
 Existuje zde jedna sdílená thread-safe struktura, ke které přistupují všechna vlákna.
@@ -1667,7 +1666,7 @@ Po nalezení výsledku dojde k aktualizaci hodnot agregačních funkcí a výsle
 Ušetříme tedy spoustu paměti za tabulku výsledků.
 Samotný výpočet hodnot funkcí a úložiště hodnot budou totožné s původním řešením.
 
-\subsubsection{Half-Streamed}
+\subsubsection{Řešení Half-Streamed}
 
 V tomto módu každé vlákno počítá hodnoty agregačních funkcí lokálně.
 Po nalezení výsledku dojde k aktualizování lokálních hodnot agregačních funkcí.
@@ -1675,7 +1674,7 @@ V moment dokončení prohledávání grafu všemi vlákny dojde ke slévání v�
 Vlákno však nebude čekat na ukončení práce ostatních vláken, ale rovnou výsledky slévá do globální struktury.
 Výhoda tohoto řešení je vyřazení nutnosti používat thread-safe logiku agregačních funkcí v lokální části.
 
-\subsubsection{Streamed}
+\subsubsection{Řešení Streamed}
 
 V tomto módu existuje pouze jedno sdílené úložiště hodnot agregačních funkcí.
 Vlákna v moment nalezení výsledku aplikují thread-safe agregační funkce.

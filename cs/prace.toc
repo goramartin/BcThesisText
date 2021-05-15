@@ -76,22 +76,22 @@
 \contentsline {subsubsection}{Experiment (a, b)-strom vůči SortedSet}{44}{section*.29}%
 \contentsline {subsubsection}{Výsledky}{44}{section*.30}%
 \contentsline {subsection}{\numberline {2.9.3}Ukládání prvků v (a, b)-stromu}{44}{subsection.2.9.3}%
-\contentsline {subsection}{\numberline {2.9.4}Half-Streamed}{45}{subsection.2.9.4}%
-\contentsline {subsection}{\numberline {2.9.5}Streamed}{45}{subsection.2.9.5}%
+\contentsline {subsection}{\numberline {2.9.4}Řešení Half-Streamed}{45}{subsection.2.9.4}%
+\contentsline {subsection}{\numberline {2.9.5}Řešení Streamed}{45}{subsection.2.9.5}%
 \contentsline {subsubsection}{Počet přihrádek}{46}{section*.31}%
 \contentsline {subsubsection}{Rozdělování rozsahu}{46}{section*.32}%
 \contentsline {subsubsection}{Rozdělování typu Int32}{47}{section*.33}%
 \contentsline {subsubsection}{Rozdělování typu string}{47}{section*.34}%
 \contentsline {section}{\numberline {2.10}Úprava Group by}{48}{section.2.10}%
-\contentsline {subsection}{\numberline {2.10.1}Half-Streamed}{48}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {2.10.1}Řešení Half-Streamed}{48}{subsection.2.10.1}%
 \contentsline {subsubsection}{Ukládání pouze reprezentantů skupin}{49}{section*.35}%
-\contentsline {subsection}{\numberline {2.10.2}Streamed}{49}{subsection.2.10.2}%
+\contentsline {subsection}{\numberline {2.10.2}Řešení Streamed}{49}{subsection.2.10.2}%
 \contentsline {subsubsection}{Problém synchronizace tabulky výsledků}{49}{section*.36}%
 \contentsline {subsubsection}{Nový přístup ukládání výsledků}{50}{section*.37}%
 \contentsline {subsubsection}{Sloučení pole klíčů a pole úložiště agregačních funkcí}{50}{section*.38}%
 \contentsline {section}{\numberline {2.11}Úprava Single group Group by}{50}{section.2.11}%
-\contentsline {subsubsection}{Half-Streamed}{51}{section*.39}%
-\contentsline {subsubsection}{Streamed}{51}{section*.40}%
+\contentsline {subsubsection}{Řešení Half-Streamed}{51}{section*.39}%
+\contentsline {subsubsection}{Řešení Streamed}{51}{section*.40}%
 \contentsline {chapter}{\numberline {3}Implementace}{52}{chapter.3}%
 \contentsline {section}{\numberline {3.1}Výběr jazyka}{52}{section.3.1}%
 \contentsline {section}{\numberline {3.2}Značení módů}{52}{section.3.2}%
@@ -197,29 +197,29 @@
 \contentsline {subsubsection}{Zrychlení paralelních řešení pro O\_Q3 a O\_Q4 }{101}{section*.106}%
 \contentsline {subsubsection}{Rozsah zrychlení paralelních řešení}{101}{section*.107}%
 \contentsline {subsection}{\numberline {4.4.3}Group by}{104}{subsection.4.4.3}%
-\contentsline {subsubsection}{Obecné shrnutí Single group Group by řešení}{104}{section*.108}%
-\contentsline {subsubsection}{Výsledky Single group Group by zpracování}{106}{section*.109}%
-\contentsline {subsubsection}{Obecné shrnutí jednovláknových řešení}{106}{section*.110}%
-\contentsline {subsubsection}{Výsledky jednovláknového zpracování}{106}{section*.111}%
-\contentsline {subsubsection}{Zpomalení Half-Streamed řešení}{106}{section*.112}%
-\contentsline {subsubsection}{Porovnání výsledků úložišť List vs Bucket}{107}{section*.113}%
-\contentsline {subsubsection}{Obecné shrnutí paralelních řešení}{111}{section*.114}%
-\contentsline {subsubsection}{Výsledky paralelního zpracování}{111}{section*.115}%
-\contentsline {subsubsection}{Test režie paralelní mapy (jedno vlákno)}{111}{section*.116}%
-\contentsline {subsubsection}{Výsledek testu režie paralelní mapy (jedno vlákno)}{112}{section*.117}%
-\contentsline {subsubsection}{Test režie paralelní mapy (osm vláken)}{112}{section*.118}%
-\contentsline {subsubsection}{Výsledek testu režie paralelní mapy (osm vláken)}{112}{section*.119}%
-\contentsline {subsubsection}{Streamed řešení vs Normal: Global řešení}{113}{section*.120}%
-\contentsline {subsubsection}{Aplikace poznatků z jednovláknového vykonání}{113}{section*.121}%
-\contentsline {subsubsection}{Nejrychlejší řešení}{113}{section*.122}%
-\contentsline {chapter}{Závěr}{118}{chapter*.123}%
-\contentsline {chapter}{Seznam použité literatury}{121}{chapter*.125}%
-\contentsline {chapter}{Seznam obr\'azk\r {u}}{123}{chapter*.126}%
-\contentsline {chapter}{Seznam tabulek}{125}{chapter*.127}%
-\contentsline {chapter}{Seznam použitých zkratek}{126}{chapter*.128}%
-\contentsline {chapter}{\numberline {A}Přílohy}{127}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Zdrojové kódy}{127}{section.A.1}%
-\contentsline {section}{\numberline {A.2}Online Git repozitář}{127}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Použité grafy při experimentu}{127}{section.A.3}%
-\contentsline {section}{\numberline {A.4}Výsledky benchmarku pro jednotlivé grafy}{127}{section.A.4}%
-\contentsline {section}{\numberline {A.5}Benchmark stromy vůči polím}{127}{section.A.5}%
+\contentsline {subsubsection}{Obecné shrnutí jednovláknových řešení}{104}{section*.108}%
+\contentsline {subsubsection}{Výsledky jednovláknového zpracování}{105}{section*.109}%
+\contentsline {subsubsection}{Zpomalení jednovláknového Half-Streamed řešení}{105}{section*.110}%
+\contentsline {subsubsection}{Porovnání výsledků úložišť List/Bucket jednovláknového zpracování}{105}{section*.111}%
+\contentsline {subsubsection}{Obecné shrnutí paralelních řešení}{109}{section*.112}%
+\contentsline {subsubsection}{Výsledky paralelního zpracování}{109}{section*.113}%
+\contentsline {subsubsection}{Test režie paralelní mapy (jedno vlákno)}{109}{section*.114}%
+\contentsline {subsubsection}{Výsledek testu režie paralelní mapy (jedno vlákno)}{110}{section*.115}%
+\contentsline {subsubsection}{Test režie paralelní mapy (osm vláken)}{110}{section*.116}%
+\contentsline {subsubsection}{Výsledek testu režie paralelní mapy (osm vláken)}{110}{section*.117}%
+\contentsline {subsubsection}{Paralelní Streamed řešení vs paralelní Normal: Global řešení}{111}{section*.118}%
+\contentsline {subsubsection}{Aplikace poznatků jednovláknového zpracování při paralelním zpracování}{111}{section*.119}%
+\contentsline {subsubsection}{Nejrychlejší paralelní řešení}{111}{section*.120}%
+\contentsline {subsubsection}{Obecné shrnutí Single group Group by řešení}{115}{section*.121}%
+\contentsline {subsubsection}{Výsledky Single group Group by zpracování}{116}{section*.122}%
+\contentsline {chapter}{Závěr}{117}{chapter*.123}%
+\contentsline {chapter}{Seznam použité literatury}{120}{chapter*.125}%
+\contentsline {chapter}{Seznam obr\'azk\r {u}}{122}{chapter*.126}%
+\contentsline {chapter}{Seznam tabulek}{124}{chapter*.127}%
+\contentsline {chapter}{Seznam použitých zkratek}{125}{chapter*.128}%
+\contentsline {chapter}{\numberline {A}Přílohy}{126}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Zdrojové kódy}{126}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Online Git repozitář}{126}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Použité grafy při experimentu}{126}{section.A.3}%
+\contentsline {section}{\numberline {A.4}Výsledky benchmarku pro jednotlivé grafy}{126}{section.A.4}%
+\contentsline {section}{\numberline {A.5}Benchmark stromy vůči polím}{126}{section.A.5}%

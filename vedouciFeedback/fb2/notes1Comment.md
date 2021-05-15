@@ -53,7 +53,7 @@ Pridavam muj komentar:
 
 		Martin: Maji to jen sekce z dokumentace implementace aby se v tom lepe orientovalo.
 		U zbytku mi to neprislo jako nutnost.
-		U dokumentace je to konzistentni jinak.
+		U dokumentace je ten summary u vsech sekci konzistentni.
 
 - je oddeleno dostatecne parsovani Pgql (kdyby to treba nekdo chtel zmenit na nejaky jiny jazyk) -> pripadne, slo by to pouzit jako C# knihovnu pro Pgql jazyk? Zminit kdyztak jako future work a prinos
 
