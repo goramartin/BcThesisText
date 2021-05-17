@@ -42,7 +42,7 @@
 \contentsline {subsection}{\numberline {2.6.3}Třídění pomocí indexů}{31}{subsection.2.6.3}%
 \contentsline {subsection}{\numberline {2.6.4}Optimalizace porovnání vlastností hodnot}{31}{subsection.2.6.4}%
 \contentsline {subsection}{\numberline {2.6.5}Optimalizace porovnání stejných elementů}{31}{subsection.2.6.5}%
-\contentsline {subsection}{\numberline {2.6.6}Optimalizace v paralelním prostření}{32}{subsection.2.6.6}%
+\contentsline {subsection}{\numberline {2.6.6}Optimalizace v paralelním prostředí}{32}{subsection.2.6.6}%
 \contentsline {section}{\numberline {2.7}Group by}{32}{section.2.7}%
 \contentsline {subsection}{\numberline {2.7.1}Módy Group by}{32}{subsection.2.7.1}%
 \contentsline {subsection}{\numberline {2.7.2}Úložiště mezivýsledků agregačních funkcí}{32}{subsection.2.7.2}%
