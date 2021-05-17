@@ -655,7 +655,6 @@ Implementace tříd výrazů je totožná jako v analýze.
 \texttt{ExpressionBase} je abstraktní třída, která definuje základní rozhraní struktur výrazů.
 Definuje:
 \begin{itemize}
-\item Položku \texttt{int ExprPosition} je \texttt{ID} výrazu dle pořadí vytvoření.
 \item Metodu \texttt{Type GetExpressionType()}, která vrací návratový typ výrazu.
 \item Metodu \texttt{void CollectUsedVars(ref List<int> v)}, která vrátí \texttt{ID} proměnných potřebných k vyhodnocení stromové struktury výrazu.
 \end{itemize}
@@ -709,7 +708,7 @@ Definuje:
 \item Položku \texttt{int[] usedVars}, která obsahuje \texttt{ID} proměnných nutných k výpočtu hodnot klíče.
 \item Položku \texttt{bool isAscending}, která určuje, jestli se třídí sestupně nebo vzestupně.
 \item Položku \texttt{ExpressionHolder expr}, která obsahuje výraz porovnávání.
-\item Položku \texttt{bool CacheResults}, která určuje, zda se má se má použít optimalizace.
+\item Položku \texttt{bool CacheResults}, která určuje, zda se má použít optimalizace.
 \texttt{true} označuje využití optimalizace.
 
 \end{itemize}
@@ -862,9 +861,8 @@ To umožní následně při výpočtu hodnoty výrazu přiřadit výsledky dané
 \end{itemize}
 Potomky třídy jsou třídy \texttt{ExpressionHasher<T>}.
 Implementují výpočet výrazu pro konkrétní návratový typ \texttt{T} a výpočet haše výrazu.
-Třída obsahuje položku \texttt{ExpressionComparer<T> exprComp}, která je odkaz na porovnávač. 
-Skrze odkaz se třídě přepíšou položky při výpočtu výrazu.
-Dále obsahuje výraz seskupení \texttt{ExpressionReturnValue<T> exprR}.
+Třída obsahuje položku \texttt{ExpressionComparer<T> exprComp}, která obsahuje odkaz na porovnávač nastavený v metodě \texttt{SetCache}. 
+Dále obsahuje výraz \texttt{ExpressionReturnValue<T> expr} použitý k výpočtu klíče seskupení.
 Všechny klíče seskupení jsou obsaženy v třídě \texttt{RowHasher}, která vypočte finální haš kombinací všech haš hodnot výrazů. 
 
 \subsubsection{Rozhraní IEqualityComparer<T>}
@@ -903,31 +901,39 @@ Pro každé úložiště pak existuje daná metoda a opět i thread-safe verze o
 \end{itemize}
 Konkrétní implementace logiky je přesunuta na potomky.
 Z dané třídy dědí abstraktní třída \texttt{Aggregate<T>}, která konkretizuje návratovou hodnotu výrazu parametrem \texttt{T}.
-Obsahuje položku \texttt{ExpressionReturnValue<T>} pro výpočet hodnoty výrazu.
+Obsahuje položku \texttt{ExpressionReturnValue<T> expr} pro výpočet hodnoty výrazu.
+Zde je nutné si uvědomit, že \texttt{T} není návratová hodnota agregační funkce, ale jen hodnota výrazu.
+Návratová hodnota agregační funkce je uložena v separátním úložišti a může být jiného typu. 
 Z třídy následně vznikají už konkrétní implementace logiky.
 Funkce \texttt{sum} a \texttt{avg} mohou na vstupu obsahovat pouze číselnou hodnotu.
 To v našem případě je pouze \texttt{int}, protože jsme omezili typy vlastností ve vstupních souborech.
-Funkce \texttt{count}, \texttt{min} a \texttt{max} mohou navíc mít i řetězec:
+Funkce \texttt{count}, \texttt{min} a \texttt{max} mohou navíc mít i řetězec \texttt{string}:
 \begin{itemize}
+
 \item Třída \texttt{IntSum: Aggregate<int>} reprezentuje funkci \texttt{sum}.
 Obecně metoda \texttt{Apply} vypočte hodnotu výrazu a přičte ji k hodnotě v úložišti.
 Úložiště musí obsahovat sumu již vypočtených výrazů.
 Thread-safe verze používá k přičtení atomickou operaci přičtení \texttt{Interlocked.Add(...)}.
 \texttt{Merge} pak pouze přičte hodnotu v \texttt{y} do \texttt{x} stejným způsobem.
+
 \item Třída \texttt{IntAvg: Aggregate<int>} reprezentuje funkci \texttt{avg}.
 Úložiště musí obsahovat sumu již vypočtených výrazů společně s jejich počtem.
 Zpracování pak pouze přičte hodnotu výrazu k sumě a navýší jejich počet.
 Přičítání je implementováno shodně jako v \texttt{IntSum}.
+
 \item Třída \texttt{Count<T>: Aggregate<T>} představuje funkci \texttt{count}.
 Přebírá v definici parametr \texttt{T}, protože v případě nepoužití \texttt{count(*)} musí být schopna pracovat se všemi druhy návratových hodnot výrazů.
 Úložiště musí obsahovat počet správně vyhodnocených výrazů a v případě \texttt{count(*)} to je pouze počet prvků skupiny.
-V případě \texttt{count(*)} se nevyhodnocují žádné výrazu uvnitř metody zpracování, ale pouze navyšuje interní hodnota úložiště.
+Tedy hodnota v úložišti je vždy \texttt{int}, ale stále potřebujeme být schopni vypočíst hodnotu vstupního výrazu, který má typ \texttt{T}. 
+V případě \texttt{count(*)} se nevyhodnocují žádné výrazy uvnitř metody zpracování, ale pouze navyšuje interní hodnota úložiště.
 Implementace metod je stejná jako u \texttt{IntSum}.
 
 \item Třída \texttt{MinMaxBase<T>: Aggregate<T>} představuje logiku funkcí \texttt{min} a \texttt{max}.
 Očekává se, že úložiště bude mít \texttt{bool}, který říká zda již byla hodnota inicializována.
 Dále má aktuální minimum nebo maximum hodnot výrazu. 
 V threa-safe verzích metod je využito \texttt{Interlocked.CompareExchange(..)} jako princip \textit{Compare and Exchange}. 
+Potomci dané třídy jsou \texttt{Min<T>} a \texttt{Max<T>}.
+Tyto třídy specifikují způsob porovnání hodnot výrazů.
 \end{itemize}
 
 \subsubsection{Úložiště hodnot agregačních funkcí}
@@ -957,12 +963,18 @@ Přístup \texttt{x[i]} odpovídá úložišti funkce \texttt{ags[i]}.
 \end{itemize}
 Z třídy dále dědí \texttt{AggregateBucketResult<T>}, která definuje ukládanou hodnotu \texttt{T aggResult}.
 Třída se používá při výpočtech funkcí \texttt{count} a \texttt{sum}.
+Již jsme řekli, že u funkce \texttt{count} je \texttt{T} rovno \texttt{int}.
+Pro funkci \texttt{sum} je \texttt{T} rovno \texttt{long}, aby nedocházelo k přetečení.
 Z této třídy dědí dvě třídy:
 \begin{itemize}
 \item První je \texttt{AggregateBucketResultWithSetFlag<T>}, která přidává položku \texttt{bool isSet}.
 Položka určuje zda byla hodnota již inicializována.
 Třída se použije při výpočtu funkcí \texttt{min} a \texttt{max}.
-\item Druhá je \texttt{AggregateBucketAvgResult<T>}, která se použije při výpočtu \texttt{avg} a definuje počet vypočtených výrazů \texttt{int eltsUsed}.
+U daných funkcí je \texttt{T} rovno návratové hodnotě výrazu uvnitř třídy \texttt{Aggregate<T>}.
+
+\item Druhá je \texttt{AggregateBucketAvgResult<T>}, která se použije při výpočtu funkce \texttt{avg} a přidává definici počtu vypočtených výrazů \texttt{int resultCount}.
+\texttt{T} úložiště u dané funkce je \texttt{long}, ze stejného důvodu jako u funkce \texttt{sum}, tj. ukládáme sumu hodnot výrazů. 
+Výsledná hodnota je vypočtena podílem \texttt{aggResult/resultCount}.
 \end{itemize}
 
 Pro řešení List je návrh totožný.
@@ -1023,7 +1035,7 @@ Zde jsme zkoušeli využít nativní třídu \texttt{Semaphor} k omezení vstupu
 Ta však při přístupu pracuje se zámky a ve výsledku řešení bylo značně pomalé.
 Řešení proto nebudeme dále uvádět.
 
-\item Řešení \textbf{Normal: Two-tep (Bucket)} odpovídá paralelnímu zpracování z sekce \ref{anal.groupby.twostep} s úložištěm Bucket.
+\item Řešení \textbf{Normal: Two-step (Bucket)} odpovídá paralelnímu zpracování z sekce \ref{anal.groupby.twostep} s úložištěm Bucket.
 Řešení je v třídě \texttt{TwoStepGroupByBucket}.
 První část je implementována stejně jako jednovláknové řešení s Bucket.
 Každé vlákno drží odkaz na svou lokální tabulku \texttt{Dictionary}.

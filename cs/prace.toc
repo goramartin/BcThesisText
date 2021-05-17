@@ -131,13 +131,13 @@
 \contentsline {subsection}{\numberline {3.4.8}Order by}{67}{subsection.3.4.8}%
 \contentsline {subsubsection}{Třída OrderByObject}{67}{section*.63}%
 \contentsline {subsubsection}{Třída ExpressionComparer}{67}{section*.64}%
-\contentsline {subsubsection}{Třída ExpressionComparer<T>}{68}{section*.65}%
+\contentsline {subsubsection}{Třída ExpressionComparer<T>}{67}{section*.65}%
 \contentsline {subsubsection}{Třída RowComparer a IndexToRowProxyComparer}{68}{section*.66}%
-\contentsline {subsubsection}{Řešení Normal: Merge sort}{69}{section*.67}%
+\contentsline {subsubsection}{Řešení Normal: Merge sort}{68}{section*.67}%
 \contentsline {subsection}{\numberline {3.4.9}Group by}{69}{subsection.3.4.9}%
 \contentsline {subsubsection}{Třída GroupByObject}{69}{section*.68}%
 \contentsline {subsubsection}{Dictionary a ConcurrentDictionary}{69}{section*.69}%
-\contentsline {subsubsection}{Třída ExpressionHasher a třídy ExpressionHasher<T>}{71}{section*.70}%
+\contentsline {subsubsection}{Třída ExpressionHasher a třídy ExpressionHasher<T>}{70}{section*.70}%
 \contentsline {subsubsection}{Rozhraní IEqualityComparer<T>}{71}{section*.71}%
 \contentsline {subsubsection}{Logika agregačních funkcí}{71}{section*.72}%
 \contentsline {subsubsection}{Úložiště hodnot agregačních funkcí}{72}{section*.73}%
