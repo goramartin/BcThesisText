@@ -15,7 +15,7 @@
 \contentsline {table}{\numberline {4.4}{\ignorespaces Dotazy Match}}{92}{table.4.4}%
 \contentsline {table}{\numberline {4.5}{\ignorespaces Dotazy Order by}}{92}{table.4.5}%
 \contentsline {table}{\numberline {4.6}{\ignorespaces Dotazy Group by}}{93}{table.4.6}%
-\contentsline {table}{\numberline {4.7}{\ignorespaces Výber argumentů konstruktoru dotazu pro grafy}}{95}{table.4.7}%
+\contentsline {table}{\numberline {4.7}{\ignorespaces Výběr argumentů konstruktoru dotazu pro grafy}}{95}{table.4.7}%
 \contentsline {table}{\numberline {4.8}{\ignorespaces Počet nalezených výsledků pro dotazy obsahující vzor (x) -> (y) -> (z) nad jednotlivými grafy.}}{97}{table.4.8}%
 \contentsline {table}{\numberline {4.9}{\ignorespaces Rozsah zrychlení paralelizovaných řešení pomocí osmi vláken pro dotazy \textit {Order by} nad grafem Amazon0601 (sekce \ref {tab.grafBase}). Tabulka zobrazuje podíl jednovláknového vůči paralelnímu zpracování.}}{104}{table.4.9}%
 \contentsline {table}{\numberline {4.10}{\ignorespaces Rozsah zrychlení paralelizovaných řešení pomocí osmi vláken pro dotazy \textit {Order by} nad grafem WebBerkStan (sekce \ref {tab.grafBase}). Tabulka zobrazuje podíl jednovláknového vůči paralelnímu zpracování.}}{104}{table.4.10}%

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  17 MAY 2021 17:27
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  17 MAY 2021 18:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -910,7 +910,7 @@ F version <1.7>, but at most version <1.5> allowed
 <../img/amazonMatch.pdf, id=1581, 844.83629pt x 597.432pt>
 File: ../img/amazonMatch.pdf Graphic file (type pdf)
 <use ../img/amazonMatch.pdf>
-Package pdftex.def Info: ../img/amazonMatch.pdf  used on input line 510.
+Package pdftex.def Info: ../img/amazonMatch.pdf  used on input line 511.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 
 
@@ -919,7 +919,7 @@ nd PDF version <1.7>, but at most version <1.5> allowed
 <../img/webberkstanMatch.pdf, id=1584, 844.83629pt x 597.432pt>
 File: ../img/webberkstanMatch.pdf Graphic file (type pdf)
 <use ../img/webberkstanMatch.pdf>
-Package pdftex.def Info: ../img/webberkstanMatch.pdf  used on input line 516.
+Package pdftex.def Info: ../img/webberkstanMatch.pdf  used on input line 517.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 
 
@@ -928,18 +928,18 @@ DF version <1.7>, but at most version <1.5> allowed
 <../img/skitterMatch.pdf, id=1587, 844.83629pt x 597.432pt>
 File: ../img/skitterMatch.pdf Graphic file (type pdf)
 <use ../img/skitterMatch.pdf>
-Package pdftex.def Info: ../img/skitterMatch.pdf  used on input line 522.
+Package pdftex.def Info: ../img/skitterMatch.pdf  used on input line 523.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 [97] [98 <../img/amazonMatch.pdf> <../img/webberkstanMatch.pdf>] [99 <../img/sk
 itterMatch.pdf>]
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <12> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 566.
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 567.
 
 
-LaTeX Warning: Command \' invalid in math mode on input line 581.
+LaTeX Warning: Command \' invalid in math mode on input line 582.
 
 
-LaTeX Warning: Command \' invalid in math mode on input line 606.
+LaTeX Warning: Command \' invalid in math mode on input line 607.
 
 [100]
 
@@ -948,7 +948,7 @@ d PDF version <1.7>, but at most version <1.5> allowed
 <../img/amazonOrderByST.pdf, id=1665, 844.83629pt x 597.432pt>
 File: ../img/amazonOrderByST.pdf Graphic file (type pdf)
 <use ../img/amazonOrderByST.pdf>
-Package pdftex.def Info: ../img/amazonOrderByST.pdf  used on input line 634.
+Package pdftex.def Info: ../img/amazonOrderByST.pdf  used on input line 635.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 
 
@@ -957,7 +957,7 @@ nd PDF version <1.7>, but at most version <1.5> allowed
 <../img/amazonOrderByPar.pdf, id=1668, 844.83629pt x 597.432pt>
 File: ../img/amazonOrderByPar.pdf Graphic file (type pdf)
 <use ../img/amazonOrderByPar.pdf>
-Package pdftex.def Info: ../img/amazonOrderByPar.pdf  used on input line 639.
+Package pdftex.def Info: ../img/amazonOrderByPar.pdf  used on input line 640.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 
 
@@ -967,7 +967,7 @@ pdfTeX warning: pdflatex (file ../img/webberkstanOrderByST.pdf): PDF inclusion:
 File: ../img/webberkstanOrderByST.pdf Graphic file (type pdf)
 <use ../img/webberkstanOrderByST.pdf>
 Package pdftex.def Info: ../img/webberkstanOrderByST.pdf  used on input line 64
-5.
+6.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 
 
@@ -977,7 +977,7 @@ pdfTeX warning: pdflatex (file ../img/webberkstanOrderByPar.pdf): PDF inclusion
 File: ../img/webberkstanOrderByPar.pdf Graphic file (type pdf)
 <use ../img/webberkstanOrderByPar.pdf>
 Package pdftex.def Info: ../img/webberkstanOrderByPar.pdf  used on input line 6
-50.
+51.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 [101] [102 <../img/amazonOrderByST.pdf> <../img/amazonOrderByPar.pdf>] [103 <..
 /img/webberkstanOrderByST.pdf> <../img/webberkstanOrderByPar.pdf>] [104
@@ -989,7 +989,7 @@ d PDF version <1.7>, but at most version <1.5> allowed
 <../img/amazonGroupByST.pdf, id=1745, 844.83629pt x 597.432pt>
 File: ../img/amazonGroupByST.pdf Graphic file (type pdf)
 <use ../img/amazonGroupByST.pdf>
-Package pdftex.def Info: ../img/amazonGroupByST.pdf  used on input line 756.
+Package pdftex.def Info: ../img/amazonGroupByST.pdf  used on input line 757.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 
 
@@ -999,7 +999,7 @@ pdfTeX warning: pdflatex (file ../img/amazonGroupBySTNoAgg.pdf): PDF inclusion:
 File: ../img/amazonGroupBySTNoAgg.pdf Graphic file (type pdf)
 <use ../img/amazonGroupBySTNoAgg.pdf>
 Package pdftex.def Info: ../img/amazonGroupBySTNoAgg.pdf  used on input line 76
-1.
+2.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 
 
@@ -1009,7 +1009,7 @@ pdfTeX warning: pdflatex (file ../img/webberkstanGroupByST.pdf): PDF inclusion:
 File: ../img/webberkstanGroupByST.pdf Graphic file (type pdf)
 <use ../img/webberkstanGroupByST.pdf>
 Package pdftex.def Info: ../img/webberkstanGroupByST.pdf  used on input line 76
-7.
+8.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 
 
@@ -1019,7 +1019,7 @@ sion: found PDF version <1.7>, but at most version <1.5> allowed
 File: ../img/webberkstanGroupBySTNoAgg.pdf Graphic file (type pdf)
 <use ../img/webberkstanGroupBySTNoAgg.pdf>
 Package pdftex.def Info: ../img/webberkstanGroupBySTNoAgg.pdf  used on input li
-ne 772.
+ne 773.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 
 
@@ -1028,7 +1028,7 @@ nd PDF version <1.7>, but at most version <1.5> allowed
 <../img/skitterGroupByST.pdf, id=1757, 844.83629pt x 597.432pt>
 File: ../img/skitterGroupByST.pdf Graphic file (type pdf)
 <use ../img/skitterGroupByST.pdf>
-Package pdftex.def Info: ../img/skitterGroupByST.pdf  used on input line 778.
+Package pdftex.def Info: ../img/skitterGroupByST.pdf  used on input line 779.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 
 
@@ -1038,7 +1038,7 @@ pdfTeX warning: pdflatex (file ../img/skitterGroupBySTNoAgg.pdf): PDF inclusion
 File: ../img/skitterGroupBySTNoAgg.pdf Graphic file (type pdf)
 <use ../img/skitterGroupBySTNoAgg.pdf>
 Package pdftex.def Info: ../img/skitterGroupBySTNoAgg.pdf  used on input line 7
-83.
+84.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 [105] [106 <../img/amazonGroupByST.pdf> <../img/amazonGroupBySTNoAgg.pdf>]
 [107 <../img/webberkstanGroupByST.pdf> <../img/webberkstanGroupBySTNoAgg.pdf>]
@@ -1052,7 +1052,7 @@ nd PDF version <1.7>, but at most version <1.5> allowed
 <../img/amazonGroupByPar.pdf, id=1865, 844.83629pt x 597.432pt>
 File: ../img/amazonGroupByPar.pdf Graphic file (type pdf)
 <use ../img/amazonGroupByPar.pdf>
-Package pdftex.def Info: ../img/amazonGroupByPar.pdf  used on input line 956.
+Package pdftex.def Info: ../img/amazonGroupByPar.pdf  used on input line 957.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 
 
@@ -1062,7 +1062,7 @@ pdfTeX warning: pdflatex (file ../img/amazonGroupByParNoAgg.pdf): PDF inclusion
 File: ../img/amazonGroupByParNoAgg.pdf Graphic file (type pdf)
 <use ../img/amazonGroupByParNoAgg.pdf>
 Package pdftex.def Info: ../img/amazonGroupByParNoAgg.pdf  used on input line 9
-61.
+62.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 
 
@@ -1072,7 +1072,7 @@ pdfTeX warning: pdflatex (file ../img/webberkstanGroupByPar.pdf): PDF inclusion
 File: ../img/webberkstanGroupByPar.pdf Graphic file (type pdf)
 <use ../img/webberkstanGroupByPar.pdf>
 Package pdftex.def Info: ../img/webberkstanGroupByPar.pdf  used on input line 9
-67.
+68.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 
 
@@ -1082,7 +1082,7 @@ usion: found PDF version <1.7>, but at most version <1.5> allowed
 File: ../img/webberkstanGroupByParNoAgg.pdf Graphic file (type pdf)
 <use ../img/webberkstanGroupByParNoAgg.pdf>
 Package pdftex.def Info: ../img/webberkstanGroupByParNoAgg.pdf  used on input l
-ine 972.
+ine 973.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 
 
@@ -1091,7 +1091,7 @@ und PDF version <1.7>, but at most version <1.5> allowed
 <../img/skitterGroupByPar.pdf, id=1877, 844.83629pt x 597.432pt>
 File: ../img/skitterGroupByPar.pdf Graphic file (type pdf)
 <use ../img/skitterGroupByPar.pdf>
-Package pdftex.def Info: ../img/skitterGroupByPar.pdf  used on input line 978.
+Package pdftex.def Info: ../img/skitterGroupByPar.pdf  used on input line 979.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 
 
@@ -1101,7 +1101,7 @@ n: found PDF version <1.7>, but at most version <1.5> allowed
 File: ../img/skitterGroupByParNoAgg.pdf Graphic file (type pdf)
 <use ../img/skitterGroupByParNoAgg.pdf>
 Package pdftex.def Info: ../img/skitterGroupByParNoAgg.pdf  used on input line 
-983.
+984.
 (pdftex.def)             Requested size: 412.56496pt x 291.7506pt.
 [111] [112 <../img/amazonGroupByPar.pdf> <../img/amazonGroupByParNoAgg.pdf>]
 [113 <../img/webberkstanGroupByPar.pdf> <../img/webberkstanGroupByParNoAgg.pdf>
@@ -1112,7 +1112,7 @@ und PDF version <1.7>, but at most version <1.5> allowed
 <../img/amazonGroupByQ1ST.pdf, id=1957, 597.432pt x 421.09319pt>
 File: ../img/amazonGroupByQ1ST.pdf Graphic file (type pdf)
 <use ../img/amazonGroupByQ1ST.pdf>
-Package pdftex.def Info: ../img/amazonGroupByQ1ST.pdf  used on input line 1007.
+Package pdftex.def Info: ../img/amazonGroupByQ1ST.pdf  used on input line 1008.
 
 (pdftex.def)             Requested size: 167.08653pt x 117.77034pt.
 
@@ -1122,7 +1122,7 @@ ound PDF version <1.7>, but at most version <1.5> allowed
 <../img/amazonGroupByQ1Par.pdf, id=1960, 597.432pt x 421.09319pt>
 File: ../img/amazonGroupByQ1Par.pdf Graphic file (type pdf)
 <use ../img/amazonGroupByQ1Par.pdf>
-Package pdftex.def Info: ../img/amazonGroupByQ1Par.pdf  used on input line 1013
+Package pdftex.def Info: ../img/amazonGroupByQ1Par.pdf  used on input line 1014
 .
 (pdftex.def)             Requested size: 167.08653pt x 117.77034pt.
 
@@ -1133,7 +1133,7 @@ n: found PDF version <1.7>, but at most version <1.5> allowed
 File: ../img/webberkstanGroupByQ1ST.pdf Graphic file (type pdf)
 <use ../img/webberkstanGroupByQ1ST.pdf>
 Package pdftex.def Info: ../img/webberkstanGroupByQ1ST.pdf  used on input line 
-1023.
+1024.
 (pdftex.def)             Requested size: 167.08653pt x 117.77034pt.
 
 
@@ -1143,7 +1143,7 @@ on: found PDF version <1.7>, but at most version <1.5> allowed
 File: ../img/webberkstanGroupByQ1Par.pdf Graphic file (type pdf)
 <use ../img/webberkstanGroupByQ1Par.pdf>
 Package pdftex.def Info: ../img/webberkstanGroupByQ1Par.pdf  used on input line
- 1029.
+ 1030.
 (pdftex.def)             Requested size: 167.08653pt x 117.77034pt.
 [115 <../img/amazonGroupByQ1ST.pdf> <../img/amazonGroupByQ1Par.pdf> <../img/web
 berkstanGroupByQ1ST.pdf> <../img/webberkstanGroupByQ1Par.pdf>]
@@ -1153,11 +1153,11 @@ ound PDF version <1.7>, but at most version <1.5> allowed
 <../img/skitterGroupByQ1ST.pdf, id=2008, 597.432pt x 421.09319pt>
 File: ../img/skitterGroupByQ1ST.pdf Graphic file (type pdf)
 <use ../img/skitterGroupByQ1ST.pdf>
-Package pdftex.def Info: ../img/skitterGroupByQ1ST.pdf  used on input line 1039
+Package pdftex.def Info: ../img/skitterGroupByQ1ST.pdf  used on input line 1040
 .
 (pdftex.def)             Requested size: 167.08653pt x 117.77034pt.
 
-Underfull \hbox (badness 1024) in paragraph at lines 1040--1040
+Underfull \hbox (badness 1024) in paragraph at lines 1041--1041
 \T1/lmr/m/n/12 G_Q1 pro graf As-Skitter (sekce
  []
 
@@ -1169,10 +1169,10 @@ found PDF version <1.7>, but at most version <1.5> allowed
 File: ../img/skitterGroupByQ1Par.pdf Graphic file (type pdf)
 <use ../img/skitterGroupByQ1Par.pdf>
 Package pdftex.def Info: ../img/skitterGroupByQ1Par.pdf  used on input line 104
-5.
+6.
 (pdftex.def)             Requested size: 167.08653pt x 117.77034pt.
 
-Underfull \hbox (badness 1024) in paragraph at lines 1046--1046
+Underfull \hbox (badness 1024) in paragraph at lines 1047--1047
 \T1/lmr/m/n/12 G_Q1 pro graf As-Skitter (sekce
  []
 
@@ -1297,7 +1297,7 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 181.
 Here is how much of TeX's memory you used:
  17801 strings out of 481239
  253145 string characters out of 5920376
- 500933 words of memory out of 5000000
+ 500934 words of memory out of 5000000
  32118 multiletter control sequences out of 15000+600000
  630689 words of font info for 95 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1316,7 +1316,7 @@ ri12.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/f
 onts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.p
 fb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/t
 ype1/public/lm/lmtt12.pfb>
-Output written on prace.pdf (130 pages, 2114848 bytes).
+Output written on prace.pdf (130 pages, 2114855 bytes).
 PDF statistics:
  2429 PDF objects out of 2487 (max. 8388607)
  2044 compressed objects within 21 object streams
