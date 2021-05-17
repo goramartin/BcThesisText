@@ -1027,16 +1027,16 @@ Ta však při přístupu pracuje se zámky a ve výsledku řešení bylo značn�
 Řešení je v třídě \texttt{TwoStepGroupByBucket}.
 První část je implementována stejně jako jednovláknové řešení s Bucket.
 Každé vlákno drží odkaz na svou lokální tabulku \texttt{Dictionary}.
-Druhá část funguje jako Global řešení výše s rozdílem, že klíčem je zde \texttt{GroupDictKey}.
+Druhá část funguje jako \textbf{Global} řešení výše s rozdílem, že klíčem je zde \texttt{GroupDictKey}.
 Zde vlákna sdílejí \texttt{ConcurrentDictionary}.
 
 \item Řešení \textbf{Normal: Two-step (List) }odpovídá paralelnímu zpracování z sekce \ref{anal.groupby.twostep} s úložištěm List.
 Řešení je v třídě \texttt{TwoStepGroupByList}.
 První část je implementována stejně jako jednovláknové řešení s List.
-Druhá část byla problematická, jelikož se jedná o stejný problém s úložištěm List jako u Global řešení.
+Druhá část byla problematická, jelikož se jedná o stejný problém s úložištěm List jako u \textbf{Global} řešení.
 Proto jsme se rozhodli v druhé části výsledky z List přeložit do Bucket.
 To znamená, že pro záznamy v List vytvoříme nová pole \texttt{AggregateBucketResult[]}, které vložíme do \texttt{ConcurrentDictionary}.
-Výsledně je druhá část implementována stejně jako Global řešení výše s rozdílem, že klíčem je zde \texttt{GroupDictKey}.
+Výsledně je druhá část implementována stejně jako \textbf{Global} řešení výše s rozdílem, že klíčem je zde \texttt{GroupDictKey}.
 
 \item \textbf{Normal: LocalGroupByLocalTwoWayMerge (Bucket)}\textbf{/(List)} odpovídají paralelním zpracováním z sekce \ref{anal.groupby.local} s úložištěm Bucket/List.
 Řešení jsou v třídách \texttt{LocalGroupByLocalTwoWayMerge} s příponou \texttt{Bucket} nebo \texttt{List}.
@@ -1289,7 +1289,7 @@ Potomci specifikují navržené přístupy zpracování dle sekce analýzy \ref{
 
 \subsubsection{Řešení Half-Streamed}
 
-V analýze jsme se rozhodli využít seskupování způsobem Two-step \textit{Group by}.
+V analýze jsme se rozhodli využít seskupování způsobem \textbf{Two-step} \textit{Group by}.
 Vytvořili jsme dva ekvivalenty daného řešení, které se liší využitým úložištěm: 
 \begin{itemize}
 \item Řešení \textbf{Half-Streamed: Two-step (Bucket)}, které využívá Bucket jako úložiště a je obsaženo v třídě \texttt{TwoStepHalfStreamedBucket}.
@@ -1330,7 +1330,7 @@ V opačném případě je položka nastavena na \texttt{null}. To odpovídá ná
 
 \subsubsection{Řešení Streamed} \label{impl.improvement.groupby.streamed}
 
-Řešení vychází z řešení Global \textit{Group by} a pojmenovali jsme jej \textbf{Streamed: Global} a je implementováno třídou \texttt{GlobalGroupByStreamed}.
+Řešení vychází z řešení \textbf{Global} \textit{Group by} a pojmenovali jsme jej \textbf{Streamed: Global} a je implementováno třídou \texttt{GlobalGroupByStreamed}.
 Jednovláknové zpracování je rovněž obsaženo v dané třídě.
 Pokud je řešení použito v jednovláknovém kontextu označíme jej \textbf{Streamed: SingleThreadSolution}.
 V tomto řešení vlákna seskupují výsledky pomocí \texttt{ConcurrentDictionary<key, value>}.

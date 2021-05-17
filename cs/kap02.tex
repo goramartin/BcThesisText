@@ -944,7 +944,7 @@ Vlákno se na přístup pokusí projít skrze semafor.
 Pokud je mu vstup zabráněn, tak dochází k rozšiřování tabulky.
 V opačném případě aktualizuje výslednou hodnotu agregační funkce.
 Postup s List může být však značně pomalý a proto budeme uvažovat, jestli přístup raději implementovat pouze pro Bucket.
-Global \textit{Group by} je znázorněn na obrázku \ref{figure.diaGlobalGr} na konci této sekce.
+Řešení \textbf{Global} je znázorněno na obrázku \ref{figure.diaGlobalGr} na konci této sekce.
 
 \subsection{Two-step Group by} \label{anal.groupby.twostep}
 
@@ -954,14 +954,14 @@ V lokální části pro každé vlákno běží kompletně identický ekvivalent
 Globální část nastane v moment dokončení této práce.
 Místo aby vlákno ukončilo běh, tak rovnou provede slévání svých výsledků do thread-safe paralelní mapy.
 To znamená, že vlákno nečeká na dokončení práce ostatních vláken, ale rovnou slévá své výsledky do paralelní mapy.
-Tento přístup kombinuje jednovláknové řešení společně s přístupem Global.
+Tento přístup kombinuje jednovláknové řešení společně s přístupem \textbf{Global}.
 Mínus je, že zde musí docházet ke slévání.
 Plus je, že v prvním kroku se využívají metody, které neobsahují synchronizaci. 
 Problematická část je zde slévání výsledků s List úložištěm výsledků agregačních funkcí.
 První fáze nepředstavuje problém. 
-Druhá představuje problém jako u Global řešení, tedy platí vše, co jsme pro něj zmínili.
-Můžeme zkusit implementovat stejné řešení jako u Global pomocí semaforu.
-Two-step \textit{Group by} je znázorněn na obrázku \ref{figure.diaTwoGr} na konci této sekce.
+Druhá představuje problém jako u \textbf{Global} řešení, tedy platí vše, co jsme pro něj zmínili.
+Můžeme zkusit implementovat stejné řešení jako u \textbf{Global} pomocí semaforu.
+Řešení \textbf{Two-step} je znázorněno na obrázku \ref{figure.diaTwoGr} na konci této sekce.
 
 \subsection{Local + dvoucestné slévání Group by} \label{anal.groupby.local}
 
@@ -985,7 +985,7 @@ Přístup je znázorněn na obrázku \ref{figure.diaLocalGr} na konci této sekc
 
 K paralelizaci \textit{Single group Group by} využijeme jíž zmíněných principů.
 Konkrétně zde mají využití všechny tři.
-Problémem Global přístupu je synchronizace mnoha vláken na jednom místě.
+Problémem \textbf{Global} přístupu je synchronizace mnoha vláken na jednom místě.
 Ideálnější je využít lokálního zpracování zbylých dvou přístupů.
 Opět řešení rozdělíme na dva kroky. 
 V prvním kroku každé vlákno provádí ekvivalent jednovláknového zpracování bez vytváření skupin, tj. počítá pouze agregační funkce pro jednu skupinu.
@@ -996,20 +996,20 @@ V takovém případě nebudeme implementovat paralelní slévání, ale pouze je
 
 \begin{figure}[!htp]
 \includegraphics{../img/diaGlobalGr.pdf}\centering
-\caption{Diagram paralelizace Global \textit{Group by}.}
+\caption{Diagram paralelizace řešení \textbf{Global}.}
 \label{figure.diaGlobalGr}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics{../img/diaTwoGr.pdf}\centering
-\caption{Diagram paralelizace Two-step \textit{Group by}.}
+\caption{Diagram paralelizace řešení \textbf{Two-step}.}
 \label{figure.diaTwoGr}
 \end{figure}
 
 \clearpage
 \begin{figure}[!htp]
 \includegraphics{../img/diaLocalGr.pdf}\centering
-\caption{Diagram paralelizace Local + dvoucestné slévání \textit{Group by} pro 4 vlákna.}
+\caption{Diagram paralelizace řešení \textbf{Local + dvoucestné slévání} pro 4 vlákna.}
 \label{figure.diaLocalGr}
 \end{figure}
 
@@ -1185,7 +1185,7 @@ Po dokončení dojde ke slévání výsledků vláken.
 
 Druhým modelem vykonání je model \textbf{Streamed}.
 Myšlenkou tohoto návrhu je příchozí výsledky zpracovat globálně.
-Vycházíme z Global zpracování \textit{Group by} z sekce \ref{anal.groupby.global}.
+Vycházíme z \textbf{Global} zpracování \textit{Group by} z sekce \ref{anal.groupby.global}.
 Vytvoříme strukturu, která nám poskytne metody se synchronizací.
 Všechna vlákna v moment nalezení výsledku volají metodu \texttt{ProcessResult}, uvnitř které dojde k volání synchronních metod na struktuře.
 Výhoda tohoto přístupu je odstranění nutnosti slévání výsledků vláken.
@@ -1399,7 +1399,7 @@ Budeme vlastnit separátní pole, do kterého na jeho konec ukládáme minima v 
 Po dokončení iterace pole bude obsahovat výsledek slévání.
 Bohužel jsme nepřišli na jednoduchý způsob paralelizace tohoto řešení, proto jsme se rozhodli od něj upustit.
 
-Místo toho využijeme již několikrát zmiňované dvoucestné slévání (použili jsme jej při paralelizaci \textit{Group by} v sekci Local + dvoucestné slévání \ref{anal.groupby.local}).
+Místo toho využijeme již několikrát zmiňované dvoucestné slévání (použili jsme jej při paralelizaci \textit{Group by} v sekci \ref{anal.groupby.local}).
 V moment dokončení prohledávání všemi vlákny se vytvoří jedno pole a každé vlákno do něj překopíruje své výsledky.
 Zde budeme muset překopírovat proxy třídy řádků a nikoliv pouze jejich indexy, protože existuje zde mnoho tabulek a sléváním pouhých indexů nedokážeme rozeznat, jaké tabulce přináleží.
 To znamená, že pole obsahuje posloupnosti výsledků vláken.
@@ -1562,14 +1562,14 @@ Budeme uvažovat paralelní řešení, protože jednovláknové zpracování je 
 
 \subsection{Řešení Half-Streamed} 
 
-V tomto módě chceme pouze upravit původní řešení Two-step z sekce \ref{anal.groupby.twostep}.
-Má totiž stejný průběh vykonání jako samotný model \textbf{Half-Streamed}.
+V tomto módě chceme pouze upravit původní řešení \textbf{Two-step} \textit{Group by} z sekce \ref{anal.groupby.twostep}.
+Má totiž stejný průběh vykonání jako model \textbf{Half-Streamed}.
 Oba pracují s myšlenkou práce ve dvou krocích.
 V prvním kroku dochází k lokálnímu vytváření skupin a po dokončení prohledávání grafu dojde ke slévání výsledků vláken.
 Vlákno po dokončení prohledávání nečeká na dokončení práce ostatních vláken, ale rovnou výsledky slévá do sdíleného úložiště.
 Zmiňovali jsme, že se jedná o paralelní mapu/slovník (C\# \texttt{ConcurrentDictionary}).
-Nepoužijeme zde řešení Local + dvoucestné slévání, protože samotné slévání vytváří nutnost vláken čekat na dokončení práce jiného vlákna.
-Pomocí řešení Two-step se problému kompletně vyhneme.
+Nepoužijeme zde řešení \textbf{Local + dvoucestné slévání}, protože samotné slévání vytváří nutnost vláken čekat na dokončení práce jiného vlákna.
+Pomocí řešení \textbf{Two-step} se problému kompletně vyhneme.
 
 \subsubsection{Ukládání pouze reprezentantů skupin} \label{anal.uprava.Groupby.table}
 
@@ -1579,7 +1579,7 @@ V moment nalezení je výsledek překopírován do tabulky na nový řádek a pr
 Daný způsob nám přijde neefektivní, protože cílem \textit{Group by} je vytvořit skupiny. 
 K vytvoření skupin nám stačí znát pouze reprezentant skupiny, tj. klíč v hašovací tabulce (proxy třída řádku v tabulce výsledků prohledávání).
 Nepotřebujeme znát všechny výsledky prohledávání, tedy nemusíme všechny výsledky kopírovat do tabulky.
-Abychom mohli pouze minimálně upravit vykonávání řešení Two-step, tak upravíme původní tabulku výsledků na základě tohoto poznatku.
+Abychom mohli pouze minimálně upravit vykonávání řešení \textbf{Two-step}, tak upravíme původní tabulku výsledků na základě tohoto poznatku.
 Tabulka bude nyní kromě samotných hodnot obsahovat položku držící odkaz na výsledek prohledávání.
 V moment nalezení výsledku se odkaz aktualizuje na daný výsledek a tabulka bude tento akt chápat jako přidání nového imaginárního řádku.
 Při přístupu k novému řádku se vytvoří obvyklá proxy třída řádku.
@@ -1588,13 +1588,13 @@ Proxy třída se použije ke zpracování výsledku prohledávání.
 Pokud byla proxy třída použita k vytvoření nové skupiny, tj. je vytvořen nový záznam v hašovací tabulce, tak je celý výsledek držený v odkazu překopírován do tabulky.
 Tímto si zachováme pouze reprezentanty skupin a díky používání odkazu nemusíme každý výsledek prohledávání kopírovat do tabulky.
 
-Zbytek zpracování bude totožný s původním řešením Two-step.
+Zbytek zpracování bude totožný s původním řešením \textbf{Two-step}.
 Úložiště hodnot agregačních funkcí bude implementováno rovněž totožně.
 Platí pro něj obdobné problémy, které jsme již zmínili v sekci popisu daného zpracování \ref{anal.groupby.twostep}. 
 
 \subsection{Řešení Streamed}
 
-Při tomto řešení budeme vycházet z přístupu Global \textit{Group by} z sekce \ref{anal.groupby.global}, protože zpracovává výsledky stejným způsobem jako model \textbf{Streamed}.
+Při tomto řešení budeme vycházet z přístupu \textbf{Global} \textit{Group by} z sekce \ref{anal.groupby.global}, protože zpracovává výsledky stejným způsobem jako model \textbf{Streamed}.
 Existuje zde jedna sdílená thread-safe struktura, ke které přistupují všechna vlákna.
 Jedná se opět o paralelní mapu/slovník.
 Předpokládejme nyní, že budeme chtít stále používat tabulky výsledků a stejná úložiště agregačních funkcí.
@@ -1648,7 +1648,7 @@ Bucket úložiště je pole hodnot.
 Můžeme zde propojit pole hodnot klíčů a pole hodnot úložiště, protože oba pole pouze obsahují konkrétní hodnoty a logika zpracování agregačních funkcí je obsažena v objektu mimo úložiště.
 Finálně bude existovat pouze jedno pole, ve kterém prvních $n$ hodnot představuje hodnoty klíčů a zbytek hodnot je považován za výsledky agregačních funkcí.
 Tímto dokážeme zmenšit počet vytvářených polí.
-Protože vycházíme z principu Global \textit{Group by} \ref{anal.groupby.global}, tak je zde problémem úložiště List.
+Protože vycházíme z principu \textbf{Global} \textit{Group by} \ref{anal.groupby.global}, tak je zde problémem úložiště List.
 Rozhodli jsme se výsledně dané řešení s úložištěm List neimplementovat.
 
 

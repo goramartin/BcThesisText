@@ -15,7 +15,7 @@ V prvním bloku jsme navrhli řešení vykonávající \textit{Group/Order by} p
 Výsledky prohledávání byly ukládány do tabulky.
 Teprve po získání všech výsledků byly na výsledcích aplikovány algoritmy \textit{Group/Order by}.
 \begin{itemize}
-\item V části \textit{Order by} jsme použili standartní algoritmus Merge sort pro jednovláknové i paralelní zpracování.
+\item V části \textit{Order by} jsme použili standardní algoritmus Merge sort pro jednovláknové i paralelní zpracování.
 \item V části \textit{Group by} jsme výsledky seskupovali pomocí hašovací tabulky.
 Pro paralelní zpracování jsme zvolili tři řešení dle úrovně synchronizace (sekce \ref{anal.groupby.paralel}).
 V módu \textit{Single group Group by} (dotaz obsahuje agregační funkce, ale neobsahuje část \textit{Group by}) jsme využili lokálního zpracování, které je zakončeno sléváním.
@@ -28,13 +28,13 @@ Pro paralelní zpracování jsme navrhli dva módy: \textbf{Streamed} a \textbf{
 \textbf{Streamed} zpracovával výsledky globálně.
 \textbf{Half-Streamed} zpracovával výsledky lokálně, následně docházelo ke slévání.
 \begin{itemize}
-\item V části \textit{Order by} jsme pro jednovláknové zpracování použili standartní $(a, 2a)$-strom a upravenou verzi $(a, 2a)$-stromu, která omezila počet zatříďovaných výsledků.  
+\item V části \textit{Order by} jsme pro jednovláknové zpracování použili standardní $(a, 2a)$-strom a upravenou verzi $(a, 2a)$-stromu, která omezila počet zatřiďovaných výsledků.  
 \textbf{Half-Streamed} řešení zpracovávalo lokálně výsledky pomocí navržených stromů a následně došlo k dvoucestnému paralelnímu slévání.
-\textbf{Streamed} řešení vytvořilo přihrádky přistupné skrze zámek a každé přihrádce přiřadilo specifický rozsah hodnot.
+\textbf{Streamed} řešení vytvořilo přihrádky přístupné skrze zámek a každé přihrádce přiřadilo specifický rozsah hodnot.
 \item
 V části \textit{Group by} jsme vycházeli z řešení prvního bloku.
 Jednovláknové a paralelní zpracování \textbf{Half-Streamed} používalo tabulku z prvního bloku.
-Obecně jsme u něj omezeli ukládané výsledky pouze na reprezentanty skupin.
+Obecně jsme u něj omezili ukládané výsledky pouze na reprezentanty skupin.
 Jednovláknové a paralelní zpracování \textbf{Streamed} nepoužívalo žádnou tabulku.
 Zpracování \textit{Single group Group by} neukládalo žádné výsledky, kromě výsledků agregačních funkcí.
 \end{itemize}
@@ -77,12 +77,12 @@ Zde je největší problém fakt, že výsledky agregačních funkcí jsou znám
 V našem experimentu jsme sice volili reálne grafy, ale jejich vlastnosti jsme uměle vygenerovali.
 
 \item Sledování obecného problému rozdělení dat při paralelizaci vylepšených řešení. 
-Normal přistup má vždy všechna data připravená v paměti a při zpracování je rovnoměrně rozděluje mezi vlákny.
+\textbf{Normal} přistup má vždy všechna data připravená v paměti a při zpracování je rovnoměrně rozděluje mezi vlákny.
 Vlákna tedy mají vždy stejný počet výsledků pro zpracování.
 Navíc díky kompletnosti dat lze data optimálněji zpracovávat a použít větší množství obecných algoritmů.
 Například při třídění jsme použili základní algoritmus Merge sort, který není možný aplikovat při třídění v průběhu vyhledávání.  
-Rozdělení práce vylepšených řešení závísí na počtu vyhledaných výsledků v každém vlákně.
-Mohou nastávát případy, kdy jedno vlákno má více výsledků ke zpracování než ostatní. 
+Rozdělení práce vylepšených řešení závisí na počtu vyhledaných výsledků v každém vlákně.
+Mohou nastávat případy, kdy jedno vlákno má více výsledků ke zpracování než ostatní. 
 Daný problém jsme se v našem řešení prohledávání snažili vyřešit pomocí přidělování malých skupin vrcholů vláknům.
 Vlákno po prohledání daných vrcholů zažádalo o další.
 Nicméně, dané řešení nemůže zaručit stoprocentně rovnoměrné rozdělení práce.
@@ -113,7 +113,7 @@ K tokenizaci jsme použili třídu \texttt{Tokenizer}, pro vytvoření syntaktic
 Procházením stromů vznikají struktury, které se následně využijí při zpracování dotazu.
 Obecně tokenizace a vytvoření syntaktických stromů je odděleno od zpracování dotazu.
 Při použití jiného jazyka stačí implementovat dané dvě části separátně.
-Problém nastave v rozhraní \texttt{IVisitor} a vzniku struktur dotazu, protože konstruktory tříd \texttt{Query} a \texttt{QueryObject} očekávají stávající formát.
+Problém nastane v rozhraní \texttt{IVisitor} a vzniku struktur dotazu, protože konstruktory tříd \texttt{Query} a \texttt{QueryObject} očekávají stávající formát.
 Nicméně, dané konstruktory a rozhraní \texttt{IVisitor} se dají jednoduše upravit k použití nového formátu.
 Přínosem je pak možnost využít i jiné dotazovací jazyky za cenu malých úprav.
 Dalším přínosem je také možnost využít třídu \texttt{Tokenizer} a \texttt{Parser} jako separátní knihovnu k načítání PGQL dotazu.
