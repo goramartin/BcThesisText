@@ -23,7 +23,7 @@
 \contentsline {subsection}{\numberline {2.3.1}Match a proměnné}{20}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Select, Order/Group by}{20}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Expressions}{21}{subsection.2.3.3}%
-\contentsline {subsubsection}{Aggregační funkce}{22}{section*.19}%
+\contentsline {subsubsection}{Agregační funkce}{22}{section*.19}%
 \contentsline {section}{\numberline {2.4}Vykonání dotazu}{24}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Paralelizace vykonání dotazu}{25}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}Formát výsledků}{25}{subsection.2.4.2}%
@@ -71,7 +71,7 @@
 \contentsline {subsection}{\numberline {2.9.2}Jednovláknové zpracování}{43}{subsection.2.9.2}%
 \contentsline {subsubsection}{Pole indexů + binární vyhledávání}{43}{section*.26}%
 \contentsline {subsubsection}{Vyhledávací stromy}{43}{section*.27}%
-\contentsline {subsubsection}{Experiment pole vůči vyhledávácím stromům}{44}{section*.28}%
+\contentsline {subsubsection}{Experiment pole vůči vyhledávacím stromům}{44}{section*.28}%
 \contentsline {subsubsection}{Výsledky}{44}{section*.29}%
 \contentsline {subsubsection}{Experiment (a, b)-strom vůči SortedSet}{45}{section*.30}%
 \contentsline {subsubsection}{Výsledky}{45}{section*.31}%

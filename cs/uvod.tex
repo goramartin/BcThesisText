@@ -42,7 +42,7 @@ Existují dva hlavní modely zpracování \citep{graphstreaming}.
 První model udržuje kondenzovaný stav při zpracování dat a nazývá se \textbf{synopsis}.
 Dobrým příkladem může být počítání sumy hodnot prvků v proudu.
 V takovém případě si program udržuje pouze sumu výsledků.
-Data v proudu pak nepotřebuje uchovávát.
+Data v proudu pak nepotřebuje uchovávat.
 Druhý model si udržuje okno určitého počtu posledních prvků z proudu a nazývá se \textbf{windowing}.
 Prvky v okně tvoří skupinu, která se v určitý moment zpracuje najednou.
 Proudové systémy se uchytili v distribuovaných systémech, například Apache Flink \citep{apacheflink}.
@@ -95,7 +95,7 @@ Cílem a motivací této práce je zjistit, zda danou úpravou docílíme zrychl
 K provedení této práce potřebujeme upravit dotazovací engine.
 Při našem průzkumu jsme zjistili, že využití již existujících dotazovacích enginů v naší práci by bylo netriviálně náročné.
 Děje se tak ze dvou hlavních důvodů.
-Komerční dotazovací enginy, například Neo4j \citep{neopropertygraph} nebo Neptune \citep{neptune}, jsou vólně přístupné.
+Komerční dotazovací enginy, například Neo4j \citep{neopropertygraph} nebo Neptune \citep{neptune}, jsou volně přístupné.
 Nalezené dotazovací enginy s veřejným zdrojovým kódem, například dgraph \citep{dgraph}, jsou značně komplexní a pouze pochopení všech důležitých aspektů k vykonání zmíněných úprav by zabralo netriviální časové období.
 Protože cílem této práce je pouze otestovat obecný koncept propojení dotazovacího enginu s proudovým systémem, rozhodli jsme se vytvořit vlastní dotazovací engine s jednoduchou grafovou databází.
 
@@ -103,14 +103,14 @@ Námi vytvořená grafová databáze bude využívat Labeled-property (sekce \re
 Samotně bude pouze statická a bude celá obsažena v hlavní paměti, jelikož návrhnout komplexní databázi by opět zabralo netriviální časové období.
 Statickou databází zde rozumíme databázi, ve které nedochází za běhu k úpravě uložených dat (např. nelze přidat nebo odebrat nový vrchol).
 Dotazovací engine bude zpracovávat dotazy nad danou grafovou databází.
-K dotazování využijeme podmnožinu jazyka PGQL \citep{pgql}, jelikož obsahuje jednodušší skladbu jazyka narozdíl od jazyka openCypher \citep{openCypher} a umožní nám tak jednodušší načítání dotazů.
+K dotazování využijeme podmnožinu jazyka PGQL \citep{pgql}, jelikož obsahuje jednodušší skladbu jazyka na rozdíl od jazyka openCypher \citep{openCypher} a umožní nám tak jednodušší načítání dotazů.
 Daný jazyk má spoustu funkcí, které v naši práci nepovažujeme za vitální, proto jsme vybrali jen jeho určitou podmnožinu (podmnožina je blíže popsána v sekci \ref{req.pgql}).
 Samotný vývoj dotazovacího enginu bude probíhat ve dvou krocích.
 V prvním kroku musíme vyvinou řešení, která vykonávají agregace po dokončení prohledávání grafu.
 V tomto bodě se budeme snažit využít již existujících a hojně využívaných algoritmů (např. pro třídění algoritmus Merge sort). 
 V druhém kroku dojde k úpravě vykonávání dotazů dle zadání práce.
 Při vývoji budeme klást důraz na jednovláknové i paralelní zpracování.
-Nakonec provedeme experiment, který otestuje vytvořená řešení v prvním kroku vůči nově navrhnutým řešením v druhém kroku.
+Nakonec provedeme experiment, který otestuje vytvořená řešení v prvním kroku vůči nově navrženým řešením v druhém kroku.
 
 \section*{Cíl práce}
 
@@ -163,7 +163,7 @@ Vykonat experiment, který testuje původní zpracování (odrážka 1.b) vůči
 Cílem experimentu je určit, zda úprava dotazovacího enginu po vzoru proudových systémů způsobí zrychlení vykonávání dotazu:
 \begin{enumerate}
 \item Experiment bude proveden na několika reálných grafech s reálnými nebo uměle vygenerovanými vlastnostmi.
-\item V experimentu otestujeme všechna navrhnutá řešení.
+\item V experimentu otestujeme všechna navržená řešení.
 \item Každé řešení bude otestováno na několika vybraných dotazech.
 \item Experiment bude zakončen prezentací výsledků a diskuzí.
 \end{enumerate}

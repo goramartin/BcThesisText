@@ -9,13 +9,13 @@ V této kapitole popíšeme konkrétněji daný model a jazyk.
 
 Při zpracování této práce uvažujeme grafovou databázi, která pracuje s grafovým modelem Labeled-property\footnote{\url{https://en.wikipedia.org/wiki/Graph_database} [dostupnost ověřena k datu 8.5.2021]}.
 V této sekci popíšeme daný model a jeho vlastnosti z pohledu grafové databáze.
-Překvapivě neexistuje standartní definice daného modelu, ačkoliv je značně využíván v moderních systémech.
+Překvapivě neexistuje standardní definice daného modelu, ačkoliv je značně využíván v moderních systémech.
 Proto budeme vycházet z definice modelu systému Neo4j \citep{neopropertygraph} a jazyka PGQL \citep{pgql}.
 Na základě těchto definic určíme klíčové vlastnosti modelu, které budeme uvažovat v naši práci.
 
 \subsubsection{Obecný popis Labeled-property modelu}
 
-Obecně grafová dazabáze pracující s daným modelem organizuje grafová data do tří částí:
+Obecně grafová databáze pracující s daným modelem organizuje grafová data do tří částí:
 
 \begin{itemize}
 \item První část obsahuje množinu \textbf{vrcholů} (Vertices).
@@ -84,7 +84,7 @@ Nyní uvedeme příklad jednoduchého grafu splňující náš model:
 \label{figure.propertygraphexample}
 \end{figure}
 
-Na obrázku \ref{figure.propertygraphexample} vidímě tři vrcholy se štítkem \textbf{Osoba}, které reprezentující fyzické osoby, a jeden vrchol se šítkem \textbf{Univerzita} reprezentující vysokou školu.
+Na obrázku \ref{figure.propertygraphexample} vidíme tři vrcholy se štítkem \textbf{Osoba}, které reprezentující fyzické osoby, a jeden vrchol se štítkem \textbf{Univerzita} reprezentující vysokou školu.
 Štítku \textbf{Osoba} byly přiděleny dvě vlastnosti: \textit{Jméno} (řetězec) a \textbf{Věk} (číselná hodnota).
 Štítku \textbf{Univerzita} byla přidělena jedna vlastnost: \textit{Jméno}, která odpovídá stejné vlastnosti štítku \textbf{Osoba} a mají stejný typ hodnoty (řetězec).
 Mezi vrcholy fyzických osob existuje vztah \textbf{zná}, který určuje zda jedna osoba (počáteční vrchol) zná druhou osobu (koncový vrchol).
@@ -100,7 +100,7 @@ V průběhu práce budeme graf splňující daný model označovat jako \textbf{
 \label{req.pgql}
 
 V naši práci budeme používat dotazovací jazyk PGQL \citep{pgql} verze 1.2 k dotazování nad Property grafem.
-Jazyk je značné obsáhlý a k realizaci naši práce nepořebujeme všechny jeho vlastnosti, proto jsme se rozhodli využít jeho podmnožinu.
+Jazyk je značné obsáhlý a k realizaci naši práce nepotřebujeme všechny jeho vlastnosti, proto jsme se rozhodli využít jeho podmnožinu.
 V naši práci budeme pracovat jen s částmi \textit{Select}, \textit{Match}, \textit{Group by} a \textit{Order by}.
 Ostatní části nebudeme používat.
 V každém dotazu musí být vždy přítomná část \textit{Select} a \textit{Match}.
@@ -113,7 +113,7 @@ Zároveň v naši práci uvažujeme, že \textit{Order by} a \textit{Group by} n
 Součástí definice podgrafu jsou proměnné, které jsou přístupné v ostatních částech dotazu.
 Proměnná zde reprezentuje jeden element podgrafu.
 
-\item \textit{Select:} určuje vrácená data ve formě tabulky jako u tabulkových databazí.
+\item \textit{Select:} určuje vrácená data ve formě tabulky jako u tabulkových databází.
 K jednomu výsledku tak můžeme vrátit výčet informací.
 Každá položka výčtu pak definuje jeden sloupeček tabulky.
 
@@ -130,13 +130,13 @@ Pro komplexní popis odkazujeme na citovanou dokumentaci.
 Část \textit{Match} se skládá z posloupností elementů definující hledaný podgraf.
 Posloupnosti jsou odděleny čárkou.
 Položky v posloupnosti jsou vrcholy a hrany.
-Položky vrcholů značíme pomocí \texttt{()} a položky hran pomocí šipek \texttt{->} (dopředná hrana), \texttt{<-} (zpětná hrana) a \texttt{-} (libovólná hrana).
+Položky vrcholů značíme pomocí \texttt{()} a položky hran pomocí šipek \texttt{->} (dopředná hrana), \texttt{<-} (zpětná hrana) a \texttt{-} (libovolná hrana).
 
 Každé položce je možno přidělit jméno (definice proměnné) a predikát štítku.
 Vrcholu přidělíme proměnnou vložením jména do kulatých závorek: \texttt{(jméno)}.
 Hraně přidělíme proměnnou vložením jména do hranatých závorek: \texttt{-[jméno]->}, \texttt{<-[jméno]-} a \texttt{-[jméno]-}.
 V části \textit{Match} musí být vždy přítomna alespoň jedna proměnná.
-Pokud se v posloupnostech opakují proměnné zmená to, že v průběhu hledání musí dané položky obsahovat elementy se shodným \texttt{ID}.
+Pokud se v posloupnostech opakují proměnné znamená to, že v průběhu hledání musí dané položky obsahovat elementy se shodným \texttt{ID}.
 Nicméně, proměnné hran se nesmí opakovat.
 Pokud dvě posloupnosti nemají společnou proměnnou, tak výsledek je skalární součin daných posloupností. 
 
@@ -145,7 +145,7 @@ Predikát určuje výběr elementů pouze s daným štítkem.
 Pokud se v posloupnostech opakuje proměnná se štítkem, pak štítek musejí mít i opakované definice proměnných.
 Protože v našem modelu elementy mají pouze jeden štítek, tak element posloupnosti může mít pouze jeden predikát.
 Navíc jsme vyřadili možnost aplikovat v predikátu operátor „|“ (logická operace nebo), tj. nelze použít \texttt{(jméno:štítek|štítekDva)}.
-Následují příklady \textit{Match} části na grafu z obrázku \ref{figure.propertygraphexample} (bez \textit{Select}) a uvedné výsledky hledání rovněž odpovídají danému obrázku:
+Následují příklady \textit{Match} části na grafu z obrázku \ref{figure.propertygraphexample} (bez \textit{Select}) a uvedené výsledky hledání rovněž odpovídají danému obrázku:
 
 \begin{enumerate}
 \item
@@ -156,7 +156,7 @@ Jsou zde dva vrcholy s názvy proměnných \texttt{x} a \texttt{y}.
 Oba mají predikát štítku \texttt{:Osoba}.
 To znamená, že do položek posloupnosti budou vybrány pouze elementy s daným štítkem.
 Část \textit{Match} v průběhu hledání využívá pouze hrany vedoucí z proměnné \texttt{x}.
-Výsledeky hledání jsou dvojice vrcholů \texttt{x}-\texttt{y}: 2-1, 2-3, 3-2.
+Výsledky hledání jsou dvojice vrcholů \texttt{x}-\texttt{y}: 2-1, 2-3, 3-2.
 Hodnoty jsou zde \texttt{ID} elementů.
 
 \item
@@ -252,7 +252,7 @@ V tomto dotaze pak nepotřebujeme znát elementy z části \textit{Match}, ale s
 \subsubsection{Select}
 
 \textit{Select} část může obsahovat pouze výše zmíněné výrazy oddělené čárkami.
-V této části lze přístoupit k proměnným, které jsou definované v \textit{Match} části, nebo zadat výrazy agregačních funkcí.
+V této části lze přistoupit k proměnným, které jsou definované v \textit{Match} části, nebo zadat výrazy agregačních funkcí.
 Výsledkem části \textit{Select} je tabulka.
 Sloupečky v tabulce představují výrazy zadané v dané části.
 Řádky tabulky jsou pak hodnoty výrazů pro výsledky z části \textit{Match} nebo \textit{Group/Order by}.
@@ -289,7 +289,7 @@ Použití části \textit{Select} zároveň s částí \textit{Group by}:
 \begin{code}
 select avg(x.Vlastnost), x match (x) -> (y) group by x
 \end{code}
-Část textit{Select} může obsahovat pouze výrazy agregačních funkcí nebo výrazy zadaných v části \textit{Group by}.
+Část \textit{Select} může obsahovat pouze výrazy agregačních funkcí nebo výrazy zadaných v části \textit{Group by}.
 Výše zmíněný dotaz bez výrazu \texttt{x} v \textit{Select} části a ponecháním pouze agregační funkce je správně.
 Rovněž odstraněním agregační funkce z \textit{Select} části a zanecháním pouze druhého výrazu je správně.
 Výsledná tabulka má počet řádků rovný počtu vytvořených skupin.
@@ -302,7 +302,7 @@ Výsledná tabulka má počet řádků rovný počtu vytvořených skupin.
 \textit{Order by} a \textit{Select} části nemusí mít shodné výrazy.
 Výrazy v této části jsou opět odděleny čárkami.
 Operátor \texttt{asc}/\texttt{desc} za výrazem definuje zda jsou hodnoty tříděny vzestupně/sestupně.
-Pokud operátor chybí, tak je jako výchozí operator použit \texttt{asc}.
+Pokud operátor chybí, tak je jako výchozí operátor použit \texttt{asc}.
 Následují příklady použití \textit{Order by} části:
 \begin{itemize}
 \item

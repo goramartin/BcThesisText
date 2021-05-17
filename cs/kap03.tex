@@ -927,7 +927,7 @@ Implementace metod je stejná jako u \texttt{IntSum}.
 \item Třída \texttt{MinMaxBase<T>: Aggregate<T>} představuje logiku funkcí \texttt{min} a \texttt{max}.
 Očekává se, že úložiště bude mít \texttt{bool}, který říká zda již byla hodnota inicializována.
 Dále má aktuální minimum nebo maximum hodnot výrazu. 
-V threa-safe verzích metod je využito \texttt{Interlocked.CompareExchange(..)} jako princip Compare and Exchange. 
+V threa-safe verzích metod je využito \texttt{Interlocked.CompareExchange(..)} jako princip \textit{Compare and Exchange}. 
 \end{itemize}
 
 \subsubsection{Úložiště hodnot agregačních funkcí}
@@ -1470,7 +1470,7 @@ Schéma vrcholů v souboru \textit{EdgeTypes.txt}.
 Pro schémata jsme definovali JSON formát v sekci \ref{anal.vstup}.
 Obecně hrana a vrchol nemůžou mít stejný štítek.
 Typy vrcholů a hran mohou však sdílet vlastnost.
-Typy vlastností jsme definovali na \textbf{integer} a \textbf{string}. 
+Typy vlastností jsme definovali na \texttt{integer} a \texttt{string}. 
 Datový soubor hran v souboru \textit{Edges.txt}.
 Datový soubor vrcholů v souboru \textit{Nodes.txt}.
 Soubory mají formát definový formát v sekci \ref{anal.vstup} a \ref{impl.vstup}.
