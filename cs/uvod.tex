@@ -23,7 +23,7 @@ Hlavní rozdíl těchto dotazovacích jazyků od SQL je ten, že specifikují v�
 Pro PGQL a openCypher to je část dotazu \textit{Match} a pro SPARQL to je část dotazu \textit{Where}.
 Tyto sekvence tvoří podgraf (vzor), který bude vyhledáván v grafu.
 V moment nalezení všech podgrafů jsou na výsledcích aplikovány další části jako \textit{Group by}, \textit{Order by}, a podobně.
-Tomuto se říká vyhledávání vzoru, nebo-li pattern matching.
+Tomuto se říká vyhledávání vzoru, neboli pattern matching.
 Program, který poskytuje tuto možnost analýzy dat, budeme označovat jako \textbf{dotazovací engine}.
 \end{itemize}
 
@@ -34,7 +34,7 @@ Z tohoto důvodu začaly vznikat takzvané \textbf{proudové systémy} \citep{st
 Proudové systémy obecně pracují s daty, která jsou potencionálně nekonečná a nevlezou se do paměti.
 V takovém případě jsou data reprezentovány formou tekoucího „\textbf{proudu}“ (stream).
 Obecně uvnitř proudu mohou být jakákoliv data, například prováděné akce, události změn nebo transakce.
-Programy pracující s proudem dat sledují jen jeho určitý bod a zpracovávají data v moment kdy protékají daným bodem.
+Programy pracující s proudem dat sledují jen jeho určitý bod a zpracovávají data v moment, kdy protékají daným bodem.
 Výsledně program vidí jen útržky všech dat.
 Zpracování takových dat pak probíhá po částech.
 
@@ -60,10 +60,10 @@ Součástí agregace je i výpočet statických funkcí pro vzniklé skupiny.
 Tyto funkce označujeme jako agregační funkce.
 Mezi nejčastější agregační funkce patří funkce:
 \begin{itemize} 
-\item \texttt{min(...)}, která vrací minimum z hodnot ve skupině..
-\item \texttt{max(...)}, která vrací maximum z hodnot ve skupině..
+\item \texttt{min(...)}, která vrací minimum z hodnot ve skupině.
+\item \texttt{max(...)}, která vrací maximum z hodnot ve skupině.
 \item \texttt{count(...)}, která vrací počet prvků ve skupině.
-\item \texttt{avg(...)}, která vrací aritmetický průměr z hodnot ve skupině..
+\item \texttt{avg(...)}, která vrací aritmetický průměr z hodnot ve skupině.
 \item \texttt{sum(...)}, která vrací sumu z hodnot ve skupině.
 \end{itemize}
 Problémem je, že proudové systémy nedovolují vykonávat dotazy obsahující vyhledávání vzoru (část \textit{Match} pro PGQL nebo \textit{Where} pro SPARQL), protože grafová data čteme po částech a tak je vyhledávání vzoru prakticky nemožné.
@@ -74,7 +74,7 @@ Avšak, tím se ztratí všechny výhody proudových systémů.
 
 Na základě poznatků z předchozí sekce v této práci provedeme úpravu dotazovacího enginu po vzoru proudových systémů.
 Konkrétně upravíme části zabývající se agregací dat, tj. části \textit{Group by} a \textit{Order by}.
-%\textit{Order by} ma za úkol setřídit výsledky prohledávání dle zadaných klíčů.
+%\textit{Order by} má za úkol setřídit výsledky prohledávání dle zadaných klíčů.
 Ačkoliv \textit{Order by} nespadá konkrétně pod definici agregace, tak z našeho pohledu provádí „primitivní seskupení“.
 V takovém případě výsledky se stejnými hodnotami klíčů třídění ve výstupu tvoří souvislou posloupnost (tj. leží u sebe), protože taková posloupnost nemůže obsahovat prvek, který má rozdílné hodnoty klíčů od hodnot klíčů prvků v dané posloupnosti.
 Kdyby takový prvek existoval, pak by se nejednalo o setříděnou posloupnost.   
@@ -114,7 +114,7 @@ Nakonec provedeme experiment, který otestuje vytvořená řešení v prvním kr
 
 \section*{Cíl práce}
 
-Hlavním cílem práce je určit zda úprava částí \textit{Group by} a \textit{Order by} dotazovacího enginu po vzoru proudových systémů dociluje rychlejšího zpracování dotazů než zpracování, které by dané části vykonávalo po získání všech výsledků prohledávání grafu.
+Hlavním cílem práce je určit, zda úprava částí \textit{Group by} a \textit{Order by} dotazovacího enginu po vzoru proudových systémů dociluje rychlejšího zpracování dotazů než zpracování, které by dané části vykonávalo po získání všech výsledků prohledávání grafu.
 Kroky k dosažení cíle jsou následovné:
 \begin{enumerate}
 \item

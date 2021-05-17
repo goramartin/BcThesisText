@@ -11,7 +11,7 @@
 \contentsline {figure}{\numberline {2.7}{\ignorespaces Diagram paralelizace řešení \textbf {Local + dvoucestné slévání} pro 4 vlákna.}}{38}{figure.2.7}%
 \contentsline {figure}{\numberline {2.8}{\ignorespaces UML class diagram nových objektů reprezentující části \textit {Group by} a \textit {Order by}.}}{40}{figure.2.8}%
 \contentsline {figure}{\numberline {2.9}{\ignorespaces UML class diagram rozšířeného objektu \textit {Match}. Objekt nyní drží přímý odkaz na \texttt {ResultProcessor} a zároveň implementuje původní logiku objektu.}}{41}{figure.2.9}%
-\contentsline {figure}{\numberline {2.10}{\ignorespaces Diagram objektů upraveného vykonání představující části dotazu \texttt {select x match (x) order by x}. Plná šipka znázorňuje původní propojení a tečkovaná šipka představuje nové nové propojení.}}{41}{figure.2.10}%
+\contentsline {figure}{\numberline {2.10}{\ignorespaces Diagram objektů upraveného vykonání představující části dotazu \texttt {select x match (x) order by x}. Plná šipka znázorňuje původní propojení a tečkovaná šipka představuje nové propojení.}}{41}{figure.2.10}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {4.1}{\ignorespaces Doba vykonání dotazů \textit {Match} pro graf Amazon0601 (sekce \ref {tab.grafBase}). Jedno vlákno vůči osmi vláknům.}}{98}{figure.4.1}%

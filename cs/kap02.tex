@@ -11,7 +11,7 @@ Pokud v nějaké ukázce použijeme jazyk C\# míníme tím jazyk C\# pro .NET F
 
 \section{Obecný pohled na engine}
 
-V naší představě je dotazovací engine určen pro práci nad grafem, který je celý obsažen v paměti a to včetně vlastností elementů grafu.
+V naší představě je dotazovací engine určen pro práci nad grafem, který je celý obsažen v paměti, a to včetně vlastností elementů grafu.
 Graf bude načten v definovaném formátu a následně na něm budou vykonávány dotazy.
 Graf po načtení bude pouze statický, tedy nebude v něm docházet k žádným změnám.
 Nad grafem se pak vykoná uživatelsky definovaný dotaz.
@@ -35,7 +35,7 @@ Uživatel při spuštění aplikace vybere chtěný mód.
 Aplikace po zapnutí načte graf z datových souborů.
 Uživatel pomocí příkazové řádku zadá dotaz k vykonání.
 Dotaz se vykoná a po dokončení uživatel může opět zadat další dotaz.
-Myslíme, že zde není nutné složité grafické rozhraní a proto budeme engine považovat za konzolovou aplikaci. 
+Myslíme, že zde není nutné složité grafické rozhraní, proto budeme engine považovat za konzolovou aplikaci. 
 
 \section{Reprezentace grafu} \label{anal.grafrep}
 
@@ -91,7 +91,7 @@ Hranám z/do něj. Daný přístup by měl být co nejrychlejší a neměl by ob
 V průběhu prohledávání grafu se z vrcholu musí projít skrze všechny jeho hrany. 
 
 \item Pokud držíme hranu, musíme být schopni přistoupit ke koncovému vrcholu. 
-V průběhu prohledávání grafu vždy vlastníme vrchol než přistoupíme k jeho hraně a následně k jejímu koncovému vrcholu. 
+V průběhu prohledávání grafu vždy vlastníme vrchol, než přistoupíme k jeho hraně a následně k jejímu koncovému vrcholu. 
 Tímto můžeme vyloučit nutnost, aby hrana znala informaci o svém původu.
 
 \item Pokud držíme element grafu, chceme být schopni přistoupit k jeho sousedním elementů v obsahující struktuře za předpokladu, že víme, jestli se jedná o hranu nebo vrchol. 
@@ -108,7 +108,7 @@ Abstraktní předek všech elementů by si měl nově pamatovat i svou pozici v 
 Každé pole tedy bude mít unikátní typ, který nám pomůže rozlišit k jaké situaci má dojít v průběhu prohledávání grafu.
 
 Zbývá vyřešit vztah hran a vrcholů.
-Řešení, které bychom chtěli zvolit, je mít hrany v polích seskupeny podle: vrcholů odkud vycházejí (pole \texttt{out} hran), vrcholů kam směřují (pole \texttt{in} hran).
+Řešení, které bychom chtěli zvolit, je mít hrany v polích seskupeny podle: vrcholů, odkud vycházejí (pole \texttt{out} hran), a  vrcholů, kam směřují (pole \texttt{in} hran).
 Vrchol by si pak pamatoval rozsah svých hran v příslušných polích. 
 Chceme-li procházet hrany vrcholu, stačí procházet pole \texttt{out}/\texttt{in} hran pomocí rozsahů uložených v daném vrcholu.
 Tedy čtyř indexů.
@@ -219,7 +219,7 @@ V druhém kroku dojde k syntaktické a sémantické analýze tokenů.
 Metodou top-down parsing \citep[str. 217]{dragonBook} se vytvoří stromová struktura reprezentující daný dotaz.
 Poslední krok provede vytvoření tříd reprezentující dotaz pomocí iterace stromové struktury.
 Iterace a sběr dat ze stromové struktury budou implementovány návrhovým vzorem Visitor \citep[str. 331]{patterns}.
-V naši představě bychom chtěli vygenerovat stromovou strukturu pro každou hlavní část dotazu (\textit{Match}, \textit{Select}, \textit{Order by} a Group by).
+V naší představě bychom chtěli vygenerovat stromovou strukturu pro každou hlavní část dotazu (\textit{Match}, \textit{Select}, \textit{Order by} a Group by).
 Nyní bychom mohli sestavit Visitor pro každou část separátně a vyřadit tak nutnost jednoho globálního Visitoru.
 Dané postupy nám pak umožní jednoduše pracovat s naší podmnožinou jazyka PGQL.
 
@@ -232,7 +232,7 @@ Pole bude obsahovat třídy.
 Třída si musí pamatovat jakou proměnou reprezentuje, \verb+elType+ pokud je definován a jde-li o hranu nebo vrchol.
 Jedná se o všechny nutné informace, které můžeme následně využít k vytvoření vzoru prohledávání grafu.
 Všimnout si musíme faktu, že \textit{Match} část definuje proměnné ve zbytku dotazu.
-Během načítání dotazu musíme určit zda se jedná o validní proměnnou a při výpočtech hodnot výrazů je nutné vědět přesně k jaké proměnné musíme přistoupit.
+Během načítání dotazu musíme určit, zda se jedná o validní proměnnou a při výpočtech hodnot výrazů je nutné vědět přesně k jaké proměnné musíme přistoupit.
 Problém se dá řešit vytvořením mapy/slovníku přístupných proměnných pro zbytek dotazu.
 Proměnným pak můžeme přiřadit \verb+ID+.
 
@@ -322,7 +322,7 @@ Skupiny jsou vytvářeny v části \textit{Group by}.
 Jejich návratové hodnoty jsou finální pouze po dokončení \textit{Group by}. 
 Vstupem funkcí jsou výstupní hodnoty uživatelem zadaných výrazů.
 Argument, dle kterého se aktualizuje agregovaná hodnota, je nutný znát pouze v době vykonání \textit{Group by}.
-Dle naši představy je ideální vytvořit dva separátní koncepty.
+Dle naší představy je ideální vytvořit dva separátní koncepty.
 První koncept bude zahrnovat výpočet hodnot argumentu společně s logikou agregační funkce.
 Koncept bude reprezentován třídou, která vlastní stromovou strukturu dle předchozího příkladu.
 Zároveň bude obsahovat logiku počítané funkce.
@@ -562,7 +562,7 @@ Strukturu budeme chápat jako propojené posloupnosti tříd.
 Třída obsahuje informace specifikující vhodný element grafu, který ji má náležet.
 Cílem DFS je nalézt elementy grafu, které budou odpovídat hledaným posloupnostem.
 V průběhu DFS prohledávání si vzor pamatuje aktuální třídu, pro kterou DFS hledá vhodný element.
-V moment průchodu DFS přes nějaký element se ověří zda se jedná o vhodný element pro aktuální třídu.
+V moment průchodu DFS přes nějaký element se ověří, zda se jedná o vhodný element pro aktuální třídu.
 Pokud ano, třída nyní reprezentuje daný element, DFS z něj pokračuje v prohledávání a dojde k přestupu na další třídu v posloupnosti.
 Pokud ne, DFS se vrací na předchozí element v prohledávání, ze kterého vybere ještě neprozkoumaný element procházení.
 
@@ -624,7 +624,7 @@ Pokud dojde k nalezení podgrafu, tak výsledek bude uložen způsobem z sekce \
 V našem případě tedy překopírování elementů z pole proměnných náležící vzoru.
 
 Vyhledávání separátních komponent vyřešíme následovně.
-V momentě kdy nalezneme podgraf odpovídající jedné komponentě, tak se spustí DFS vyhledávání pro komponentu další.
+V momentě, kdy je nalezen podgraf odpovídající jedné komponentě, spustí se DFS vyhledávání pro komponentu další.
 Teprve až projdeme všechny komponenty se výsledek uloží do tabulky, protože tuto chvíli budeme vlastnit finální výsledek prohledávání.
 Zbavíme se tak nutnosti uchovávat mezivýsledky a následnému tvoření skalárního součinu.
 
@@ -943,7 +943,7 @@ Vlákno v moment nutnosti rozšíření zablokuje vstup přes semafor.
 Vlákno se na přístup pokusí projít skrze semafor.
 Pokud je mu vstup zabráněn, tak dochází k rozšiřování tabulky.
 V opačném případě aktualizuje výslednou hodnotu agregační funkce.
-Postup s List může být však značně pomalý a proto budeme uvažovat, jestli přístup raději implementovat pouze pro Bucket.
+Postup s List může být však značně pomalý, proto budeme uvažovat, jestli přístup raději implementovat pouze pro Bucket.
 Řešení \textbf{Global} je znázorněno na obrázku \ref{figure.diaGlobalGr} na konci této sekce.
 
 \subsection{Two-step Group by} \label{anal.groupby.twostep}
@@ -1104,7 +1104,7 @@ První úroveň bude přímé spojení nových objektů s objektem \textit{Match
 Popíšeme realizaci první úrovně propojení, tj. objekt \textit{Match} drží odkaz na objekt \textit{Group/Order by}.
 Abychom realizovali tuto úroveň, tak musíme upravit objekt \textit{Match}.
 Objekt \textit{Match} rozšíříme o chápání logiky nových objektů (obrázek \ref{figure.diaStreamedQueryObjects}).
-Stávající objekt \textit{Match} jsme v naši představě pouze rozšířili a nevytvářeli kompletně nový objekt, protože propojení s \textit{Select} objektem je realizováno stále původním způsobem.
+Stávající objekt \textit{Match} jsme v naší představě pouze rozšířili a nevytvářeli kompletně nový objekt, protože propojení s \textit{Select} objektem je realizováno stále původním způsobem.
 Finální propojení objektů je pak znázorněno na obrázku \ref{figure.diaStreamedQueryObjectsCon}.
 
 \begin{figure}[!htp]
@@ -1115,7 +1115,7 @@ Finální propojení objektů je pak znázorněno na obrázku \ref{figure.diaStr
 
 \begin{figure}[!htp]
 \includegraphics{../img/diaStreamedQueryObjectsCon.pdf}\centering
-\caption{Diagram objektů upraveného vykonání představující části dotazu \texttt{select x match (x) order by x}. Plná šipka znázorňuje původní propojení a tečkovaná šipka představuje nové nové propojení.}
+\caption{Diagram objektů upraveného vykonání představující části dotazu \texttt{select x match (x) order by x}. Plná šipka znázorňuje původní propojení a tečkovaná šipka představuje nové propojení.}
 \label{figure.diaStreamedQueryObjectsCon}
 \end{figure}
 
@@ -1123,10 +1123,10 @@ Finální propojení objektů je pak znázorněno na obrázku \ref{figure.diaStr
 
 Musíme ještě navrhnout způsob předávání výsledků částem \textit{Order/Group by} v průběhu prohledávání grafu.
 Způsob musí být použitelný pro paralelní zpracování, proto budeme rovnou přemýšlet nad paralelním řešením.
-V naši představě budeme vycházet přímo z původního návrhu z sekce \ref{anal.match}.
+V naší představě budeme vycházet přímo z původního návrhu z sekce \ref{anal.match}.
 Definovali jsme si, že každé vlákno vlastní lokálně strukturu vzoru \texttt{Pattern}, objekt vyhledávání \texttt{Matcher} a tabulku výsledků.
 Finální výsledky ukládá do tabulky a po dokončení prohledávání grafu dojde k slévání tabulek.
-Zde upravíme část, kdy dochází k ukládání výsledků do tabulky.
+Zde upravíme část, ve které dochází k ukládání výsledků do tabulky.
 Vlákno bude držet odkaz na objekt \textit{Group/Order by} a v moment nalezení výsledek předá pomocí volání metody \texttt{ProcessResult}.
 Metoda výsledek zpracuje a po návratu z metody se pokračuje ve vyhledávání.
 To se opakuje dokud prohledávání grafu neskončí.
@@ -1203,7 +1203,7 @@ V následujících sekcích navrhneme způsob zpracování \textit{Order by} v p
 
 \subsection{Obecný princip zpracování}
 
-V naši představě zpracování budeme udržovat setříděnou posloupnost výsledků prohledávání.
+V naší představě zpracování budeme udržovat setříděnou posloupnost výsledků prohledávání.
 Při nalezení výsledku výsledek zatřídíme do již setříděné posloupnosti.
 Obecně jsme se rozhodli použít následující princip.
 Bude existovat totožná tabulka výsledků prohledávání jako v původním řešení společně s indexační strukturou tabulky, protože nechceme přesouvat řádky tabulky.
@@ -1237,7 +1237,7 @@ Jediným rozdílem je, že k nalezení místa vložení se používá binární 
 
 Problém zde představuje posouvání prvků v poli.
 Předpokládáme-li, že prvky posouváme napravo, tak v nejhorším případě vložením na začátek pole posuneme všechny prvky.
-V naši představě bychom chtěli problém řešit rozmístěním mezer mezi prvky v poli.
+V naší představě bychom chtěli problém řešit rozmístěním mezer mezi prvky v poli.
 Mezerou zde rozumíme prázdný záznam, tj. neobsahuje žádný index tabulky výsledků.
 Mezi každými dvěma sousedními prvky by existoval stejný počet prázdných záznamů.
 Vložení by bylo opět realizováno binárním vyhledáváním.
@@ -1358,7 +1358,7 @@ Pro finální rozhodnutí, kterou strukturu zvolíme k zatřiďování, jsme roz
 Tentokrát budeme měřit první část vkládání $n$ prvků do prázdné struktury (test je označen \textit{build}).
 Výsledky jsou v tabulce \ref{tab.orderbyexpr3}.
 Vidíme, že v experimentu je rychlejší \texttt{SortedSet}.
-Situaci si vysvětlujeme režií za operaci vložení do $(a, b)$-stromu, kdy dochází k častému překopírovávání prvků v moment vytváření nového vrcholu.
+Situaci si vysvětlujeme režií za operaci vložení do $(a, b)$-stromu, při které dochází k častému překopírovávání prvků v moment vytváření nového vrcholu.
 Nicméně, v průběhu experimentu jsme sledovali paměťové vytížení procesu pomocí nativního nástroje \texttt{Memory Usage} Visual Studia 2019.
 Ukázalo se, že v průběhu testu \texttt{SortedSet} dosahovalo využití paměti $6,8$\,GB, zatímco $(a, b)$-strom pouze $2,1$\,GB.
 Daný jev je způsoben vytvářením nové třídy pro každý vložený prvek do struktury \texttt{SortedSet}.
@@ -1367,7 +1367,7 @@ Finálně jsme se rozhodli zatřiďování realizovat pomocí $(a, b)$-stromu.
 \subsection{Ukládání prvků v (a, b)-stromu} \label{anal.improvement.orderby.storeindex}
 
 V minulé sekci jsme rozhodli, že zatřiďování nalezených prvků prohledávání provedeme pomocí $(a, b)$-stromu.
-Musíme definovat chování, kdy nějaké dva prvky sdílí stejnou hodnotu třídění.
+Musíme definovat chování v případě, kdy nějaké dva prvky sdílí stejnou hodnotu třídění.
 Předpokládejme, že ve stromě existuje index s určitou hodnotou klíče.
 Prohledávání nalezne výsledek a uloží jej do tabulky a následně index řádku vloží k zatřídění do stromu.
 V takovém případě dva indexy se budou jevit jako shodné.

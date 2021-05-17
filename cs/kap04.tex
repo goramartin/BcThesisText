@@ -13,7 +13,7 @@ Pro náš experiment jsme použili tři orientované grafy z databáze SNAP \cit
 Grafy jsme primárně vybírali na základě počtu nalezených výsledků z testovaného dotazu \textit{Match} části (sekce \ref{expr.matchDotazy}).
 Počet vygenerovaných výsledku je zobrazen v sekci výsledků \ref{matchResults}.
 Cíl byl nalézt grafy, které vygenerují počet výsledků v řádech $10^7$ až $10^8$, abychom mohli sledovat chování řešení při zpracování velkého množství dat.
-Zároveň jsme vybrali grafy pro které platí, že mají minimálně dvojnásobný počet výsledků vůči již vybraným grafům, což nám umožní sledovat chování řešení při zvyšování počtu zpracovaných výsledků.
+Zároveň jsme vybrali grafy, pro které platí, že mají minimálně dvojnásobný počet výsledků vůči již vybraným grafům, což nám umožní sledovat chování řešení při zvyšování počtu zpracovaných výsledků.
 Výsledky v řádu $10^9$ bychom měli problém zpracovat na testovaném hardwaru (sekce \ref{expr.hw}), kvůli nedostatku paměti.
 Samotná databáze SNAP nám poskytla datový formát, který jsme byli schopni jednoduše transformovat na náš vstupní datový formát.
 
@@ -329,9 +329,9 @@ Následuje shrnutí:
 \begin{itemize}
 
 \item G\_Q1 testuje \textit{Single group Group by}. Vše je agregováno pouze do jedné skupiny. 
-\item G\_Q2 a G\_Q3  testuje vytváření skupin podle \verb+ID+ vrcholů. Rozdíl mezi nimi je ten, že proměnná x je při paralelním zpracování přístupná pouze jednomu vláknu za celý běh vyhledávání. Maximální počet skupin je ze shora omezen počtem vrcholů v grafu.
-\item G\_Q4 a G\_Q5 přidávají režii za ukládání a zpracovávání další proměnné. Počet skupin je ze shora omezen počtem hran v grafu. Tyto dotazy obsahují nejvíce skupin mezi zbylými dotazy.
-\item G\_Q6 testuje vytváření skupin náhodně vygenerovaných hodnot z celého rozsahu \verb+Int32+ (viz \ref{tab.grafProps}). Počet skupin je ze shora omezen počtem vrcholů v grafu.
+\item G\_Q2 a G\_Q3  testuje vytváření skupin podle \verb+ID+ vrcholů. Rozdíl mezi nimi je ten, že proměnná x je při paralelním zpracování přístupná pouze jednomu vláknu za celý běh vyhledávání. Maximální počet skupin je shora omezen počtem vrcholů v grafu.
+\item G\_Q4 a G\_Q5 přidávají režii za ukládání a zpracovávání další proměnné. Počet skupin je shora omezen počtem hran v grafu. Tyto dotazy obsahují nejvíce skupin mezi zbylými dotazy.
+\item G\_Q6 testuje vytváření skupin náhodně vygenerovaných hodnot z celého rozsahu \verb+Int32+ (viz \ref{tab.grafProps}). Počet skupin je shora omezen počtem vrcholů v grafu.
 \item G\_Q7 testuje vytváření skupin náhodně vygenerovaných hodnot z rozsahu $[0; 100$ $000]$ \verb+Int32+ (viz \ref{tab.grafProps}). Dojde k rozprostření několika stejných hodnot v grafu. Maximální počet skupin je 100 000.
 \item G\_Q8  testuje vytváření skupin náhodně vygenerovaných hodnot z rozsahu $[0; 1000]$ \verb+Int32+ (viz \ref{tab.grafProps}). Dojde k rozprostření mnoha stejných hodnot v grafu. Maximální počet skupin je 1000.
 
@@ -443,7 +443,7 @@ Benchmark společně s dotazovacím enginem a potřebnými knihovnami byl přelo
 V této sekci prezentujeme naměřená data pro všechny tři grafy (\ref{expr.graphs}), které jsme podrobili dotazům z sekce \ref{expr.dotazy}.
 U grafů \textit{Group/Order by} se držíme značení odpovídající z kapitoly implementace.
 Značení se skládá ze tří částí.
-Prvních dvě jsou obsaženy vždy a poslední je použit popuze v paralelní části \textit{Group by}.
+Prvních dvě jsou obsaženy vždy a poslední je použit pouze v paralelní části \textit{Group by}.
 Značení vypadá následovně:
 \begin{code}
 [Mód enginu]:  [Název řešení] [způsob ukládání výsledků u Group by]
@@ -537,7 +537,7 @@ Nejprve shrneme základní koncepty použitých řešení.
 Každé řešení pracuje s tabulkou výsledků, kterou musí setřídit.
 Nikdy netřídíme samotné řádky tabulky, ale pouze indexy řádků.
 Výsledek třídění je indexační struktura nad tabulkou.
-Při porovnávání je nutné mít na paměti, že jednovláknově bežící části používají optimalizace popsané v sekcích \ref{anal.orderby.opt1}, \ref{anal.orderby.opt2} a \ref{impl.orderby.opts}.  
+Při porovnávání je nutné mít na paměti, že jednovláknově běžící části používají optimalizace popsané v sekcích \ref{anal.orderby.opt1}, \ref{anal.orderby.opt2} a \ref{impl.orderby.opts}.  
 
 Mód \textbf{Normal} využívá k třídění algoritmus Merge sort.
 Algoritmus je implementován v knihovně HPCsharp \citep{hpcsharp}.
@@ -553,7 +553,7 @@ Tedy místo vytvoření nového záznamu ve stromě dojde pouze k vložení do p
 
 \subsubsection{Výsledky jednovláknového zpracování}
 
-Začneme řešením běžícím v jednom vlákně, tj. grafy  \ref{figure.amazonOrderST} a \ref{figure.webberkstanOrderST}.
+Začneme řešením běžícím v jednom vlákně, tj. grafy \ref{figure.amazonOrderST} a \ref{figure.webberkstanOrderST}.
 Můžeme si všimnout, že výsledky vypadají v rámci daných grafů konzistentně pro každý dotaz.
 Ani jedno z vylepšených řešení nedokázalo porazit mód \textbf{Normal}, což odpovídá našim předpokladům. 
 Je to způsobeno značnou režií za metodu vložení (\verb+Insert+) do stromu, ve které dochází k častému alokování nových vrcholů a překopírovávání prvků.
@@ -585,7 +585,7 @@ Při příchozím výsledku se získá hodnota prvního klíče třídění a ur
 Do přihrádky vlákno přistoupí pomocí přiloženého zámku.
 Následně výsledek vloží do tabulky a index nového řádku tabulky do stromu.
 Rozdíl v řešeních je pak jen využitá stromová struktura.
-Při porovnávání je nutné mít na paměti, že lokálně bežící části používají optimalizace popsané v sekcích \ref{anal.orderby.opt1}, \ref{anal.orderby.opt2} a \ref{impl.orderby.opts}.  
+Při porovnávání je nutné mít na paměti, že lokálně běžící části používají optimalizace popsané v sekcích \ref{anal.orderby.opt1}, \ref{anal.orderby.opt2} a \ref{impl.orderby.opts}.  
 
 \subsubsection{Výsledky paralelního zpracování}
 
@@ -743,10 +743,10 @@ Absenci jevu neumíme plně objasnit.
 \subsubsection{Porovnání výsledků úložišť List/Bucket jednovláknového zpracování}
 
 Na největším grafu platí, že použité ukládání List je pomalejší než Bucket, kvůli indirekci navíc.
-Na menších grafech rozdíly ustupují a dokonce nastávají situace, kdy je List rychlejší. 
+Na menších grafech rozdíly ustupují, a dokonce nastávají situace, kdy je List rychlejší. 
 Přesněji u dotazů G\_Q4 a G\_Q5.
 Přehození rolí si u nich vysvětlujeme režií za množství vytvářených polí (tj. hodně alokací, málo přístupů), které se vyrovná použité indirekci.
-Na grafu Amazon0601 u  G\_Q4 a G\_Q5 dotazů je \textbf{Streamed} řešení pomalejší než \textbf{Half-Streamed} s úložištěm List, protože také vytváří pole jako Bucket řešení (viz implementace \ref{impl.improvement.groupby.streamed}).
+Na grafu Amazon0601 u G\_Q4 a G\_Q5 dotazů je \textbf{Streamed} řešení pomalejší než \textbf{Half-Streamed} s úložištěm List, protože také vytváří pole jako Bucket řešení (viz implementace \ref{impl.improvement.groupby.streamed}).
 U dalších grafů je pak počet vytvářených polí mnohonásobně menší než počet přístupů k nim.
 
 \bigskip

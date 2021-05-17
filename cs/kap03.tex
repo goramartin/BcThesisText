@@ -241,7 +241,7 @@ Kde \texttt{token} je typ vlastnosti a \texttt{name} je její název.
 \subsubsection{Třída Graph}
 
 Třída \texttt{Graph} pak reprezentuje celý graf.
-Můžeme se dívat na ni spíše jako na objekt držící data grafu a ne objekt se složitou logikou.
+Můžeme se dívat na ni spíše jako na objekt držící data grafu, a ne objekt se složitou logikou.
 Načítá grafová data během inicializace.
 Zároveň dělá kontrolu načtených vlastností a jejich typů během načítání.
 Obsahuje pole všech typů elementů. Tedy \texttt{List<Vertex>}, \texttt{List<InEdge>} a \texttt{List<OutEdge>}.
@@ -350,7 +350,7 @@ Výstupem jsou stromové struktury hlavních částí dotazu, které jsou dále 
 \item \texttt{QueryExecutionHelper qEhelper} obsahuje informace o způsobu vykonání dotazu. 
 \item \texttt{QueryExpressionInfo exprInfo} obsahuje všechny výrazy (expressions) v dotazu.
 \end{itemize}
-Po inicializaci, v moment volání metody \texttt{Compute()} dojde k vyvolání metody \texttt{Compute(...)} na položce \texttt{query}.
+V moment volání metody \texttt{Compute()} dojde k vyvolání metody \texttt{Compute(...)} na položce \texttt{query}.
 Tímto se spustí vykonávání dotazu.
 
 \subsubsection{Třída QueryObject}
@@ -533,7 +533,7 @@ Obsahuje dva indexy \texttt{int startVerticesIndex} a \texttt{int startVerticesE
 Dva indexy určují rozsah vrcholů z pole vrcholů \texttt{List<Vertex>}, ze kterých se bude spouštět prohledávání.
 Dané položky jsou inicializovány na celý rozsah pole, což odpovídá jednovláknovému zpracování.
 Třída má rozhraní \texttt{void SetStartingVerticesIndeces( int start, int end)} nastavující dané indexy rozsahu.
-Daná metoda se používá v paralelním zpracování, kdy je přidělováno malé množství vrcholů z grafu k prohledání.
+Daná metoda se používá v paralelním zpracování v momentě, kdy je přidělováno malé množství vrcholů z grafu k prohledání.
 Metodou \texttt{void Search()} se spustí prohledávání grafu.
 Prohledávání prochází všechny vrcholy v definovaném rozsahu a pak se ukončí.
 V tento moment lze nastavit zmíněnou metodou další rozsah a opět spustit prohledávání grafu.
@@ -742,7 +742,7 @@ Protože by se vlákna snažila ukládat výsledky na sdílené pozice a došlo 
 Snažili jsme se problém vyřešit třídou \texttt{ThreadLocal} (lokální úložiště vlákna).
 Každá ukládaná položka by byla obsažena v dané třídě a vlákna by tak měla svá úložiště.
 Dalším zkoušeným řešením bylo uzavřít celou třídu porovnávače do \texttt{ThreadLocal}.
-Avšak, tyto způsoby způsobili zpomalení vykonávání a proto jsme se rozhodli optimalizaci využívat pouze v jednovláknovém prostředí.
+Avšak, tyto způsoby způsobili zpomalení vykonávání, proto jsme se rozhodli optimalizaci využívat pouze v jednovláknovém prostředí.
 
 \subsubsection{Třída RowComparer a IndexToRowProxyComparer}
 
@@ -829,7 +829,7 @@ První vypočte haš vkládaného objektu a při porovnání se vyvolá metoda \
 Strukturám se dá v konstruktoru poskytnou vlastní implementaci rozhraní.
 Díky této implementaci jsme vymysleli dvě optimalizace:
 \begin{enumerate}
-\item V moment kdy dochází k použití \texttt{Dictionary} nebo aktu slévání hašovacích tabulek budeme jako \texttt{Key} používat strukturu \texttt{GroupDictKey}.
+\item V moment, kdy dochází k použití \texttt{Dictionary} nebo aktu slévání hašovacích tabulek, budeme jako \texttt{Key} používat strukturu \texttt{GroupDictKey}.
 Struktura obsahuje dvě položky \texttt{int hash} a \texttt{int position}. 
 \texttt{hash} je zde haš řádku a \texttt{position} je index řádku v tabulce výsledků.
 Tedy jsme rozšířili \texttt{Key} o haš hodnotu řádku, kterou můžeme znovu použít, pokud to bude nutné.
@@ -1119,7 +1119,7 @@ Objekt algoritmu musíme také upravit a předat mu odkaz na objekt zpracování
 \subsubsection{Třída DFSParallelPatternMatcherStreamed}
 
 Tato třída představuje upravené chování třídy \texttt{DFSParallelPatternMatcher}.
-V konstruktoru se nepředává tabulka výsledků  \texttt{MatchFixedResults} a nedochází zde ke slévání výsledků.
+V konstruktoru se nepředává tabulka výsledků \texttt{MatchFixedResults} a nedochází zde ke slévání výsledků.
 Při inicializaci objektů jednovláknového prohledávání grafu se vytvářejí nově instance třídy \texttt{DFSParallelPatternMatcherStreamed}. 
 Tyto instance obdrží nově \texttt{ID} na základě jejich pořadí vzniku.
 Samotná paralelizace zpracování prohledávání funguje totožně jako v původní třídě.
@@ -1330,7 +1330,7 @@ Využíváme danou strukturu, protože při slévání výsledků je sléváno n
 Kdybychom použili původní strukturu, tak bychom nedokázali rozeznat, které tabulce řádek náleží.
 
 \item Implementaci metody \texttt{Process(Element[] result, int matcherID)}, ve které dochází v první části k lokálnímu seskupování.
-V moment kdy vlákno dokončí prohledávání grafu začne slévat své lokální výsledky do položky \texttt{globalGroups}.
+V moment, kdy vlákno dokončí prohledávání grafu, začne dané vlákno slévat své lokální výsledky do položky \texttt{globalGroups}.
 Slévání vykonává metoda \texttt{MergeResults(GroupJob job, int matcherID)}.
 V jednovláknovém zpracování nedochází ke slévání.
 \end{itemize}
@@ -1387,7 +1387,7 @@ Obsahuje:
 \item Položku \texttt{bool lastWasInserted}, která říká, zda poslední vytvořené pole bylo vloženo do hašovací tabulky.
 Pokud bylo vloženo, tak se při volání metody \texttt{Create} vytváří pole úplně nové.
 Pokud nebylo, tak se nevytváří pole nové, ale pouze se přepíšou hodnoty klíčů v prvních \texttt{keysCount} objektech uvnitř pole \texttt{lastBucketsKeyValue}.
-Tímto vytváříme pole jen když je to nutné.
+Tímto vytváříme pole, jen když je to nutné.
 \item Položku \texttt{BucketKeyFactory[] factories}, je pole objektů, které vytvářejí objekty klíčů (\texttt{AggregateBucketResultStreamed<T>}).
 Každý objekt v tomto poli vytváří jeden objekt hodnoty klíče pro výsledné pole uvnitř metody \texttt{Create(...)}.
 \end{itemize}
@@ -1543,7 +1543,7 @@ s & abtreeAccumS & Streamed: ABTreeAcccumulator \\
 Každý mód má svá vlastní řešení.
 Názvy řešení odpovídají názvům z implementace.
 Hodnota ve sloupečku \textbf{Argument} udává hodnotu argumentu.
-Pokud bylo zadáno „refL“ nebo „refB“, pak je \textit{Group by} vykonáno jedním vláknem i když bylo definováno paralelní zpracování v argumentu \textbf{ThreadCount}.
+Pokud bylo zadáno „refL“ nebo „refB“, pak je \textit{Group by} vykonáno jedním vláknem, přestože bylo definováno paralelní zpracování v argumentu \textbf{ThreadCount}.
 Výběr zpracování \textit{Single group Group by} závisí pouze na výběru módu, protože každý mód má pravě jedno takové řešení.
 \begin{table}[!htb]
 \centering

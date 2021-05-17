@@ -11,7 +11,7 @@ Při zpracování této práce uvažujeme grafovou databázi, která pracuje s g
 V této sekci popíšeme daný model a jeho vlastnosti z pohledu grafové databáze.
 Překvapivě neexistuje standardní definice daného modelu, ačkoliv je značně využíván v moderních systémech.
 Proto budeme vycházet z definice modelu systému Neo4j \citep{neopropertygraph} a jazyka PGQL \citep{pgql}.
-Na základě těchto definic určíme klíčové vlastnosti modelu, které budeme uvažovat v naši práci.
+Na základě těchto definic určíme klíčové vlastnosti modelu, které budeme uvažovat v naší práci.
 
 \subsubsection{Obecný popis Labeled-property modelu}
 
@@ -47,7 +47,7 @@ Navíc pokud dva různé elementy sdílejí vlastnost (tj. mají stejný název)
 
 \subsubsection{Omezení Labeled-property modelu}
 Popsali jsme obecně Labeled-property model.
-Daný popis modelu je značně abstraktní, proto si určíme další zpřísňující vlastnosti, které budeme využívat v naši práci.
+Daný popis modelu je značně abstraktní, proto si určíme další zpřísňující vlastnosti, které budeme využívat v naší práci.
 
 \begin{enumerate}
 
@@ -87,9 +87,9 @@ Nyní uvedeme příklad jednoduchého grafu splňující náš model:
 Na obrázku \ref{figure.propertygraphexample} vidíme tři vrcholy se štítkem \textbf{Osoba}, které reprezentující fyzické osoby, a jeden vrchol se štítkem \textbf{Univerzita} reprezentující vysokou školu.
 Štítku \textbf{Osoba} byly přiděleny dvě vlastnosti: \textit{Jméno} (řetězec) a \textbf{Věk} (číselná hodnota).
 Štítku \textbf{Univerzita} byla přidělena jedna vlastnost: \textit{Jméno}, která odpovídá stejné vlastnosti štítku \textbf{Osoba} a mají stejný typ hodnoty (řetězec).
-Mezi vrcholy fyzických osob existuje vztah \textbf{zná}, který určuje zda jedna osoba (počáteční vrchol) zná druhou osobu (koncový vrchol).
+Mezi vrcholy fyzických osob existuje vztah \textbf{zná}, který určuje, zda jedna osoba (počáteční vrchol) zná druhou osobu (koncový vrchol).
 Vlastnost \textit{Od} definuje datum, kdy došlo k poznání osoby.
-Mezi vrcholy fyzických osob a vysokou školou existuje vztah \textbf{je studentem}, který říká zda osoba studuje na dané vysoké škole.
+Mezi vrcholy fyzických osob a vysokou školou existuje vztah \textbf{je studentem}, který říká, zda osoba studuje na dané vysoké škole.
 Tento vztah nemá žádnou vlastnost.
 Samotně pak každý element má přiřazeno \texttt{ID}.
 Příklad vznikl na základě prvního grafu z dokumentace níže popisovaného PGQL.
@@ -99,14 +99,14 @@ V průběhu práce budeme graf splňující daný model označovat jako \textbf{
 \section{Jazyk PGQL}
 \label{req.pgql}
 
-V naši práci budeme používat dotazovací jazyk PGQL \citep{pgql} verze 1.2 k dotazování nad Property grafem.
-Jazyk je značné obsáhlý a k realizaci naši práce nepotřebujeme všechny jeho vlastnosti, proto jsme se rozhodli využít jeho podmnožinu.
-V naši práci budeme pracovat jen s částmi \textit{Select}, \textit{Match}, \textit{Group by} a \textit{Order by}.
+V naší práci budeme používat dotazovací jazyk PGQL \citep{pgql} verze 1.2 k dotazování nad Property grafem.
+Jazyk je značné obsáhlý a k realizaci naší práce nepotřebujeme všechny jeho vlastnosti, proto jsme se rozhodli využít jeho podmnožinu.
+V naší práci budeme pracovat jen s částmi \textit{Select}, \textit{Match}, \textit{Group by} a \textit{Order by}.
 Ostatní části nebudeme používat.
 V každém dotazu musí být vždy přítomná část \textit{Select} a \textit{Match}.
 S části \textit{Match} se pojí část \textit{From} specifikující název grafu, nad kterým se má vykonat dotaz.
-Nicméně, v naši práci vždy budeme pracovat s jedním grafem a tedy jsme část vyřadili. 
-Zároveň v naši práci uvažujeme, že \textit{Order by} a \textit{Group by} nejsou zadány nikdy společně.
+Nicméně, v naší práci vždy budeme pracovat s jedním grafem, proto jsme část vyřadili. 
+Zároveň v naší práci uvažujeme, že \textit{Order by} a \textit{Group by} nejsou zadány nikdy společně.
 
 \begin{itemize}
 \item \textit{Match:} definuje podgraf, který bude vyhledán v grafu.
@@ -301,7 +301,7 @@ Výsledná tabulka má počet řádků rovný počtu vytvořených skupin.
 \textit{Order by} může přistupovat pouze k proměnným z \textit{Match} části.
 \textit{Order by} a \textit{Select} části nemusí mít shodné výrazy.
 Výrazy v této části jsou opět odděleny čárkami.
-Operátor \texttt{asc}/\texttt{desc} za výrazem definuje zda jsou hodnoty tříděny vzestupně/sestupně.
+Operátor \texttt{asc}/\texttt{desc} za výrazem definuje, zda jsou hodnoty tříděny vzestupně/sestupně.
 Pokud operátor chybí, tak je jako výchozí operátor použit \texttt{asc}.
 Následují příklady použití \textit{Order by} části:
 \begin{itemize}
