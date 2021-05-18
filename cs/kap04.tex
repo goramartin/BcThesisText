@@ -823,7 +823,7 @@ ConcurrentDictionary<int, int> parMap =
 for (int i = 0; i < 1_000_000; i++)
 {
     var val = ran.Next();
-    // Based on the used map choose (1) or (2).
+    // Na základě použité mapy vyber (1) nebo (2).
     (1) if (!map.TryGetValue(val, out int value)) map.Add(val, i);
     (2) var tmp = parMap.GetOrAdd(val, i);
 }
@@ -832,7 +832,7 @@ for (int i = 0; i < 1_000_000; i++)
 for (int i = 0; i < 100_000_000; i++)
 {
     var val = ran.Next(0, 1_000_000);
-    // Based on the used map choose (1) or (2).
+    // Na základě použité mapy vyber (1) nebo (2).
     (1) if (!map.TryGetValue(val, out int value));
     (2) var tmp = parMap.GetOrAdd(val, val);
 }
