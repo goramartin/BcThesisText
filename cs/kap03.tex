@@ -1151,7 +1151,7 @@ Nejdříve popíšeme implementaci použitých vyhledávacích stromů a násled
 Implementovali jsme vlastní $(a, b)$-strom, protože jsme nedokázali nalézt již existující knihovnu.
 Obecně při zpracovávání budeme využívat dva druhy stromů.
 První je obecný $(a, b)$-strom a druhý je optimalizovaný strom z sekce \ref{anal.improvement.orderby.storeindex}, který seskupuje totožné prvky do pole místo aby je vložil do vrcholu.
-Oba stromy implementují rozhraní \texttt{IABTree<T>}, který definuje metodu vložení prvku \texttt{void Insert(T key)} a položku počtu prvků ve stromě \texttt{itn Count}.
+Oba stromy implementují rozhraní \texttt{IABTree<T>}, který definuje metodu vložení prvku \texttt{void Insert(T key)} a položku počtu prvků ve stromě \texttt{int Count}.
 Toto rozhraní použijeme pro vytvoření obecného algoritmu zpracování, kterému budeme jednoduše moct změnit druh stromu.
 Při zpracování očekáváme, že vkládané prvky jsou indexy řádků tabulky.
 Potřebujeme setřídit i prvky se shodnými klíči, proto u všech řešení je použit \texttt{IndexToRowProxyComparer} s \texttt{allowDuplicities == false}.
@@ -1222,7 +1222,7 @@ Slévání je implementováno v objektu \texttt{MergeObject<T>} v metodě \textt
 V jednovláknovém zpracování nedochází ke slévání.
 \item Objekt \texttt{MergeObject<T>}, který implementuje paralelní dvoucestné slévání.
 Interně používá metodu knihovny HPCsharp \citep{hpcsharp}.
-Rozhraní metody pracuje s dvěma pol. 
+Rozhraní metody pracuje s dvěma poli. 
 \texttt{T[] source} a \texttt{T[] destination}.
 V prvním kroku slévání dochází k překopírování výsledků uvnitř stromů do pole \texttt{source}.
 Na pole se tedy díváme jako na několik posloupností výsledků vláken.
@@ -1230,7 +1230,7 @@ Posloupnosti jsou slévány knihovní metodou do pole \texttt{destination}.
 V této části nefunguje druhá optimalizace z důvodu paralelizace.
 \end{itemize}
 Toto je implementace obecné části.
-Z třídy \texttt{ABTreeSorterHalfStreamed} dědí dvě třídy, které představují dva řešení.
+Z třídy \texttt{ABTreeSorterHalfStreamed} dědí dvě třídy, které představují dvě řešení.
 Specifikují pouze implementaci \texttt{IABTree} a typ \texttt{T} třídy \texttt{MergeObject<T>}.
 Budeme se držet definovaného značení:
 \begin{itemize}
@@ -1309,7 +1309,7 @@ Je ekvivalentem řešení \textbf{Normal: Two-step (Bucket)}.
 \item Řešení \textbf{Half-Streamed: Two-step (List)}, které využívá List jako úložiště a je obsaženo v třídě \texttt{TwoStepHalfStreamedListBucket}.
 Je ekvivalentem řešení \textbf{Normal: Two-step (List)}.
 \end{itemize}
-Oba řešení ve výsledcích pro jednovláknové zpracování mají v názvu \textbf{SingleThreadSolution} místo \textbf{Two-step}.
+Obě řešení ve výsledcích pro jednovláknové zpracování mají v názvu \textbf{SingleThreadSolution} místo \textbf{Two-step}.
 Řešení obecně fungují totožně jako jejich ekvivalenty a rovněž používají stejná úložiště agregačních funkcí, proto popíšeme krátce rozložení třídy a hlavní rozdíly.
 Obě třídy definují:
 
@@ -1366,7 +1366,7 @@ Definuje:
 \begin{itemize}
 \item Položku \texttt{bool isSet}, která určuje, zda výpočet výrazu byl úspěšný.
 Při neúspěchu \texttt{aggResult} obsahuje hodnotu \texttt{default}. 
-\item Imlementaci metody \texttt{int GetHashCode()}, která vyvolává stejnojmennou metodu na zděděném prvku \texttt{aggResult}.
+\item Implementaci metody \texttt{int GetHashCode()}, která vyvolává stejnojmennou metodu na zděděném prvku \texttt{aggResult}.
 Metoda se používá k získání haše výsledku prohledávání při vkládání do hašovací tabulky.
 \end{itemize}
 Při vkládání pole do hašovací tabulky musíme prvky porovnat. 
@@ -1415,11 +1415,11 @@ Vlákno volající metodu vytvoří vkládané pole pomocí svého objektu \\*\t
 
 V této sekci popíšeme implementaci úprav \textit{Single group Group by}.
 Při úpravě \textit{Single group Group by} jsme postupovali přesně podle sekce analýzy \ref{anal.improvement.singlegroup}.
-Vytvořili jsme dva řešení.
+Vytvořili jsme dvě řešení.
 Jedno řešení pro mód \textbf{Half-Streamed} a jedno pro mód \textbf{Streamed}.
 Řešení jsou:
 \begin{itemize}
-\item Řešení \textbf{Half-Streamed: SingleGroup} představuje \textit{Single}\\* \textit{group Group by} \textbf{Half-Streamed} módu.
+\item Řešení \textbf{Half-Streamed: SingleGroup} představuje \textbf{Half-Streamed} \\*\textit{Single} \textit{group} \textit{Group by}.
 Je implementováno v třídě \\*\texttt{SingleGroupGroupByHalfStreamed}.
 \item Řešení \textbf{Streamed: SingleGroup} představuje \textbf{Streamed} \textit{Single group}\\* \textit{Group by}.
 Je implementováno v třídě \texttt{SingleGroupGroupByStreamed}.
@@ -1437,7 +1437,7 @@ Třída definuje hlavní položky:
 Každé vlákno ukládá výsledky funkcí při volání metody \texttt{Process} do svého lokálního úložiště \texttt{matcherNonAsterixResults[matcherID]}.
 Tato položka neobsahuje úložiště pro funkci \texttt{count(*)}, abychom nemuseli vyvolávat metody logiky této funkce.
 \item Položku \texttt{int[] numberOfMatchedElements}, která obsahuje lokální úložiště pro výpočet funkce \texttt{count(*)}.
-Vlákna tedy při zpracování této funkce vykonají pouze vykonají navýšení této položky.
+Vlákna tedy při zpracování této funkce vykonají pouze navýšení této položky.
 \item Položku \texttt{AggregateBucketResult[] finalResults}, do kterého se budou výsledky vláken slévat.
 Tato položka obsahuje již úložiště pro \texttt{count(*)}.
 \item Implementaci metody \texttt{Process(Element[] result, int matcherID)}.\\*
@@ -1616,7 +1616,7 @@ Spuštění s výpisem do souboru + paralelní zpracování:
 \subsubsection{Zadání dotazu}
 
 Po spuštění aplikace se načtou vstupní soubory.
-Po načtení je uživatel vyzván pomocí zprávy, aby zadal vstupní dotaz k vykonání:
+Po načtení je uživatel vyzván pomocí zprávy, aby zadal \textbf{jeden} vstupní dotaz k vykonání:
 \begin{code}
 Enter Query:
 \end{code}
@@ -1624,9 +1624,10 @@ Uživatel zadá dotaz pomocí jazyka PGQL z sekce \ref{req.pgql}.
 Názvy proměnných, elementů Property grafu a vlastností jsou citlivé na velikost písmene.
 Samotné názvy částí dotazu a funkcí nejsou citlivé na velikost písmene.
 Názvy proměnných nesmí obsahovat čísla.
-Každý dotaz musí být ukončen znakem „;“.
+Zadaný dotaz musí být ukončen znakem „\textbf{;}“.
 Stisknutím klávesy „Enter“ dojde k zahájení zpracování dotazu.
-Po dokončení je uživatel vyzván pomocí zprávy, aby zadal další dotaz nebo ukončil aplikaci:
+Výstup je zobrazen uživateli dle argumentů programu \textbf{Printer} a \textbf{Formater}.
+Po dokončení zpracování dotazu je uživatel vyzván pomocí zprávy, aby zadal další dotaz nebo ukončil aplikaci:
 \begin{code}
 Do you want to continue with another query?
     y/n (single character answer):

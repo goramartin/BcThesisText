@@ -492,10 +492,9 @@ Pro představu, každá proměnná (element grafu) je uložena do vlastního slo
 Lokalita sloupečků vede na potřebu slévání výsledků vláken.
 Nicméně, díky ukládání do polí fixní délky nastává nutnost pouze zarovnat poslední nezaplněná pole, zbytek práce slévání je jen přesunutí několika ukazatelů na pole. 
 Tento proces je paralelizovaný pouze přes sloupečky.
-Poslední nezaplněná pole jednoho sloupečku zarovná vždy jedno vlákno.
-Pokud je sloupeček jen jeden, zarovnání probíhá jednovláknově.
-Pokud je sloupečků více, zarovnání probíhá paralelně.
-V tomto případě je každý sloupeček přidělen jednomu vláknu, které následně provede zarovnání. 
+Pokud je sloupeček jen jeden, slévání probíhá jednovláknově.
+Pokud je sloupečků více, slévání probíhá paralelně.
+V tomto případě je každý sloupeček přidělen jednomu vláknu, které následně provede slévání. 
 
 \subsubsection{Zpomalení paralelních řešení sléváním}
 
