@@ -216,10 +216,9 @@
 \contentsline {chapter}{Seznam použité literatury}{120}{chapter*.124}%
 \contentsline {chapter}{Seznam obr\'azk\r {u}}{122}{chapter*.125}%
 \contentsline {chapter}{Seznam tabulek}{124}{chapter*.126}%
-\contentsline {chapter}{Seznam použitých zkratek}{125}{chapter*.127}%
-\contentsline {chapter}{\numberline {A}Přílohy}{126}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Zdrojové kódy}{126}{section.A.1}%
-\contentsline {section}{\numberline {A.2}Online Git repozitář}{126}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Použité grafy při experimentu}{126}{section.A.3}%
-\contentsline {section}{\numberline {A.4}Výsledky benchmarku pro jednotlivé grafy}{126}{section.A.4}%
-\contentsline {section}{\numberline {A.5}Benchmark stromy vůči polím}{126}{section.A.5}%
+\contentsline {chapter}{\numberline {A}Přílohy}{125}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Zdrojové kódy}{125}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Online Git repozitář}{125}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Použité grafy při experimentu}{125}{section.A.3}%
+\contentsline {section}{\numberline {A.4}Výsledky benchmarku pro jednotlivé grafy}{125}{section.A.4}%
+\contentsline {section}{\numberline {A.5}Benchmark stromy vůči polím}{125}{section.A.5}%

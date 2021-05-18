@@ -29,18 +29,17 @@ Jsou to módy:
 V prvním kroku dojde k prohledání grafu a uložení výsledků do tabulky.
 Teprve po dokončení dojde vykonání \textit{Group by} a \textit{Order by}.
 
-\item \textbf{Half-Streamed:} Reprezentuje upravené vykonávání. 
+\item \textbf{Half-Streamed:} reprezentuje upravené vykonávání. 
 Tento mód v paralelním vykonání ukládá výsledky nejdříve lokálně a po dokončení dojde ke slévání.
 
-\item \textbf{Streamed:} Reprezentuje upravené vykonávání. 
+\item \textbf{Streamed:} reprezentuje upravené vykonávání. 
 Tento mód v paralelním vykonání zpracovává výsledky globálně.
 \end{itemize}
 
-Samotná individuální řešení se pro upravené módy \textbf{Half-Streamed} a \textbf{Streamed} liší pouze v paralelním vykonávání.
-V určitých případech nastane, že i jednovláknová řešení jsou rozdílná.
-V takovou chvíli na to upozorníme.
-V průběhu této kapitoly se budeme držet tohoto značení.
-
+Jednovláknová řešení části \textit{Order by} módů \textbf{Half-Streamed} a \textbf{Streamed} se shodují.
+Rozdíl je tedy jen v paralelních řešeních.
+Jednovláknová řešení části \textit{Group by} módů \textbf{Half-Streamed} a \textbf{Streamed} se neshodují.
+Rozdíl je tedy v paralelních i jednovláknových řešeních.
 
 \section{Rozložení aplikace}
 
@@ -50,15 +49,16 @@ Samotný projekt je rozdělený na tři hlavní řešení:
 
 \begin{itemize}
 
-\item \texttt{QueryEngine}, který představuje implementaci dotazovacího enginu.
-\item \texttt{HPCsharp} \citep{hpcsharp} je doprovodné řešení, které poskytuje sadu mnoha výkonných jednovláknových i paralelních algoritmů.
-\item \texttt{Benchmark}, který jsme implementovali pro porovnání upraveného a původního způsobu zpracování dotazu. 
+\item Řešení \texttt{QueryEngine} představující implementaci dotazovacího enginu.
+\item Řešení \texttt{HPCsharp} \citep{hpcsharp} je doprovodná knihovna, která poskytuje sadu mnoha výkonných jednovláknových i paralelních algoritmů.
+Z knihovny jsme využili pouze určité algoritmy při implementaci části \textit{Order by}.
+Knihovna spadá pod licenci Apache License 2.0.
+\item Řešení \texttt{Benchmark}, které jsme implementovali pro porovnání upraveného a původního způsobu zpracování dotazu. 
 
 \end{itemize}
 
 V průběhu celé kapitoly se budeme věnovat pouze řešení \texttt{QueryEngine}, protože obsahuje hlavní část práce.
 Řešení \texttt{Benchmark} je popsáno podrobněji v kapitole Experiment \ref{expr}., ve které se věnujeme porovnání implementovaných řešení.
-Z \texttt{HPCsharp} řešení jsme využili pouze určité algoritmy při implementaci části \textit{Order by}.
 Samotná implementace algoritmů lze nalézt v odkazu citovaného zdroje. 
 Nyní popíšeme podrobněji rozložení řešení \texttt{QueryEngine}.
 
