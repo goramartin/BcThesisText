@@ -50,7 +50,7 @@ Samotný projekt je rozdělený na tři hlavní řešení:
 \begin{itemize}
 
 \item Řešení \texttt{QueryEngine} představující implementaci dotazovacího enginu.
-\item Řešení \texttt{HPCsharp} \citep{hpcsharp} je doprovodná knihovna, která poskytuje sadu mnoha výkonných jednovláknových i paralelních algoritmů.
+\item Řešení \texttt{HPCsharp} \citep{hpcsharp} představující doprovodnou knihovnu, která poskytuje sadu mnoha výkonných jednovláknových i paralelních algoritmů.
 Z knihovny jsme využili pouze určité algoritmy při implementaci části \textit{Order by}.
 Knihovna spadá pod licenci Apache License 2.0.
 \item Řešení \texttt{Benchmark}, které jsme implementovali pro porovnání upraveného a původního způsobu zpracování dotazu. 
@@ -335,7 +335,7 @@ Daná metoda dostává množství argumentů, vypíšeme ty hlavní:
 \item \texttt{string/TextReader inputQuery}: definuje dotaz uživatele, který se má vykonat. \texttt{string} zde reprezentuje vstup jako řetězec. \texttt{TextReader} představuje vstup z konzole.
 \item \texttt{QueryMode mode}: definuje mód vykonávání, který se má provádět (sekce \ref{impl.engine.modes}).
 \item \texttt{Graph graph}: definuje graf, nad kterým se má dotaz provést.
-\item \texttt{ThreadCount threadCount}: definuje počet vláken, které se mají využít při vykonávání.
+\item \texttt{ThreadCount threadCount}: definuje počet využitých vláken v paralelním zpracování.
 \item \texttt{GrouperAlias grouperAlias}: definuje řešení, které se má použít při vykonávání \textit{Group by}.
 \item \texttt{SorterAlias sorterAlias}: definuje řešení, které se má použít při vykonávání \textit{Order by}.
 \end{itemize}
