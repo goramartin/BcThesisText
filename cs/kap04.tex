@@ -725,11 +725,11 @@ Obecně nejznačnější zrychlení nastává u \textbf{Streamed} řešení, kdy
 
 Velice mírné zrychlení můžeme vidět u \textbf{Half-Streamed} řešení, které ukládá jen reprezentanty skupiny.
 U všech dotazů bez agregačních funkcí, kromě dvojice G\_Q4$'$/G\_Q5$'$, nastávají situace, kdy \textbf{Half-Streamed} řešení je pomalejší než \textbf{Normal}.
-U grafu Amazon0601 nastává stejná situace pro G\_Q3, G\_Q6 a pro každý graf G\_Q8.
+U grafu Amazon0601 nastává stejná situace pro G\_Q3, G\_Q6 a pro každý graf pro G\_Q8.
 Situaci jsme neočekávali a vysvětlujeme si ji následovně.
 \textbf{Half-Streamed} řešení používá při zpracování výsledku položku tabulky \verb+temporaryRow+, do které přesouvá ukazatel na pole výsledků.
 Skrze danou položku pak následně přistupuje k výsledku při vkládání do mapy. 
-Na dané přesouvání se můžeme dívat jako na kopírovaní jedné proměnné do tabulky.
+Na dané přesouvání se můžeme dívat jako na kopírování jedné proměnné do tabulky.
 Při úspěšném vložení nastane navíc překopírování výsledků do pravé tabulky.
 Což odpovídá větší režii na zpracování výsledku než u \textbf{Normal} řešení.
 Proto vidíme pokles rychlosti a celkově jen mírné zrychlení u \textbf{Half-Streamed} řešení v jiných případech.
