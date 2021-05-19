@@ -1110,10 +1110,10 @@ Rozdíl je ten, že potomci tříd specifikují algoritmy zpracování v metodě
 Třída dědí z třídy \texttt{MatchBaseObject}.
 Třídě jsme přidali položku držící odkaz na třídu zpracovávající výsledky v \texttt{ResultsProcessor resultProcessor}.
 Dále jsme třídě přidali metodu \texttt{PassResultProcessor}, která uloží odkaz na objekt zpracování do dané položky.
-To odpovídá návrhu z obrázku \ref{figure.diaStreamedQueryObjects}.
+To odpovídá návrhu z obrázku \ref{figure.diaStreamedQueryObjects} s rozdílem, že jsme upustili od vytváření rozhraní \texttt{ResultProcessorConnection}, jelikož žádná jiná třída by jej nevyužila. 
 Abychom mohli vykonávat zpracování v průběhu, tak nyní musíme upravit i samotné objekty prohledávání grafu.
 Řekli jsme, že původní třída části \textit{Match} obsahuje odkaz na objekt prohledávání grafu a tabulku výsledků.
-Nyní vlastní pouze odkaz na objekt zpracování \texttt{ResultsProcessor} a odkaz na nový objekt algoritmu prohledávání grafu \texttt{DFSParallelPatternMatcherStreamed}.
+Nyní vlastní pouze odkaz na objekt zpracování \texttt{ResultsProcessor} a odkaz na nový objekt \texttt{DFSParallelPatternMatcherStreamed} algoritmu prohledávání grafu.
 Objekt algoritmu musíme také upravit a předat mu odkaz na objekt zpracování.
 
 \subsubsection{Třída DFSParallelPatternMatcherStreamed}

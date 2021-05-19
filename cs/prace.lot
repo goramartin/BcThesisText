@@ -3,7 +3,7 @@
 \addvspace {10\p@ }
 \contentsline {table}{\numberline {2.1}{\ignorespaces Výsledky testu vkládání v sekundách \texttt {List} vůči \texttt {SortedSet}. Hodnota za názvem testu představuje parametr \textit {m}.}}{44}{table.2.1}%
 \contentsline {table}{\numberline {2.2}{\ignorespaces Výsledky testu vkládání v sekundách \texttt {SortedSet} vůči $(128, 256)$-strom. Hodnota za názvem testu představuje parametr \textit {m}.}}{45}{table.2.2}%
-\contentsline {table}{\numberline {2.3}{\ignorespaces Výsledky testu stavby struktur v sekundách \texttt {SortedSet} vůči $(128, 256)$-strom.}}{45}{table.2.3}%
+\contentsline {table}{\numberline {2.3}{\ignorespaces Výsledky testu stavby struktur v sekundách \texttt {SortedSet} vůči \\*$(128, 256)$-strom.}}{45}{table.2.3}%
 \addvspace {10\p@ }
 \contentsline {table}{\numberline {3.1}{\ignorespaces Tabulka argumentu \textbf {Mode}.}}{85}{table.3.1}%
 \contentsline {table}{\numberline {3.2}{\ignorespaces Tabulka argumentu \textbf {SorterAlias}.}}{86}{table.3.2}%

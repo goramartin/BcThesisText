@@ -449,7 +449,7 @@ Při vykonání se provede rekurzivní voláni funkce \texttt{Compute} na objekt
 
 \begin{figure}[!htp]
 \includegraphics{../img/diaQueryObjectsCon.pdf}\centering
-\caption{Propojení objektů pomocí položky \texttt{next} pro dotaz \texttt{select x match (x) order by x}.}
+\caption{Propojení objektů pomocí položky \texttt{next} pro dotaz\\* \texttt{select x match (x) order by x}.}
 \label{figure.diaQueryObjectsCon}
 \end{figure}
 
@@ -1109,13 +1109,13 @@ Finální propojení objektů je pak znázorněno na obrázku \ref{figure.diaStr
 
 \begin{figure}[!htp]
 \includegraphics{../img/diaStreamedQueryObjects.pdf}\centering
-\caption{UML class diagram rozšířeného objektu \textit{Match}. Objekt nyní drží přímý odkaz na \texttt{ResultProcessor} a zároveň implementuje původní logiku objektu.}
+\caption{UML class diagram rozšířeného objektu \texttt{newMatch} části \textit{Match}. Objekt nyní drží přímý odkaz na \texttt{ResultProcessor} a zároveň implementuje původní logiku objektu.}
 \label{figure.diaStreamedQueryObjects}
 \end{figure}
 
 \begin{figure}[!htp]
 \includegraphics{../img/diaStreamedQueryObjectsCon.pdf}\centering
-\caption{Diagram objektů upraveného vykonání představující části dotazu \texttt{select x match (x) order by x}. Plná šipka znázorňuje původní propojení a tečkovaná šipka představuje nové propojení.}
+\caption{Diagram objektů upraveného vykonání dotazu \texttt{select x match (x) order by x}. Plná šipka znázorňuje původní propojení a tečkovaná šipka představuje nové propojení.}
 \label{figure.diaStreamedQueryObjectsCon}
 \end{figure}
 
@@ -1348,7 +1348,7 @@ Hodnota za názvem testu představuje parametr \textit{m}.}
 \textit{build} $n=10^8$   &  59,890  & 101,421   \\
 \bottomrule
 \end{tabular}
-\caption{Výsledky testu stavby struktur v sekundách \texttt{SortedSet} vůči $(128, 256)$-strom.}
+\caption{Výsledky testu stavby struktur v sekundách \texttt{SortedSet} vůči \\*$(128, 256)$-strom.}
 \label{tab.orderbyexpr3}
 \end{table}
 

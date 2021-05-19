@@ -480,7 +480,7 @@ As-Skitter & 453 674 558 \\
 \subsubsection{Paralelizace prohledávání grafu}
 
 Zbytek sekce věnujeme popisu grafů \ref{figure.amazonMatch}, \ref{figure.webberkstanMatch} a \ref{figure.skitterMatch}. 
-Paralelizace startovního prohledávacího vrcholu (tj. každé vlákno dostává opakovaně množství vrcholů k prohledání určené argumentem \verb+VerticesPerThread+, dokud se nevyčerpají všechny vrcholy grafu) dociluje zrychlení v rozmezí $[4,17; 5,56]$-krát pro všechny grafy.
+Paralelizace startovního prohledávacího vrcholu (tj. každé vlákno dostává opakovaně množství vrcholů k prohledání určené argumentem \verb+VerticesPerThread+, dokud se nevypotřebují všechny vrcholy grafu) dociluje zrychlení v rozmezí $[4,17; 5,56]$-krát pro všechny grafy.
 Výsledky pro jednotlivé dotazy dopadly podle našeho očekávání. 
 Dotaz M\_Q1 provádí pouze vyhledávání výsledků bez ukládání do tabulky a je nejrychlejší. 
 Všechny ostatní dotazy dosahují zpomalení závislé na počtu ukládaných proměnných (počet ukládaných proměnných definuje část \textit{Select}), tedy čím více proměnných k uložení tím je vykonání pomalejší a to platí i pro paralelní verzi. 
@@ -758,7 +758,7 @@ Z výsledků můžeme vyvodit, že vylepšená jednovláknová \textbf{Streamed}
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonGroupBySTNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů \textit{Group by} bez agr. funkcí pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
+\caption{Doba vykonání dotazů \textit{Group by} pro graf Amazon0601 (sekce \ref{tab.grafBase})  bez agregačních funkcí. Běh v jednom vláknu.}
 \label{figure.amazonGroupBySTNoAgg}
 \end{figure}
 
@@ -769,7 +769,7 @@ Z výsledků můžeme vyvodit, že vylepšená jednovláknová \textbf{Streamed}
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanGroupBySTNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů \textit{Group by} bez agr. funkcí pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
+\caption{Doba vykonání dotazů \textit{Group by} pro graf WebBerkStan (sekce \ref{tab.grafBase}) bez agregačních funkcí. Běh v jednom vláknu.}
 \label{figure.webberkstanGroupBySTNoAgg}
 \end{figure}
 
@@ -780,7 +780,7 @@ Z výsledků můžeme vyvodit, že vylepšená jednovláknová \textbf{Streamed}
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/skitterGroupBySTNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů \textit{Group by} bez agr. funkcí pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh v jednom vláknu.}
+\caption{Doba vykonání dotazů \textit{Group by} pro graf As-Skitter (sekce \ref{tab.grafBase}) bez agregačních funkcí. Běh v jednom vláknu.}
 \label{figure.skitterGroupBySTNoAgg}
 \end{figure}
 
@@ -958,7 +958,7 @@ Z výsledků usuzujeme, že vylepšená řešení pro náš případ paralelizac
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonGroupByParNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů \textit{Group by} bez agr. funkcí pro graf Amazon0601 (sekce \ref{tab.grafBase}). Běh osmi vláken.}
+\caption{Doba vykonání dotazů \textit{Group by} pro graf Amazon0601 (sekce \ref{tab.grafBase}) bez agregačních funkcí. Běh osmi vláken.}
 \label{figure.amazonGroupByParNoAgg}
 \end{figure}
 
@@ -969,7 +969,7 @@ Z výsledků usuzujeme, že vylepšená řešení pro náš případ paralelizac
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/webberkstanGroupByParNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů \textit{Group by} bez agr. funkcí pro graf WebBerkStan (sekce \ref{tab.grafBase}). Běh osmi vláken.}
+\caption{Doba vykonání dotazů \textit{Group by} pro graf WebBerkStan (sekce \ref{tab.grafBase}) bez agregačních funkcí. Běh osmi vláken.}
 \label{figure.webberkstanGroupByParNoAgg}
 \end{figure}
 
@@ -980,7 +980,7 @@ Z výsledků usuzujeme, že vylepšená řešení pro náš případ paralelizac
 \end{figure}
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/skitterGroupByParNoAgg.pdf}\centering
-\caption{Doba vykonání dotazů \textit{Group by} bez agr. funkcí pro graf As-Skitter (sekce \ref{tab.grafBase}). Běh osmi vláken.}
+\caption{Doba vykonání dotazů \textit{Group by} pro graf As-Skitter (sekce \ref{tab.grafBase}) bez agregačních funkcí. Běh osmi vláken.}
 \label{figure.skitterGroupByParNoAgg}
 \end{figure}
 \bigskip
