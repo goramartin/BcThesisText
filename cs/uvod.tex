@@ -112,6 +112,12 @@ V druhém kroku dojde k úpravě vykonávání dotazů dle zadání práce.
 Při vývoji budeme klást důraz na jednovláknové i paralelní zpracování.
 Nakonec provedeme experiment, který otestuje vytvořená řešení v prvním kroku vůči nově navrženým řešením.
 
+\section*{Upřednostnění paměti před výkonem}
+
+Dotazovací engine chceme vyvinout tak, abychom s ním byli schopni pracovat na stolním počítači/notebooku, protože nám to umožní zjednodušit vývojové a testovací prostředí.
+Z tohoto důvodu nám ale vzniká hlavní omezení, které je paměťové, jelikož celá aplikace bude obsažena v hlavní paměti.
+Reálné grafy bývají značně obrovské, a navíc samotné zpracování dotazů zabere množství paměti i času (tj. ukládáme výsledky prohledávání nebo vytváříme skupiny výsledků).
+Abychom byli schopni reálné grafy načíst a zpracovat, tak při vývoji dotazovacího enginu se budeme snažit upřednostnit paměť před výkonem.
 \section*{Cíl práce}
 
 Hlavním cílem práce je určit, zda úprava částí \textit{Group by} a \textit{Order by} dotazovacího enginu po vzoru proudových systémů dociluje rychlejšího zpracování dotazů než zpracování, které by dané části vykonávalo po získání všech výsledků prohledávání grafu.

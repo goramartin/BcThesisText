@@ -14,7 +14,7 @@ Dále také poskytuje nástroje pro práci ve vícevláknovém prostředí.
 Uvažovali jsme ještě o jazyku C++, který nabízí množství technik a možností optimalizace k získání rychlosti při vykonávání aplikace. 
 Nyní zmíníme, že hlavním cílem práce není vyvinou co nejrychlejší dotazovací engine, ale otestovat obecný koncept vykonávání \textit{Group by} a \textit{Order by} v průběhu prohledávání grafu.
 Myslíme, že tento koncept se dá implementovat v každém jazyce.
-Navíc, v průběhu analýzy jsme si zkoušeli již implementovat určité koncepty v daném jazyce C\#, abychom měli lepší přehled o způsobech vykonání.
+Navíc v průběhu analýzy jsme si zkoušeli již implementovat určité koncepty v daném jazyce C\#, abychom měli lepší přehled o způsobech vykonání.
 Z tohoto důvodu jsme měli určité části již implementovány.
 Výsledně jsme se rozhodli z výše zmíněných důvodu použít C\# pro .NET Framework 4.8.
 
@@ -369,7 +369,7 @@ Všimněme si, že tato metoda definuje rozhraní pro předávání výsledků z
 \item Metodu \texttt{void AddToEnd(QueryObject queryObject)}, která připojí \\*poskytnutý objekt na konec řetězce.
 \end{itemize}
 Konkrétní potomci třídy jsou vytvářeny v konstruktoru třídy \texttt{Query}.
-Navíc, každý potomek očekává v konstruktoru syntaktický strom.
+Navíc každý potomek očekává v konstruktoru syntaktický strom.
 Uvnitř konstruktoru dojde k vytvoření adekvátního \texttt{IVisitor<T>} objektu.
 Návratová hodnota \texttt{T} se využije ke konstrukci privátních objektů pro vykonání dotazu.
 
@@ -1155,7 +1155,7 @@ Oba stromy implementují rozhraní \texttt{IABTree<T>}, který definuje metodu v
 Toto rozhraní použijeme pro vytvoření obecného algoritmu zpracování, kterému budeme jednoduše moct změnit druh stromu.
 Při zpracování očekáváme, že vkládané prvky jsou indexy řádků tabulky.
 Potřebujeme setřídit i prvky se shodnými klíči, proto u všech řešení je použit \texttt{IndexToRowProxyComparer} s \texttt{allowDuplicities == false}.
-To způsobí porovnání při shodnosti klíčů pomocí indexů řádků a navíc \texttt{cacheResults == true}, protože se stromem vždy bude pracovat jedno vlákno.
+To způsobí porovnání při shodnosti klíčů pomocí indexů řádků a \texttt{cacheResults == true}, protože se stromem vždy bude pracovat jedno vlákno.
 
 \subsubsection{Třída ABTree<T>}
 

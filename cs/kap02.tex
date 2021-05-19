@@ -1025,7 +1025,7 @@ Daná analýza a návrh nám poskytnou odrazový můstek při analýze úprav pr
 Cílem úprav je poskytnout enginu schopnost provádět části \textit{Group by} a \textit{Order by} v průběhu prohledávání grafu části \textit{Match}.
 Obecně to znamená, že v moment nalezení jednoho výsledku jej musíme okamžitě zpracovat.
 Pro \textit{Order by} to znamená výsledek správně zatřídit do již setříděné posloupnosti výsledků.
-Pro \textit{Group by} to znamená výsledek přidat do správné skupiny nebo pro něj skupinu vytvořit, navíc musíme pro něj zpracovat agregační funkce. 
+Pro \textit{Group by} to znamená výsledek přidat do správné skupiny nebo pro něj skupinu vytvořit, a navíc musíme pro něj zpracovat agregační funkce. 
 Čili, výsledky v průběhu prohledávání \textit{Match} části nebudeme ukládat do tabulky, která se po nalezení všech výsledků předá k dalšímu zpracování.
 Namísto toho navrhneme postup, kterým docílíme zpracování výsledků v moment jeho nalezení.
 Postupy ověříme vůči stávajícím řešením v kapitole Experiment \ref{expr} z hlediska doby vykonání.
@@ -1244,7 +1244,7 @@ Vložení by bylo opět realizováno binárním vyhledáváním.
 V situaci posouvání prvků nyní stačí posouvat prvky do první mezery.
 Řešení však naskýtá spoustu otázek.
 Například neznáme ideální počet mezer mezi prvky a nevíme jak optimálně navrhnout binární vyhledávání na takovém poli.
-Navíc, zvyšováním počtu mezer se pole značně zvětšuje, tj. roste paměťová složitost.
+Navíc zvyšováním počtu mezer se pole značně zvětšuje, tj. roste paměťová složitost.
 
 \subsubsection{Vyhledávací stromy}
 
@@ -1638,7 +1638,7 @@ Kdyby každé vlákno našlo kompletně stejné skupiny, pak by existovala toto�
 Další otázka je proč jsme se rozhodli uchovávat hodnoty výrazů a ne elementy grafu.
 Hlavní příčina ukládání elementů jsme popsali v sekci návrhu tabulky výsledků prohledávání \ref{anal.tables}.
 Tento problém zde odpadá, protože ukládáme malé množství výsledků.
-Navíc, v ostatních částech dotazu se mohou vyskytnout pouze výrazy klíčů \textit{Group by} a agregační funkce.
+Navíc v ostatních částech dotazu se mohou vyskytnout pouze výrazy klíčů \textit{Group by} a agregační funkce.
 Tedy v moment výpočtu daných výrazů a agregačních funkcí jsme získali všechny možné hodnoty, ke kterým se může přistoupit v jiných částech dotazu. 
 
 \subsubsection{Sloučení pole klíčů a pole úložiště agregačních funkcí}

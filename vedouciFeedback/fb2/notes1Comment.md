@@ -59,6 +59,8 @@ Pridavam muj komentar:
 
 		Tom: No, proste jen nekde v uvodu vysvetlit, proc cilis na pamet a ne vykon -> protoze kdyz mas 1 pocitac (napr notebook), tak to, co te omezuje v pripade tvoji "in-memory" databaze je vzdycky pamet, protoze to maji byt obrovske grafy a jejich zpracovani logicky zabere nejaky cas, ale abys je vubec mohl zacit zpracovavat, tak je nejdriv musis nacist, proto pamet. 
 
+		DONE - dopsal jsem do uvodu kratsi sekci "uprednostneni pameti pred vykonem" proc cilit na pamet.
+
 
 - vypsat omezeni GB/OB oproti Pgql standardu
 
