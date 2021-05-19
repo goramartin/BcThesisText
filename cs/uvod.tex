@@ -117,7 +117,8 @@ Nakonec provedeme experiment, který otestuje vytvořená řešení v prvním kr
 Dotazovací engine chceme vyvinout tak, abychom s ním byli schopni pracovat na stolním počítači/notebooku, protože nám to umožní zjednodušit vývojové a testovací prostředí.
 Z tohoto důvodu nám ale vzniká hlavní omezení, které je paměťové, jelikož celá aplikace bude obsažena v hlavní paměti.
 Reálné grafy bývají značně obrovské, a navíc samotné zpracování dotazů zabere množství paměti i času (tj. ukládáme výsledky prohledávání nebo vytváříme skupiny výsledků).
-Abychom byli schopni reálné grafy načíst a zpracovat, tak při vývoji dotazovacího enginu se budeme snažit upřednostnit paměť před výkonem.
+Abychom mohli reálné grafy načíst a zpracovat, tak při vývoji dotazovacího enginu se budeme snažit upřednostnit paměť před výkonem.
+To znamená, že při rozhodování mezi získáním menší paměťové náročnosti a zvýšením výkonu se raději přikloníme k menší paměťové náročnosti.  
 \section*{Cíl práce}
 
 Hlavním cílem práce je určit, zda úprava částí \textit{Group by} a \textit{Order by} dotazovacího enginu po vzoru proudových systémů dociluje rychlejšího zpracování dotazů než zpracování, které by dané části vykonávalo po získání všech výsledků prohledávání grafu.
