@@ -546,7 +546,7 @@ Vlastnosti prohledávání grafu:
 \subsection{BFS vs DFS}
 
 Hledání podgrafu v grafu je obecně složitý problém. 
-Cílem této práce není navrhnout algoritmus pro vyhledávání vzoru, proto jsme se rozhodli inspirovat a použít obecný postup k řešení daného problému.
+Cílem této práce není navrhnout algoritmus pro vyhledávání podgrafu, proto jsme se rozhodli inspirovat a použít obecný postup k řešení daného problému.
 Mezi základní postupy vyhledávání vzoru patří prohledávání do šířky (BFS) a prohledávání do hloubky (DFS) \citep[kap. 4]{graphAlg}. 
 Na základě 1. a 2. kapitoly článku o distribuovaném zpracování PGQL dotazů \citep{asyncPGX} jsme vybrali algoritmus DFS, jelikož v průběhu prohledávání generuje menší množství mezivýsledků.
 To je dáno chováním BFS.
@@ -559,17 +559,17 @@ DFS naopak potřebuje znát sousedy pouze aktuálně prohledávaných vrcholů.
 
 K aplikaci algoritmu musíme vytvořit strukturu (vzor) představující hledaný podgraf.
 Strukturu budeme chápat jako propojené posloupnosti tříd.
-Třída obsahuje informace specifikující vhodný element grafu, který ji má náležet.
+Dané třídy obsahují informace specifikující vhodné elementy grafu, které jim májí náležet.
 Cílem DFS je nalézt elementy grafu, které budou odpovídat hledaným posloupnostem.
 V průběhu DFS prohledávání si vzor pamatuje aktuální třídu, pro kterou DFS hledá vhodný element.
 V moment průchodu DFS přes nějaký element se ověří, zda se jedná o vhodný element pro aktuální třídu.
 Pokud ano, třída nyní reprezentuje daný element, DFS z něj pokračuje v prohledávání a dojde k přestupu na další třídu v posloupnosti.
-Pokud ne, DFS se vrací na předchozí element v prohledávání, ze kterého vybere ještě neprozkoumaný element procházení.
+Pokud ne, DFS se vrací na předchozí element v prohledávání, ze kterého vybere ještě neprozkoumaný element.
 
 \subsubsection{Tvorba vzoru}
 
 Nyní musíme strukturu vytvořit.
-V sekci \ref{anal.mathcandvar} jsme uvedli, že posloupnosti oddělené čárkou v \textit{Match} části budou reprezentovány jako pole tříd obsahující informace o proměnných.
+V sekci \ref{anal.mathcandvar} jsme uvedli, že posloupnosti oddělené čárkou v \textit{Match} části budou reprezentovány jako pole tříd obsahující informace o proměnných a hledaných elementech.
 Tedy jedno pole je ekvivalentní jedné posloupnosti.
 Pro zřetelnost budeme hovořit o jednom poli jako o řetězci.
 
@@ -579,22 +579,67 @@ match (x) -> (y), (x) -> (q)
 \end{code}
 
 Řetězce nám nyní budou sloužit k vytvoření vzoru.
-Abychom mohli efektivně hledat daný vzor, potřebujeme z řetězců vytvořit souvislou komponentu
-(popis tvorby vzoru a komponent je blíže popsán v sekci \ref{impl.match}). 
-Obecně ji vytvoříme propojením řetězců pomocí opakujících se proměnných.
-Tedy dva řetězce jsou propojeny právě tehdy, obsahují-li stejnou proměnnou. 
-Propojením všech takových řetězců vytvoříme souvislou komponentu.
-Souvislá komponenta představuje hledaný vzor.
-Strukturu tedy chápeme jako abstrakci procházení DFS.
+Vzor budeme chápat jako pole obsahující řetězce z části \textit{Match}.
+Výše jsme zmínili, že řetězce jsou také pole.
+Vzor pro výše zmíněný příklad dotazu se dvěma řetězci bude vypadat následovně:
+\begin{code}
+pole = [[(x), ->, (y)], [(x), ->, (q)]]
+\end{code}
+Zde \texttt{pole} obsahuje dva řetězce.
+\texttt{pole[0]} obsahuje první řetězec.
+\texttt{pole[0][0]} představuje hledaný vrchol, který definuje proměnnou \texttt{x}.
+\texttt{pole[0][1]} představuje hledanou dopřednou hranu.
+\texttt{pole[0][2]} představuje hledaný vrchol, který definuje novou proměnnou \texttt{y}.
+Ekvivalentně pro \texttt{pole[1]}.
+Tímto docílíme jednoduché iterace po struktuře vzoru.
+Prohledávání bude probíhat zleva doprava.
+První hledaný element je vrchol \texttt{x}.
+Při úspěšném nalezení daného vrcholu dojde k DFS zanoření, které je symbolizováno přestupem na následující položku v řetězci, tj. hledáme dopřednou hranu z elementu proměnné \texttt{x}.
+V momentě nalezení všech elementů prvního řetězce dojde k přestupu na další řetězec.
+Zde prohledávání proběhne z již nalezeného vrcholu představující proměnnou \texttt{x}.
+Po nalezení všech elementů druhého řetězce je získán výsledek prohledávání a následuje DFS vynoření, které je symbolizováno přestupem na předcházející položku v řetězci.
+Obecně při úspěšném nalezení elementu probíhá DFS zanoření a při neúspěchu probíhá DFS vynoření.
+
+Všimněme si, co se stalo při přestupu na druhý řetězec.
+Prohledávání začalo z již nalezeného elementu proměnné \texttt{x}.
+Abychom mohli toto provádět, musíme mít již nalezený element proměnné \texttt{x}.
+Jelikož zadané řetězce v dotazu nemusí být na vstupu nijak setříděné, a navíc nemusí obsahovat opakující se proměnné, tak ze vstupních řetězců vytvoříme souvislé komponenty.
+Souvislou komponentu chápeme jako skupinu řetězců, které se dají propojit pomocí sdílených proměnných.
+Řetězce souvislé komponenty budou ve vzoru obsaženy za sebou tak, abychom vždy mohli navázat na následující řetězec pomocí již nalezených proměnných.
+
+Příklad souvislé komponenty tří řetězců:
+\begin{code}
+      (1)         (2)                (3)
+match (x) -> (y), (r) -> (q) -> (t), (y) -> (q)
+\end{code}
+Zde vidíme tři řetězce, které tvoří souvislou komponentu.
+První řetězec lze propojit s třetím pomocí proměnné \texttt{y} a druhý řetězec lze propojit s třetím pomocí proměnné \texttt{q}.
+Abychom při prohledávání mohli navázat již nalezenými elementy proměnných, upravíme pořadí řetězců na \texttt{(1)}, \texttt{(3)} a \texttt{(2)}.
+Nyní při přestupu na další řetězec vždy spustíme prohledávání z již nalezeného elementu sdílené proměnné.
+Problém však nastává v případě řetězce \texttt{(2)}, který obsahuje navazující proměnnou uprostřed.
+Abychom mohli stále iterovat zleva doprava, tak daný řetězec rozdělíme na dva řetězce pomocí proměnné \texttt{q}.
+První řetězec bude obsahovat třídy před danou proměnnou v převráceném pořadí (včetně převrácení hran) a druhý obsahuje třídy za danou proměnnou.
+Oba řetězce budou začínat třídou reprezentující vrchol proměnné \texttt{q}. 
+Nyní jsme schopni při přestupu na dva nové řetězce navázat již nalezeným elementem proměnné \texttt{q}.
+
+Příklad rozdělení řetězce \texttt{(2)} pomocí proměnné \texttt{q}:
+\begin{code}
+(r) -> (q) -> (t) rozdělíme na (q) <- (r) a (q) -> (t)
+Výsledný vzor pak je:
+[[(x), ->, (y)], [(y), ->, (q)], [(q), <-, (r)], [(q), ->, (t)]]
+\end{code}
+
 Problém vyvstane, pokud nám vzniknou dvě separátní komponenty z jednoho dotazu.
 Tento případ nastane právě tehdy, když pro dvě komponenty neexistuje proměnná, která by je propojila.
+Například přidáním řetězce \texttt{(o) -> (s)} do výše zmíněného vzoru.
 V takovém případě se můžeme dívat na dotaz jako na skalární součin výsledků prohledávání dvou komponent.
-Stejný princip aplikujeme, pokud existuje vícero separátních komponent.
-
-Příklad dotazu separátních komponent:
-\begin{code}
-select x, y match (x), (y)
-\end{code}
+Již jsme zmínili, že řetězce souvislých komponent budou v poli vzoru umístěny za sebou.
+Přidaný řetězec tedy bude obsažen na konci vzoru.
+Případ, kdy nedokážeme při přestupu na následující řetězec (tj. první řetězec jiné komponenty) navázat, vyřešíme následovně.
+V momentě, kdy je nalezen podgraf odpovídající první komponentě, spustí se nové DFS prohledávání pro komponentu druhou.
+Teprve až projdeme obě komponenty, výsledek se uloží do tabulky, protože v tuto chvíli budeme vlastnit finální výsledek prohledávání.
+Zbavíme se tak nutnosti uchovávat mezivýsledky a následnému tvoření skalárního součinu.
+Princip se aplikuje ekvivalentně pro více komponent.
 
 \subsubsection{Finální výsledek}
 
@@ -611,7 +656,7 @@ Výsledně první položka v poli představuje proměnnou \texttt{x}, druhá pol
 
 Bude existovat pouze jedno pole pro jeden vzor. 
 Nebudou se vytvářet další, ale budou se měnit pouze vnitřní elementy, protože chceme omezit režii za tvorbu polí.
-Pole bude sloužit k ověření, jestli držíme totožné elementy v moment opakující se proměnné v průběhu prohledávání grafu.
+Pole bude sloužit k ověření, zda držíme totožné elementy v moment opakující se proměnné v průběhu prohledávání.
 V moment nalezení celého podgrafu bude pole proměnných zaplněné a bude chápáno jako finální výsledek prohledávání, protože pouze proměnné jsou přístupné v jiných částech dotazu.
 
 \subsection{Průběh prohledávání grafu}
@@ -621,13 +666,7 @@ Při DFS se bude kontrolovat, jestli průchod odpovídá hledanému vzoru.
 Procházení vždy začíná vrcholem, následně se přistoupí k hraně daného vrcholu a pak koncovému vrcholu hrany. 
 K procházení grafu máme navrženou strukturu z sekce reprezentace grafu \ref{anal.grafrep}.
 Pokud dojde k nalezení podgrafu, tak výsledek bude uložen způsobem z sekce \ref{anal.tables}.
-V našem případě tedy překopírování elementů z pole proměnných náležící vzoru.
-
-Vyhledávání separátních komponent vyřešíme následovně.
-V momentě, kdy je nalezen podgraf odpovídající jedné komponentě, spustí se DFS vyhledávání pro komponentu další.
-Teprve až projdeme všechny komponenty se výsledek uloží do tabulky, protože tuto chvíli budeme vlastnit finální výsledek prohledávání.
-Zbavíme se tak nutnosti uchovávat mezivýsledky a následnému tvoření skalárního součinu.
-
+V našem případě tedy překopírováním elementů z pole proměnných náležící vzoru.
 \subsection{Paralelizace prohledávání grafu} \label{anal.matchPar}
 
 Nyní přistoupíme k analýze paralelizace prohledávání grafu.

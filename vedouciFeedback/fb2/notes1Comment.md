@@ -26,6 +26,8 @@ Pridavam muj komentar:
 		zacinat od `(z)`, protoze v grafu bude typicky jen jeden vrchol s `id() = 123` takze ty tim vlastne rychle omezis prohledavany prostor (kdybys pouzil prvni zpusob, muzes az pri poslednim skoku treba zjistit, ze tam zadny vrchol s `id(x) = 123` ani neni. 
 		Kazdopadne, tohle je mega veda, je to problem sam o sobe, ale je to dost znamy problem -> zminil bych to jako future work/improvement
 
+		DONE - dopsal jsem to do future work
+
 - slozitost (pamet, cas) u algoritmu
 
 		Martin: Napada me pridat ty casy jen k tomu (a, b) stromu a binarnimu vyhledavani.Jinak uplne nevim jak bych udelal cas k tem samostatnym resenim.

@@ -124,7 +124,17 @@ Při použití jiného jazyka stačí implementovat dané dvě části separátn
 Problém nastane v rozhraní \texttt{IVisitor} a vzniku struktur dotazu, protože konstruktory tříd \texttt{Query} a \texttt{QueryObject} očekávají stávající formát.
 Nicméně, dané konstruktory a rozhraní \texttt{IVisitor} se dají jednoduše upravit k použití nového formátu.
 Přínosem je pak možnost využít i jiné dotazovací jazyky za cenu malých úprav.
-Dalším přínosem je také možnost využít třídu \texttt{Tokenizer} a \texttt{Parser} jako separátní knihovnu k načítání PGQL dotazu pro jazyk C\#, protože dle našeho průzkumu neexistuje ekvivalent pro práci s PGQL pro daný jazyk. 
+Dalším přínosem je také možnost využít třídu \texttt{Tokenizer} a \texttt{Parser} jako separátní knihovnu k načítání PGQL dotazu pro jazyk C\#, protože dle našeho průzkumu neexistuje v C\# knihovna pro práci s PGQL. 
+
+\item
+V budoucích rozšířeních lze uvažovat nad vypracováním důmyslnějšího exekučního plánu prohledávání v části \textit{Match}.
+Exekučním plánem zde myslíme vrcholy, ze kterých začíná prohledávání grafu.
+V našem případě jsme pouze vytvořili souvislé komponenty z posloupností v části dotazu \texttt{Match} (sekce \ref{anal.match} a \ref{impl.match}).
+Obecně lze však využít efektivnější přístupy.
+Například dojde k rozšíření dotazovacího enginu o část dotazu \textit{Where} (ekvivalent SQL \textit{Where}) a uživatel zadá dotaz \texttt{select count(*) match (x) -> (y) -> (z) where z.Vlastnost == 42}.
+Zde se jeví jako efektivnější přístup spustit prohledávání z vrcholu \texttt{z} a hledat vzor \texttt{(z) <- (y) <- (x)}, protože již v prvním kroku můžeme zjistit, že existuje jen pár vrcholů \texttt{z} splňujících podmínku \textit{Where}.
+V našem případě by však došlo ke spuštění prohledávání z proměnné \texttt{x}.
+Výsledně bychom procházeli první dva vrcholy \texttt{x} a \texttt{y} zbytečně, když následně zjistíme, že pro ně žádný vrchol \texttt{z} neexistuje.
 
 \end{enumerate}
 

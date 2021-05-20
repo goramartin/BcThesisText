@@ -267,7 +267,7 @@ Dva soubory se zmiňovaným JSON formátem \textit{EdgeTypes.txt} (schéma hran)
 Další dva soubory \textit{Edge.txt} (data hran) a \textit{Nodes.txt} (data vrcholů) obsahují samotná data s mezerami jako oddělovače.
 Soubory musí mít přesně stejné názvy.
 Jediná úprava formátu je ta, že hrany v datovém souboru musí být seřazeny podle \texttt{ID} počátečního vrcholu hrany tak, jak jsou vrcholy seřazeny v jejich datovém souboru.
-To znamená, že pokud máme v souboru vrcholů za sebou vrcholy s \texttt{ID} 1, 2 a 3, tak soubor hran musí nejdříve obsahovat hrany začínající vrcholem s \texttt{ID} 1, pak s \texttt{2} apod.
+To znamená, pokud máme v souboru vrcholů za sebou vrcholy s \texttt{ID} 1, 2 a 3, tak soubor hran musí nejdříve obsahovat hrany začínající vrcholem s \texttt{ID} 1, pak s \texttt{2} apod.
 Důvodem je zjednodušení procesu načítání.
 
 \subsubsection{Načítání vstupních souborů}
@@ -399,7 +399,7 @@ Třída obsahuje:
 \begin{itemize}
 \item Pole abstraktních tříd \texttt{List<ParsedPatternNode> pattern}.
 Abstraktní \\*třída reprezentuje jeden hledaný element v posloupnosti, tj. hrana  (\texttt{-[e]>}) nebo vrchol (\texttt{(x)}).
-Obsahuje položky \texttt{string Name}, pokud je element označen proměnnou (např. vrchol \texttt{(x)}), a \texttt{Table Table} pokud je definován typ elementu (např. vrchol \texttt{(:Type)}).
+Obsahuje položky \texttt{string Name}, pokud je element označen proměnnou (např. vrchol \texttt{(x)}), a \texttt{Table Table}, pokud je definován typ elementu (např. vrchol \texttt{(:Type)}).
 Potomci specifikují konkrétní případy vrcholů a hran. 
 Například pro posloupnost výše \texttt{(x) -> (y)} bude pole obsahovat tři třídy.
 \texttt{pattern[0]} je třída vrcholu \texttt{x}, \texttt{pattern[1]} je třída \texttt{OutEdge} hrany a \texttt{pattern[2]} je třída vrcholu \texttt{y}.
@@ -453,7 +453,7 @@ Tyto pozice budeme chápat jako \texttt{ID} proměnných v celém dotazu.
 Toto pořadí je uchováváno v třídě \texttt{QueryVariableMap}.
 V moment nalezení vhodného elementu proměnné se element uloží do daného pole na pozici proměnné.
 V moment vynořování z DFS se element z pozice smaže.
-Položka se používá ke kopírování do tabulky nebo k dalšímu zpracování.
+Položka se používá ke kopírování výsledků do tabulky nebo k dalšímu zpracování.
 
 Vzor dále implementuje rozhraní \texttt{IDFSPattern} spolu s \texttt{IPattern}, které slouží k posouvání po posloupnosti.
 Mají množství metod, ale vypíšeme pouze hlavní:
