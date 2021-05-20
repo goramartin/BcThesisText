@@ -583,14 +583,14 @@ Vzor budeme chápat jako pole obsahující řetězce z části \textit{Match}.
 Výše jsme zmínili, že řetězce jsou také pole.
 Vzor pro výše zmíněný příklad dotazu se dvěma řetězci bude vypadat následovně:
 \begin{code}
-pole = [[(x), ->, (y)], [(x), ->, (q)]]
+vzor = [[(x), ->, (y)], [(x), ->, (q)]]
 \end{code}
-Zde \texttt{pole} obsahuje dva řetězce.
-\texttt{pole[0]} obsahuje první řetězec.
-\texttt{pole[0][0]} představuje hledaný vrchol, který definuje proměnnou \texttt{x}.
-\texttt{pole[0][1]} představuje hledanou dopřednou hranu.
-\texttt{pole[0][2]} představuje hledaný vrchol, který definuje novou proměnnou \texttt{y}.
-Ekvivalentně pro \texttt{pole[1]}.
+Zde \texttt{vzor} obsahuje dva řetězce.
+\texttt{vzor[0]} obsahuje první řetězec.
+\texttt{vzor[0][0]} představuje hledaný vrchol, který definuje proměnnou \texttt{x}.
+\texttt{vzor[0][1]} představuje hledanou dopřednou hranu.
+\texttt{vzor[0][2]} představuje hledaný vrchol, který definuje novou proměnnou \texttt{y}.
+Ekvivalentně pro \texttt{vzor[1]}.
 Tímto docílíme jednoduché iterace po struktuře vzoru.
 Prohledávání bude probíhat zleva doprava.
 První hledaný element je vrchol \texttt{x}.
@@ -605,7 +605,7 @@ Prohledávání začalo z již nalezeného elementu proměnné \texttt{x}.
 Abychom mohli toto provádět, musíme mít již nalezený element proměnné \texttt{x}.
 Jelikož zadané řetězce v dotazu nemusí být na vstupu nijak setříděné, a navíc nemusí obsahovat opakující se proměnné, tak ze vstupních řetězců vytvoříme souvislé komponenty.
 Souvislou komponentu chápeme jako skupinu řetězců, které se dají propojit pomocí sdílených proměnných.
-Řetězce souvislé komponenty budou ve vzoru obsaženy za sebou tak, abychom vždy mohli navázat na následující řetězec pomocí již nalezených proměnných.
+Řetězce souvislé komponenty budou v poli \texttt{vzor} obsaženy za sebou tak, abychom vždy mohli navázat na následující řetězec pomocí již nalezených proměnných.
 
 Příklad souvislé komponenty tří řetězců:
 \begin{code}
@@ -635,7 +635,7 @@ Například přidáním řetězce \texttt{(o) -> (s)} do výše zmíněného vzo
 V takovém případě se můžeme dívat na dotaz jako na skalární součin výsledků prohledávání dvou komponent.
 Již jsme zmínili, že řetězce souvislých komponent budou v poli vzoru umístěny za sebou.
 Přidaný řetězec tedy bude obsažen na konci vzoru.
-Případ, kdy nedokážeme při přestupu na následující řetězec (tj. první řetězec jiné komponenty) navázat, vyřešíme následovně.
+Případ, kdy nedokážeme při přestupu na následující řetězec navázat (tj. první řetězec jiné komponenty), vyřešíme následovně.
 V momentě, kdy je nalezen podgraf odpovídající první komponentě, spustí se nové DFS prohledávání pro komponentu druhou.
 Teprve až projdeme obě komponenty, výsledek se uloží do tabulky, protože v tuto chvíli budeme vlastnit finální výsledek prohledávání.
 Zbavíme se tak nutnosti uchovávat mezivýsledky a následnému tvoření skalárního součinu.

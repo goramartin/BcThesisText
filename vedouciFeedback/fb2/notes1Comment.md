@@ -34,6 +34,8 @@ Pridavam muj komentar:
 
 		Tom: no obecne by se hodilo rict, jakou spotrebu pameti to ma -> jestli je to linearni s poctem hran/vrcholu atp... To same pro cas -> nemusi to byt nic exaktniho, proste jen zminit.
 
+		:(
+
 - mozna pridat definice na zacatek,co je graf, vrchol, hrana -> nejak v rychlosti
 
 		Martin: Martin Mareš s Ježkem říkali, že tyhle obecne definice nemusime popisovat.
@@ -55,6 +57,9 @@ Pridavam muj komentar:
 		jeho bottleneck je na synchronizaci. A tvoje obrana v textu by mela by neco na zpusob: "chteli jsme ukazat zakladni paralelni implementaci a kouknout se na jeho vykonnost, vime, ze to neni idealni, bude to future work, zavery z toho nejde moc vyvozovat, ale aspon vime kde je bottleneck pro para reseni; dulezite vysledky jsou ale videt v singhle thread reseni"
 
 
+		DONE - dopsal jsem odstavec na konec experimentu group by a dodal to navic jako future work.
+
+
 - pamet vs. vykon - zminit, proc pamet (na 1 proc dulezitejsi)
 
 		Martin: Stacilo by to nejak obecne v uvodu treba? Nejaky nastrel ze grafy jsou v dnesni dobe velke, proto budeme cilit na mensi pametovou slozitost na ukor rychlosti?
@@ -73,7 +78,7 @@ Pridavam muj komentar:
 		Uz to tam je, vypsal jsem v kapitole 1 na zacatku co presne pouzivame z pgql.
 		Vyrazy, agregacni funkce a co se muze zadat v tech dotazech.
 
-		Done 
+		DONE 
 
 - jak reseni ztizi GB + OB dohromady?
 
