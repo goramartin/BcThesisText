@@ -715,7 +715,7 @@ Výsledky jednovláknového seskupování jsou zobrazeny na grafech před shrnut
 
 Na grafech \ref{figure.amazonGroupByST}, \ref{figure.webberkstanGroupByST} a \ref{figure.skitterGroupByST} vidíme výsledky \textit{Group by} pro běh v jednom vlákně.
 Výsledky na grafech \ref{figure.amazonGroupBySTNoAgg}, \ref{figure.webberkstanGroupBySTNoAgg} a \ref{figure.skitterGroupBySTNoAgg} představují dotazy bez agregačních funkcí v části \textit{Select}.
-Dvě dvojice dotazů G\_Q4/G\_Q5, G\_Q2/G\_Q3 a trojice dotazů G\_Q6/G\_Q7/G\_Q8 jsou pouze mírně odlišné a můžeme u nich vidět konzistenci výsledků pro použité grafy.
+Dvě dvojice dotazů G\_Q2/G\_Q3, G\_Q4/G\_Q5 a trojice dotazů G\_Q6/G\_Q7/G\_Q8 jsou pouze mírně odlišné a můžeme u nich vidět konzistenci výsledků pro použité grafy.
 Řešení vykonávající \textit{Group by} v průběhu vyhledávání překonávají \textbf{Normal} řešení.
 S růstem počtu výsledku se rozdíly mezi módy prohlubují. 
 Například zrychlení \textbf{Streamed} řešení je znatelnější u grafu As-Skitter než u grafu Amazon0601. 
@@ -812,7 +812,7 @@ Z grafů \ref{figure.amazonGQ1Par}, \ref{figure.webberkstanGQ1Par} a \ref{figure
 
 Pro představu pouhé režie paralelní mapy jsme otestovali režii zvlášť čtení a vložení \verb+ConcurrentDictionary+ vůči \verb+Dictionary+ pro jedno vlákno.
 
-Následuje příklad kódu použitého při testu (označíme jej \textit{I/Rcode}):
+Následuje příklad kódu použitého při testu (kód označíme \textit{InsertReadCode}):
 \begin{code}
 Random ran = new Random(100100);
 Dictionary<int, int> map = new Dictionary<int, int>();
@@ -856,7 +856,7 @@ for (int i = 0; i < 100_000_000; i++)
 \label{tab.mapsInsert}
 \end{table}
 
-Měření dle kódu \textit{I/Rcode} výše.
+Měření dle kódu \textit{InsertReadCode} výše.
 Zkratka \textbf{Dict} označuje \texttt{Dictionary} a zkratka \textbf{ConDict} označuje \texttt{ConcurrentDictionary}.
 Běh v jednom vlákně. 
 Generování prvků pomocí třídy \texttt{Random} s inicializační hodnotou 100100. 
@@ -875,7 +875,7 @@ Test bude simulovat vkládání náhodných prvků do paralelní mapy osmi vlák
 Daná situace je velmi podobná naší situaci v \textit{Group by}.
 Výsledek porovnáme s výsledky režie normální mapy z tabulky \ref{tab.mapsInsert}.
 
-Následuje příklad kódu použitého při testu (označíme jej \textit{ParIcode}):
+Následuje příklad kódu použitého při testu (kód označíme \textit{ParalelInsertCode}):
 \begin{code}
 ConcurrentDictionary<int, int> parMap = 
     new ConcurrentDictionary<int, int>();
@@ -909,7 +909,7 @@ public static void Insert(ConcurrentDictionary<int, int> dict,
 \label{tab.mapsInsertParMap}
 \end{table}
 
-Měřeno dle kódu \textit{ParIcode} výše. 
+Měřeno dle kódu \textit{InsertReadCode} výše. 
 Zkratka \textbf{Dict} označuje \texttt{Dictionary} a zkratka \textbf{ConDict} označuje \texttt{ConcurrentDictionary}. 
 \texttt{Dictionary} vykoná práci v jednom vlákně. 
 \texttt{ConcurrentDictionary} běží paralelně v osmi vláknech. 
