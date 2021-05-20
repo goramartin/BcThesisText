@@ -212,10 +212,11 @@
 \contentsline {subsubsection}{Nejrychlejší paralelní řešení}{112}{section*.120}%
 \contentsline {subsubsection}{Obecné shrnutí Single group Group by řešení}{116}{section*.121}%
 \contentsline {subsubsection}{Výsledky Single group Group by zpracování}{117}{section*.122}%
-\contentsline {chapter}{Závěr}{118}{chapter*.123}%
-\contentsline {chapter}{Seznam použité literatury}{122}{chapter*.125}%
-\contentsline {chapter}{Seznam obr\'azk\r {u}}{124}{chapter*.126}%
-\contentsline {chapter}{Seznam tabulek}{126}{chapter*.127}%
+\contentsline {subsubsection}{Obecný problém synchronizace}{117}{section*.123}%
+\contentsline {chapter}{Závěr}{118}{chapter*.124}%
+\contentsline {chapter}{Seznam použité literatury}{122}{chapter*.126}%
+\contentsline {chapter}{Seznam obr\'azk\r {u}}{124}{chapter*.127}%
+\contentsline {chapter}{Seznam tabulek}{126}{chapter*.128}%
 \contentsline {chapter}{\numberline {A}Přílohy}{127}{appendix.A}%
 \contentsline {section}{\numberline {A.1}Zdrojové kódy}{127}{section.A.1}%
 \contentsline {section}{\numberline {A.2}Online Git repozitář}{127}{section.A.2}%

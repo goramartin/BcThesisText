@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  20 MAY 2021 21:14
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  20 MAY 2021 21:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1254,7 +1254,7 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 181.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 181.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 181.
 Package rerunfilecheck Info: File `prace.out' has not changed.
-(rerunfilecheck)             Checksum: 7E997232375723EE340DC5329F96613C;19229.
+(rerunfilecheck)             Checksum: E733ADFFD2C8CC714D8CA010822E8C26;19229.
 
 
 LaTeX Warning: There were multiply-defined labels.
@@ -1262,8 +1262,8 @@ LaTeX Warning: There were multiply-defined labels.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 181.
  ) 
 Here is how much of TeX's memory you used:
- 17803 strings out of 481239
- 253164 string characters out of 5920376
+ 17806 strings out of 481239
+ 253190 string characters out of 5920376
  501036 words of memory out of 5000000
  32118 multiletter control sequences out of 15000+600000
  630689 words of font info for 95 fonts, out of 8000000 for 9000
@@ -1283,10 +1283,10 @@ ri12.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/f
 onts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.p
 fb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/t
 ype1/public/lm/lmtt12.pfb>
-Output written on prace.pdf (131 pages, 2122164 bytes).
+Output written on prace.pdf (131 pages, 2123438 bytes).
 PDF statistics:
- 2433 PDF objects out of 2487 (max. 8388607)
- 2047 compressed objects within 21 object streams
- 504 named destinations out of 1000 (max. 500000)
+ 2438 PDF objects out of 2487 (max. 8388607)
+ 2052 compressed objects within 21 object streams
+ 507 named destinations out of 1000 (max. 500000)
  1078 words of extra memory for PDF output out of 10000 (max. 10000000)
 

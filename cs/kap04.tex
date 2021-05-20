@@ -1057,6 +1057,18 @@ To platí pro běh jednoho vlákna i běhu osmi vláken.
 Problém představuje paralelní \textbf{Streamed} řešení, jelikož k jednomu výsledku přistupuje osm vláken najednou, což způsobuje značné zpomalení kvůli nutné synchronizaci při výpočtu funkcí \verb+min+ a \verb+avg+. 
 Zrychlení je zde pouze v rozsahu $[1,81; 2,64]$-krát, zatímco u zbylých řešení je $[3,67; 4,61]$-krát.
 
+\subsubsection{Obecný problém synchronizace}
+
+Ať už v paralelních řešeních \textit{Group by} módů \textbf{Half-Streamed} a \textbf{Streamed} nebo paralelním řešení \textit{Single group Group by} módu \textbf{Streamed} jsme viděli, že se v daných módech objevuje značný problém režie za synchronizaci.
+Dali jsme si za cíl vyzkoušet základní paralelní implementaci a otestovat její výkonnost.
+Jsme si vědomi, že daný způsob není ideální a z výsledků nejde vyvodit dostatečné závěry.
+Nicméně, zjistili jsme, kde v paralelních řešeních leží hlavní kámen úrazu a vylepšení ponecháme jako budoucí rozšíření.
+Důležité poznatky jsme viděli již v jednovláknových zpracováních.
+Upravené jednovláknové řešení \textbf{Streamed} při zpracování \textit{Group by} bylo nejrychlejší.
+Upravené jednovláknové řešení \textbf{Half-Streamed/Streamed} při zpracování \textit{Single group Group by} bylo také nejrychlejší.
+Dokonce i paralelní řešení \textbf{Half-Streamed} při zpracování \textit{Single group Group by} bylo nejrychlejší.
+
+\bigskip
 Tímto jsme zakončili prezentaci výsledků. 
 Všechna nasbíraná data použitá k tvorbě grafů je možné nalézt v příloze výsledků benchmarku (\ref{prilohy.grafyVysledky}). 
 
