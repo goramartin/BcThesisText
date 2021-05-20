@@ -96,7 +96,7 @@ Vlákno po prohledání daných vrcholů zažádalo o další.
 Nicméně, dané řešení nemůže zaručit stoprocentně rovnoměrné rozdělení práce.
 Bylo by vhodné prozkoumat, jak daná situace ovlivňuje naše řešení.
 
-\item \textit{Order by}:
+\item Rozšíření \textit{Order by}:
 \begin{enumerate}
 
 \item
@@ -111,8 +111,9 @@ Daná implementace má značnou režii za metodu \texttt{Insert}, při které do
 V budoucích rozšířeních je možné vyzkoušet předalokovat určitou množinu vrcholů stromu, které se následně využijí v dané metodě.
 \end{enumerate}
 
-\item V paralelních \textit{Group by} řešeních by bylo vhodné prozkoumat podrobněji škálovatelnost daných řešení pro rozličné počty vláken.
-Pokud možno, také možnosti jiných paralelních map/slovníků.
+\item
+Paralelní řešení jsme otestovali jen při využití osmi vláken.
+V budoucím výzkumu by bylo vhodné prozkoumat škálovatelnost řešení pro různé počty využitých vláken.
  
 \item
 Dotazy v našem dotazovacím enginu jsou zadávány pomocí podmnožiny jazyka PGQL.

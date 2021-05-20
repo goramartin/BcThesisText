@@ -1110,7 +1110,7 @@ Pokud dotaz neobsahuje další části, pak v době nalezení výsledku jej sta�
 Nicméně, pokud je v dotazu obsažen \textit{Group by} nebo \textit{Order by}, pak se výsledky mohou vypsat až po dokončení třídění nebo seskupování.
 Tedy dané dvě části nám tvoří bariéru, skrze kterou se nemůže posílat výsledky dále.
 Jelikož máme navrhnout pouze vykonání částí \textit{Order by} a \textit{Group by}, tak budeme uvažovat pro \textit{Match} a \textit{Select} stejný návrh, jako v minulých sekcích.
-Tedy dotaz bude tvořen původní částí \textit{Select} propojenou s části \textit{Match}.
+Tedy dotaz bude tvořen původní částí \textit{Select} propojenou s částí \textit{Match}.
 Část \textit{Match} pak propojíme s částmi \textit{Order/Group by} a upravíme tak, aby jim byla schopna předávat jeden výsledek v moment jeho nalezení.  
 
 \subsection{Změna objektů reprezentující části Order/Group by}

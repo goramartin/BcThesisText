@@ -79,7 +79,7 @@ Ačkoliv \textit{Order by} nespadá konkrétně pod definici agregace, tak z na�
 V takovém případě výsledky se stejnými hodnotami klíčů třídění ve výstupu tvoří souvislou posloupnost (tj. leží u sebe), protože taková posloupnost nemůže obsahovat prvek, který má rozdílné hodnoty klíčů od hodnot klíčů prvků v dané posloupnosti.
 Kdyby takový prvek existoval, pak by se nejednalo o setříděnou posloupnost.   
 Z tohoto důvodu v naší práci budeme upravovat i část \textit{Order by}.
-Výsledně rozdíl mezi \textit{Group by} a \textit{Order by} je ten, že v \textit{Group by} jsou výše zmíněné posloupnosti sloučeny do jednoho prvku (tj. skupiny) a lze pro ně vypočítat agregační funkce. 
+Výsledně rozdíl z pohledu seskupování mezi \textit{Group by} a \textit{Order by} je ten, že v \textit{Group by} jsou výše zmíněné posloupnosti sloučeny do jednoho prvku (tj. skupiny) a lze pro ně vypočítat agregační funkce. 
 Avšak, zaměříme se pouze na jejich separátní použití a nebudeme uvažovat situaci, ve které jsou obě části zadány společně.
 Dále také budeme uvažovat, že dotaz vždy bude obsahovat pouze části \textit{Select}, \textit{Match} (PGQL a openCypher)/\textit{Where} (RDF) a následně \textit{Group/Order by}.
 

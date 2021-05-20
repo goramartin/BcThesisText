@@ -441,16 +441,16 @@ Benchmark společně s dotazovacím enginem a potřebnými knihovnami byl přelo
 \section{Výsledky}
 
 V této sekci prezentujeme naměřená data pro všechny tři grafy (\ref{expr.graphs}), které jsme podrobili dotazům z sekce \ref{expr.dotazy}.
-U grafů \textit{Group/Order by} se držíme značení odpovídající z kapitoly implementace.
+U grafů \textit{Group/Order by} se držíme značení z kapitoly Implementace \ref{impl}.
 Značení se skládá ze tří částí.
-Prvních dvě jsou obsaženy vždy a poslední je použit pouze v paralelní části \textit{Group by}.
+Prvních dvě části jsou obsaženy vždy a poslední část je použita pouze v paralelní části \textit{Group by}.
 Značení vypadá následovně:
 \begin{code}
 [Mód enginu]:  [Název řešení] [způsob ukládání výsledků u Group by]
 \end{code}
 
-Pokud řešení obsahuje kombinaci módů, pak řešení pro dané módy jsou totožná.
-Pro připomenutí zmíníme, že mód \textbf{Normal} vykonává \textit{Group/Order by} až po dokončení prohledávání grafu a vylepšené módy \textbf{Streamed}/\textbf{Half-Streamed} je vykonávají v průběhu prohledávání grafu.
+Pokud řešení obsahuje kombinaci módů (např. \textbf{Half-Streamed}\textbf{/Streamed}), pak řešení pro dané módy jsou totožná.
+Pro připomenutí zmíníme, že mód \textbf{Normal} vykonává \textit{Group/Order by} až po dokončení prohledávání grafu a vylepšené módy \textbf{Half-Streamed}/\textbf{Streamed} je vykonávají v průběhu prohledávání grafu.
 U paralelního řešení \textbf{Streamed} jsou výsledky zpracovány globálně, zatímco u \textbf{Half-Streamed} řešení dochází k lokálnímu zpracování, které je zakončené sléváním.
 Zopakování hlavních konceptů řešení a způsob ukládání ponecháme jako úvod jednotlivých částí.
 
@@ -473,7 +473,7 @@ WebBerkStan &  222 498 869 \\
 As-Skitter & 453 674 558 \\
 \bottomrule
 \end{tabular}
-\caption{Počet nalezených výsledků pro dotazy obsahující vzor (x) -> (y) -> (z) nad jednotlivými grafy.}
+\caption{Počet nalezených výsledků pro dotazy obsahující vzor \texttt{(x) -> (y) -> (z)} nad jednotlivými grafy.}
 \label{tab.matchCount}
 \end{table}
 
@@ -501,10 +501,10 @@ V tomto případě je každý sloupeček přidělen jednomu vláknu, které nás
 Již jsme zmínili, že nárůst počtu ukládaných proměnných zpomaluje vykonání.
 Nyní se podíváme ještě na zpomalení z pohledu paralelizace slévání.
 V paralelním řešení u dotazu M\_Q2 vůči M\_Q1 můžeme vidět značný skok nárůstu doby vykonání.
-V M\_Q1 se neukládá žádná proměnná, zatímco v M\_Q2 se ukládá jedna proměnná a zároveň zarovnání sloupečku probíhá pouze v jednom vlákně.
+V M\_Q1 se neukládá žádná proměnná, zatímco v M\_Q2 se ukládá jedna proměnná a zároveň slévání sloupečku probíhá pouze v jednom vlákně.
 Při navýšení počtu ukládaných proměnných vůči M\_Q2, tj. dotazy M\_Q3 a M\_Q4, nedochází k tak velkému skoku jako mezi dotazy M\_Q1 a M\_Q2.
-To je právě způsobeno již zmíněnou paralelizaci zarovnání.
-Každý sloupeček je zde zarovnán jedním vláknem.  
+To je právě způsobeno již zmíněnou paralelizaci slévání.
+Každý sloupeček je zde sléván jedním vláknem.  
 
 \begin{figure}[!htp]
 \includegraphics[width=\linewidth]{../img/amazonMatch.pdf}\centering

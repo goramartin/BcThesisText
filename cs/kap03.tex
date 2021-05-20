@@ -1470,7 +1470,7 @@ Poslední pracující vlákno vyvolá uložení výsledků z \texttt{nonAsterixR
 \subsubsection{Překlad}
 
 Překlad se vykonává z prostředí aplikace Visual Studia 2019.
-K překladu je nutné volit Release mód a platformu x64.
+K překladu je nutné volit \texttt{Release} mód a platformu x64.
 Předpokládáme, že aplikace se používá na systému Windows 10.
 Vstupní soubory v adresáři \textit{DataFiles} se při překladu překopírují do složky s přeloženou aplikací.
 
@@ -1500,7 +1500,7 @@ Pořadí výpisu určuje pořadí zadání při spuštění.
 
 \begin{enumerate}
 
-\item Povinný argument \textbf{Mode:} argument definuje mód zpracování dotazu. 
+\item Povinný argument \texttt{Mode:} argument definuje mód zpracování dotazu. 
 Ve zbytku výpisu budeme využívat dané zkratky k označení módů.
 \begin{table}[!htb]
 \centering
@@ -1513,11 +1513,11 @@ hs   &  Half-Streamed \\
 s   &  Streamed \\
 \bottomrule
 \end{tabular}
-\caption{Tabulka argumentu \textbf{Mode}.}
+\caption{Tabulka argumentu \texttt{Mode}.}
 \label{tab.argument.mode}
 \end{table}
 
-\item Povinný argument \textbf{SorterAlias:} argument definuje způsob zpracování části \textit{Order by}.
+\item Povinný argument \texttt{SorterAlias:} argument definuje způsob zpracování \\*části \textit{Order by}.
 Každý mód má svá vlastní řešení.
 Názvy řešení odpovídají názvům z implementace.
 Hodnota ve sloupečku \textbf{Argument} udává hodnotu argumentu.
@@ -1535,15 +1535,15 @@ s & abtreeS  & Streamed: ABTree \\
 s & abtreeAccumS & Streamed: ABTreeAcccumulator \\
 \bottomrule
 \end{tabular}
-\caption{Tabulka argumentu \textbf{SorterAlias}.}
+\caption{Tabulka argumentu \texttt{SorterAlias}.}
 \label{tab.argument.sorteralias}
 \end{table}
 
-\item Povinný argument \textbf{GrouperAlias:} argument definuje způsob zpracování části \textit{Group by}.
+\item Povinný argument \texttt{GrouperAlias:} argument definuje způsob zpracování části \textit{Group by}.
 Každý mód má svá vlastní řešení.
 Názvy řešení odpovídají názvům z implementace.
 Hodnota ve sloupečku \textbf{Argument} udává hodnotu argumentu.
-Pokud bylo zadáno „refL“ nebo „refB“, pak je \textit{Group by} vykonáno jedním vláknem, přestože bylo definováno paralelní zpracování v argumentu \textbf{ThreadCount}.
+Pokud bylo zadáno „refL“ nebo „refB“, pak je \textit{Group by} vykonáno jedním vláknem, přestože bylo definováno paralelní zpracování v argumentu \texttt{ThreadCount}.
 Výběr zpracování \textit{Single group Group by} závisí pouze na výběru módu, protože každý mód má pravě jedno takové řešení.
 \begin{table}[!htb]
 \centering
@@ -1563,40 +1563,40 @@ hs & twostepHSL & Half-Streamed: Two-step (List) \\
 s & globalS & Streamed: Global \\
 \bottomrule
 \end{tabular}
-\caption{Tabulka argumentu \textbf{GrouperAlias}.}
+\caption{Tabulka argumentu \texttt{GrouperAlias}.}
 \label{tab.argument.grouperalias}
 \end{table}
 
-\item Povinný argument \textbf{FixedArraySize:} definuje velikost bloků fixní velikost uvnitř tabulky výsledků
+\item Povinný argument \texttt{FixedArraySize:} definuje velikost bloků fixní velikost uvnitř tabulky výsledků
 (viz sekce \ref{anal.match.merge}, \ref{impl.table} a \ref{impl.match.table}).
 Argument má číselnou hodnotu.
 Minimální hodnota je 1 a maximální je \texttt{Int32.MaxValue}.
 
-\item Povinný argument \textbf{ThreadCount:} definuje počet použitých vláken k zpracování dotazu.
+\item Povinný argument \texttt{ThreadCount:} definuje počet použitých vláken k zpracování dotazu.
 Argument má číselnou hodnotu.
 Minimální počet je 1 a maximální počet je 64.
 
-\item Povinný argument \textbf{Printer:} definuje místo výpisu výsledků dotazu.
+\item Povinný argument \texttt{Printer:} definuje místo výpisu výsledků dotazu.
 Existují dvě možnosti: „console“ a „file“.
 První vypíše výsledky dotazu uživateli do konzolového okna aplikace.
 Druhý vypíše výsledky dotazu uživateli do souboru.
 Název souboru je definován jako poslední argument programu.
 
-\item Povinný argument \textbf{Formater:} definuje formát výpisu výsledků dotazu ve formě tabulky.
+\item Povinný argument \texttt{Formater:} definuje formát výpisu výsledků dotazu ve formě tabulky.
 Existují dvě možnosti: „simple“ a „markdown“.
 Hlavička tabulky obsahuje výrazy s \textit{Select} části dotazu.
 První vypíše tabulku výsledků ve formátu, ve kterém jsou sloupečky odděleny mezerami.
 Druhý vypíše tabulku výsledků ve formátu Markdown\footnote{\url{https://www.markdownguide.org/}} tabulky.
 
-\item Nepovinný argument \textbf{VerticesPerThread:} argument je povinný, pokud je argument \textbf{ThreadCount} větší než jedna.
+\item Nepovinný argument \texttt{VerticesPerThread:} argument je povinný, pokud je argument \texttt{ThreadCount} větší než jedna.
 Argument má číselnou hodnotu.
 Minimální hodnota je 1 a maximální je \texttt{Int32.MaxValue}.
 Argument udává počet vrcholů přidělených vláknům k prohledání v části \textit{Match} (viz sekce \ref{anal.matchPar} a \ref{impl.match.parmatch} (\texttt{VertexDistributor})).
 
-\item Nepovinný argument \textbf{File:} argument je povinný, pokud je argument \textbf{Printer} roven „file“.
+\item Nepovinný argument \texttt{File:} argument je povinný, pokud je \texttt{Printer} roven „file“.
 Argument definuje jméno souboru, do kterého se vypíšou výsledky dotazu.
 Součástí jména není koncovka souboru (např. .txt nebo .cs).
-Koncovka souboru je určena na základě argumentu \textbf{Formater}.
+Koncovka souboru je určena na základě argumentu \texttt{Formater}.
 Při hodnotě „simple“ se vytvoří soubor s koncovkou .txt a při „markdown“ se vytvoří soubor s koncovkou .md. 
 \end{enumerate}
 
@@ -1626,7 +1626,7 @@ Samotné názvy částí dotazu a funkcí nejsou citlivé na velikost písmene.
 Názvy proměnných nesmí obsahovat čísla.
 Zadaný dotaz musí být ukončen znakem „\textbf{;}“.
 Stisknutím klávesy „Enter“ dojde k zahájení zpracování dotazu.
-Výstup je zobrazen uživateli dle argumentů programu \textbf{Printer} a \textbf{Formater}.
+Výstup je zobrazen uživateli dle argumentů programu \texttt{Printer} a \texttt{Formater}.
 Po dokončení zpracování dotazu je uživatel vyzván pomocí zprávy, aby zadal další dotaz nebo ukončil aplikaci:
 \begin{code}
 Do you want to continue with another query?
