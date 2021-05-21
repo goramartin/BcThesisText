@@ -164,7 +164,7 @@
 \contentsline {subsection}{\numberline {3.4.13}Úprava Single group Group by}{84}{subsection.3.4.13}%
 \contentsline {subsubsection}{Třída SingleGroupGroupByHalfStreamed}{85}{section*.91}%
 \contentsline {subsubsection}{Třída SingleGroupGroupByStreamed}{85}{section*.92}%
-\contentsline {section}{\numberline {3.5}Překlad a spuštění enginu}{86}{section.3.5}%
+\contentsline {section}{\numberline {3.5}Překlad a spuštění dotazovacího enginu}{86}{section.3.5}%
 \contentsline {subsubsection}{Překlad}{86}{section*.93}%
 \contentsline {subsubsection}{Vstupní soubory}{86}{section*.94}%
 \contentsline {subsubsection}{Argumenty programu}{86}{section*.95}%

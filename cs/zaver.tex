@@ -65,7 +65,7 @@ Problematické zde bylo paralelní řešení módu \textbf{Streamed}, ve kterém
 Hlavním cílem této práce bylo zjistit, zda upravením částí zabývajících se agregací dat (tj. části  \textit{Group/Order by}) dotazovacího enginu po vzoru proudových systémů urychlíme vykonávání dotazů.
 Danou úpravu představují navržená řešení módů \textbf{Half-Streamed} a \textbf{Streamed}.
 Původní vykonávání představují řešení módu \textbf{Normal}.
-Z výsledků experimentu výše můžeme vyvodit, že existují situace, kdy nastává urychlení vykonávání.
+Z výsledků experimentu výše můžeme vyvodit, že existují situace, kdy pro upravené módy nastává urychlení vykonávání dotazů.
 Konkrétně nastalo zrychlení v paralelním zpracování \textit{Order by} módů \textbf{Half-Streamed} a \textbf{Streamed} při třídění pomocí vlastností.
 Dále nastalo urychlení v jednovláknovém zpracování \textit{Group by} módu \textbf{Streamed}, kdy nebyla použita tabulka výsledků prohledávání.
 Posledně nastalo urychlení v paralelním i jednovláknovém zpracování \textit{Single group Group by} módu \textbf{Half-Streamed}, kdy docházelo k uchovávání pouze hodnot agregačních funkcí.

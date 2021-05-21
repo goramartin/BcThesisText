@@ -20,7 +20,7 @@ Výsledně jsme se rozhodli z výše zmíněných důvodu použít C\# pro .NET 
 
 \section{Značení módů} \label{impl.engine.modes}
 
-Určili jsme, že engine bude pracovat v několika módech, které uživatel bude moct měnit.
+Určili jsme, že dotazovací engine bude pracovat v několika módech, které uživatel bude moct měnit.
 Jsou to módy:
 
 \begin{itemize}
@@ -65,7 +65,7 @@ Nyní popíšeme podrobněji rozložení řešení \texttt{QueryEngine}.
 \subsection{Rozložení řešení QueryEngine}
 
 Řešení \texttt{QueryEngine} neobsahuje další podřešení, ale pouze adresáře.
-Níže popsané adresáře rozdělují engine na hlavní části výstavby z kapitoly analýzy.
+Níže popsané adresáře rozdělují dotazovací engine na hlavní části výstavby z kapitoly analýzy.
 Hlavní adresáře jsou:
 
 \begin{itemize}
@@ -231,7 +231,7 @@ Z třídy pak vznikají konkrétní třídy:
 \item \texttt{IntProperty}, kde \texttt{T} je \texttt{Int32}. Odpovídá typu \texttt{integer} ve vstupním JSON schématu.
 \end{itemize}
 V analýze jsme se rozhodli implementovat pouze tyto dva typy. 
-Což znamená, že v celém enginu bude možno pracovat \textbf{pouze s těmito dvěma typy}.
+Což znamená, že v celém dotazovacím enginu bude možno pracovat \textbf{pouze s těmito dvěma typy}.
 Tyto třídy mají metodu \texttt{void ParsePropFromStringToList(string strProp)}, která se používá při načítání hodnot ze vstupních souborů.
 Převede hodnotu \texttt{strProp} na svůj typ \texttt{T} a uloží na konec pole \texttt{propHolder}.
 Každý element v \texttt{Table} má svou hodnotu vlastnosti v poli na pozici \texttt{IDs[Element.ID]}.
@@ -248,7 +248,7 @@ Obsahuje pole všech typů elementů. Tedy \texttt{List<Vertex>}, \texttt{List<I
 Obsahuje dále:
 \begin{itemize}
 \item \texttt{Dictionary<string, Table> nodeTables} všechny typy vrcholů Property grafu. To samé pro hrany v položce \texttt{edgeTables}.
-\item \texttt{Dictionary<string, Tuple<int, Type> > labels} mapa, kde klíč je název vlastnosti a \texttt{int} je její přiřazený unikátní identifikátor, abychom nemuseli v enginu používat řetězce jako \texttt{ID} vlastnosti.
+\item \texttt{Dictionary<string, Tuple<int, Type> > labels} mapa, kde klíč je název vlastnosti a \texttt{int} je její přiřazený unikátní identifikátor, abychom nemuseli v dotazovacím enginu používat řetězce jako \texttt{ID} vlastnosti.
 \texttt{Type} je pak typ vlastnosti, slouží pro kontrolu, protože dvě stejnojmenné vlastnosti musí mít stejný typ. 
 \end{itemize}
 
@@ -1465,7 +1465,7 @@ Výsledek se neukládá do tabulky, ale pouze zahodí.
 Poslední pracující vlákno vyvolá uložení výsledků z \texttt{nonAsterixResults} do položky \texttt{finalResults}.
 \end{itemize}
 
-\section{Překlad a spuštění enginu}
+\section{Překlad a spuštění dotazovacího enginu}
 
 \subsubsection{Překlad}
 
