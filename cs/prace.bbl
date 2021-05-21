@@ -66,15 +66,21 @@ Nan Tang, Qing Chen, and Prasenjit Mitra.
   Management of Data}, SIGMOD '16, page 1481–1496, New York, NY, USA, 2016.
   Association for Computing Machinery.
 
-\bibitem{neopropertygraph}
-{\em Neo4j grafová databáze}.
-\newblock \url{https://neo4j.com/developer/graph-database/} [Dostupnost
-  ověřena k datu 15.4.2021].
+\bibitem{pgx}
+{\em PGX - paralelní dotazovací engine od firmy Oracle}.
+\newblock
+  \url{https://www.oracle.com/middleware/technologies/parallel-graph-analytix.html}
+  [Dostupnost ověřena k datu 15.4.2021].
 
 \bibitem{neptune}
 {\em Neptune grafová databáze}.
 \newblock \url{https://aws.amazon.com/neptune/} [Dostupnost ověřena k datu
   15.4.2021].
+
+\bibitem{neopropertygraph}
+{\em Neo4j grafová databáze}.
+\newblock \url{https://neo4j.com/developer/graph-database/} [Dostupnost
+  ověřena k datu 15.4.2021].
 
 \bibitem{dgraph}
 {\em Dgraph grafová databáze}.

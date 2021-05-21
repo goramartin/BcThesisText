@@ -350,7 +350,7 @@ Výstupem jsou stromové struktury hlavních částí dotazu, které jsou dále 
 \item \texttt{QueryExecutionHelper qEhelper} obsahuje informace o způsobu vykonání dotazu. 
 \item \texttt{QueryExpressionInfo exprInfo} obsahuje všechny výrazy (expressions) v dotazu.
 \end{itemize}
-V moment volání metody \texttt{Compute()} dojde k vyvolání metody \texttt{Compute(...)} na položce \texttt{query}.
+V momentě volání metody \texttt{Compute()} dojde k vyvolání metody \texttt{Compute(...)} na položce \texttt{query}.
 Tímto se spustí vykonávání dotazu.
 
 \subsubsection{Třída QueryObject}
@@ -438,7 +438,7 @@ Pole po zpracování:
 Zde vidíme, že první tři posloupnosti po zpracování tvoří souvislou komponentu, protože sdílejí proměnnou \texttt{x}, ale původně nebyli v poli za sebou.
 Nulté a druhé pole sdílejí proměnnou \texttt{x}, podle které jsme druhou posloupnost dělili.
 V průběhu prohledávání grafu budeme vždy iterovat po daných posloupnostech.
-V moment nalezení vhodného elementu se posuneme na další prvek posloupnosti (doprava) nebo na novou posloupnost.
+V momentě nalezení vhodného elementu se posuneme na další prvek posloupnosti (doprava) nebo na novou posloupnost.
 To symbolizuje DFS krok zanoření.
 Opačně se posouváme doleva a zkoušíme ještě neprohledané elementy grafu.
 Díky rozdělení můžeme při přesouvání na začátek další posloupnosti vždy navázat již nalezenou proměnnou, pokud existuje a jedná o součást aktuální komponenty.
@@ -451,8 +451,8 @@ Pokud ve vzoru není žádná proměnná, tak je pole vždy prázdné.
 Každá proměnná má svou pozici.
 Tyto pozice budeme chápat jako \texttt{ID} proměnných v celém dotazu.
 Toto pořadí je uchováváno v třídě \texttt{QueryVariableMap}.
-V moment nalezení vhodného elementu proměnné se element uloží do daného pole na pozici proměnné.
-V moment vynořování z DFS se element z pozice smaže.
+V momentě nalezení vhodného elementu proměnné se element uloží do daného pole na pozici proměnné.
+V momentě vynořování z DFS se element z pozice smaže.
 Položka se používá ke kopírování výsledků do tabulky nebo k dalšímu zpracování.
 
 Vzor dále implementuje rozhraní \texttt{IDFSPattern} spolu s \texttt{IPattern}, které slouží k posouvání po posloupnosti.
@@ -537,7 +537,7 @@ Daná metoda se používá v paralelním zpracování v momentě, kdy je přidě
 Metodou \texttt{void Search()} se spustí prohledávání grafu.
 Prohledávání prochází všechny vrcholy v definovaném rozsahu a pak se ukončí.
 V tento moment lze nastavit zmíněnou metodou další rozsah a opět spustit prohledávání grafu.
-V moment nalezení finálního výsledku se zavolá abstraktní metoda \texttt{void ProcessResult()}, která zpracuje výsledek.
+V momentě nalezení finálního výsledku se zavolá abstraktní metoda \texttt{void ProcessResult()}, která zpracuje výsledek.
 Rozhraní prohledávání neposkytuje návrat nalezených výsledků.
 Pokud se výsledky mají ukládat, tak potomek dané třídy musí dostat v konstruktoru objekt úložiště a přepsat metodu \texttt{void ProcessResult()}.
 Způsob zpracování výsledku si definují potomci.
@@ -545,7 +545,7 @@ Způsob zpracování výsledku si definují potomci.
 \subsubsection{Třída DFSPatternMatcher}
 
 Třída je potomkem třídy výše.
-Reprezentuje algoritmus prohledávání grafu, který ukládá výsledky do tabulky v moment jejich nalezení.
+Reprezentuje algoritmus prohledávání grafu, který ukládá výsledky do tabulky v momentě jejich nalezení.
 V konstruktoru dostane tabulku \texttt{MatcherFixedResultsInternal}, kam ukládá své výsledky prohledávání.
 Metoda \texttt{ProcessResult} tedy ukládá výsledky do dané tabulky.
 V průběhu volání této metody taky dochází k počítání nalezených výsledků v položce \texttt{NumberOfMatchedElements}.
@@ -553,7 +553,7 @@ Pokud uživatel zadal pouze \texttt{count(*)} v části \textit{Select}, tak ned
 
 \subsubsection{Třída DFSParallelPatternMatcher} \label{impl.match.parmatch}
 
-Třída představuje paralelní prohledávání grafu, které ukládá výsledky v moment nalezení do tabulky.
+Třída představuje paralelní prohledávání grafu, které ukládá výsledky v momentě nalezení do tabulky.
 Paralelizaci jsme popsali v sekci \ref{anal.matchPar}.
 V konstruktoru dostává počet vláken \texttt{ThreadCount}, vzor \texttt{DFSPattern}, graf \texttt{Graph} a instanci úložiště výsledků \texttt{MatchFixedResults}.
 K paralelizaci prohledávání grafu využívá instance třídy \texttt{DFSPatternMatcher} a počet instancí odpovídá hodnotě \texttt{ThreadCount}.
@@ -581,7 +581,7 @@ Ten obsahuje odkaz na \texttt{MatchInternalResults} a \texttt{ColumnDistributor}
 Vlákna žádají objekt \texttt{ColumnDistributor} o sloupeček ke slévání.
 Interně objekt funguje totožně jako \texttt{VertexDistributor} s rozdílem, že si objekt pamatuje index prvního nepřiděleného sloupečku.
 Slévání probíhá voláním metody \texttt{MergeColumn} na instanci \texttt{results}.
-V moment dokončení slévání jsou finální výsledky v položce \texttt{results.FinalMerged}.
+V momentě dokončení slévání jsou finální výsledky v položce \texttt{results.FinalMerged}.
 Tato položka je předána konstruktoru \texttt{TableResults}, která implementuje rozhraní \texttt{ITableResults}.
 Třída představuje tabulku výsledků, kterou si objekty částí dotazu (\texttt{QueryObjekt}) předávají ke zpracování.
 Pokud dotaz obsahoval pouze \texttt{count(*)} v části \textit{Select}, tak se výsledky neukládaly do tabulku a místo slévání výsledků dojde pouze ke slévání položek instancí DFS algoritmů \texttt{NumberOfMatchedElements}.
@@ -607,7 +607,7 @@ Pokud chceme přistoupit k proměnné výsledku prohledávání, musíme znát j
 \item \texttt{int FixedArraySize} je velikost bloků v tabulce.
 Tabulka opět využívá princip ukládání výsledků do bloků fixní délky.
 Stejný princip jsme použili při ukládání výsledků v průběhu prohledávání grafu.
-To nám umožní v moment dokončení slévání pouze přesunou výsledky do konstruktoru této třídy.
+To nám umožní v momentě dokončení slévání pouze přesunou výsledky do konstruktoru této třídy.
 \item \texttt{List<Element[FixedArraySize]>[] resTable} je tabulka výsledků prohledávání.
 \texttt{resTable[i]} je \textit{i}-tý sloupeček.
 \texttt{resTable[i][j]} je \textit{j}-tý blok ve sloupečku.
@@ -829,7 +829,7 @@ První vypočte haš vkládaného objektu a při porovnání se vyvolá metoda \
 Strukturám se dá v konstruktoru poskytnou vlastní implementaci rozhraní.
 Díky této implementaci jsme vymysleli dvě optimalizace:
 \begin{enumerate}
-\item V moment, kdy dochází k použití \texttt{Dictionary} nebo aktu slévání hašovacích tabulek, budeme jako \texttt{Key} používat strukturu \texttt{GroupDictKey}.
+\item V momentě, kdy dochází k použití \texttt{Dictionary} nebo aktu slévání hašovacích tabulek, budeme jako \texttt{Key} používat strukturu \texttt{GroupDictKey}.
 Struktura obsahuje dvě položky \texttt{int hash} a \texttt{int position}. 
 \texttt{hash} je zde haš řádku a \texttt{position} je index řádku v tabulce výsledků.
 Tedy jsme rozšířili \texttt{Key} o haš hodnotu řádku, kterou můžeme znovu použít, pokud to bude nutné.
@@ -912,12 +912,12 @@ Funkce \texttt{count}, \texttt{min} a \texttt{max} mohou navíc mít i řetězec
 
 \item Třída \texttt{IntSum: Aggregate<int>} reprezentuje funkci \texttt{sum}.
 Obecně metoda \texttt{Apply} vypočte hodnotu výrazu a přičte ji k hodnotě v úložišti.
-Úložiště musí obsahovat sumu již vypočtených výrazů.
+Úložiště musí obsahovat součet již vypočtených výrazů.
 Thread-safe verze používá k přičtení atomickou operaci přičtení \texttt{Interlocked.Add(...)}.
 \texttt{Merge} pak pouze přičte hodnotu v \texttt{y} do \texttt{x} stejným způsobem.
 
 \item Třída \texttt{IntAvg: Aggregate<int>} reprezentuje funkci \texttt{avg}.
-Úložiště musí obsahovat sumu již vypočtených výrazů společně s jejich počtem.
+Úložiště musí obsahovat součet již vypočtených výrazů společně s jejich počtem.
 Zpracování pak pouze přičte hodnotu výrazu k sumě a navýší jejich počet.
 Přičítání je implementováno shodně jako v \texttt{IntSum}.
 
@@ -973,7 +973,7 @@ Třída se použije při výpočtu funkcí \texttt{min} a \texttt{max}.
 U daných funkcí je \texttt{T} rovno návratové hodnotě výrazu uvnitř třídy \texttt{Aggregate<T>}.
 
 \item Druhá je \texttt{AggregateBucketAvgResult<T>}, která se použije při výpočtu funkce \texttt{avg} a přidává definici počtu vypočtených výrazů \texttt{int resultCount}.
-\texttt{T} úložiště u dané funkce je \texttt{long}, ze stejného důvodu jako u funkce \texttt{sum}, tj. ukládáme sumu hodnot výrazů. 
+\texttt{T} úložiště u dané funkce je \texttt{long}, ze stejného důvodu jako u funkce \texttt{sum}, tj. ukládáme součet hodnot výrazů. 
 Výsledná hodnota je vypočtena podílem \texttt{aggResult/resultCount}.
 \end{itemize}
 
@@ -1092,7 +1092,7 @@ Definuje:
 \begin{itemize}
 \item Abstraktní metodu \texttt{void Process(int matcherID, Element[] result)}, která implementuje logiku zpracování jednoho výsledku prohledávání.
 První parametr \texttt{matcherID} je zde \texttt{ID} instance algoritmu prohledávání grafu, které se použije při přístupu k lokálním výsledkům v paralelních řešeních.
-Očekává se, že instance algoritmu prohledávání grafu v moment dokončení prohledávání signalizují situaci pomocí této metody s \texttt{result == null}.
+Očekává se, že instance algoritmu prohledávání grafu v momentě dokončení prohledávání signalizují situaci pomocí této metody s \texttt{result == null}.
 Po této signalizaci může dojít k finálním úpravám výsledků.
 \item Abstraktní metodu \\*\texttt{RetrieveResults(out ITableResults t, out GroupByResults g)},\\* která získá finální zpracované výsledky v podobě tabulek. 
 \end{itemize}
@@ -1262,11 +1262,11 @@ Definuje:
 \item Položku \texttt{ExpressionReturnValue<T> firstKeyExpression} představující výraz prvního klíče třídění.
 Výraz se vypočte a následně se jeho hodnota použije k zjištění správné přihrádky.
 \item Položku \texttt{ExpressionComparer<T>[] firstKeyComparers}, která obsahuje odkaz na porovnávače prvních klíčů použitých ve stromech uvnitř přihrádek.
-V moment výpočtu prvního klíče nastavíme výslednou hodnotu výrazu položkám porovnávače, aby nedocházelo k opětovnému výpočtu výrazu.
+V momentě výpočtu prvního klíče nastavíme výslednou hodnotu výrazu položkám porovnávače, aby nedocházelo k opětovnému výpočtu výrazu.
 \item Metodu \texttt{RangeBucket CreateBucket()}, kterou implementují potomci a vytváří v ní specializovaný druh vyhledávacího stromu.
 \item Položku \texttt{TypeRangeHasher<T> firstKeyHasher}, která na základě hodnoty prvního klíče třídění určí správnou přihrádku výsledku (volání metody \texttt{int Hash(T value)}).
 \item Implementaci metody \texttt{Process(Element[] result, int matcherID)}.
-V moment nalezení výsledku vlákno vypočte hodnotu \texttt{firstKeyExpression} pomocí \texttt{result} a určí přihrádku voláním metody \texttt{Hash} s vypočtenou hodnotou výrazu.
+V momentě nalezení výsledku vlákno vypočte hodnotu \texttt{firstKeyExpression} pomocí \texttt{result} a určí přihrádku voláním metody \texttt{Hash} s vypočtenou hodnotou výrazu.
 Uzamkne přihrádku a vloží výsledek do tabulky v přihrádce.
 Nastaví položky porovnávače uvnitř stromu a následně vloží index řádku do stromu. 
 \end{itemize}
@@ -1330,7 +1330,7 @@ Využíváme danou strukturu, protože při slévání výsledků je sléváno n
 Kdybychom použili původní strukturu, tak bychom nedokázali rozeznat, které tabulce řádek náleží.
 
 \item Implementaci metody \texttt{Process(Element[] result, int matcherID)}, ve které dochází v první části k lokálnímu seskupování.
-V moment, kdy vlákno dokončí prohledávání grafu, začne dané vlákno slévat své lokální výsledky do položky \texttt{globalGroups}.
+V momentě, kdy vlákno dokončí prohledávání grafu, začne dané vlákno slévat své lokální výsledky do položky \texttt{globalGroups}.
 Slévání vykonává metoda \texttt{MergeResults(GroupJob job, int matcherID)}.
 V jednovláknovém zpracování nedochází ke slévání.
 \end{itemize}

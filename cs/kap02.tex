@@ -9,7 +9,7 @@ V třetím kroku provedeme analýzu úprav pro agregaci v průběhu vyhledáván
 Součástí této části bude analýza algoritmů \textit{Order by} a \textit{Group by} pro dané úpravy. 
 Pokud v nějaké ukázce použijeme jazyk C\# míníme tím jazyk C\# pro .NET Framework 4.8.
 
-\section{Obecný pohled na engine}
+\section{Obecný pohled na dotazovací engine}
 
 V naší představě je dotazovací engine určen pro práci nad grafem, který je celý obsažen v paměti, a to včetně vlastností elementů grafu.
 Graf bude načten v definovaném formátu a následně na něm budou vykonávány dotazy.
@@ -18,7 +18,12 @@ Nad grafem se pak vykoná uživatelsky definovaný dotaz.
 Dané omezení jsme zvolili, protože hlavním cílem je testovat pouze části \textit{Group by} a \textit{Order by}.
 Vytvořit reálnou grafovou databázi by zabralo netriviální časové období.
 
-Při obecném pohledu na engine jsme lokalizovali hlavní bloky výstavby, které musíme uvážit.
+Dotazovací engine chceme vyvinout tak, abychom s ním byli schopni pracovat na stolním počítači/notebooku, protože nám to umožní zjednodušit vývojové a testovací prostředí.
+Z tohoto důvodu nám ale vzniká hlavní omezení, které je paměťové, jelikož celá aplikace bude obsažena v hlavní paměti.
+Reálné grafy bývají značně obrovské, a navíc samotné zpracování dotazů zabere množství paměti i času (tj. ukládáme výsledky prohledávání nebo vytváříme skupiny výsledků).
+Abychom mohli reálné grafy načíst a zpracovat, tak při vývoji dotazovacího enginu se budeme snažit upřednostnit nižší paměťovou náročnost před vyšším výkonem.
+
+Při obecném pohledu na dotazovací engine jsme lokalizovali hlavní bloky výstavby, které musíme uvážit.
 Jsou to: reprezentace grafu, načítání uživatelského dotazu, výrazy (expressions) a dotaz/vykonání dotazu.
 Graf nám bude představovat grafovou databázi. 
 Samotně pak určuje formát objektů, nad kterými je vykonán uživatelský dotaz.
@@ -28,14 +33,14 @@ Například v části \texttt{order by x.PropOne}, musíme vědět, jak reprezen
 Na základě interní reprezentace se musí vytvořit struktury dotazu a definovat exekuční plán. 
 Blok dotaz/vykonání dotazu pak musí navíc obsahovat dva módy.
 A to upravené řešení a původní řešení.
-Uživatel si při spuštění enginu bude moct vybrat požadovaný mód.
+Uživatel si při spuštění dotazovacího enginu bude moct vybrat požadovaný mód.
 
 Samotná představa vykonávání je následovná.
 Uživatel při spuštění aplikace vybere chtěný mód.
 Aplikace po zapnutí načte graf z datových souborů.
 Uživatel pomocí příkazové řádku zadá dotaz k vykonání.
 Dotaz se vykoná a po dokončení uživatel může opět zadat další dotaz.
-Myslíme, že zde není nutné složité grafické rozhraní, proto budeme engine považovat za konzolovou aplikaci. 
+Myslíme, že zde není nutné složité grafické rozhraní, proto budeme dotazovací engine považovat za konzolovou aplikaci. 
 
 \section{Reprezentace grafu} \label{anal.grafrep}
 
@@ -102,7 +107,7 @@ K vyřešení daných problému v naší představě bychom použili tři pole.
 Pole vrcholů, pole \texttt{out} hran (ukazují na koncový vrchol hrany) a \texttt{in} hran (ukazují na počáteční vrchol hrany). 
 Zde by bylo vhodné vytvořit nové potomky obecné hrany: \texttt{out} hrana a \texttt{in} hrana.
 Hrany by si pamatovali svůj koncový vrchol.
-Pro \texttt{in} hranu by to byl vrchol odkud vychází, aby bylo možné v moment držení vrcholu projít skrze ni na vrchol další.
+Pro \texttt{in} hranu by to byl vrchol odkud vychází, aby bylo možné v momentě držení vrcholu projít skrze ni na vrchol další.
 Tedy pro jednu hranu na vstupu budou existovat dva záznamy v daných polích, které se liší pouze koncovým vrcholem.
 Abstraktní předek všech elementů by si měl nově pamatovat i svou pozici v daných polích pro rychlý přístup k jeho sousedům.
 Každé pole tedy bude mít unikátní typ, který nám pomůže rozlišit k jaké situaci má dojít v průběhu prohledávání grafu.
@@ -144,14 +149,13 @@ Vlastnosti budou opět reprezentovány dvojicí \verb+(NázevVlastnosti/propType
 Každý JSON objekt tedy definuje jeden \texttt{elType}.
 Všechny objekty pak budou obsaženy v JSON poli:
 \begin{code}
-Soubor schéma vrcholů:
+Soubor obsahující schéma vrcholů:
 [    { "Kind": "NodeX" }, 
      { "Kind": "NodeY", "Vlastnost1": "integer" } 
      { "Kind": "NodeZ", "Vlastnost2": "string", 
        "Vlastnost1": "integer" }  ]
-\end{code}
-\begin{code}
-Soubor schéma hran:
+
+Soubor obsahující schéma hran:
 [    { "Kind": "EdgeX" }, 
      { "Kind": "EdgeY", "Vlastnost1": "integer" } ]
 \end{code}
@@ -191,7 +195,8 @@ ID elType fromID toID Vlastnosti...
 51 EdgeY 0 1 44 // EdgeY má vlastnost Vlastnost1
                 // s číselnou hodnotou.
 52 EdgeX 1 2   
-...
+\end{code}
+\begin{code}
 Soubor vrcholů:
 ID elType Vlastnosti...
 0 NodeX    // NodeX nemá vlastnosti.
@@ -340,7 +345,8 @@ abstract class Aggregation<T>: Aggregation {
   public ExpReturnValue<T> expr; // Argument ag. funkce.
   public abstract void Apply(ValueStorage storage, Element[] elms);
 }
-
+\end{code}
+\begin{code}
 public class Sum<T>: Aggregation<T>{
   public override void Apply(ValueStorage storage, Element[] elms) {
     if (expr.TryEvaluate(elms, out T retVal)) {
@@ -349,7 +355,6 @@ public class Sum<T>: Aggregation<T>{
   }
 }
 \end{code}
-\clearpage
 \noindent Na ukázce výše vidíme položku \verb+expr+, která reprezentuje vstupní výraz agregační funkce.
 Funkce \verb+Apply+ je logikou funkce. 
 Vidíme funkci \verb+Sum+. 
@@ -393,12 +398,10 @@ Zde \texttt{ExpressionIntegerAdd} rozšiřuje obecný binární operátor a urč
 V těle funkce \texttt{TryEvaluate} dojde k pokusu o vyhodnocení dvou podvýrazů.
 Při úspěchu dojde k vypočtení finální hodnoty a v opačném případě dojde k selhání vyhodnocení. 
 
-Tímto jsme vyřešili problémy načítání a reprezentace expressions pro náš engine.
+Tímto jsme vyřešili problémy načítání a reprezentace expressions pro náš dotazovací engine.
 Kód je pouze ilustrační a není finální.
 Použili jsme jej, protože poskytoval lepší možnosti vysvětlení konceptu než obrázek.
 Nyní přistoupíme k problémům vykonávání dotazu.
-
-\clearpage
 
 \section{Vykonání dotazu} \label{anal.vykonanidotazu}
 
@@ -409,7 +412,7 @@ Abychom splnili zadání, tak \textit{Group/Order by} musí být vykonány po do
 Vylepšená řešení budou dané části vykonávat v průběhu vyhledávání.
 V ideálním případě chceme dosáhnout toho, aby dotazovací engine poskytoval dva módy.
 Mód zde reprezentuje způsob vykonání dotazu.
-Uživatel enginu si při spuštění vybere chtěný mód.
+Uživatel dotazovacího enginu si při spuštění vybere chtěný mód.
 Tudíž, módy musí v programu koexistovat.
 V této části analyzujeme obecný model vykonání, který posléze v sekci \ref{anal.improvement} upravíme tak, aby vykonával \textit{Group/Order by} v průběhu prohledávání grafu.
 
@@ -445,8 +448,6 @@ Při vykonání se provede rekurzivní voláni funkce \texttt{Compute} na objekt
 \label{figure.diaQueryObjects}
 \end{figure}
 
-\clearpage
-
 \begin{figure}[!htp]
 \includegraphics{../img/diaQueryObjectsCon.pdf}\centering
 \caption{Propojení objektů pomocí položky \texttt{next} pro dotaz\\* \texttt{select x match (x) order by x}.}
@@ -458,6 +459,8 @@ Při vykonání se provede rekurzivní voláni funkce \texttt{Compute} na objekt
 \caption{UML activity diagram rekurzivního volání metody \texttt{Compute} pro dotaz \texttt{select x match (x) order by x}.}
 \label{figure.diaQueryObjectsCall}
 \end{figure}
+
+\clearpage
 
 \subsection{Paralelizace vykonání dotazu}
 
@@ -485,9 +488,7 @@ První varianta v části \textit{Match} při jeho nalezení vypočte hodnoty v�
 Sloupeček představuje hodnoty jednoho výrazu.
 Tato varianta nám nepřišla vhodná, protože by objekt \textit{Match} musel znát informace o výrazech v celém dotazu.
 Navíc výrazy v částech mohou být rozdílné.
-Tedy se vytváří nutnost vytvářet sloupečky hodnot v moment, kdy se nepotřebují a tím se navyšuje spotřeba paměti.
-
-\clearpage
+Tedy se vytváří nutnost vytvářet sloupečky hodnot v momentě, kdy se nepotřebují a tím se navyšuje spotřeba paměti.
 
 Příkladem může být dotaz: 
 \begin{code}
@@ -562,7 +563,7 @@ Strukturu budeme chápat jako propojené posloupnosti tříd.
 Dané třídy obsahují informace specifikující vhodné elementy grafu, které jim májí náležet.
 Cílem DFS je nalézt elementy grafu, které budou odpovídat hledaným posloupnostem.
 V průběhu DFS prohledávání si vzor pamatuje aktuální třídu, pro kterou DFS hledá vhodný element.
-V moment průchodu DFS přes nějaký element se ověří, zda se jedná o vhodný element pro aktuální třídu.
+V momentě průchodu DFS přes nějaký element se ověří, zda se jedná o vhodný element pro aktuální třídu.
 Pokud ano, třída nyní reprezentuje daný element, DFS z něj pokračuje v prohledávání a dojde k přestupu na další třídu v posloupnosti.
 Pokud ne, DFS se vrací na předchozí element v prohledávání, ze kterého vybere ještě neprozkoumaný element.
 
@@ -656,8 +657,8 @@ Výsledně první položka v poli představuje proměnnou \texttt{x}, druhá pol
 
 Bude existovat pouze jedno pole pro jeden vzor. 
 Nebudou se vytvářet další, ale budou se měnit pouze vnitřní elementy, protože chceme omezit režii za tvorbu polí.
-Pole bude sloužit k ověření, zda držíme totožné elementy v moment opakující se proměnné v průběhu prohledávání.
-V moment nalezení celého podgrafu bude pole proměnných zaplněné a bude chápáno jako finální výsledek prohledávání, protože pouze proměnné jsou přístupné v jiných částech dotazu.
+Pole bude sloužit k ověření, zda držíme totožné elementy v momentě opakující se proměnné v průběhu prohledávání.
+V momentě nalezení celého podgrafu bude pole proměnných zaplněné a bude chápáno jako finální výsledek prohledávání, protože pouze proměnné jsou přístupné v jiných částech dotazu.
 
 \subsection{Průběh prohledávání grafu}
 
@@ -693,6 +694,12 @@ Děje se tak, protože reálné grafy nemají obecně rovnoměrné rozložení h
 Jedno vlákno by mohlo dostat vrcholy nacházející se v oblasti s množstvím hran, zatímco jiné vlákno by procházelo řídkou oblastí.
 Jelikož se rychle vyčerpaly startovní vrcholy, tak vlákno v řídké oblasti ukončí svou práci mnohem dříve něž vlákno první.
 Nyní se musí čekat na dokončení práce prvního vlákna.
+\clearpage
+\begin{figure}[!htp]
+\includegraphics{../img/diaQueryObjectsMatchPar.pdf}\centering
+\caption{Diagram paralelizace prohledávání grafu.}
+\label{figure.diaQueryObjectsMatchPar}
+\end{figure}
 
 \subsection{Slévání výsledků prohledávání} \label{anal.match.merge}
 
@@ -713,13 +720,6 @@ Nabízí se dva způsoby.
 Vlákno slévá pouze jeden totožný sloupeček všech výsledků vláken nebo dojde k dvoucestnému slévání výsledků vláken.
 Správné řešení ponecháme na dobu implementace.    
 
-\clearpage
-
-\begin{figure}[!htp]
-\includegraphics{../img/diaQueryObjectsMatchPar.pdf}\centering
-\caption{Diagram paralelizace prohledávání grafu.}
-\label{figure.diaQueryObjectsMatchPar}
-\end{figure}
 
 \bigskip
 
@@ -887,13 +887,13 @@ V objektu výsledku musíme znát aktuální minimum/maximum.
 Dále, byla-li hodnota již nastavena, protože musíme být schopni rozeznat prázdné úložiště po jeho vytvoření.
 
 
-\item \texttt{count/sum:} výsledek je počet výsledků/suma hodnot výsledků. 
+\item \texttt{count/sum:} výsledek je počet výsledků/součet hodnot výsledků. 
 Při výpočtu musíme přičítat hodnotu k hodnotě v úložišti.
 
 \item \texttt{avg:} výsledek je aritmetický průměr.
-Při výpočtu si budeme ukládat počet výsledků a sumu hodnot výsledků.
-Dochází zde tedy k navýšení počtu výsledků a přičtení nové hodnoty ke stávající sumě.
-Pro získání finální hodnoty dojde k vypočtení podílu sumy a počtu výsledků.
+Při výpočtu si budeme ukládat počet výsledků a součet hodnot výsledků.
+Dochází zde tedy k navýšení počtu výsledků a přičtení nové hodnoty ke stávajícímu součtu.
+Pro získání finální hodnoty dojde k vypočtení podílu součtu a počtu výsledků.
 \end{itemize}
 
 \subsection{Jednovláknové zpracování} \label{anal.groupby.singlethread}
@@ -949,7 +949,7 @@ Pro úpravu logiky agregačních funkcí na thread-safe verze volíme tyto varia
 
 \begin{itemize}
 
-\item \texttt{min/max:} princip \textit{Compare and Exchange}. V moment porovnání mohlo dojít ke změně hodnoty v úložišti.
+\item \texttt{min/max:} princip \textit{Compare and Exchange}. V momentě porovnání mohlo dojít ke změně hodnoty v úložišti.
 Musíme znovu provést porovnání.  
 
 \item \texttt{sum/count:} tyto metody implementují pouze přičítání. 
@@ -969,7 +969,7 @@ Všimněme si nutnosti dvojité synchronizace.
 Prvně musí dojít k synchronizaci vytváření záznamů v mapě.
 Druhý krok synchronizace je nutný při zpracování agregačních funkcí.
 Paralelní mapa nám vyřadí souběh při vytváření nových záznamů skupin.
-V moment zpracování agregačních funkcí musí dojít k volání thread-safe verzí.
+V momentě zpracování agregačních funkcí musí dojít k volání thread-safe verzí.
 Výhoda tohoto přístupu je, že zde nedochází ke slévání výsledků.
 
 Bucket reprezentace úložiště má zde značnou výhodu vůči List.
@@ -978,19 +978,28 @@ Místo abychom použili dvojí synchronizace jako u Bucket, tak zde bude nutné 
 Při přístupu do tabulky je nutné kontrolovat, jestli se nemusí rozšířit.
 V ten moment se musí zabránit přístupu ostatních vláken a teprve pak rozšířit tabulku.
 To se dá implementovat například semaforem (C\# \texttt{Semaphor}) omezující pohyb vláken v kritické sekci.
-Vlákno v moment nutnosti rozšíření zablokuje vstup přes semafor.
+Vlákno v momentě nutnosti rozšíření zablokuje vstup přes semafor.
 Vlákno se na přístup pokusí projít skrze semafor.
 Pokud je mu vstup zabráněn, tak dochází k rozšiřování tabulky.
 V opačném případě aktualizuje výslednou hodnotu agregační funkce.
 Postup s List může být však značně pomalý, proto budeme uvažovat, jestli přístup raději implementovat pouze pro Bucket.
-Řešení \textbf{Global} je znázorněno na obrázku \ref{figure.diaGlobalGr} na konci této sekce.
+
+Řešení \textbf{Global} je znázorněno na obrázku \ref{figure.diaGlobalGr}.
+Část rozdělení práce ukazuje přidělení rovnoměrného počtu výsledků vláknům.
+V globální části vlákna seskupují přídělené výsledky pomocí globální mapy výsledků (paralelní mapy).
+
+\begin{figure}[!htp]
+\includegraphics{../img/diaGlobalGr.pdf}\centering
+\caption{Diagram paralelizace řešení \textbf{Global}.}
+\label{figure.diaGlobalGr}
+\end{figure}
 
 \subsection{Two-step Group by} \label{anal.groupby.twostep}
 
 Tento přístup probíhá ve dvou krocích.
 Lokální část následovaná globální částí. 
 V lokální části pro každé vlákno běží kompletně identický ekvivalent jednovláknového zpracování.
-Globální část nastane v moment dokončení této práce.
+Globální část nastane v momentě dokončení této práce.
 Místo aby vlákno ukončilo běh, tak rovnou provede slévání svých výsledků do thread-safe paralelní mapy.
 To znamená, že vlákno nečeká na dokončení práce ostatních vláken, ale rovnou slévá své výsledky do paralelní mapy.
 Tento přístup kombinuje jednovláknové řešení společně s přístupem \textbf{Global}.
@@ -1000,7 +1009,18 @@ Problematická část je zde slévání výsledků s List úložištěm výsledk
 První fáze nepředstavuje problém. 
 Druhá představuje problém jako u \textbf{Global} řešení, tedy platí vše, co jsme pro něj zmínili.
 Můžeme zkusit implementovat stejné řešení jako u \textbf{Global} pomocí semaforu.
-Řešení \textbf{Two-step} je znázorněno na obrázku \ref{figure.diaTwoGr} na konci této sekce.
+
+Řešení \textbf{Two-step} je znázorněno na obrázku \ref{figure.diaTwoGr}.
+Část rozdělení práce ukazuje přidělení rovnoměrného počtu výsledků vláknům.
+V lokální části vlákna seskupují přidělené výsledky pomocí lokální mapy výsledků.
+V globální části dochází ke slévání lokálních výsledků vláken pomocí globální mapy výsledků (paralelní mapy).
+
+\begin{figure}[!htp]
+\includegraphics{../img/diaTwoGr.pdf}\centering
+\caption{Diagram paralelizace řešení \textbf{Two-step}.}
+\label{figure.diaTwoGr}
+\end{figure}
+
 
 \subsection{Local + dvoucestné slévání Group by} \label{anal.groupby.local}
 
@@ -1018,7 +1038,19 @@ Hlavní výhody byly už zmíněny.
 Nevýhoda řešení je, že vlákna musejí čekat při slévání na dokončení práce druhého vlákna a teprve až pak může dojít ke slévání.
 Další nevýhoda nastane v případě velkého počtu vláken.
 Strom slévání v tuto chvíli bude hluboký a tedy výsledky vláken se budou často překopírovávat. 
-Přístup je znázorněn na obrázku \ref{figure.diaLocalGr} na konci této sekce.
+
+Řešení \textbf{Local + dvoucestné slévání} je znázorněno na obrázku \ref{figure.diaLocalGr}.
+Část rozdělení práce ukazuje přidělení rovnoměrného počtu výsledků vláknům.
+V lokální části vlákna seskupují přidělené výsledky pomocí lokální mapy výsledků.
+V globální části dochází k dvoucestnému slévání lokálních výsledků vláken.
+
+
+
+\begin{figure}[!htp]
+\includegraphics{../img/diaLocalGr.pdf}\centering
+\caption{Diagram paralelizace řešení \textbf{Local + dvoucestné slévání} pro 4 vlákna.}
+\label{figure.diaLocalGr}
+\end{figure}
 
 \subsection{Paralelizace Single group Group by} \label{anal.groupby.singlegroup}
 
@@ -1033,24 +1065,7 @@ K rozhodnutí, které řešení finálně použít použijeme fakt, že počet v
 V takovém případě nebudeme implementovat paralelní slévání, ale pouze jedno vybrané vlákno provede sjednocení všech výsledků.
 
 
-\begin{figure}[!htp]
-\includegraphics{../img/diaGlobalGr.pdf}\centering
-\caption{Diagram paralelizace řešení \textbf{Global}.}
-\label{figure.diaGlobalGr}
-\end{figure}
 
-\begin{figure}[!htp]
-\includegraphics{../img/diaTwoGr.pdf}\centering
-\caption{Diagram paralelizace řešení \textbf{Two-step}.}
-\label{figure.diaTwoGr}
-\end{figure}
-
-\clearpage
-\begin{figure}[!htp]
-\includegraphics{../img/diaLocalGr.pdf}\centering
-\caption{Diagram paralelizace řešení \textbf{Local + dvoucestné slévání} pro 4 vlákna.}
-\label{figure.diaLocalGr}
-\end{figure}
 
 \bigskip
 Analyzovali jsme a navrhli řešení vykonání částí \textit{Match}, \textit{Group by} a \textit{Order by}.
@@ -1059,14 +1074,14 @@ Daná analýza a návrh nám poskytnou odrazový můstek při analýze úprav pr
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Úprava enginu} \label{anal.improvement}
+\section{Úprava dotazovacího enginu} \label{anal.improvement}
 
-Cílem úprav je poskytnout enginu schopnost provádět části \textit{Group by} a \textit{Order by} v průběhu prohledávání grafu části \textit{Match}.
-Obecně to znamená, že v moment nalezení jednoho výsledku jej musíme okamžitě zpracovat.
+Cílem úprav je poskytnout dotazovacímu enginu schopnost provádět části \textit{Group by} a \textit{Order by} v průběhu prohledávání grafu části \textit{Match}.
+Obecně to znamená, že v momentě nalezení jednoho výsledku jej musíme okamžitě zpracovat.
 Pro \textit{Order by} to znamená výsledek správně zatřídit do již setříděné posloupnosti výsledků.
 Pro \textit{Group by} to znamená výsledek přidat do správné skupiny nebo pro něj skupinu vytvořit, a navíc musíme pro něj zpracovat agregační funkce. 
 Čili, výsledky v průběhu prohledávání \textit{Match} části nebudeme ukládat do tabulky, která se po nalezení všech výsledků předá k dalšímu zpracování.
-Namísto toho navrhneme postup, kterým docílíme zpracování výsledků v moment jeho nalezení.
+Namísto toho navrhneme postup, kterým docílíme zpracování výsledků v momentě jeho nalezení.
 Postupy ověříme vůči stávajícím řešením v kapitole Experiment \ref{expr} z hlediska doby vykonání.
 V ideálním případě docílíme zrychlení nebo pouze vyrovnání vůči řešením vykonávající \textit{Order by} a \textit{Group by} po dokončení prohledávání grafu.
 Z hlediska implementace to také znamená naprogramovat vylepšení tak, abychom byli schopni jednoduše přepínat mezi způsobem vykonání dotazu.
@@ -1088,7 +1103,7 @@ Následně se nalezené výsledky předávali dalším částem ve směru klesaj
 Nejvyšší priorita se nachází nalevo a nejnižší napravo.
 Pro naše potřeby úprav budeme nyní uvažovat pouze části \textit{Match}, \textit{Group by}, \textit{Order by} a \textit{Select}.
 Opět budeme o částech uvažovat jako o separátních objektech.
-Potřebujeme, aby \textit{Match} část v moment nalezení výsledku jej předala k zatřídění části \textit{Order by} nebo k seskupení části \textit{Group by}.
+Potřebujeme, aby \textit{Match} část v momentě nalezení výsledku jej předala k zatřídění části \textit{Order by} nebo k seskupení části \textit{Group by}.
 Po zatřídění/seskupení se opět pokračuje v prohledávání grafu, dokud se nenajde další výsledek a ten se zase předá k dalšímu zpracování.
 Můžeme si všimnout značné podobnosti s předchozím návrhem. 
 Jediný rozdíl je ten, že místo předání všech výsledku najednou další části se předá výsledek pouze jeden.
@@ -1111,7 +1126,7 @@ Nicméně, pokud je v dotazu obsažen \textit{Group by} nebo \textit{Order by}, 
 Tedy dané dvě části nám tvoří bariéru, skrze kterou se nemůže posílat výsledky dále.
 Jelikož máme navrhnout pouze vykonání částí \textit{Order by} a \textit{Group by}, tak budeme uvažovat pro \textit{Match} a \textit{Select} stejný návrh, jako v minulých sekcích.
 Tedy dotaz bude tvořen původní částí \textit{Select} propojenou s částí \textit{Match}.
-Část \textit{Match} pak propojíme s částmi \textit{Order/Group by} a upravíme tak, aby jim byla schopna předávat jeden výsledek v moment jeho nalezení.  
+Část \textit{Match} pak propojíme s částmi \textit{Order/Group by} a upravíme tak, aby jim byla schopna předávat jeden výsledek v momentě jeho nalezení.  
 
 \subsection{Změna objektů reprezentující části Order/Group by}
 
@@ -1166,7 +1181,7 @@ V naší představě budeme vycházet přímo z původního návrhu z sekce \ref
 Definovali jsme si, že každé vlákno vlastní lokálně strukturu vzoru \texttt{Pattern}, objekt vyhledávání \texttt{Matcher} a tabulku výsledků.
 Finální výsledky ukládá do tabulky a po dokončení prohledávání grafu dojde k slévání tabulek.
 Zde upravíme část, ve které dochází k ukládání výsledků do tabulky.
-Vlákno bude držet odkaz na objekt \textit{Group/Order by} a v moment nalezení výsledek předá pomocí volání metody \texttt{ProcessResult}.
+Vlákno bude držet odkaz na objekt \textit{Group/Order by} a v momentě nalezení výsledek předá pomocí volání metody \texttt{ProcessResult}.
 Metoda výsledek zpracuje a po návratu z metody se pokračuje ve vyhledávání.
 To se opakuje dokud prohledávání grafu neskončí.
 
@@ -1226,14 +1241,14 @@ Druhým modelem vykonání je model \textbf{Streamed}.
 Myšlenkou tohoto návrhu je příchozí výsledky zpracovat globálně.
 Vycházíme z \textbf{Global} zpracování \textit{Group by} z sekce \ref{anal.groupby.global}.
 Vytvoříme strukturu, která nám poskytne metody se synchronizací.
-Všechna vlákna v moment nalezení výsledku volají metodu \texttt{ProcessResult}, uvnitř které dojde k volání synchronních metod na struktuře.
+Všechna vlákna v momentě nalezení výsledku volají metodu \texttt{ProcessResult}, uvnitř které dojde k volání synchronních metod na struktuře.
 Výhoda tohoto přístupu je odstranění nutnosti slévání výsledků vláken.
 Nevýhoda je, že zde dochází k volání metod se synchronizací.
 
 \section{Úprava Order by} \label{anal.improvement.orderby}
 
 Cílem \textit{Order by} by je setřídit výsledky prohledávání.
-V původním řešení jsme měli značnou výhodu, protože v moment začátku třídění jsme vlastnili všechny výsledky prohledávání (tj. kompletní tabulka výsledků).
+V původním řešení jsme měli značnou výhodu, protože v momentě začátku třídění jsme vlastnili všechny výsledky prohledávání (tj. kompletní tabulka výsledků).
 Místo třídění samotných řádků tabulky jsme třídili pole indexů.
 Na pole indexů pak stačilo aplikovat základní třídicí algoritmus.
 Nyní nevlastníme všechny výsledky.
@@ -1249,7 +1264,7 @@ Bude existovat totožná tabulka výsledků prohledávání jako v původním ř
 Indexační struktura bude opět obsahovat indexy řádků v tabulce.
 Výsledek \textit{Order by} pak bude tabulka výsledku s indexační strukturou.
 
-Výsledek prohledávání v moment nalezení je vložen na nový řádek tabulky výsledků.
+Výsledek prohledávání v momentě nalezení je vložen na nový řádek tabulky výsledků.
 Následně je index nového řádku tabulky zatříděn do indexační struktury.
 Z tohoto principu budeme vycházet v našem návrhu.
 Nejdříve budeme analyzovat způsob jednovláknového zpracování a následně jednotlivé módy paralelního zpracování.
@@ -1267,7 +1282,7 @@ Přístupy popíšeme a následně provedeme malý experiment.
 \subsubsection{Pole indexů + binární vyhledávání}
 
 Myšlenka přístupu je udržovat setříděné pole indexů. 
-V moment nalezení výsledku je využito binární vyhledávání \citep[str. 26]{labyrint} k nalezení vhodného místa vložení do pole.
+V momentě nalezení výsledku je využito binární vyhledávání \citep[str. 26]{labyrint} k nalezení vhodného místa vložení do pole.
 Prvek je vložen do pole.
 Pokud se na místě nacházel již nějaký prvek, prvek je posunut doprava.
 Pokud v poli není dostatek místa, tak je rozšířeno.
@@ -1326,6 +1341,8 @@ Parametry $n$ a $m$ jsme volili tak, abychom byli schopni sledovat chování př
 
 \subsubsection{Výsledky}
 
+Výsledky se nacházejí v tabulce \ref{tab.orderbyexpr1}.
+Z tabulky vidíme, že vkládání prvků do pole pomocí binárního vyhledávání značně zaostává, proto jsme se rozhodli upustit od myšlenky pole s mezerami.
 
 \begin{table}[!htb]
 \centering
@@ -1349,8 +1366,6 @@ Hodnota za názvem testu představuje parametr \textit{m}.}
 \label{tab.orderbyexpr1}
 \end{table}
 
-Výsledky se nacházejí v tabulce \ref{tab.orderbyexpr1}.
-Z tabulky vidíme, že vkládání prvků do pole pomocí binárního vyhledávání značně zaostává, proto jsme se rozhodli upustit od myšlenky pole s mezerami.
 
 \subsubsection{Experiment (a, b)-strom vůči SortedSet}
 
@@ -1359,6 +1374,19 @@ Pro experiment jsme určili parametr $a=128$, protože jsme díky němu dosahova
 Strom jsme porovnali vůči struktuře \texttt{SortedSet} při stejných testech, ale pouze pro nejvyšší řády počtu prvků stavby a vkládání.
 
 \subsubsection{Výsledky}
+
+
+Výsledky jsou zobrazeny v tabulce \ref{tab.orderbyexpr2}.
+Z tabulky vidíme, že při vkládání prvků je rychlejší $(a, b)$-strom.
+Pro finální rozhodnutí, kterou strukturu zvolíme k zatřiďování, jsme rozhodli provést poslední experiment.
+Tentokrát budeme měřit první část vkládání $n$ prvků do prázdné struktury (test je označen \textit{build}).
+Výsledky jsou v tabulce \ref{tab.orderbyexpr3}.
+Vidíme, že v experimentu je rychlejší \texttt{SortedSet}.
+Situaci si vysvětlujeme režií za operaci vložení do $(a, b)$-stromu, při které dochází k častému překopírovávání prvků v momentě vytváření nového vrcholu.
+Nicméně, v průběhu experimentu jsme sledovali paměťové vytížení procesu pomocí nativního nástroje \texttt{Memory Usage} Visual Studia 2019.
+Ukázalo se, že v průběhu testu \texttt{SortedSet} dosahovalo využití paměti $6,8$\,GB, zatímco $(a, b)$-strom pouze $2,1$\,GB.
+Daný jev je způsoben vytvářením nové třídy pro každý vložený prvek do struktury \texttt{SortedSet}.
+Finálně jsme se rozhodli zatřiďování realizovat pomocí $(a, b)$-stromu.
 
 \begin{table}[!htb]
 \centering
@@ -1391,18 +1419,6 @@ Hodnota za názvem testu představuje parametr \textit{m}.}
 \label{tab.orderbyexpr3}
 \end{table}
 
-Výsledky jsou zobrazeny v tabulce \ref{tab.orderbyexpr2}.
-Z tabulky vidíme, že při vkládání prvků je rychlejší $(a, b)$-strom.
-Pro finální rozhodnutí, kterou strukturu zvolíme k zatřiďování, jsme rozhodli provést poslední experiment.
-Tentokrát budeme měřit první část vkládání $n$ prvků do prázdné struktury (test je označen \textit{build}).
-Výsledky jsou v tabulce \ref{tab.orderbyexpr3}.
-Vidíme, že v experimentu je rychlejší \texttt{SortedSet}.
-Situaci si vysvětlujeme režií za operaci vložení do $(a, b)$-stromu, při které dochází k častému překopírovávání prvků v moment vytváření nového vrcholu.
-Nicméně, v průběhu experimentu jsme sledovali paměťové vytížení procesu pomocí nativního nástroje \texttt{Memory Usage} Visual Studia 2019.
-Ukázalo se, že v průběhu testu \texttt{SortedSet} dosahovalo využití paměti $6,8$\,GB, zatímco $(a, b)$-strom pouze $2,1$\,GB.
-Daný jev je způsoben vytvářením nové třídy pro každý vložený prvek do struktury \texttt{SortedSet}.
-Finálně jsme se rozhodli zatřiďování realizovat pomocí $(a, b)$-stromu.
-
 \subsection{Ukládání prvků v (a, b)-stromu} \label{anal.improvement.orderby.storeindex}
 
 V minulé sekci jsme rozhodli, že zatřiďování nalezených prvků prohledávání provedeme pomocí $(a, b)$-stromu.
@@ -1410,7 +1426,7 @@ Musíme definovat chování v případě, kdy nějaké dva prvky sdílí stejnou
 Předpokládejme, že ve stromě existuje index s určitou hodnotou klíče.
 Prohledávání nalezne výsledek a uloží jej do tabulky a následně index řádku vloží k zatřídění do stromu.
 V takovém případě dva indexy se budou jevit jako shodné.
-Avšak, stále potřebuje mít indexy setříděné, čili v moment shodnosti klíčů třídění budeme třídit prvky pomocí samotných hodnot indexů.
+Avšak, stále potřebuje mít indexy setříděné, čili v momentě shodnosti klíčů třídění budeme třídit prvky pomocí samotných hodnot indexů.
 To můžeme, protože každý index řádku existuje pouze jednou v tabulce.
 Čili nedojde k porušení setříděnosti.
 
@@ -1439,7 +1455,7 @@ Po dokončení iterace pole bude obsahovat výsledek slévání.
 Bohužel jsme nepřišli na jednoduchý způsob paralelizace tohoto řešení, proto jsme se rozhodli od něj upustit.
 
 Místo toho využijeme již několikrát zmiňované dvoucestné slévání (použili jsme jej při paralelizaci \textit{Group by} v sekci \ref{anal.groupby.local}).
-V moment dokončení prohledávání všemi vlákny se vytvoří jedno pole a každé vlákno do něj překopíruje své výsledky.
+V momentě dokončení prohledávání všemi vlákny se vytvoří jedno pole a každé vlákno do něj překopíruje své výsledky.
 Zde budeme muset překopírovat proxy třídy řádků a nikoliv pouze jejich indexy, protože existuje zde mnoho tabulek a sléváním pouhých indexů nedokážeme rozeznat, jaké tabulce přináleží.
 To znamená, že pole obsahuje posloupnosti výsledků vláken.
 Následně se posloupnosti slévají po dvojicích, jako ve zmiňovaném řešení \textit{Group by}. 
@@ -1456,7 +1472,7 @@ Přihrádka bude přístupná pouze skrze zámek.
 Třídění probíhá na základě klíčů zadaných uživatelem.
 Klíče jsou vlastnosti elementů grafu.
 Vlastnosti mají svůj typ (např. číselná hodnota \texttt{integer} nebo řetězec \texttt{string}).
-V moment implementace enginu typ vlastnosti je definován konkrétním typem programovacícho jazyka.
+V momentě implementace dotazovacího enginu typ vlastnosti je definován konkrétním typem programovacícho jazyka.
 Pro jazyk C\# číselná hodnota může být typ \texttt{Int32} a řetězec typ \texttt{string}.
 Dané typy mají své rozsahy hodnot.
 Například pro \texttt{Int32} je rozsah hodnot $[$\texttt{Int32.MinValue}; \texttt{Int32.MaxValue}$]$.
@@ -1577,7 +1593,7 @@ Následně $i=q/d$.
 
 Nastává tady problém pro velký počet vláken.
 Uvažujme $t=64$, pak $d=R_{max}/4096=2$.
-Jenže v moment výpočtu $i=q/2$ bychom pro hodnoty $q>2 \cdot 4096$ získali indexy větší než počet přihrádek.  
+Jenže v momentě výpočtu $i=q/2$ bychom pro hodnoty $q>2 \cdot 4096$ získali indexy větší než počet přihrádek.  
 Všimněme si, že počet problematických hodnot je zde vždy menší než počet přihrádek.
 Tedy řešením daného problému je hodnoty spadající za danou hranici rozmístit do prvních $n$ přihrádek, které mají $i=0, 1, ..., n-1$.
 Tyto přihrádky budou mít $d'=d+1$ a zbytek $d$.
@@ -1612,15 +1628,15 @@ Pomocí řešení \textbf{Two-step} se problému kompletně vyhneme.
 
 \subsubsection{Ukládání pouze reprezentantů skupin} \label{anal.uprava.Groupby.table}
 
-K upravení původního řešení musíme pouze vyřešit problém chybějící tabulky výsledků, protože v moment nalezení výsledku je výsledek předán části \textit{Group by} a není tak uložen do tabulky.
+K upravení původního řešení musíme pouze vyřešit problém chybějící tabulky výsledků, protože v momentě nalezení výsledku je výsledek předán části \textit{Group by} a není tak uložen do tabulky.
 Mohli bychom výsledky opět ukládat do tabulky.
-V moment nalezení je výsledek překopírován do tabulky na nový řádek a proxy třídu řádku využijeme k jeho zpracování.
+V momentě nalezení je výsledek překopírován do tabulky na nový řádek a proxy třídu řádku využijeme k jeho zpracování.
 Daný způsob nám přijde neefektivní, protože cílem \textit{Group by} je vytvořit skupiny. 
 K vytvoření skupin nám stačí znát pouze reprezentant skupiny, tj. klíč v hašovací tabulce (proxy třída řádku v tabulce výsledků prohledávání).
 Nepotřebujeme znát všechny výsledky prohledávání, tedy nemusíme všechny výsledky kopírovat do tabulky.
 Abychom mohli pouze minimálně upravit vykonávání řešení \textbf{Two-step}, tak upravíme původní tabulku výsledků na základě tohoto poznatku.
 Tabulka bude nyní kromě samotných hodnot obsahovat položku držící odkaz na výsledek prohledávání.
-V moment nalezení výsledku se odkaz aktualizuje na daný výsledek a tabulka bude tento akt chápat jako přidání nového imaginárního řádku.
+V momentě nalezení výsledku se odkaz aktualizuje na daný výsledek a tabulka bude tento akt chápat jako přidání nového imaginárního řádku.
 Při přístupu k novému řádku se vytvoří obvyklá proxy třída řádku.
 Následný přístup k hodnotám řádku skrze proxy třídu vyvolá čtení hodnot z odkazu a nikoliv hodnot z tabulky.
 Proxy třída se použije ke zpracování výsledku prohledávání.
@@ -1643,7 +1659,7 @@ Předpokládejme nyní, že budeme chtít stále používat tabulky výsledků a
 Vyvstává zde opět problém neexistující tabulky výsledků.
 Opět chceme ukládat pouze reprezentanty skupin.
 Nicméně, problém je zde komplikovanější, protože v minulé sekci jsme tabulky vytvářeli lokálně.
-Tedy v moment slévání byly tabulky již finální. 
+Tedy v momentě slévání byly tabulky již finální. 
 Aplikujeme-li nyní přístup lokálních tabulek, tak vyvstává další problém.
 Vlákna v průběhu vyvolávají porovnaní klíčů v hašovací tabulce.
 Klíč je zde proxy třída řádku v tabulce.
@@ -1662,7 +1678,7 @@ Hodnoty uložíme do pole, které následně použijeme jako klíč paralelní m
 Samotné pole elementů použijeme pouze k výpočtu hodnot klíčů a k aktualizaci hodnot agregačních funkcí.
 Následně jej zahodíme.
 Paralelní mapa bude ve výsledku obsahovat pole hodnot klíčů a pole hodnot agregačních funkcí.
-Samotné hodnoty klíčů jsou v moment vytvoření statické, tedy nikdy nedojde ke změně hodnot klíče.
+Samotné hodnoty klíčů jsou v momentě vytvoření statické, tedy nikdy nedojde ke změně hodnot klíče.
 Vlákna mohou jednoduše vyvolat porovnání klíčů bez nutnosti synchronizace.
 
 Ačkoliv se může zdát, že vytvářením mnoha malých polí povede k značné paměťové zátěži.
@@ -1678,7 +1694,7 @@ Další otázka je proč jsme se rozhodli uchovávat hodnoty výrazů a ne eleme
 Hlavní příčina ukládání elementů jsme popsali v sekci návrhu tabulky výsledků prohledávání \ref{anal.tables}.
 Tento problém zde odpadá, protože ukládáme malé množství výsledků.
 Navíc v ostatních částech dotazu se mohou vyskytnout pouze výrazy klíčů \textit{Group by} a agregační funkce.
-Tedy v moment výpočtu daných výrazů a agregačních funkcí jsme získali všechny možné hodnoty, ke kterým se může přistoupit v jiných částech dotazu. 
+Tedy v momentě výpočtu daných výrazů a agregačních funkcí jsme získali všechny možné hodnoty, ke kterým se může přistoupit v jiných částech dotazu. 
 
 \subsubsection{Sloučení pole klíčů a pole úložiště agregačních funkcí}
 
@@ -1706,14 +1722,14 @@ Samotný výpočet hodnot funkcí a úložiště hodnot budou totožné s původ
 
 V tomto módu každé vlákno počítá hodnoty agregačních funkcí lokálně.
 Po nalezení výsledku dojde k aktualizování lokálních hodnot agregačních funkcí.
-V moment dokončení prohledávání grafu všemi vlákny dojde ke slévání výsledků vláken.
+V momentě dokončení prohledávání grafu všemi vlákny dojde ke slévání výsledků vláken.
 Vlákno však nebude čekat na ukončení práce ostatních vláken, ale rovnou výsledky slévá do globální struktury.
 Výhoda tohoto řešení je vyřazení nutnosti používat thread-safe logiku agregačních funkcí v lokální části.
 
 \subsection{Řešení Streamed}
 
 V tomto módu existuje pouze jedno sdílené úložiště hodnot agregačních funkcí.
-Vlákna v moment nalezení výsledku aplikují thread-safe agregační funkce.
+Vlákna v momentě nalezení výsledku aplikují thread-safe agregační funkce.
 Výhoda tohoto řešení je, že zde nedochází ke slévání výsledků.
 Problém zde může nastat ve chvíli, kdy existuje velké množství přistupujících vláken.
 Tyto přístupy mohou mít za následek značné zpomalení zpracování, kvůli synchronizaci.

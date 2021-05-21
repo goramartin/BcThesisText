@@ -542,7 +542,7 @@ Mód \textbf{Normal} využívá k třídění algoritmus Merge sort.
 Algoritmus je implementován v knihovně HPCsharp \citep{hpcsharp}.
 Třídění probíhá po dokončení prohledávání grafu a třídí celou tabulku výsledků pomocí pole indexů.
 
-Vylepšená řešení zpracovávají vyhledané výsledky v moment jejich nalezení.
+Vylepšená řešení zpracovávají vyhledané výsledky v momentě jejich nalezení.
 Nalezený prvek se nejdříve vloží do tabulky na nový řádek. 
 Následně se index daného řádku vloží do indexační struktury. 
 Jako indexační strukturu nad tabulkou používáme $(a, b)$-strom \citep[str. 190]{labyrint}, u kterého jsme upravili definici na $b=2a$.
@@ -591,7 +591,7 @@ Nyní budeme prezentovat výsledky paralelizace (grafy \ref{figure.amazonOrderPa
 Na první pohled jsme si všimli mnohonásobného zpomalení \textbf{Streamed} řešení pro dotazy O\_Q1 a O\_Q2.
 Výše jsme zmínili základní princip \textbf{Streamed} řešení.
 Rozsah hodnot prvního klíče třídění se rozdělí na rovnoměrné části a pro každý takový rozsah existuje přihrádka přístupná pomocí zámku.
-Vlákno v moment nalezení výsledku přistupuje k přihrádce pomocí zámku a vloží do ní daný výsledek.
+Vlákno v momentě nalezení výsledku přistupuje k přihrádce pomocí zámku a vloží do ní daný výsledek.
 Při implementaci řešení jsme se omezili pouze na celý rozsah hodnot typů vlastností v jazyce C\# pro .NET Framework 4.8.
 To znamená, že pokud vlastnost má typ \texttt{integer} (v C\# \texttt{Int32}), ačkoliv hodnoty vlastnosti v grafu mohou být v rozsahu $[0; 100]$, tak rozdělení přihrádek se vytvářejí z celého rozsahu C\# typu.
 Tedy přihrádky se vytvářejí rozdělením rozsahu $[$\verb+Int32.MinValue+; \verb+Int32.MaxValue+$]$ a nikoliv $[0; 100]$.

@@ -2,11 +2,11 @@
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {1.1}{\ignorespaces Příklad Property grafu.}}{10}{figure.1.1}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces UML class diagram objektů představující části dotazu.}}{24}{figure.2.1}%
+\contentsline {figure}{\numberline {2.1}{\ignorespaces UML class diagram objektů představující části dotazu.}}{25}{figure.2.1}%
 \contentsline {figure}{\numberline {2.2}{\ignorespaces Propojení objektů pomocí položky \texttt {next} pro dotaz\\* \texttt {select x match (x) order by x}.}}{25}{figure.2.2}%
 \contentsline {figure}{\numberline {2.3}{\ignorespaces UML activity diagram rekurzivního volání metody \texttt {Compute} pro dotaz \texttt {select x match (x) order by x}.}}{25}{figure.2.3}%
 \contentsline {figure}{\numberline {2.4}{\ignorespaces Diagram paralelizace prohledávání grafu.}}{31}{figure.2.4}%
-\contentsline {figure}{\numberline {2.5}{\ignorespaces Diagram paralelizace řešení \textbf {Global}.}}{38}{figure.2.5}%
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Diagram paralelizace řešení \textbf {Global}.}}{37}{figure.2.5}%
 \contentsline {figure}{\numberline {2.6}{\ignorespaces Diagram paralelizace řešení \textbf {Two-step}.}}{38}{figure.2.6}%
 \contentsline {figure}{\numberline {2.7}{\ignorespaces Diagram paralelizace řešení \textbf {Local + dvoucestné slévání} pro 4 vlákna.}}{39}{figure.2.7}%
 \contentsline {figure}{\numberline {2.8}{\ignorespaces UML class diagram nových objektů reprezentující části \textit {Group by} a \textit {Order by}.}}{41}{figure.2.8}%

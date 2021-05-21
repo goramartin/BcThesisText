@@ -7,7 +7,7 @@ První část je statická grafová databáze využívající Labeled-property m
 Druhá část obsahuje struktury a algoritmy pro vykonání uživatelských dotazů nad grafovou databází.
 Dotazy jsou zadány ve stanovené podmnožině jazyka PGQL.
 Vykonávání je možno provádět jednovláknově i paralelně.
-Všechna grafová data a data v průběhu zpracování dotazu jsou obsažena v hlavní paměti.
+Všechna grafová data i data v průběhu zpracování dotazu jsou obsažena v hlavní paměti.
 Druhou část jsme rozdělili na dva bloky:
 \begin{enumerate}
 \item
@@ -25,14 +25,16 @@ V módu \textit{Single group Group by} (dotaz obsahuje agregační funkce, ale n
 \item
 Druhý blok představuje dva módy \textbf{Half-Streamed} a \textbf{Streamed}, které odpovídají navrženým řešením dle zadání práce.
 Pro oba módy jsme propojili prohledávání grafu se zpracováním částí \textit{Group/Order by} tak, aby dané části byly vykonávány v průběhu prohledávání grafu.
-To znamená, že v moment nalezení výsledku prohledávání se výsledek okamžitě zatřídí nebo seskupí.
+To znamená, že v momentě nalezení výsledku prohledávání se výsledek okamžitě zatřídí nebo seskupí.
 Obecně se módy liší v paralelních řešeních. 
 \textbf{Half-Streamed} zpracovával výsledky lokálně, následně docházelo ke slévání.
 \textbf{Streamed} zpracovával výsledky globálně.
 \begin{itemize}
-\item V části \textit{Order by} jsme pro jednovláknové zpracování použili standardní $(a, 2a)$-strom a upravenou verzi $(a, 2a)$-stromu, která omezila počet zatřiďovaných výsledků.  
-\textbf{Half-Streamed} řešení zpracovávalo lokálně výsledky pomocí navržených stromů a následně došlo k dvoucestnému paralelnímu slévání.
-\textbf{Streamed} řešení vytvořilo přihrádky přístupné skrze zámek a každé přihrádce přiřadilo specifický rozsah hodnot.
+
+\item V části \textit{Order by} jsme pro jednovláknové zpracování obou módů (tj. jednovláknová řešení jsou totožná pro oba módy) použili standardní $(a, 2a)$-strom a upravenou verzi $(a, 2a)$-stromu, která omezila počet zatřiďovaných výsledků.  
+Paralelní řešení módu \textbf{Half-Streamed} zpracovávalo výsledky lokálně pomocí navržených stromů a následně došlo k dvoucestnému paralelnímu slévání.
+Paralelní řešení módu \textbf{Streamed} vytvořilo přihrádky přístupné skrze zámek a každé přihrádce přiřadilo specifický rozsah hodnot.
+
 \item
 V části \textit{Group by} jsme vycházeli z řešení prvního bloku.
 Jednovláknové a paralelní zpracování \textbf{Half-Streamed} používalo tabulku z prvního bloku.
