@@ -46,8 +46,8 @@ Myslíme, že zde není nutné složité grafické rozhraní, proto budeme dotaz
 
 Musíme uvážit, jak reprezentovat graf.
 Graf bude představovat grafovou databázi.
-Z části \ref{requirements} jsou hlavními faktory námi zvolená podmnožina jazyku PGQL a že se jedná o Property graf.
-Pro případy nejednoznačnosti označíme \verb+elType+ jako typ štítku a \verb+propType+ jako typ hodnoty vlastnosti.
+Z kapitoly předpokladů \ref{requirements} jsou hlavními faktory námi zvolená podmnožina jazyku PGQL a že se jedná o Property graf.
+Pro případy nejednoznačnosti označíme \verb+elType+ jako typ štítku a \verb+propType+ jako skalární typ hodnoty vlastnosti.
 
 \subsection{Elementy grafu a jejich typ}
 
@@ -74,7 +74,7 @@ Předek si bude pamatovat unikátní \verb+ID+, abychom elementy dokázali rozli
 Předek navíc bude znát svůj \verb+elType+. 
 Bude se jednat o ukazatel na třídu.
 Daná třída by reprezentovala pouze jeden \verb+elType+ a bude společná všem elementům majících daný \verb+elType+.
-V třídě by byl obsažen seznam \verb+IDs+ elementů daného typu, jejich pořadí (např. dle vkládání do seznamu) a vlastností v podobě polí s hodnotami.
+V třídě by byl obsažen seznam \verb+ID+ elementů daného typu, jejich pořadí (např. dle vkládání do seznamu) a vlastností v podobě polí s hodnotami.
 V daných polích budou hodnoty vlastností každého elementu ležet na pozicích určených dle jejich pořadí.
 Pro náš případ nebudeme uvažovat situaci, kdy vlastnost pro nějaký element nemá definovanou hodnotu.
 Vlastnost musí být přístupná skrze mapu/slovník, abychom k ní mohli rychle přistoupit.
@@ -120,7 +120,7 @@ Tedy čtyř indexů.
 Skrze indexy můžeme pak pole libovolně iterovat.
 
 Uvažovali jsme nad různými alternativami. 
-Mít jeden typ hrany obsahující všechny nutné informace.
+Například mít jeden typ hrany obsahující všechny nutné informace.
 Řešení je paměťově přijatelnější, ale nastává problém s přístupem k \texttt{in} hranám vrcholů.
 Řešením by mohlo být vytvořit samostatné pole \texttt{out}/\texttt{in} hran pro každý vrchol. 
 Daný přístup nám připadá výrazně náročnější z hlediska paměti, protože musíme vytvářet pole pro každý vrchol zvlášť. 
@@ -224,7 +224,7 @@ V druhém kroku dojde k syntaktické a sémantické analýze tokenů.
 Metodou top-down parsing \citep[str. 217]{dragonBook} se vytvoří stromová struktura reprezentující daný dotaz.
 Poslední krok provede vytvoření tříd reprezentující dotaz pomocí iterace stromové struktury.
 Iterace a sběr dat ze stromové struktury budou implementovány návrhovým vzorem Visitor \citep[str. 331]{patterns}.
-V naší představě bychom chtěli vygenerovat stromovou strukturu pro každou hlavní část dotazu (\textit{Match}, \textit{Select}, \textit{Order by} a Group by).
+V naší představě bychom chtěli vygenerovat stromovou strukturu pro každou hlavní část dotazu (\textit{Match}, \textit{Select}, \textit{Order by} a \textit{Group by}).
 Nyní bychom mohli sestavit Visitor pro každou část separátně a vyřadit tak nutnost jednoho globálního Visitoru.
 Dané postupy nám pak umožní jednoduše pracovat s naší podmnožinou jazyka PGQL.
 
@@ -254,7 +254,7 @@ Funkce \verb+sum+ a \verb+count+ by měli ideálně pracovat s typem, který by 
 U \verb+avg+ se očekává hodnota s desetinnou čárkou.  
 V budoucnu však může dojít k rozšířením a vyvstanou složitější výrazy, například aritmetické operace nebo zmiňované porovnání z \textit{Where/Having} části.
 Problém nám usnadňuje fakt, že vlastnosti nesoucí stejné jméno mají stejný \verb+propType+.
-Pokud ne, je nutné určit vhodnou návratovou hodnotu.
+Pokud nemají stejné jméno, je nutné určit vhodnou návratovou hodnotu.
 Navíc musíme brát v potaz, že daný výraz se nemusí vyhodnotit, například absence vlastnosti na vrcholu.
 Proto jsme byli nuceni vymyslet systém výrazů (expressions).
 
@@ -281,7 +281,8 @@ abstract class ExpReturnValue<T>: Expression {
   public abstract bool TryEvaluate(Element[] elms, out T retVal); 
 }
 abstract class VariableAccess<T>: ExpReturnValue<T> {
-     readonly int accessedVariableID; }
+     readonly int accessedVariableID; 
+}
 \end{code}
 
 Třída reprezentující přístup k \verb+ID+ proměnné:
@@ -357,8 +358,8 @@ public class Sum<T>: Aggregation<T>{
 \end{code}
 \noindent Na ukázce výše vidíme položku \verb+expr+, která reprezentuje vstupní výraz agregační funkce.
 Funkce \verb+Apply+ je logikou funkce. 
-Vidíme funkci \verb+Sum+. 
-Logikou je přičtení vypočítané hodnoty do poskytnutého úložiště, pokud dojde k úspěšnému vyhodnocení výrazu.
+Dále vidíme třídu \verb+Sum+, která představuje logiku funkce \texttt{sum}. 
+Logikou funkce je přičtení vypočítané hodnoty do poskytnutého úložiště, pokud dojde k úspěšnému vyhodnocení výrazu.
 
 Následuje ukázka druhého konceptu:
 \begin{code}
@@ -366,7 +367,9 @@ class GroupAggValueAccess<T>: ExpReturnValue<T> {
   reaonly int accessedAggFuncID; 
   public override bool TryEvaluate(Group group, out T retVal) {
     retVal = group.GetAggValue<T>(accessedAggFuncID);
-    return true; }}
+    return true; 
+  } 
+}
 \end{code}
 \verb+Group+ reprezentuje výsledky jedné skupiny.
 \verb+accessedAggFuncID+ je identifikátor vypočítané agregační funkce.

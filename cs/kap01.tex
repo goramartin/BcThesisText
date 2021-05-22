@@ -18,16 +18,16 @@ Na základě těchto definic určíme klíčové vlastnosti modelu, které budem
 Obecně grafová databáze pracující s daným modelem organizuje grafová data do tří částí:
 
 \begin{itemize}
-\item První část obsahuje množinu \textbf{vrcholů} (Vertices).
+\item První část obsahuje množinu \textbf{vrcholů} (vertices).
 Vrcholy zde představují entity nebo doménové komponenty grafu.
 Vrchol tedy reprezentuje objekt, osobu, myšlenku, dílo a podobně.
 
-\item Druhá část obsahuje množinu \textbf{hran} (Edges).
+\item Druhá část obsahuje množinu \textbf{hran} (edges).
 Hrany jsou zde vždy orientované a spojují dva vrcholy.
 Hrany zde představují vztahy mezi vrcholy.
-Hrana tedy může být například vztah kamarádství dvou lidí (Karel \textit{se kamarádí s} Jirkou.), vztah zaměstnání člověka se zaměstnavatelem (Karel \textit{pracuje pro Google.}) a podobně.
+Hrana tedy může být například vztah kamarádství dvou lidí (Karel \textit{se kamarádí s} Jirkou.) nebo vztah zaměstnání člověka se zaměstnavatelem (Karel \textit{pracuje pro Google.}).
 Vrcholy a hrany zde označíme za \textbf{elementy} grafu.
-\item Poslední třetí část představuje \textbf{vlastnosti} (Properties) a \textbf{štítky} (Labels), které jsou uloženy v elementech grafu.
+\item Poslední třetí část představuje \textbf{vlastnosti} (properties) a \textbf{štítky} (labels), které jsou uloženy v elementech grafu.
 
 \begin{itemize}
 \item
@@ -73,7 +73,7 @@ To znamená, že i štítek hrany se štítkem vrcholu může mít stejnou vlast
 \end{enumerate}
 
 Samotná grafová data nebudeme nijak omezovat.
-To znamená, že v grafu mohou být cykly, dva vrcholy mohou být propojeny několika hranami, nemusí existovat žádná hrana ani vrchol, mohou existovat nepropojené vrcholy, hrana může mít totožný počáteční vrchol s koncovým vrcholem a podobně.
+V grafu tedy mohou být cykly, dva vrcholy mohou být propojeny několika hranami, nemusí existovat žádná hrana ani vrchol, mohou existovat nepropojené vrcholy, hrana může mít totožný počáteční vrchol s koncovým vrcholem a podobně.
 
 \subsubsection{Příklad grafu splňující Labelel-property model}
 Nyní uvedeme příklad jednoduchého grafu splňující náš model:
@@ -244,8 +244,7 @@ První mód je použití zápisu \texttt{count(výraz)}, kde \texttt{výraz} je 
 Druhý mód je použití zápisu \texttt{count(*)}.
 Tento zápis nepotřebuje vyhodnotit výrazy.
 Pokud byl například zadán dotaz:
-\texttt{select count(*) match (x)}.
-V tomto dotaze pak nepotřebujeme znát elementy z části \textit{Match}, ale stačí nám jejich počet.
+\texttt{select count(*) match (x)}, pak v tomto dotaze nepotřebujeme znát elementy z části \textit{Match}, ale stačí nám jejich počet.
 \end{enumerate}
 \end{itemize}
 
