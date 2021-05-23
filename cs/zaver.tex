@@ -144,7 +144,7 @@ V budoucích rozšířeních lze uvažovat nad vypracováním důmyslnějšího 
 Exekučním plánem zde myslíme vrcholy, ze kterých začíná prohledávání grafu.
 V našem případě jsme pouze vytvořili souvislé komponenty z posloupností v části dotazu \texttt{Match} (sekce \ref{anal.match} a \ref{impl.match}).
 Obecně lze však využít efektivnější přístupy.
-Například dojde k rozšíření dotazovacího enginu o část dotazu \textit{Where} (ekvivalent SQL \textit{Where}) a uživatel zadá dotaz \texttt{select count(*) match (x) -> (y) -> (z) where z.Vlastnost == 42}.
+Například dojde k rozšíření dotazovacího enginu o část dotazu \textit{Where} (ekvivalent SQL \textit{Where}) a~uživatel zadá dotaz \texttt{select count(*) match (x) -> (y) -> (z) where z.Vlastnost == 42}.
 Zde se jeví jako efektivnější přístup spustit prohledávání z vrcholu \texttt{z} a hledat vzor \texttt{(z) <- (y) <- (x)}, protože již v prvním kroku můžeme zjistit, že existuje jen pár vrcholů \texttt{z} splňujících podmínku \textit{Where}.
 V našem případě by však došlo ke spuštění prohledávání z proměnné \texttt{x}.
 Výsledně bychom procházeli první dva vrcholy \texttt{x} a \texttt{y} zbytečně, když následně zjistíme, že pro ně žádný vrchol \texttt{z} neexistuje.

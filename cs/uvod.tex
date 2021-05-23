@@ -21,7 +21,7 @@ Dotazy jsou zde podobné například SQL dotazům.
 Pro RDF model to je například jazyk SPARQL \citep{sparql}.
 Pro Labeled-property to je PGQL \citep{pgql} nebo openCypher \citep{openCypher}.
 Dotazy obsahují základní části se stejnou logikou z SQL jako \textit{Select}, \textit{Order by}, \textit{Group by} a \textit{Having}.
-Hlavní rozdíl těchto dotazovacích jazyků od SQL je ten, že specifikují výběr dat pomocí sekvence vrcholů a hran.
+Hlavní rozdíl těchto dotazovacích jazyků od SQL je ten, že specifikují výběr dat pomocí sekvence vrcholů a~hran.
 Pro PGQL a openCypher to je část dotazu \textit{Match} a pro SPARQL to je část dotazu \textit{Where}.
 Tyto sekvence tvoří podgraf (vzor), který bude vyhledáván v grafu.
 V momentě nalezení všech podgrafů jsou na výsledcích aplikovány další části jako \textit{Group by}, \textit{Order by}, a podobně.
@@ -36,7 +36,7 @@ Z tohoto důvodu začaly vznikat takzvané \textbf{proudové systémy} \citep{st
 Proudové systémy obecně pracují s daty, která jsou potenciálně nekonečná a nevejdou se do paměti.
 V takovém případě jsou data reprezentována formou tekoucího „\textbf{proudu}“ (stream).
 Obecně uvnitř proudu mohou být jakákoliv data, například prováděné akce, události změn nebo transakce.
-Programy pracující s proudem dat sledují jen jeho určitý bod a zpracovávají data v momentu, kdy protékají daným bodem.
+Programy pracující s proudem dat sledují jen jeho určitý bod a~zpracovávají data v momentu, kdy protékají daným bodem.
 Výsledně program vidí jen útržky všech dat.
 Zpracování takových dat pak probíhá po částech.
 
@@ -78,8 +78,8 @@ Na základě poznatků z předchozí sekce v této práci provedeme úpravu dota
 Konkrétně upravíme části zabývající se agregací dat, tj. části \textit{Group by} a \textit{Order by}.
 %\textit{Order by} má za úkol setřídit výsledky prohledávání dle zadaných klíčů.
 Ačkoliv \textit{Order by} nespadá konkrétně pod definici agregace, tak z našeho pohledu provádí „primitivní seskupení“.
-V takovém případě výsledky se stejnými hodnotami klíčů třídění ve výstupu tvoří souvislou posloupnost (tj. leží u sebe), protože taková posloupnost nemůže obsahovat prvek, který má rozdílné hodnoty klíčů od hodnot klíčů prvků v dané posloupnosti.
-Kdyby takový prvek existoval, pak by se nejednalo o setříděnou posloupnost.   
+V takovém případě výsledky se stejnými hodnotami klíčů třídění ve~výstupu tvoří souvislou posloupnost (tj. leží u sebe), protože taková posloupnost nemůže obsahovat prvek, který má rozdílné hodnoty klíčů od hodnot klíčů prvků v dané posloupnosti.
+Kdyby takový prvek existoval, pak by se nejednalo o~setříděnou posloupnost.   
 Z tohoto důvodu v naší práci budeme upravovat i část \textit{Order by}.
 Výsledně rozdíl z pohledu seskupování mezi \textit{Group by} a \textit{Order by} je ten, že v \textit{Group by} jsou výše zmíněné posloupnosti sloučeny do jednoho prvku (tj. skupiny) a lze pro ně vypočítat agregační funkce. 
 Avšak, zaměříme se pouze na jejich separátní použití a nebudeme uvažovat situaci, ve které jsou obě části zadány společně.
@@ -98,18 +98,18 @@ K provedení této práce potřebujeme upravit dotazovací engine.
 Při našem průzkumu jsme zjistili, že využití již existujících dotazovacích enginů v naší práci by bylo netriviálně náročné.
 Děje se tak ze dvou hlavních důvodů.
 Komerční dotazovací enginy, například PGX \citep{pgx} nebo Neptune \citep{neptune}, jsou volně nepřístupné.
-Nalezené dotazovací enginy s veřejným zdrojovým kódem, například Neo4j \citep{neopropertygraph} (v základní verzi) nebo dgraph \citep{dgraph}, jsou značně komplexní a pouze pochopení všech důležitých aspektů k vykonání zmíněných úprav by zabralo netriviální časové období.
+Nalezené dotazovací enginy s veřejným zdrojovým kódem, například Neo4j \citep{neopropertygraph} (v~základní verzi) nebo dgraph \citep{dgraph}, jsou značně komplexní a pouze pochopení všech důležitých aspektů k vykonání zmíněných úprav by zabralo netriviální časové období.
 Protože cílem této práce je pouze otestovat obecný koncept propojení dotazovacího enginu s proudovým systémem, rozhodli jsme se vytvořit vlastní dotazovací engine s jednoduchou grafovou databází.
 
 Námi vytvořená grafová databáze bude využívat Labeled-property (sekce \ref{req.propGraph}) datový model, protože nám umožní pracovat s obecnými grafovými daty.
-Samotně bude pouze statická a bude celá obsažena v hlavní paměti, jelikož návrhnout komplexní databázi by opět zabralo netriviální časové období.
+Samotně bude pouze statická a bude celá obsažena v hlavní paměti, jelikož návrhnout komplexní databázi by opět zabralo dlouhé časové období.
 Statickou databází zde rozumíme databázi, ve které nedochází za běhu k úpravě uložených dat (např. nelze přidat nebo odebrat nový vrchol).
 Dotazovací engine bude zpracovávat dotazy nad danou grafovou databází.
 K dotazování využijeme podmnožinu jazyka PGQL \citep{pgql}, jelikož obsahuje jednodušší skladbu jazyka na rozdíl od jazyka openCypher \citep{openCypher} a umožní nám tak jednodušší načítání dotazů.
 Daný jazyk má spoustu funkcí, které v naši práci nepovažujeme za důležité, proto jsme vybrali jen jeho určitou podmnožinu (podmnožina je blíže popsána v sekci \ref{req.pgql}).
 
 Samotný vývoj dotazovacího enginu bude probíhat ve dvou krocích.
-V prvním kroku musíme vyvinou řešení, která vykonávají agregace po dokončení prohledávání grafu.
+V prvním kroku musíme vyvinout řešení, která vykonávají agregace po dokončení prohledávání grafu.
 V tomto bodě se budeme snažit využít již existujících a hojně využívaných algoritmů (např. pro třídění algoritmus Merge sort). 
 V druhém kroku dojde k úpravě vykonávání dotazů dle zadání práce.
 Při vývoji budeme klást důraz na jednovláknové i paralelní zpracování.
@@ -129,12 +129,12 @@ Celá grafová databáze bude obsažena v hlavní paměti.
 
 \item Druhá část obsahuje algoritmy a struktury pro zpracování dotazu \textbf{podmnožiny jazyka PGQL} (sekce \ref{req.pgql}) nad danou grafovou databází:
     \begin{enumerate}
-    \item Podmnožina jazyka PGQL bude obsahovat pouze hlavní částí dotazu: \textit{Select}, \textit{Match}, \textit{Group by} a \textit{Order by}.
+    \item Podmnožina jazyka PGQL bude obsahovat pouze hlavní části dotazu: \textit{Select}, \textit{Match}, \textit{Group by} a \textit{Order by}.
     \textbf{Nebude možno} zadat \textit{Group by} a \textit{Order by} společně.
-    \item Všechna data v průběhu zpracování dotazu budou obsažena v hlavní paměti.
+    \item Všechna data v průběhu zpracování dotazu budou obsažena \\*v~hlavní paměti.
     \item Zpracování částí \textit{Group by} a \textit{Order by} bude provedeno \textbf{po dokončení prohledávání grafu} v části \textit{Match}.
     To znamená, že nejdříve dojde k nalezení všech výsledků prohledávání a teprve pak dojde k seskupení nebo setřídění daných výsledků.
-    \item Dotazovací engine bude schopen vykonat dotaz jednovláknově i paralelně
+    \item Dotazovací engine bude schopen vykonat dotaz jednovláknově \\*i~paralelně.
     \end{enumerate}
 \end{enumerate}
 

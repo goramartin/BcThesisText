@@ -47,7 +47,7 @@ Navíc, pokud dva různé elementy sdílejí vlastnost (tj. mají stejný název
 
 \subsubsection{Omezení Labeled-property modelu}
 Popsali jsme obecně Labeled-property model.
-Daný popis modelu je značně abstraktní, proto si určíme další zpřísňující vlastnosti, které budeme využívat v naší práci.
+Daný popis modelu je značně abstraktní, proto si určíme další zpřísňující vlastnosti, které budeme využívat v~naší práci.
 
 \begin{enumerate}
 
@@ -57,7 +57,7 @@ Každý element bude mít unikátní identifikátor (\texttt{ID}), abychom doká
 
 \item
 Každý element (vrchol/hrana) bude mít právě jeden štítek.
-Myslíme, že počet štítků není určující pro naši práci, protože primárně ovlivňuje prohledávání grafu a ne části \textit{Order by} nebo \textit{Group by}.
+Myslíme, že~počet štítků jednoho elementu není určující pro naši práci, protože štítky primárně ovlivňují prohledávání grafu a ne části \textit{Order by} nebo \textit{Group by}.
 
 \item
 Budeme uvažovat, že štítky vrcholů jsou vždy rozdílné od štítků hran.
@@ -216,13 +216,12 @@ Tento výraz se například nemusí povést vyhodnotit, protože vlastnost nemus
 V takovém případě budeme předpokládat, že výraz vrací nějakou konstantu definující selhání výpočtu.
 
 \item 
-Agregační funkce.
-Agregační funkce vypočítají výslednou hodnotu pro skupiny vytvořených při seskupování (\textit{Group by}).
+Agregační funkce, které vypočítají výslednou hodnotu pro skupiny vytvořených při seskupování (\textit{Group by}).
 Pokud nebylo zadáno \textit{Group by} a je použita agregační funkce, pak ve zbylých částech kromě \textit{Match} mohou být pouze agregační funkce.
 V takovém případě všechny výsledky patří do jedné skupiny.
 Agregační funkce povolíme pouze v části \textit{Select}, protože \textit{Order by} a \textit{Group by} nemůžou být nikdy zadány společně.
 Nedovolíme rekurzivní používání daných funkcí, tj. agregační funkce nemůže mít na vstupu další agregační funkci.
-Funkce na vstupu mají hodnotu vypočteného výrazu (tj. \texttt{ID} nebo přístup k vlastnosti).
+Funkce na vstupu mají hodnotu vypočteného výrazu (tj.~\texttt{ID} nebo přístup k vlastnosti).
 Musíme brát v potaz, že při výpočtu výrazu může dojít k selhání a tedy funkce musí umět pracovat s konstantou definující selhání výpočtu.
 PGQL definuje pět funkcí:
 \begin{enumerate}
@@ -251,11 +250,11 @@ Pokud byl například zadán dotaz:
 \subsubsection{Select}
 
 \textit{Select} část může obsahovat pouze výše zmíněné výrazy oddělené čárkami.
-V této části lze přistoupit k proměnným, které jsou definované v \textit{Match} části, nebo zadat výrazy agregačních funkcí.
+V~této části lze přistoupit k proměnným, které jsou definované v \textit{Match} části, nebo zadat výrazy agregačních funkcí.
 Výsledkem části \textit{Select} je tabulka.
-Sloupečky v tabulce představují výrazy zadané v dané části.
+Sloupečky v~tabulce představují výrazy zadané v dané části.
 Řádky tabulky jsou pak hodnoty výrazů pro výsledky z části \textit{Match} nebo \textit{Group/Order by}.
-Existuje ještě speciální operátor \texttt{*}, který lze zadat pouze v případě, pokud je v dotazu jen část \textit{Select} a \textit{Match}.
+Existuje ještě speciální operátor \texttt{*}, který lze zadat pouze v případě, pokud je v~dotazu jen část \textit{Select} a \textit{Match}.
 V takovém případě se \texttt{*} nahradí všemi proměnnými z části \textit{Match}.
 Následují příklady použití \textit{Select} části:
 \begin{itemize}

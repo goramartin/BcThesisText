@@ -11,7 +11,7 @@ Kapitolu zakončíme prezentací výsledků.
 
 Pro náš experiment jsme použili tři orientované grafy z databáze SNAP \citep{snapnets}.
 Grafy jsme primárně vybírali na základě počtu nalezených výsledků z testovaného dotazu \textit{Match} části (sekce \ref{expr.matchDotazy}).
-Počet vygenerovaných výsledku je zobrazen v sekci výsledků \ref{matchResults}.
+Počet vygenerovaných výsledku je zobrazen v~sekci výsledků \ref{matchResults}.
 Cíl byl nalézt grafy, které vygenerují počet výsledků v řádech $10^7$ až $10^8$, abychom mohli sledovat chování řešení při zpracování velkého množství dat.
 Zároveň jsme vybrali grafy, pro které platí, že mají minimálně dvojnásobný počet výsledků vůči již vybraným grafům, což nám umožní sledovat chování řešení při zvyšování počtu zpracovaných výsledků.
 Výsledky v řádu $10^9$ bychom měli problém zpracovat na testovaném hardwaru (sekce \ref{expr.hw}), kvůli nedostatku paměti.
@@ -35,7 +35,7 @@ As-Skitter    & 1 696 415 & 11 095 298 \\
 
 \begin{itemize}
 
-\item \textbf{Amazon0601:} Jedná se o graf vytvořený procházením webových stránek Amazonu na základě funkce „Customers Who Bought This Item Also Bought“ ze dne 1.6.2003. V grafu existuje hrana z $i$ do $j$, pokud je produkt $i$ často zakoupen s produktem $j$.
+\item \textbf{Amazon0601:} Jedná se o graf vytvořený procházením webových stránek Amazonu na základě funkce „Customers Who Bought This Item Also Bought“ ze dne 1.6.2003. V grafu existuje hrana z $i$ do $j$, pokud je produkt $i$~často zakoupen s produktem $j$.
 
 \item \textbf{WebBerkStan:} Graf popisuje odkazy webových stránek domén \url{https://www.stanford.edu/} a \url{https://www.berkeley.edu/}. Vrcholem je webová stránka a hrana představuje hypertextový odkaz mezi stránkami.
 
@@ -61,7 +61,7 @@ Při příkladu transformace budeme vycházet z následující ukázky hlavičky
 \subsection{Transformace grafových dat}
 
 Výstupem transformace budou soubory popisující schéma vrcholů/hran \textit{NodeTypes.txt}/\textit{EdgeTypes.txt} a datové soubory vrcholů/hran \textit{Nodes.txt}/\textit{Edges.txt}.
-V našem případě graf bude obsahovat pouze jeden typ hrany a jeden typ vrcholu. 
+V~našem případě graf bude obsahovat pouze jeden typ hrany a jeden typ vrcholu. 
 Dané omezení pouze snižuje počet nalezených výsledků, což není určující pro náš experiment. 
 
 Ukázka zvoleného schématu pro \textit{Nodes.txt}/\textit{Edges.txt}:
@@ -83,7 +83,7 @@ Soubor \textit{EdgeTypes.txt} definuje jeden druh hrany \texttt{BasicEdge} bez v
 Soubor \textit{NodeTypes.txt} definuje jeden druh vrcholu \texttt{BasicNode} bez vlastností.
 
 Generování souborů \textit{Nodes.txt}/\textit{Edges.txt} provádí program, který je obsahem přílohy zdrojových kódů \ref{prilohy.kod} v souboru \textit{GrapDataBuilder.cs}.
-Výstupní soubor \textit{Edges.txt} bude obsahovat hrany v rostoucím pořadí dle položky \verb+FromNodeId+ z originálního souboru s přidělenými \verb+IDs+ od hodnoty \verb+ID+ posledního vrcholu v souboru \textit{Nodes.txt}.
+Výstupní soubor \textit{Edges.txt} bude obsahovat hrany v rostoucím pořadí dle položky \verb+FromNodeId+ z~originálního souboru s přidělenými \verb+IDs+ od hodnoty \verb+ID+ posledního vrcholu v souboru \textit{Nodes.txt}.
 Samotný soubor \textit{Nodes.txt} obsahuje setříděné vrcholy podle \verb+ID+ v rostoucím pořadí. Je nutné zmínit, že setřídění dat podle \verb+ID+ není nežádoucí, jelikož nezaručuje nic o seskupení vrcholů v daném grafu.
 Pro připomenutí zmíníme, že první sloupeček v datových souborech \textit{Edges.txt} a \textit{Nodes.txt} odpovídá unikátnímu \verb+ID+ v rámci celého grafu.
 Výsledný soubor \textit{Nodes.txt} definuje vrcholy grafu. 
@@ -185,7 +185,7 @@ As-Skitter    & 82 \\
 \end{table}
 
 Program generuje hodnoty definované ve statické položce \verb+propGenerators+ a zachovává jejich pořadí ve výsledném datovém souboru.
-Aby nedocházelo k omylům při opakování experimentů, uvádíme útržek kódu použité inicializace položky dle tabulky generovaných vlastností \ref{tab.grafProps} pro všechny tři grafy:
+Aby nedocházelo k~omylům při opakování experimentů, uvádíme útržek kódu použité inicializace položky dle tabulky generovaných vlastností \ref{tab.grafProps} pro všechny tři grafy:
 
 \begin{code}
     static PropGenerator[] propGenerators = new PropGenerator[]
@@ -304,8 +304,8 @@ Dané dotazy značíme symbolem $'$ (např. G\_Q7$'$ je \texttt{select x.PropOne
 
 U vybraných dotazů je nutné si uvědomit, co znamenají klíče v části \textit{Group by}.
 Každý klíč má svůj rozsah hodnot.
-Konkrétní hodnoty klíčů jsou uloženy v našem případě ve vrcholech.
-Pokud by každý vrchol měl unikátní hodnotu klíče, pak počet vytvářených skupin v části \textit{Group by} je shora omezen počtem vrcholů v grafu.
+Konkrétní hodnoty klíčů jsou uloženy v~našem případě ve vrcholech.
+Pokud by každý vrchol měl unikátní hodnotu klíče, pak počet vytvářených skupin v části \textit{Group by} je shora omezen počtem vrcholů v~grafu.
 To se děje pro dotazy G\_Q2, G\_Q3 a G\_Q6.
 Zvolíme-li dva takové klíče za klíče \textit{Group by}, pak maximální počet skupin je shora omezen skalárním součinem jejich rozsahů.
 To nastává pro dotazy  G\_Q4 a G\_Q5.
@@ -316,7 +316,7 @@ Odtud vyplývá, že při generování vlastností vrcholů v minule sekci urči
 Tímto jsme dokázali shora omezit počet skupin v dotazech G\_Q7 a G\_Q8 horní hranicí intervalu rozsahu hodnot daných vlastností.
 
 Další nutnou znalostí je způsob paralelizace prohledávání grafu (sekce \ref{anal.matchPar}).
-Každé vlákno provádí prohledávání grafu z určité části vrcholů v grafu.
+Každé vlákno provádí prohledávání grafu z určité části vrcholů v~grafu.
 Platí, že každé vlákno neprovede prohledávání ze stejného vrcholu jako vlákno jiné.
 Tedy vrcholy představující proměnnou x jsou unikátní pro každé vlákno, taktéž hodnoty jejich vlastností.
 Při paralelizaci se provádí paralelní slévání výsledků do globální struktury.
@@ -324,16 +324,16 @@ V dotazech G\_Q3 a G\_Q6 pak vlákna při slévání výsledků vytvářejí vž
 To nám umožní sledovat situaci, kdy vlákna vytvářejí navzájem rozdílné záznamy.
 Obecně dotazy G\_Q4 až G\_Q8 nám umožní otestovat chování řešení při snižování počtu vytvářených skupin.
 Pro G\_Q3 a G\_Q6 bude navíc vidět režie za porovnání vlastnosti vůči \verb+ID+.
-
+\clearpage
 Následuje shrnutí:
 \begin{itemize}
 
 \item G\_Q1 testuje \textit{Single group Group by}. Vše je agregováno pouze do jedné skupiny. 
-\item G\_Q2 a G\_Q3  testuje vytváření skupin podle \verb+ID+ vrcholů. Rozdíl mezi nimi je ten, že proměnná x je při paralelním zpracování přístupná pouze jednomu vláknu za celý běh vyhledávání. Maximální počet skupin je shora omezen počtem vrcholů v grafu.
-\item G\_Q4 a G\_Q5 přidávají režii za ukládání a zpracovávání další proměnné. Počet skupin je shora omezen počtem hran v grafu. Tyto dotazy obsahují nejvíce skupin mezi zbylými dotazy.
-\item G\_Q6 testuje vytváření skupin náhodně vygenerovaných hodnot z celého rozsahu \verb+Int32+ (viz \ref{tab.grafProps}). Počet skupin je shora omezen počtem vrcholů v grafu.
-\item G\_Q7 testuje vytváření skupin náhodně vygenerovaných hodnot z rozsahu $[0; 100$ $000]$ \verb+Int32+ (viz \ref{tab.grafProps}). Dojde k rozprostření několika stejných hodnot v grafu. Maximální počet skupin je 100 000.
-\item G\_Q8  testuje vytváření skupin náhodně vygenerovaných hodnot z rozsahu $[0; 1000]$ \verb+Int32+ (viz \ref{tab.grafProps}). Dojde k rozprostření mnoha stejných hodnot v grafu. Maximální počet skupin je 1000.
+\item G\_Q2 a G\_Q3  testuje vytváření skupin podle \verb+ID+ vrcholů. Rozdíl mezi nimi je ten, že proměnná x je při paralelním zpracování přístupná pouze jednomu vláknu za celý běh vyhledávání. Maximální počet skupin je shora omezen počtem vrcholů v~grafu.
+\item G\_Q4 a G\_Q5 přidávají režii za ukládání a zpracovávání další proměnné. Počet skupin je shora omezen počtem hran v~grafu. Tyto dotazy obsahují nejvíce skupin mezi zbylými dotazy.
+\item G\_Q6 testuje vytváření skupin náhodně vygenerovaných hodnot z celého rozsahu \verb+Int32+ (viz \ref{tab.grafProps}). Počet skupin je shora omezen počtem vrcholů v~grafu.
+\item G\_Q7 testuje vytváření skupin náhodně vygenerovaných hodnot z rozsahu $[0; 100$ $000]$ \verb+Int32+ (viz \ref{tab.grafProps}). Dojde k rozprostření několika stejných hodnot v~grafu. Maximální počet skupin je 100 000.
+\item G\_Q8  testuje vytváření skupin náhodně vygenerovaných hodnot z rozsahu $[0; 1000]$ \verb+Int32+ (viz \ref{tab.grafProps}). Dojde k rozprostření mnoha stejných hodnot v~grafu. Maximální počet skupin je 1000.
 
 \end{itemize}
 
@@ -342,7 +342,7 @@ Pro provedení experimentu jsme připravili jednoduchý benchmark v jazyce C\# p
 Paralelizování řešení jsme otestovali při zatížení všech dostupných jader procesoru (argument \verb+ThreadCount = 8+).
 Při spuštění programu dojde k navýšení priority procesu, aby docházelo k méně častému vykonávání ostatních procesů na pozadí během testování. 
 Pro \verb+ThreadCount = 1+ navíc dochází k navýšení priority hlavního vlákna. 
-To není možné u paralelního testování, protože vlákna běží v nativním \verb+ThreadPool+, který neumožňuje navyšování priority vláken.
+To není možné u paralelního testování, protože vlákna běží v~nativním \verb+ThreadPool+, který neumožňuje navyšování priority vláken.
 
 Následuje ukázka hlavní smyčky benchmarku:
 
@@ -429,7 +429,7 @@ Všechny testy proběhly na notebooku Lenovo ThinkPad E14 Gen. 2 verze 20T6000MC
 \subsection{Příprava hardwaru}
 
 Každému testování předcházel studený restart systému a odpojení od internetu. 
-V průběhu testování neběžel žádný klientský proces kromě benchmarku a nativních systémových procesů. 
+V průběhu testování neběžel žádný klientský proces kromě benchmarku a~nativních systémových procesů. 
 Rovněž, použitý notebook byl napájen po celou dobu testování.
 
 
@@ -440,7 +440,7 @@ Benchmark společně s dotazovacím enginem a potřebnými knihovnami byl přelo
 
 \section{Výsledky}
 
-V této sekci prezentujeme naměřená data pro všechny tři grafy (\ref{expr.graphs}), které jsme podrobili dotazům z sekce \ref{expr.dotazy}.
+V této sekci prezentujeme naměřená data pro všechny tři grafy (\ref{expr.graphs}), které jsme podrobili dotazům ze sekce \ref{expr.dotazy}.
 U grafů \textit{Group/Order by} se držíme značení z kapitoly Implementace \ref{impl}.
 Značení se skládá ze tří částí.
 Prvních dvě části jsou obsaženy vždy a poslední část je použita pouze v paralelní části \textit{Group by}.
@@ -451,7 +451,7 @@ Značení vypadá následovně:
 
 Pokud řešení obsahuje kombinaci módů (např. \textbf{Half-Streamed}\textbf{/Streamed}), pak řešení pro dané módy jsou totožná.
 Pro připomenutí zmíníme, že mód \textbf{Normal} vykonává \textit{Group/Order by} až po dokončení prohledávání grafu a vylepšené módy \textbf{Half-Streamed}/\textbf{Streamed} je vykonávají v průběhu prohledávání grafu.
-U paralelního řešení \textbf{Streamed} jsou výsledky zpracovány globálně, zatímco u \textbf{Half-Streamed} řešení dochází k lokálnímu zpracování, které je zakončené sléváním.
+U paralelního řešení \textbf{Streamed} jsou výsledky zpracovány globálně, zatímco u~\textbf{Half-Streamed} řešení dochází k lokálnímu zpracování, které je zakončené sléváním.
 Zopakování hlavních konceptů řešení a způsob ukládání ponecháme jako úvod jednotlivých částí.
 
 \subsection{Match}
@@ -533,7 +533,7 @@ Všechny výsledky měření třídění jsou zobrazeny na grafech na konci tét
 \subsubsection{Obecné shrnutí jednovláknových řešení}
 
 Nejprve shrneme základní koncepty použitých řešení.
-Každé řešení pracuje s tabulkou výsledků, kterou musí setřídit.
+Každé řešení pracuje s~tabulkou výsledků, kterou musí setřídit.
 Nikdy netřídíme samotné řádky tabulky, ale pouze indexy řádků.
 Výsledek třídění je indexační struktura nad tabulkou.
 Při porovnávání je nutné mít na paměti, že jednovláknově běžící části používají optimalizace popsané v sekcích \ref{anal.orderby.opt1}, \ref{anal.orderby.opt2} a \ref{impl.orderby.opts}.  
@@ -546,7 +546,7 @@ Vylepšená řešení zpracovávají vyhledané výsledky v momentě jejich nale
 Nalezený prvek se nejdříve vloží do tabulky na nový řádek. 
 Následně se index daného řádku vloží do indexační struktury. 
 Jako indexační strukturu nad tabulkou používáme $(a, b)$-strom \citep[str. 190]{labyrint}, u kterého jsme upravili definici na $b=2a$.
-V našem případě $b=256$.
+V~našem případě $b=256$.
 V řešení \textbf{ABTree} se jedná o obecný $(a, b)$-strom, zatímco řešení \textbf{ABTreeValueAccumulator} výsledky (indexy) mající stejnou hodnotu klíčů třídění jako již vložené prvky uloží do \verb+List<int>+.
 Tedy místo vytvoření nového záznamu ve stromě dojde pouze k vložení do patřičného pole.
 
@@ -556,16 +556,16 @@ Začneme řešením běžícím v jednom vlákně, tj. grafy \ref{figure.amazonO
 Můžeme si všimnout, že výsledky vypadají v rámci daných grafů konzistentně pro každý dotaz.
 Ani jedno z vylepšených řešení nedokázalo porazit mód \textbf{Normal}. 
 Je to způsobeno značnou režií za metodu vložení (\verb+Insert+) do stromu, ve které dochází k častému alokování nových vrcholů a překopírovávání prvků.
-Nejproblematičtější část je množství tříděných výsledků, kdy počet samotných hodnot klíčů třídění je omezen počtem vrcholů v grafu (tabulka \ref{tab.grafBase}). 
+Nejproblematičtější část je množství tříděných výsledků, kdy počet samotných hodnot klíčů třídění je omezen počtem vrcholů v~grafu (tabulka \ref{tab.grafBase}). 
 Daná situace vede k opakovanému zatřiďování výsledků se stejnou hodnotou a tím navyšování velikosti stromu společně s počtem vykonaných porovnání v metodě \verb+Insert+.
 Celý problém jsme vyřešili v řešení \textbf{ABTreeValueAccumulator}, ve kterém se duplicitní hodnoty ukládají do zmíněného pole a tím omezujeme velikost výsledného stromu. 
 Jak vidíme na grafech, řešení se přibližuje rychlosti řešení \textbf{Normal}.
 Problém by nastal v případě, pokud by množství hodnot odpovídalo počtu nalezených výsledků. 
-V tomto případě bychom zbytečně navyšovali režii za vzniklá pole, která se nevyužijí.
+V~tomto případě bychom zbytečně navyšovali režii za vzniklá pole, která se nevyužijí.
 
 \subsubsection{Třídění pomocí vlastnosti vůči \texttt{ID}}
 
-Dle našich předpokladů se ukázalo, že třídění pomocí vlastnosti (O\_Q3 a O\_Q4) vůči \verb+ID+ (O\_Q1 a O\_Q2) vede ke znatelnému zpomalení.
+Dle našich předpokladů se ukázalo, že třídění pomocí hodnot vlastnosti (dotazy O\_Q3 a O\_Q4) vůči \verb+ID+ (dotazy O\_Q1 a O\_Q2) vede ke znatelnému zpomalení.
 Je to způsobeno nutným přístupem k databázi, při kterém se ověřuje, jestli daná vlastnost existuje na daném elementu a následném čtení hodnoty ze struktury obsahující ji.
 
 \subsubsection{Obecné shrnutí paralelních řešení}
@@ -573,7 +573,7 @@ Je to způsobeno nutným přístupem k databázi, při kterém se ověřuje, jes
 Opět zde platí, že tabulka výsledků je tříděna pomocí indexů.
 Mód \textbf{Normal} používá paralelní Merge sort \citep{hpcsharp}.
 Vylepšená paralelní zpracování aplikují použité verze $(a, b)$-stromů ze zpracování pro jedno vlákno. 
-Každé běžící vlákno v \textbf{Half-Streamed} řešení obsahuje lokální tabulku a indexační strom. 
+Každé běžící vlákno v~\textbf{Half-Streamed} řešení obsahuje lokální tabulku a indexační strom. 
 Po dokončení vyhledávání se obsahy stromů překopírují do pole a dojde k paralelnímu dvoucestnému slévání používající stejnou funkci jako paralelní Merge sort. 
 U \textbf{Streamed} řešení jsme navrhli sdílenou strukturu pro zatřiďování výsledků.
 Struktura rozdělí rozsah hodnot prvního klíče třídění na rovnoměrné části (konkrétněji v sekci \ref{anal.improvement.orderby.streamed})
@@ -594,7 +594,7 @@ Rozsah hodnot prvního klíče třídění se rozdělí na rovnoměrné části 
 Vlákno v momentě nalezení výsledku přistupuje k přihrádce pomocí zámku a vloží do ní daný výsledek.
 Při implementaci řešení jsme se omezili pouze na celý rozsah hodnot typů vlastností v jazyce C\# pro .NET Framework 4.8.
 To znamená, že pokud vlastnost má typ \texttt{integer} (v C\# \texttt{Int32}), ačkoliv hodnoty vlastnosti v grafu mohou být v rozsahu $[0; 100]$, tak rozdělení přihrádek se vytvářejí z celého rozsahu C\# typu.
-Tedy přihrádky se vytvářejí rozdělením rozsahu $[$\verb+Int32.MinValue+; \verb+Int32.MaxValue+$]$ a nikoliv $[0; 100]$.
+Tedy přihrádky se vytvářejí rozdělením rozsahu $[$\verb+Int32.MinValue+; \verb+Int32.MaxValue+$]$ a~nikoliv $[0; 100]$.
 To má za následek při třídění pomocí vlastnosti s rozsahem hodnot v grafu $[0; 100]$, že vlákna budou přistupovat v nejhorším případě k pouze jedné přihrádce.
 Vlákna pak budou vždy čekat na uvolnění jednoho zámku.
 Přesně tato situace nastala u \textbf{Streamed} řešení pro dotazy O\_Q1 a O\_Q2.
@@ -603,7 +603,7 @@ V nich třídíme pomocí vlastnosti \texttt{ID}.
 Vlastnost typu \texttt{integer} je v C\# typ \texttt{Int32}.
 Vytvoří se přihrádky rozdělením rozsahu $[$\verb+Int32.MinValue+; \verb+Int32.MaxValue+$]$.
 Rozsah se rozdělí na 64 dílů, protože jsme určili počet přihrádek jako $m=t^2$, kde $t=\#vláken$ a všechny testy běží v osmi vláknech.
-Ale problém je, že hodnoty \texttt{ID} vrcholů jsou z omezeného rozsahu $[0; \#$vrcholů v grafu$]$, zatímco pouze jedna přihrádka obsahuje posloupnost 67 108 863 hodnot.
+Ale problém je, že hodnoty \texttt{ID} vrcholů jsou z rozsahu $[0; \#$vrcholů v~grafu$]$, zatímco pouze jedna přihrádka obsahuje posloupnost 67 108 863 hodnot.
 A vždy platí, že 67 108 863 $> \# $vrcholů v grafu (z tabulky \ref{tab.grafBase}).
 Čili vlákna vždy přistupují pouze k přihrádce, kde se synchronizují pomocí zámku. 
 Výsledná doba zpracování pak odpovídá jednovláknovému zpracování s přidanou režií za přístup k zámku.
@@ -616,7 +616,7 @@ Pro budoucí rozšíření by bylo nutné zvážit vytvoření statistik rozsah�
 
 \textbf{Half-Streamed} řešení se přibližuje \textbf{Normal} řešení v prvních dvou dotazech a překonává jej ve třetím i čtvrtém dotazu pro řešení  \textbf{ABTreeValueAccumulator}.
 U třetího a čtvrtého dotazu se porovnává pomocí vlastností. V jednovláknovém zpracovávání jsme viděli režii za dané porovnání.
-V druhém kroku u daného \textbf{Half-Streamed} řešení dochází k slévání pouze akumulovaných skupin, což rapidně sníží počet porovnávání při slévání a odtud výhoda oproti \textbf{Normal: Merge sort} řešení. 
+V druhém kroku u~daného \textbf{Half-Streamed} řešení dochází k slévání pouze akumulovaných skupin, což rapidně sníží počet porovnávání při slévání a odtud výhoda oproti \textbf{Normal: Merge sort} řešení. 
 To samé platí u \textbf{Streamed} řešení, protože použití přihrádek způsobí vkládání do mnohonásobně menší skupiny výsledků. 
 Celá situace je navíc umocněna zmíněnými optimalizacemi. 
 
@@ -707,7 +707,7 @@ Každé řešení používá k \textit{Group by} mapu (\verb+Dictionary<key, val
 \textbf{Half-Streamed} řešení vykonává \textit{Group by} v průběhu prohledávání a ukládá do tabulky pouze výsledky, pro které ještě neexistuje skupina v použité mapě.
 Pro zmíněná řešení se jako \verb+key+ používá index do tabulky a skrze něj se následně vypočtou hodnoty klíče.
 \textbf{Streamed} řešení nepoužívá tabulku, ale hodnoty klíče ukládá rovnou do mapy. 
-Objevující se značení Bucket a List určuje způsob ukládání výsledků agregačních funkcí (\verb+min+, \verb+avg+...) jako \verb+value+ záznam v mapě.
+Objevující se značení Bucket a~List určuje způsob ukládání výsledků agregačních funkcí (\verb+min+, \verb+avg+...) jako \verb+value+ záznam v mapě.
 Podrobnější vysvětlení je v kapitole Analýzy \ref{anal.groupby.uloziste}.
 Výsledky jednovláknového seskupování jsou zobrazeny na grafech před shrnutím paralelních výsledků seskupování v sekci \ref{expr.results.groupby.par}.
 
@@ -719,13 +719,13 @@ Dvě dvojice dotazů G\_Q2/G\_Q3, G\_Q4/G\_Q5 a trojice dotazů G\_Q6/G\_Q7/G\_Q
 Řešení vykonávající \textit{Group by} v průběhu vyhledávání překonávají \textbf{Normal} řešení.
 S růstem počtu výsledku se rozdíly mezi módy prohlubují. 
 Například zrychlení \textbf{Streamed} řešení je znatelnější u grafu As-Skitter než u grafu Amazon0601. 
-Obecně nejznačnější zrychlení nastává u \textbf{Streamed} řešení, kdy není použita tabulka výsledků.
+Obecně nejznačnější zrychlení nastává u~\textbf{Streamed} řešení, kdy není použita tabulka výsledků.
 
 \subsubsection{Zpomalení jednovláknového Half-Streamed řešení}
 
 Velice mírné zrychlení můžeme vidět u \textbf{Half-Streamed} řešení, které ukládá jen reprezentanty skupiny.
 U všech dotazů bez agregačních funkcí, kromě dvojice G\_Q4$'$/G\_Q5$'$, nastávají situace, kdy \textbf{Half-Streamed} řešení je pomalejší než \textbf{Normal}.
-U grafu Amazon0601 nastává stejná situace pro G\_Q3, G\_Q6 a pro každý graf pro G\_Q8.
+U grafu Amazon0601 nastává stejná situace pro G\_Q3, G\_Q6 a~pro každý graf pro G\_Q8.
 Situaci jsme neočekávali a vysvětlujeme si ji následovně.
 \textbf{Half-Streamed} řešení používá při zpracování výsledku položku tabulky \verb+temporaryRow+, do které přesouvá ukazatel na pole výsledků.
 Skrze danou položku pak následně přistupuje k výsledku při vkládání do mapy. 
@@ -743,10 +743,10 @@ Absenci jevu neumíme plně objasnit.
 
 Na největším grafu platí, že použité ukládání List je pomalejší než Bucket, kvůli indirekci navíc.
 Na menších grafech rozdíly ustupují, a dokonce nastávají situace, kdy je List rychlejší. 
-Přesněji u dotazů G\_Q4 a G\_Q5.
+Přesněji u dotazů G\_Q4 a~G\_Q5.
 Přehození rolí si u nich vysvětlujeme režií za množství vytvářených polí (tj. hodně alokací, málo přístupů), které se vyrovná použité indirekci.
 Na grafu Amazon0601 u G\_Q4 a G\_Q5 dotazů je \textbf{Streamed} řešení pomalejší než \textbf{Half-Streamed} s úložištěm List, protože také vytváří pole jako Bucket řešení (viz implementace \ref{impl.improvement.groupby.streamed}).
-U dalších grafů je pak počet vytvářených polí mnohonásobně menší než počet přístupů k nim.
+U~dalších grafů je pak počet vytvářených polí mnohonásobně menší než počet přístupů k nim.
 
 \bigskip
 Z výsledků můžeme vyvodit, že vylepšená jednovláknová \textbf{Streamed} řešení \textit{Group by} jsou výhodnější z hlediska rychlosti vykonávání než řešení \textbf{Normal}. 
@@ -804,13 +804,13 @@ Výsledky paralelního seskupování jsou zobrazeny na grafech před shrnutím v
 Byli jsme překvapeni, že vylepšená řešení se mnohdy nevyrovnala původním řešením.
 \textbf{Streamed} řešení, ačkoliv bylo nejrychlejší v jednovláknovém běhu, tak zde se pouze vyrovnalo \textbf{Normal} řešením a nebo bylo pomalejší.
 Danou situaci si vysvětlujeme synchronizací. 
-První vrstva synchronizace nastává u přístupu k paralelní mapě a čtení/vložení záznamu.
+První vrstva synchronizace nastává u přístupu k~paralelní mapě a čtení/vložení záznamu.
 Po získání \verb+value+ z mapy následuje druhá vrstva, která obsahuje volání thread-safe funkcí pro výpočet agregovaných hodnot pro danou skupinu.
 Z grafů \ref{figure.amazonGQ1Par}, \ref{figure.webberkstanGQ1Par} a \ref{figure.skitterGQ1Par} (paralelní \textbf{Streamed} řešení) v sekci \ref{expr.results.groupby.sinleGroup} je pak vidět značnou režii za synchronizaci za thread-safe agregační funkce při přístupu osmi vláken.
 
 \subsubsection{Test režie paralelní mapy (jedno vlákno)}
 
-Pro představu pouhé režie paralelní mapy jsme otestovali režii zvlášť čtení a vložení \verb+ConcurrentDictionary+ vůči \verb+Dictionary+ pro jedno vlákno.
+Pro představu pouhé režie paralelní mapy jsme otestovali režii zvlášť čtení a~vložení \verb+ConcurrentDictionary+ vůči \verb+Dictionary+ pro jedno vlákno.
 
 Následuje příklad kódu použitého při testu (kód označíme \textit{InsertReadCode}):
 \begin{code}
@@ -857,7 +857,7 @@ for (int i = 0; i < 100_000_000; i++)
 \end{table}
 
 Měření dle kódu \textit{InsertReadCode} výše.
-Zkratka \textbf{Dict} označuje \texttt{Dictionary} a zkratka \textbf{ConDict} označuje \texttt{ConcurrentDictionary}.
+Zkratka \textbf{Dict} označuje \texttt{Dictionary} a~zkratka \textbf{ConDict} označuje \texttt{ConcurrentDictionary}.
 Běh v jednom vlákně. 
 Generování prvků pomocí třídy \texttt{Random} s inicializační hodnotou 100100. 
 Měřeno pomocí třídy \texttt{Stopwatch}. 
@@ -866,7 +866,7 @@ Test \textit{Insert} $n$ provádí vkládání $n$ náhodně vygenerovaných prv
 Test \textit{Read} $n$ provádí $n$ čtení z rozsahu 0 až 1 000 000. Poměr je roven podílu času paralelní mapy a mapy.
 
 Tabulka naměřených hodnot testování (\ref{tab.mapsInsert}) ukazuje, že pouhé vkládání náhodně generovaných prvků do paralelní mapy trvá průměrně 4x déle.
-Samostatné čtení náhodně generovaných hodnot, které existují v mapě, je průměrně o 13\% pomalejší.
+Samostatné čtení náhodně generovaných hodnot, které existují v mapě, je průměrně o 13\,\% pomalejší.
 
 \subsubsection{Test režie paralelní mapy (osm vláken)}
 
@@ -910,8 +910,8 @@ public static void Insert(ConcurrentDictionary<int, int> dict,
 \end{table}
 
 Měřeno dle kódu \textit{InsertReadCode} výše. 
-Zkratka \textbf{Dict} označuje \texttt{Dictionary} a zkratka \textbf{ConDict} označuje \texttt{ConcurrentDictionary}. 
-\texttt{Dictionary} vykoná práci v jednom vlákně. 
+Zkratka \textbf{Dict} označuje \texttt{Dictionary} a~zkratka \textbf{ConDict} označuje \texttt{ConcurrentDictionary}. 
+\texttt{Dictionary} vykoná práci v~jednom vlákně. 
 \texttt{ConcurrentDictionary} běží paralelně v osmi vláknech. 
 Generování prvků pomocí třídy \texttt{Random} s inicializační hodnotou 100100. 
 Měřeno pomocí třídy \texttt{Stopwatch}. 
@@ -925,9 +925,9 @@ Tedy obecné zpomalení je zřetelné u řešení používající paralelní map
 \subsubsection{Paralelní Streamed řešení vs paralelní Normal: Global řešení}
 
 \textbf{Streamed} řešení vůči jeho protějšku \textbf{Normal: Global} je místy pomalejší. 
-Děje se tak ve dvou grafech.
-První je graf As-Skitter u dotazů  G\_3/G\_3$'$ a  G\_6/G\_6$'$.
-Druhý graf je Amazon0601 na dotazech G\_4/G\_4$'$ a  G\_5/G\_5$'$.
+Děje se tak na dvou grafech.
+První graf je graf As-Skitter u dotazů G\_3/G\_3$'$ a G\_6/G\_6$'$.
+Druhý graf je Amazon0601 na dotazech G\_4/G\_4$'$ a~G\_5/G\_5$'$.
 Myslíme si, že se jedná o specifické situace pro dané grafy a nedokážeme je plně zodpovědět, jelikož navzájem a pro graf WebBerkStan nenastávají.
 Obecně pro dotazy G\_6/G\_6$'$ až G\_8/G\_8$'$ vidíme mírné zrychlení \textbf{Streamed} řešení, protože šetří drahou režii za vytváření nových skupin.
 Pro \textbf{Normal: Global} nastává zpomalení, jelikož se při vkládání do mapy častěji vyvolá drahé porovnání klíčů pomocí vlastností skrze tabulku výsledků. 
@@ -937,13 +937,13 @@ Pro \textbf{Normal: Global} nastává zpomalení, jelikož se při vkládání d
 Můžeme zde aplikovat poznatky z výsledků jednovláknových řešení pro \textbf{Normal: Two-Step} proti \textbf{Half-Streamed: Two-Step}.
 \textbf{Half-Streamed} řešení je zde opět pomalejší než \textbf{Normal} řešení nebo jsou vyrovnané.
 Dále zde opět vidíme zpomalení implementace List vůči Bucket, které jsme viděli u jednovláknových řešení.
-Situace při které je List rychlejší nastávala pro dotazy G\_Q4 a G\_Q5 na grafu Amazon0601 a WebBerkStan.
+Situace při které je List rychlejší nastávala pro dotazy G\_Q4 a~G\_Q5 na grafu Amazon0601 a WebBerkStan.
 Nyní nastává pouze pro graf Amazon0601 s řešením \textbf{Normal: LocalGroupByLocalTwoWayMerge}.
 \textbf{Two-step (List)} řešení při slévání překopírovává větší množství dat, proto u něj daný jev už nenastává. 
 
 \subsubsection{Nejrychlejší paralelní řešení}
 
-Všem řešením dominuje\textbf{Normal: LocalGroupByLocalTwoWayMerge},\\* které provádí vše lokálně a ujišťuje nás v předpokladu, že hlavní důvod zpomalení je synchronizace.
+Všem řešením dominuje \textbf{Normal: LocalGroupByLocalTwoWayMerge},\\* které provádí vše lokálně a ujišťuje nás v předpokladu, že hlavní důvod zpomalení je synchronizace.
 Například dané řešení vůči \textbf{Normal: Two-Step}. 
 Je zde vidět režie za použití paralelní mapy vůči lokálnímu slévání po dvojicích, jelikož samotný první krok je totožný pro obě řešení.
 Zpomalení \textbf{Normal: Two-Step} je ještě znatelnější pro dotazy G\_Q4/G\_Q4$'$ a G\_Q5/G\_Q5$'$, kdy se vkládá množství skupin do paralelní mapy.
@@ -1051,11 +1051,11 @@ Obě řešení výsledky neukládají.
 
 Na grafech \ref{figure.amazonGQ1ST} až \ref{figure.skitterGQ1Par} lze vidět značnou konzistenci mezi výsledky testování při nárůstu počtu výsledků vyhledávání.
 \textbf{Half-Streamed} a \textbf{Streamed} řešení zde neukládá výsledky vyhledávání do tabulky, ale pouze na aktuální výsledek aplikuje agregační funkce a následně jej zahodí.
-To způsobuje značnou výhodu oproti \textbf{Normal} řešení, které drží všechny výsledky v paměti.
-Použijeme-li poznatky z sekce \ref{matchResults} o zpomalení způsobeném ukládáním výsledků do tabulky zjistíme (v našem případě jedné proměnné), že rozdíl mezi \textbf{Normal} a \textbf{Half-Streamed} řešením se pohybuje právě v rozsahu onoho zpomalení.
+To způsobuje značnou výhodu oproti \textbf{Normal} řešení, které drží všechny výsledky v~paměti.
+Použijeme-li poznatky ze sekce \ref{matchResults} o zpomalení způsobeném ukládáním výsledků do tabulky zjistíme (v~našem případě jedné proměnné), že rozdíl mezi \textbf{Normal} a \textbf{Half-Streamed} řešením se pohybuje právě v rozsahu onoho zpomalení.
 To platí pro běh jednoho vlákna i běhu osmi vláken. 
 Problém představuje paralelní \textbf{Streamed} řešení, jelikož k jednomu výsledku přistupuje osm vláken najednou, což způsobuje značné zpomalení kvůli nutné synchronizaci při výpočtu funkcí \verb+min+ a \verb+avg+. 
-Zrychlení je zde pouze v rozsahu $[1,81; 2,64]$-krát, zatímco u zbylých řešení je $[3,67; 4,61]$-krát.
+Zrychlení je zde pouze v~rozsahu $[1,81; 2,64]$-krát, zatímco u zbylých řešení je $[3,67; 4,61]$-krát.
 
 \subsubsection{Obecný problém synchronizace}
 
@@ -1070,5 +1070,5 @@ Dokonce i paralelní řešení \textbf{Half-Streamed} při zpracování \textit{
 
 \bigskip
 Tímto jsme zakončili prezentaci výsledků. 
-Všechna nasbíraná data použitá k tvorbě grafů je možné nalézt v příloze výsledků benchmarku (\ref{prilohy.grafyVysledky}). 
+Všechna nasbíraná data použitá k~tvorbě grafů je možné nalézt v příloze výsledků benchmarku (\ref{prilohy.grafyVysledky}). 
 
