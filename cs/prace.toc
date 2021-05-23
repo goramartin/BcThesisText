@@ -48,7 +48,7 @@
 \contentsline {subsection}{\numberline {2.7.2}Úložiště mezivýsledků agregačních funkcí}{34}{subsection.2.7.2}%
 \contentsline {subsection}{\numberline {2.7.3}Logika agregačních funkcí}{35}{subsection.2.7.3}%
 \contentsline {subsection}{\numberline {2.7.4}Jednovláknové zpracování}{35}{subsection.2.7.4}%
-\contentsline {subsection}{\numberline {2.7.5}Optimalizace při výpočtu haš hodnoty}{35}{subsection.2.7.5}%
+\contentsline {subsection}{\numberline {2.7.5}Optimalizace při výpočtu heš hodnoty}{35}{subsection.2.7.5}%
 \contentsline {subsection}{\numberline {2.7.6}Paralelní zpracování}{36}{subsection.2.7.6}%
 \contentsline {subsection}{\numberline {2.7.7}Thread-safe agregační funkce}{36}{subsection.2.7.7}%
 \contentsline {subsection}{\numberline {2.7.8}Global Group by}{36}{subsection.2.7.8}%

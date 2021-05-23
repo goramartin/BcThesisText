@@ -87,88 +87,6 @@ Obsahuje řešení pro \textbf{Streamed} i \textbf{Half-Streamed} módy.
 
 \end{itemize}
 
-%%Podrobnější popis adresářové struktury:
-%%
-%%\clearpage
-%%\dirtree{%
-%%.1 /.
-%%.2 DB.
-%%.3 Creator \DTcomment{Definuje api čtení vstupních souborů.}. 
-%%.3 GraphElement \DTcomment{Definuje objekty elementů grafu.}.
-%%.3 Processor \DTcomment{Definuje tvorbu objektů grafu.}.
-%%.3 Table \DTcomment{Definuje typ v Property grafu.}.
-%%.4 Property \DTcomment{Definuje vlastnosti typu v Property grafu.}.
-%%.2 DataFiles. 
-%%.2 Parser.
-%%.3 ParsedPattern \DTcomment{Definuje objekty syntaktického stromu posloupností části \textit{Match}.}.
-%%.3 Parser.
-%%.4 ParseTree \DTcomment{Definuje objekty použité k tvorbě syntaktického stromu.}.
-%%.5 Visitor \DTcomment{Definuje objekty procházení syntaktického stromu.}.
-%%.4 ParserComponent \DTcomment{Definuje metody syntaktické analýzy tokenů dotazu.}.
-%%.3 Tokenizer \DTcomment{Definuje tokeny a způsob tokenizace vstupu.}.
-%%.2 Query.
-%%.3 Expression \DTcomment{Obsahuje logiku výrazů.}.
-%%.4 ExpressionComparer \DTcomment{Definuje porovnávání hodnot dvou výrazů.}.
-%%.4 Reference \DTcomment{Definuje výrazy odkazů na proměnné, jejich vlastnosti a agregační funkce.}.
-%%.3 GroupBy \DTcomment{Definuje objekty důležité k vykonání Group by.}.
-%%.4 Aggregate.
-%%.5 AggregateFunction \DTcomment{Definuje logiku agregačních funkcí.}.
-%%.4 AggregateInternalResults \DTcomment{Definuje úložiště hodnot agregačních funkcí.}.
-%%.4 MultiGroupGroupBy \DTcomment{Definuje řešení, pokud je zadano Group by.}.
-%%.5 EqualityComparer \DTcomment{Definuje porovnání záznamů v hašovací tabulce.}.
-%%.5 Hasher \DTcomment{Definuje hašování výrazů.}.
-%%.5 ParallelSolutions \DTcomment{Definuje paralelní vykonání Group by.}.
-%%.6 GlobalGroupBy.
-%%.6 LocalGroupByLocalTwoWayMerge.
-%%.6 TwoStepGroupBy.
-%%.5 ReferenceSingleThreadSolutions \DTcomment{Definuje jednovláknové vykonání Group by.}.
-%%.4 SingleGroupGroupBy \DTcomment{Definuje řešení, pokud není zadáno Group by.}.
-%%.3 Match \DTcomment{Definuje objekty důležité k vykonání \textit{Match}.}.
-%%.4 DFSMatch \DTcomment{Definuje obejekty DFS prohledávání grafu.}.
-%%.5 BaseMatch \DTcomment{Definuje objekty vzoru.}.
-%%.5 Matcher \DTcomment{Definuje objekty algoritmu prohledávání grafu .}.
-%%.6 DFSParallelPatternMatcher \DTcomment{Definuje paralelní prohledávání grafu.}.
-%%.6 DFSPatternMatcher \DTcomment{Definuje jednovláknové prohledávání grafu.}.
-%%.5 Pattern \DTcomment{Definuje api vzoru.}.
-%%.4 MatchInternalResults \DTcomment{Definuje interní struktury \textit{Match} pro ukládání výsledků prohledávání grafu.}.
-%%.3 OrderBy \DTcomment{Definuje objekty důležité k vykonání Order by.}.
-%%.4 Comparer \DTcomment{Definuje porovnání řádků tabulky pomocí proxy třídy.}.
-%%.5 Wrappers \DTcomment{Definuje porovnání řádků tabulky pomocí indexu.}.
-%%.4 Sorter \DTcomment{Definuje algoritmy třídění.}.
-%%.6 TableSorter \DTcomment{Definuje algoritmy třídění tabulky.}.
-%%.3 Results \DTcomment{Definuje tabulky výsledků.}.
-%%.4 GroupByResults \DTcomment{Definuje formát tabulky výsledků Group by.}.
-%%.4 TableResults \DTcomment{Definuje formát tabulky pouze pro elementy grafu.}.
-%%.3 Select \DTcomment{Definuje objekty důležité k vykonání \textit{Select}.}.
-%%.4 ExpressionToStringWrapper  \DTcomment{Definuje objekt převodu hodnoty výrazu na řetězec.}.
-%%.4 Formater  \DTcomment{Definuje formát výstupu.}.
-%%.4 Printer  \DTcomment{Definuje kam se má výstup vypsat.}.
-%%.2 QueryStreamed.
-%%.3 GroupBy  \DTcomment{Definuje objekty důležité pro upravené vykonání Group by.}.
-%%.4 AggregateInternalResults  \DTcomment{Definuje upravené úložište agregačních funkcí pro Streamed mód.}.
-%%.4 MultiGroupGroupBy  \DTcomment{Definuje Streamed a Half-Streamed řešení, pokud je zadáno Group by.}.
-%%.5 BucketKeyValueFactory  \DTcomment{Definuje výrobu klíče hašovací tabulky pro Streamed mód.}.
-%%.5 Comparers  \DTcomment{Definuje porovnání využité Half-Streamed a Streamed módem.}.
-%%.4 SingleGroupGroupBy \DTcomment{Definuje Streamed a Half-Streamed vykonání, pokud není zadáno Group by.}.
-%%.3 Match  \DTcomment{Definuje objekty důležité pro upravené vykonání Group by.}.
-%%.4 DFSMatch  \DTcomment{Definuje pozměněná api pro předávání výsledků částem v průběhu prohledávání grafu.}.
-%%.5 Matcher.
-%%.6 DFSParallelPatternMatcher.
-%%.6 DFSPatternMatcher.
-%%.3 OrderBy \DTcomment{Definuje objekty důležité pro upravené vykonání Order by.}.
-%%.4 ABTree \DTcomment{Definuje použité vyhledávací stromy.}.
-%%.4 Sorter \DTcomment{Definuje Half-Streamed a Streamed vykonání pomocí vyhledávacích stromů.}.
-%%.5 ABTreeSorterHalfStreamed.
-%%.5 ABTreeSorterStreamed.
-%%.6 Comparer.
-%%.7 Wrapper \DTcomment{Definuje porovnání akumulovaných skupin pomocí proxy třídy.}.
-%%.4 TypeRangeHasher \DTcomment{Obsahuje objekty, které rozdělují rozsah typu na přihrádky.}.
-%%.3 Results \DTcomment{Definuje upravené fotmáty tabulek výsledků.}.
-%%.4 GroupByResults.
-%%.4 TableResults.
-%%.5 ABTree \DTcomment{Formát tabulky pro řešení s normálním (a, b)-stromem.}.
-%%.5 ABTreeAccum \DTcomment{Formát tabulky pro řešení s (a, b)-stromem, který akumuluje shodné řádky.}.
-%%}
 
 \section{Programátorská dokumentace}
 
@@ -802,9 +720,9 @@ Nejdříve popíšeme implementaci seskupování a následně implementaci agreg
 
 \subsubsection{Dictionary a ConcurrentDictionary}
 
-Abychom pochopili implementaci seskupování musíme se podívat na způsob práce s hašováním výrazů.
-V analýze jsme určili, že výsledky prohledávání budeme seskupovat pomocí hašovací tabulky, ať už v jednovláknovém nebo paralelním zpracování.
-Jazyk C\# obsahuje hašovací tabulku \texttt{Dictionary<Key, Value>} pro jednovláknové zpracování a \texttt{ConcurrentDictionary<Key, Value>} pro paralelní zpracování.
+Abychom pochopili implementaci seskupování musíme se podívat na způsob práce s hešováním výrazů.
+V analýze jsme určili, že výsledky prohledávání budeme seskupovat pomocí hešovací tabulky, ať už v jednovláknovém nebo paralelním zpracování.
+Jazyk C\# obsahuje hešovací tabulku \texttt{Dictionary<Key, Value>} pro jednovláknové zpracování a \texttt{ConcurrentDictionary<Key, Value>} pro paralelní zpracování.
 \texttt{ConcurrentDictionary} je thread-safe verze \texttt{Dictionary}. 
 \texttt{Key} zde chápeme jako řádek tabulky a \texttt{Value} úložiště hodnot agregačních funkcí. 
 \texttt{Key} zde nebude proxy třída, ale pouze index řádku.
@@ -817,10 +735,10 @@ if (!dict.TryGetValue(x, out int y)) dict.Add(x, 42);
 \end{code}
 
 Nejdříve se v podmínce otestuje, jestli vkládaný prvek ve struktuře existuje.
-To znamená, že se vypočte haš prvku a nalezne se místo vložení.
+To znamená, že se vypočte heš prvku a nalezne se místo vložení.
 Jestli na místě nějaký prvek již leží, tak dojde k porovnání hodnot a jinak funkce vrací \texttt{false}.
 Funkce vrátí \texttt{true} při úspěchu porovnání prvků a při neúspěchu vrátí \texttt{false}.
-Při vrácení \texttt{false} dojde k vložení funkcí \texttt{Add}, která opět vypočte haš a případně porovná prvky.
+Při vrácení \texttt{false} dojde k vložení funkcí \texttt{Add}, která opět vypočte heš a případně porovná prvky.
 Obvyklé vkládání prvku pro \texttt{ConcurrentDictionary} vypadá následovně:
 \begin{code}
 ConcurrentDictionary<int, int> dict = 
@@ -830,33 +748,33 @@ var retVal = dict.GetOrAdd(x, 42);
 \end{code}
 
 Nyní neuvažujme žádné synchronizační koncepty.
-Funkce \texttt{GetOrAdd} vypočte haš, získá místo vložení a pokud na místě jiný prvek není rovnou ho vloží.
-Zde tedy dochází k hašování a porovnání pouze jednou.
+Funkce \texttt{GetOrAdd} vypočte heš, získá místo vložení a pokud na místě jiný prvek není rovnou ho vloží.
+Zde tedy dochází k hešování a porovnání pouze jednou.
 V prvním případě \texttt{Dictionary} bychom byli nuceni vyhodnotit ten samý výraz 4-krát.
-Obecně obě struktury pro dva rozdílné prvky se stejnou haš hodnotou mohou vytvářet spojový seznam daných prvků.
+Obecně obě struktury pro dva rozdílné prvky se stejnou heš hodnotou mohou vytvářet spojový seznam daných prvků.
 Výsledně bychom museli vypočítávat výrazy při každém porovnání v~seznamu.
-Navíc, pokud by docházelo ke slévání výsledků dvou hašovacích tabulek do jedné, tak bychom opět museli počítat haš a porovnávat.
+Navíc, pokud by docházelo ke slévání výsledků dvou hešovacích tabulek do jedné, tak bychom opět museli počítat heš a porovnávat.
 
-Obě struktury používají k výpočtu haš hodnoty a porovnání objekt s rozhraním \texttt{IEqualityComparer<T>}.
+Obě struktury používají k výpočtu heš hodnoty a porovnání objekt s rozhraním \texttt{IEqualityComparer<T>}.
 Kde \texttt{T} je \texttt{Key}. 
 Objekt interně definuje dvě metody \\*\texttt{int GetHashCode(T o)} a \texttt{bool Equals(T x, T y)}.
-První vypočte haš vkládaného objektu a při porovnání se vyvolá metoda \texttt{Equals}.
+První vypočte heš vkládaného objektu a při porovnání se vyvolá metoda \texttt{Equals}.
 Strukturám se dá v~konstruktoru poskytnou vlastní implementaci rozhraní.
 Díky této implementaci jsme vymysleli dvě optimalizace:
 
 \begin{enumerate}
 
-\item V momentě, kdy dochází k použití \texttt{Dictionary} nebo aktu slévání hašovacích tabulek, budeme jako \texttt{Key} používat strukturu \texttt{GroupDictKey}.
+\item V momentě, kdy dochází k použití \texttt{Dictionary} nebo aktu slévání hešovacích tabulek, budeme jako \texttt{Key} používat strukturu \texttt{GroupDictKey}.
 Struktura obsahuje dvě položky \texttt{int hash} a \texttt{int position}. 
-\texttt{hash} je zde haš řádku a~\texttt{position} je index řádku v tabulce výsledků.
-Tedy jsme rozšířili \texttt{Key} o~haš hodnotu řádku, kterou můžeme znovu použít, pokud to bude nutné.
-Budeme implementovat vlastní \texttt{IEqualityComparer<T>}, který jen použije haš hodnotu ze struktury.
-Tímto vypočteme haš pouze jednou za celý cyklus vkládání nebo slévání.
+\texttt{hash} je zde heš řádku a~\texttt{position} je index řádku v tabulce výsledků.
+Tedy jsme rozšířili \texttt{Key} o~heš hodnotu řádku, kterou můžeme znovu použít, pokud to bude nutné.
+Budeme implementovat vlastní \texttt{IEqualityComparer<T>}, který jen použije heš hodnotu ze struktury.
+Tímto vypočteme heš pouze jednou za celý cyklus vkládání nebo slévání.
 Pokud používáme \texttt{ConcurrentDictionary} a nedochází ke slévání, tak stačí jako \texttt{Key} volit index řádku.
 
-\item Při výpočtu haš hodnoty se vypočítávají hodnoty výrazů.
+\item Při výpočtu heš hodnoty se vypočítávají hodnoty výrazů.
 Abychom nepočítali stejné výrazy opětovně při porovnání, tak budeme používat dvě třídy.
-V prvním případě vytvoříme \texttt{ExpressionHasher}, který počítá haš hodnotu jednoho výrazu.
+V prvním případě vytvoříme \texttt{ExpressionHasher}, který počítá heš hodnotu jednoho výrazu.
 Třídu propojíme s již existující \texttt{ExpressionComparer<T>}.
 Třída \texttt{ExpressionHasher} při výpočtu výrazu pak jen aktualizuje vnitřní hodnoty položek (\texttt{lastYRow}, \texttt{lastYValue} a \texttt{lastYSuccess}) uvnitř porovnávače a ten je následně využije.
 Nastavujeme položky argumentu \texttt{y} (dle metody \texttt{Compare(x, y)}), protože vkládaný prvek při porovnání je vždy uchováván v \texttt{y}.
@@ -874,27 +792,27 @@ Tak ani zde ji nebudeme implementovat pro paralelní zpracování.
 Definuje:
 \begin{itemize}
 \item Položku \texttt{ExpressionHolder expr}, která obsahuje výraz seskupení.
-\item Abstraktní metodu \texttt{int Hash(in RowProxy row)}, která vypočte haš výrazu pro řádek tabulky. 
+\item Abstraktní metodu \texttt{int Hash(in RowProxy row)}, která vypočte heš výrazu pro řádek tabulky. 
 V průběhu výpočtu dojde k nastavení položek porovnávače.
 \item Abstraktní metodu \texttt{SetCache(ExpressionComparer cache)}, ve které si potomci nastaví odkaz na \texttt{ExpressionComparer<T>}.
 To umožní následně při výpočtu hodnoty výrazu přiřadit výsledky dané třídě.
 \end{itemize}
 
 Potomky třídy jsou třídy \texttt{ExpressionHasher<T>}.
-Implementují výpočet výrazu pro konkrétní návratový typ \texttt{T} a výpočet haše výrazu.
+Implementují výpočet výrazu pro konkrétní návratový typ \texttt{T} a výpočet heše výrazu.
 Třída obsahuje položku \texttt{ExpressionComparer<T> exprComp}, která obsahuje odkaz na porovnávač nastavený v metodě \texttt{SetCache}. 
 Dále obsahuje výraz \texttt{ExpressionReturnValue<T> expr} použitý k výpočtu klíče seskupení.
-Všechny klíče seskupení jsou obsaženy v~třídě \texttt{RowHasher}, která vypočte finální haš kombinací všech haš hodnot výrazů. 
+Všechny klíče seskupení jsou obsaženy v~třídě \texttt{RowHasher}, která vypočte finální heš kombinací všech heš hodnot výrazů. 
 
 \subsubsection{Rozhraní IEqualityComparer<T>}
 
 V aplikaci jsme vytvořili dva objekty:
 \begin{itemize}
-\item \texttt{RowEqualityComparerInt: IEqualityComparer<int>} definuje porovnání a výpočet haš hodnot pomocí indexu řádku tabulky.
+\item \texttt{RowEqualityComparerInt: IEqualityComparer<int>} definuje porovnání a výpočet heš hodnot pomocí indexu řádku tabulky.
 Třída drží odkaz na tabulku \texttt{TableResults} pro získání proxy třídy řádku indexem.
-Dále má porovnávače \texttt{ExpressionComparer[]} pro zjištění rovnosti dvou prvků v hašovací tabulce a finálně \texttt{RowHasher} pro výpočet haše.
+Dále má porovnávače \texttt{ExpressionComparer[]} pro zjištění rovnosti dvou prvků v hešovací tabulce a finálně \texttt{RowHasher} pro výpočet heše.
 Položka \texttt{bool cacheResults} určuje zda se má použít druhá optimalizace.
-\item \texttt{RowEqualityComparerGroupDictKey:} \\*\texttt{IEqualityComparer<GroupDictKey>}, který je totožný s předchozím, ale neobsahuje \texttt{RowHasher}, protože haš je uložen v objektu porovnání.
+\item \texttt{RowEqualityComparerGroupDictKey:} \\*\texttt{IEqualityComparer<GroupDictKey>}, který je totožný s předchozím, ale neobsahuje \texttt{RowHasher}, protože heš je uložen v objektu porovnání.
 \end{itemize}
 
 \subsubsection{Logika agregačních funkcí}
@@ -1003,8 +921,8 @@ Výsledná hodnota je vypočtena podílem \texttt{aggResult/resultCount}.
 Pro řešení List je návrh totožný.
 Názvy místo \texttt{Bucket} obsahují \texttt{List}.
 A definované položky jsou pole místo jedné hodnoty (např. \texttt{List<T> aggResults} místo \texttt{T aggResult}).
-Výsledně při používání úložiště Bucket vkládáme jako \texttt{value} do hašovací tabulky odkaz na pole vytvořené metodou \texttt{CreateBucketResult(..)}.
-Při použití List nemůžeme použít odkazy na pole, protože hlavní myšlenka List je mít úložiště mimo hašovací tabulku, abychom nemuseli vytvářet spoustu tříd jako u Bucket.
+Výsledně při používání úložiště Bucket vkládáme jako \texttt{value} do hešovací tabulky odkaz na pole vytvořené metodou \texttt{CreateBucketResult(..)}.
+Při použití List nemůžeme použít odkazy na pole, protože hlavní myšlenka List je mít úložiště mimo hešovací tabulku, abychom nemuseli vytvářet spoustu tříd jako u Bucket.
 V tomto případě budeme vkládat jako \texttt{value} pozici hodnot v úložišti pro danou skupinu.
 Každá skupina tedy obdrží unikátní index (typ \texttt{int}).
 Výsledky agregačních funkcí pro danou skupinu jsou tedy uloženy na daném indexu v úložišti.
@@ -1023,7 +941,7 @@ Začneme jednovláknovým zpracováním (sekce analýzy \ref{anal.groupby.single
 Řešení je v třídě \texttt{GroupByWithBuckets}.
 K seskupení je použit \texttt{Dictionary<key, value>}, proto je zde využit \texttt{GroupDictKey} jako \texttt{key}.
 \texttt{value} je zde odkaz na pole úložiště \texttt{AggregateBucketResult[]}.
-Pole úložiště hodnot agregačních funkcí se vytváří pouze v momentě, kdy je vytvářen nový záznam do hašovací tabulky.
+Pole úložiště hodnot agregačních funkcí se vytváří pouze v momentě, kdy je vytvářen nový záznam do hešovací tabulky.
 \texttt{RowEqualityComparerGroupDictKey} je zde rozhraní pro určení rovnosti skupin.
 Využívají se obě optimalizace.
 
@@ -1031,9 +949,9 @@ Využívají se obě optimalizace.
 Řešení je obsaženo v třídě \texttt{GroupByWithList}.
 Řešení využívá \texttt{Dictionary<key, value>}, tudíž je zde opět \texttt{GroupDictKey} jako \texttt{key}.
 Úložiště výsledků agregačních funkcí je vytvořeno na začátku v položce \texttt{aggResults}.
-\texttt{value} je \texttt{int}, protože úložiště hodnot agregačních funkcí leží mimo hašovací tabulku.
-Při přidávání nové skupiny do hašovací tabulky je určena nová pozice pro skupinu v úložišti \texttt{aggResults} pomocí \texttt{Dictionary.Count}.
-Tato hodnota se vkládá s klíčem do hašovací tabulky a skrze ni se přistoupí k výsledkům funkcí pro skupinu.
+\texttt{value} je \texttt{int}, protože úložiště hodnot agregačních funkcí leží mimo hešovací tabulku.
+Při přidávání nové skupiny do hešovací tabulky je určena nová pozice pro skupinu v úložišti \texttt{aggResults} pomocí \texttt{Dictionary.Count}.
+Tato hodnota se vkládá s klíčem do hešovací tabulky a skrze ni se přistoupí k výsledkům funkcí pro skupinu.
 \end{itemize}
 
 Všechna paralelní řešení využívají nativní třídu \texttt{ThreadPool}.
@@ -1044,7 +962,7 @@ Každé řešení je reprezentováno třídou, která implementuje vlastní logi
 \begin{itemize}
 \item Řešení \textbf{Normal: Global (Bucket)} odpovídá paralelnímu zpracování ze sekce \ref{anal.groupby.global}.
 Řešení je obsaženo v třídě \texttt{GlobalGroupByBucket}.
-K seskupení vlákna využívají sdílenou hašovací tabulka \texttt{ConcurrentDictionary<key, value>}.
+K seskupení vlákna využívají sdílenou hešovací tabulka \texttt{ConcurrentDictionary<key, value>}.
 Není zde druhá optimalizace a \texttt{key} je zde pouze index řádku (\texttt{int}). 
 \texttt{value} je zde odkaz na pole úložiště \texttt{AggregateBucketResult[]}.
 Metoda \texttt{GetOrAdd(key, value)} je použita k vkládání.
@@ -1078,7 +996,7 @@ Výsledně je druhá část implementována stejně jako \textbf{Global} řešen
 Řešení jsou v třídách \texttt{LocalGroupByLocalTwoWayMerge} s příponou \texttt{Bucket} nebo \texttt{List}.
 V prvním kroku jsou implementovány stejně jako jednovláknová řešení.
 Vlákna zde drží odkaz na svou lokální tabulku \texttt{Dictionary}.
-Při slévání dvou tabulek dochází k překopírování záznamů z jedné hašovací tabulky do druhé.
+Při slévání dvou tabulek dochází k překopírování záznamů z jedné hešovací tabulky do druhé.
 První je poté zahozena.
 Výsledně existuje pouze jedna tabulka. 
 Zde má značnou výhodu Bucket řešení, protože při slévání dochází k přesunutí odkazu na pole.
@@ -1353,7 +1271,7 @@ Objekt obsahuje \texttt{ITableResults resTable} (lokální tabulka výsledků pr
 
 \item Položku \\*\texttt{ConcurrentDictionary<GroupDictKeyFull, ...> globalGroups},\\* do které se slévají výsledky, když vlákno dokončí prohledávání grafu.
 Zde je první rozdíl s řešeními módu \textbf{Normal}.
-V původním řešení jsme použili při slévání výsledků do paralelní hašovací tabulky strukturu \texttt{GroupDictKey} jako klíč seskupení.
+V původním řešení jsme použili při slévání výsledků do paralelní hešovací tabulky strukturu \texttt{GroupDictKey} jako klíč seskupení.
 Nyní využíváme \texttt{GroupDictKeyFull}.
 Struktura rozšiřuje \texttt{GroupDictKey} tak, že místo indexu řádku obsahuje proxy třídu řádku.
 Využíváme danou strukturu, protože při slévání výsledků je sléváno několik tabulek \texttt{ITableResults}.
@@ -1367,8 +1285,8 @@ V jednovláknovém zpracování nedochází ke slévání.
 
 Hlavní rozdíl, kromě jiné struktury klíče při slévání, je způsob ukládání výsledků prohledávání do tabulky \texttt{ITableResults} v první části.
 Místo aby se výsledek \texttt{result} překopíroval prvně do tabulky (\texttt{resTable.StoreRow(result)}), tak je uložen do položky \texttt{resTable.temporaryRow}.
-Porovnání v hašovací tabulce vyvolá přístup k dané položce a ne hodnotám v tabulce.
-Pokud položka neexistuje v hašovací tabulce, tak je pole \texttt{temporaryRow} překopírováno do tabulky voláním metody \texttt{resTable.StoreTemporaryRow()}.
+Porovnání v hešovací tabulce vyvolá přístup k dané položce a ne hodnotám v tabulce.
+Pokud položka neexistuje v hešovací tabulce, tak je pole \texttt{temporaryRow} překopírováno do tabulky voláním metody \texttt{resTable.StoreTemporaryRow()}.
 V opačném případě je položka nastavena na \texttt{null}. To odpovídá návrhu ze sekce analýzy \ref{anal.improvement.groupby}. 
 
 \subsubsection{Řešení Streamed} \label{impl.improvement.groupby.streamed}
@@ -1382,7 +1300,7 @@ Hlavním rozdílem od původních řešení je typ \texttt{key} a \texttt{value}
 Zde jsou oba rovny typu \texttt{AggregateBucketResult[]}.
 Metody vkládání jsou volány s odkazem na stejné pole v \texttt{key} i \texttt{value}.
 Ačkoliv je to zbytečné, nenašli jsme ekvivalent thread-safe struktury, který by umožnil práci pouze s jedním záznamem.
-Pro \texttt{Dictionary} existuje ekvivalent s jedním záznamem \texttt{HashSet}, ale protože již používáme původní paralelní hašovací tabulku, tak využijeme i \texttt{Dictionary}. 
+Pro \texttt{Dictionary} existuje ekvivalent s jedním záznamem \texttt{HashSet}, ale protože již používáme původní paralelní hešovací tabulku, tak využijeme i \texttt{Dictionary}. 
 
 Hlavní myšlenka z analýzy byla mít pole obsahující v prvních $n$ položkách hodnoty klíčů seskupení a ve zbylých $m$ výsledky agregačních funkcí.
 To jsme realizovali zmíněným polem \texttt{AggregateBucketResult[]}.
@@ -1398,10 +1316,10 @@ Definuje:
 \item Položku \texttt{bool isSet}, která určuje, zda výpočet výrazu byl úspěšný.
 Při neúspěchu \texttt{aggResult} obsahuje hodnotu \texttt{default}. 
 \item Implementaci metody \texttt{int GetHashCode()}, která vyvolává stejnojmennou metodu na zděděném prvku \texttt{aggResult}.
-Metoda se používá k získání haše výsledku prohledávání při vkládání do hašovací tabulky.
+Metoda se používá k získání heše výsledku prohledávání při vkládání do hešovací tabulky.
 \end{itemize}
 
-Při vkládání pole do hašovací tabulky musíme prvky porovnat. 
+Při vkládání pole do hešovací tabulky musíme prvky porovnat. 
 Implementovali statickou třídu \texttt{AggregateBucketResultStreamedComparers}.
 Třída má metodu \\*\texttt{bool Equals(Type type, aggBucket x, aggBucket y)}, kde \texttt{aggBucket} je roven \texttt{AggregateBucketResult}.
 Na základě \texttt{type} se přetypují prvky \texttt{x} a \texttt{y} na \texttt{AggregateBucketResultStreamed<T>}.
@@ -1409,14 +1327,14 @@ Následně se vyvolá porovnání hodnot.
 
 \subsubsection{Třída BucketsKeyValueFactory a třída BucketKeyFactory}
 
-Třída vytváří pole \texttt{AggregateBucketResult[]}, které se vkládá do hašovací tabulky.
+Třída vytváří pole \texttt{AggregateBucketResult[]}, které se vkládá do hešovací tabulky.
 Obsahuje:
 \begin{itemize}
 \item Položku \texttt{int keysCount}, která obsahuje počet klíčů v poli.
 \item Položku \texttt{Aggregate[] aggregates}, na základě které se vytváří úložiště hodnot agregačních funkcí.
 \item Položku \texttt{AggregateBucketResult[] lastBucketsKeyValue}, která je odkaz na poslední vytvořené pole.
 \item Metodu \texttt{AggregateBucketResult[] Create(Element[] result)}, která \\*vytváří pole objektů hodnot klíčů a úložišť agregačních funkcí.
-\item Položku \texttt{bool lastWasInserted}, která říká, zda poslední vytvořené pole bylo vloženo do hašovací tabulky.
+\item Položku \texttt{bool lastWasInserted}, která říká, zda poslední vytvořené pole bylo vloženo do hešovací tabulky.
 Pokud bylo vloženo, tak se při volání metody \texttt{Create} vytváří pole úplně nové.
 Pokud nebylo, tak se nevytváří pole nové, ale pouze se přepíšou hodnoty klíčů v prvních \texttt{keysCount} objektech uvnitř pole \texttt{lastBucketsKeyValue}.
 Tímto vytváříme pole, jen když je to nutné.
@@ -1437,11 +1355,11 @@ Třída definuje:
 \begin{itemize}
 \item Položku \texttt{ConcurrentDictionary<..., ...> parGroups}, která je použita k seskupování v paralelním řešení.
 \item Položku \texttt{Dictionary<..., ...> groups}, která je použita k seskupování v~jednovláknovém řešení.
-\item Položku \texttt{BucketKeyFactory[] matcherBucketFactories}, kde každý záznam odpovídá třídě vytvářející pole vkládané do hašovací tabulky jednoho vlákna.
+\item Položku \texttt{BucketKeyFactory[] matcherBucketFactories}, kde každý záznam odpovídá třídě vytvářející pole vkládané do hešovací tabulky jednoho vlákna.
 To znamená, že každé vlákno má svůj objekt opět přístupný pomocí \texttt{matcherID}.
 Každé vlákno vlastní svůj objekt, protože při použití sdíleného objektu by vlákna přepisovala objekty uvnitř pole.
 \item Implementaci metody \texttt{Process(Element[] result, int matcherID)}.\\*
-Vlákno volající metodu vytvoří vkládané pole pomocí svého objektu \\*\texttt{matcherBucketFactories[matcherID]} a vloží jej do hašovací tabulky.
+Vlákno volající metodu vytvoří vkládané pole pomocí svého objektu \\*\texttt{matcherBucketFactories[matcherID]} a vloží jej do hešovací tabulky.
 \end{itemize}
 
 \subsection{Úprava Single group Group by}

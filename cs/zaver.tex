@@ -17,7 +17,7 @@ Výsledky prohledávání byly ukládány do tabulky.
 Teprve po získání všech výsledků byly na výsledcích aplikovány algoritmy \textit{Group/Order by}.
 \begin{itemize}
 \item V části \textit{Order by} jsme použili standardní algoritmus Merge sort pro jednovláknové i paralelní zpracování.
-\item V části \textit{Group by} jsme výsledky seskupovali pomocí hašovací tabulky.
+\item V části \textit{Group by} jsme výsledky seskupovali pomocí hešovací tabulky.
 Pro paralelní zpracování jsme zvolili tři řešení dle úrovně synchronizace (sekce \ref{anal.groupby.paralel}).
 V módu \textit{Single group Group by} (dotaz obsahuje agregační funkce, ale neobsahuje část \textit{Group by}) jsme využili lokálního zpracování, které je zakončeno sléváním.
 \end{itemize}

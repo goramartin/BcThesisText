@@ -916,28 +916,28 @@ Po celou dobu budeme pracovat s tabulkou výsledků \textit{Match} části.
 Pro vykonání \textit{Group by} se nám nabízí několik možností.
 První možnost je řádky tabulky setřídit a následně při iteraci vytvářet skupiny a počítat agregační funkce.
 Myslíme, že možnost přináší zbytečnou režii za porovnání při třídění, protože pro každé porovnání musíme vypočítat hodnotu výrazu.
-Z tohoto důvodu chceme využít strukturu, která bude interně používat hašovací tabulku (C++ \texttt{std::map<Key, Value>} nebo C\#  \texttt{Dictionary<Key, Value>}).
+Z tohoto důvodu chceme využít strukturu, která bude interně používat hešovací tabulku (C\#  \texttt{Dictionary<Key, Value>}).
 Záznam v tabulce bude dvojice \texttt{key/value}. 
 \texttt{key} je zde index do tabulky výsledků z \textit{Match} části (nikoliv proxy třída).
 Chceme ukládat pouze index, abychom ušetřili paměť za ukazatel na tabulku.
 Porovnání vyvolá získání proxy třídy a následně vyhodnocení výrazů.
 \texttt{value} obsahuje strukturu pro výsledky agregačních funkcí.
 Pro Bucket to bude pole objektů a pro List to bude index do tabulky výsledků agregačních funkcí.
-Pro výsledek bude vypočítána haš na základě hodnot klíčů a následně použita při vložení do hašovací tabulky.
+Pro výsledek bude vypočítána heš na základě hodnot klíčů a následně použita při vložení do hešovací tabulky.
 Pokud už je výsledek obsažen v tabulce, tak se pro \texttt{value} (pole nebo index) pouze aktualizují hodnoty výsledků agregačních funkcí.
 V opačném případě bude vložen nový záznam s novou \texttt{value}.
 Pro \textit{Single group Group by} stačí pouze iterovat skrze tabulku a počítat agregační funkce.
 
-\subsection{Optimalizace při výpočtu haš hodnoty} \label{anal.groupby.opt1}
+\subsection{Optimalizace při výpočtu heš hodnoty} \label{anal.groupby.opt1}
 
 Minulý přístup nám nabízí jednu optimalizaci k ušetření opakovaného výpočtu hodnoty klíčů.
-Hašovací tabulka při vložení dvojice v prvním kroku vypočte hodnoty klíčů a vypočte jejich haš.
+Hešovací tabulka při vložení dvojice v prvním kroku vypočte hodnoty klíčů a vypočte jejich heš.
 Výsledek se vloží do patřičné přihrádky.
 Pokud nastala kolize, tak se prvky musí porovnat.
 Při tomto porovnání se opět musí vypočíst hodnoty výrazů vkládané dvojice.
-Zde můžeme využít předchozího výpočtu haš hodnoty.
+Zde můžeme využít předchozího výpočtu heš hodnoty.
 Budeme uchovávat hodnoty výrazů a následně je znovu použijeme při porovnání.
-Nicméně, pravděpodobně budeme potřebovat vytvořit závislost mezi objektem počítajícím haš hodnotu a objektem provádějícím porovnání.
+Nicméně, pravděpodobně budeme potřebovat vytvořit závislost mezi objektem počítajícím heš hodnotu a objektem provádějícím porovnání.
 Stejný princip jsme použili při optimalizaci porovnání v sekci \ref{anal.orderby.opt1}.
 Nastávají pro něj také stejné problémy v paralelním prostředí.
 
@@ -1626,7 +1626,7 @@ Dané principy se dají aplikovat i v dalších jazycích.
 
 \textit{Group by} má za úkol seskupit výsledky dle zadaných klíčů a vypočíst hodnoty zadaných agregačních funkcí.
 Při úpravě budeme využívat původní úložiště (List a Bucket) a logiku agregačních funkcí.
-Opět budeme při zpracování chtít použít hašovací tabulku jako původní řešení.
+Opět budeme při zpracování chtít použít hešovací tabulku jako původní řešení.
 Přejdeme rovnou k návrhu zpracování módů \textbf{Streamed} a \textbf{Half-Streamed}.
 Budeme uvažovat paralelní řešení, protože jednovláknové zpracování je určitý případ paralelního.
 
@@ -1647,7 +1647,7 @@ K upravení původního řešení musíme pouze vyřešit problém chybějící 
 Mohli bychom výsledky opět ukládat do tabulky.
 V momentě nalezení je výsledek překopírován do tabulky na nový řádek a~proxy třídu řádku využijeme k jeho zpracování.
 Daný způsob nám přijde neefektivní, protože cílem \textit{Group by} je vytvořit skupiny. 
-K vytvoření skupin nám stačí znát pouze reprezentant skupiny, tj. klíč v hašovací tabulce (proxy třída řádku v tabulce výsledků prohledávání).
+K vytvoření skupin nám stačí znát pouze reprezentant skupiny, tj. klíč v hešovací tabulce (proxy třída řádku v tabulce výsledků prohledávání).
 Nepotřebujeme znát všechny výsledky prohledávání, tedy nemusíme všechny výsledky kopírovat do tabulky.
 Abychom mohli pouze minimálně upravit vykonávání řešení \textbf{Two-step}, tak upravíme původní tabulku výsledků na základě tohoto poznatku.
 Tabulka bude nyní kromě samotných hodnot obsahovat položku držící odkaz na výsledek prohledávání.
@@ -1655,7 +1655,7 @@ V momentě nalezení výsledku se odkaz aktualizuje na daný výsledek a tabulka
 Při přístupu k novému řádku se vytvoří obvyklá proxy třída řádku.
 Následný přístup k hodnotám řádku skrze proxy třídu vyvolá čtení hodnot z odkazu a nikoliv hodnot z tabulky.
 Proxy třída se použije ke zpracování výsledku prohledávání.
-Pokud byla proxy třída použita k vytvoření nové skupiny, tj. je vytvořen nový záznam v hašovací tabulce, tak je celý výsledek držený v odkazu překopírován do tabulky.
+Pokud byla proxy třída použita k vytvoření nové skupiny, tj. je vytvořen nový záznam v hešovací tabulce, tak je celý výsledek držený v odkazu překopírován do tabulky.
 Tímto si zachováme pouze reprezentanty skupin a díky používání odkazu nemusíme každý výsledek prohledávání kopírovat do tabulky.
 
 Zbytek zpracování bude totožný s původním řešením \textbf{Two-step}.
@@ -1676,7 +1676,7 @@ Opět chceme ukládat pouze reprezentanty skupin.
 Nicméně, problém je zde komplikovanější, protože v minulé sekci jsme tabulky vytvářeli lokálně.
 Tedy v momentě slévání byly tabulky již finální. 
 Aplikujeme-li nyní přístup lokálních tabulek, tak vyvstává další problém.
-Vlákna v průběhu vyvolávají porovnaní klíčů v hašovací tabulce.
+Vlákna v průběhu vyvolávají porovnaní klíčů v hešovací tabulce.
 Klíč je zde proxy třída řádku v tabulce.
 Skrze proxy třídu vlákno přistoupí k elementům na řádku tabulky.
 V tuto chvíli však můžou přistupovat k hodnotám v tabulce i~jiná vlákna a zároveň může docházet k rozšíření tabulky.
