@@ -9,7 +9,6 @@ Prilohy namerenych dat:
 upravit vypis v aplikaci query engine. 
 ------------------------------
 
-anglicky abstrakt
 dopsat tam casove a prostorove slozitosti
 ------------------------------
 
