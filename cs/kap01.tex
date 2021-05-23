@@ -112,6 +112,8 @@ Zároveň v naší práci uvažujeme, že \textit{Order by} a \textit{Group by} 
 \item \textit{Match:} definuje podgraf, který bude vyhledán v grafu.
 Součástí definice podgrafu jsou proměnné, které jsou přístupné v ostatních částech dotazu.
 Proměnná zde reprezentuje jeden element podgrafu.
+Obecně existují dvě základní sémantiky vyhledávání \citep{graphmatch}: grafový izomorfismus a grafový homomorfismus (pro upřesnění odkazujeme na citovaný zdroj).
+V naší práci budeme pracovat se sémantikou grafového homomorfismu, protože se jedná o obecnější pohled na vyhledávání.
 
 \item \textit{Select:} určuje vrácená data ve formě tabulky jako u tabulkových databází.
 K jednomu výsledku tak můžeme vrátit výčet informací.
@@ -144,7 +146,7 @@ Predikát je vložen do závorek za jméno, pokud jméno chybí tak jen do závo
 Predikát určuje výběr elementů pouze s daným štítkem.
 Pokud se v posloupnostech opakuje proměnná se štítkem, pak štítek musejí mít i opakované definice proměnných.
 Protože v našem modelu elementy mají pouze jeden štítek, tak element posloupnosti může mít pouze jeden predikát.
-Navíc jsme vyřadili možnost aplikovat v predikátu operátor „|“ (logická operace nebo), tj. nelze použít \texttt{(jméno:štítek|štítekDva)}.
+Navíc jsme vyřadili možnost aplikovat v predikátu operátor \texttt{|} (logická operace nebo), tj. nelze použít \texttt{(jméno:štítek|štítekDva)}.
 Následují příklady \textit{Match} části na grafu z obrázku \ref{figure.propertygraphexample} (bez \textit{Select}) a uvedené výsledky hledání rovněž odpovídají danému obrázku:
 
 \begin{enumerate}

@@ -7,9 +7,9 @@
 \contentsline {subsubsection}{Příklad grafu splňující Labelel-property model}{10}{section*.11}%
 \contentsline {section}{\numberline {1.2}Jazyk PGQL}{11}{section.1.2}%
 \contentsline {subsubsection}{Match}{11}{section*.12}%
-\contentsline {subsubsection}{Výrazy}{12}{section*.13}%
+\contentsline {subsubsection}{Výrazy}{13}{section*.13}%
 \contentsline {subsubsection}{Select}{14}{section*.14}%
-\contentsline {subsubsection}{Order by}{14}{section*.15}%
+\contentsline {subsubsection}{Order by}{15}{section*.15}%
 \contentsline {subsubsection}{Group by}{15}{section*.16}%
 \contentsline {chapter}{\numberline {2}Analýza}{16}{chapter.2}%
 \contentsline {section}{\numberline {2.1}Obecný pohled na dotazovací engine}{16}{section.2.1}%
