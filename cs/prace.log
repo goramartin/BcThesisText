@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  23 MAY 2021 20:16
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  23 MAY 2021 20:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1210,8 +1210,15 @@ Underfull \hbox (badness 10000) in paragraph at lines 37--45
  []
 
 
+Underfull \hbox (badness 2644) in paragraph at lines 57--61
+[]\T1/lmr/m/it/12 Apache Flink Gelly - prou-dový sys-tém pro gra-fová data\T1/l
+mr/m/n/12 .  []$\T1/lmtt/m/n/12 https :
+ []
+
+
 Underfull \hbox (badness 10000) in paragraph at lines 57--61
-\T1/lmr/m/n/12 urlhttps://ci.apache.org/projects/flink/flink-docs-release-
+\T1/lmtt/m/n/12 / / ci . apache . org / projects / flink / flink-[]docs-[]relea
+se-[]1 . 13 / docs /
  []
 
 
@@ -1220,36 +1227,36 @@ Underfull \hbox (badness 10000) in paragraph at lines 70--74
  html$[] \T1/lmr/m/n/12 [Do-
  []
 
+
+Underfull \hbox (badness 10000) in paragraph at lines 81--84
+[]\T1/lmr/m/it/12 Neo4j - gra-fová da-ta-báze\T1/lmr/m/n/12 .  []$\T1/lmtt/m/n/
+12 https : / / neo4j . com / developer /
+ []
+
 [123
 
 
 
 ]
-Underfull \hbox (badness 4518) in paragraph at lines 91--96
-[]\T1/lmr/m/it/12 Sémantika vy-hle-dá-vání - gra-fový izo-mor-fis-mus a gra-fov
-ý ho-mo-mor-
+Underfull \hbox (badness 10000) in paragraph at lines 91--98
+\T1/lmr/m/n/12 PGX - []$\T1/lmtt/m/n/12 https : / / docs . oracle . com / cd / 
+E56133 _ 01 / latest / reference /
  []
 
 
-Underfull \hbox (badness 1496) in paragraph at lines 91--96
-\T1/lmr/m/it/12 fis-mus\T1/lmr/m/n/12 .  []$\T1/lmtt/m/n/12 https : / / docs . 
-oracle . com / cd / E56133 _ 01 / latest / reference /
+Underfull \hbox (badness 10000) in paragraph at lines 91--98
+\T1/lmr/m/n/12 Neo4j - []$\T1/lmtt/m/n/12 https : / / neo4j . com / docs / cyph
+er-[]manual / current /
  []
 
 
-Underfull \hbox (badness 1406) in paragraph at lines 91--96
-\T1/lmtt/m/n/12 overview / graph-[]pattern-[]matching . html$[] \T1/lmr/m/n/12 
-[Do-stup-nost ov¥-°ena k datu
- []
-
-
-Underfull \hbox (badness 1365) in paragraph at lines 141--144
+Underfull \hbox (badness 1365) in paragraph at lines 143--146
 []\T1/lmr/m/it/12 Dokumentace ja-zyka C# pro .NET Fra-mework 4.8\T1/lmr/m/n/12 
 .  []$\T1/lmtt/m/n/12 https : / / docs .
  []
 
 
-Underfull \hbox (badness 6658) in paragraph at lines 141--144
+Underfull \hbox (badness 6658) in paragraph at lines 143--146
 \T1/lmtt/m/n/12 microsoft . com / en-[]us / dotnet / csharp/$[] \T1/lmr/m/n/12 
 [Do-stup-nost ov¥-°ena k datu
  []
@@ -1309,10 +1316,10 @@ ri12.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/f
 onts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.p
 fb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/t
 ype1/public/lm/lmtt12.pfb>
-Output written on prace.pdf (133 pages, 2128949 bytes).
+Output written on prace.pdf (133 pages, 2129005 bytes).
 PDF statistics:
- 2454 PDF objects out of 2487 (max. 8388607)
- 2066 compressed objects within 21 object streams
+ 2460 PDF objects out of 2487 (max. 8388607)
+ 2072 compressed objects within 21 object streams
  510 named destinations out of 1000 (max. 500000)
  1078 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -44,7 +44,7 @@ János~Dániel Bali.
   diva=diva2:830662.
 
 \bibitem{apacheflink}
-{\em Apache Flink proudový systém}.
+{\em Apache Flink - proudový systém}.
 \newblock \url{https://ci.apache.org/projects/flink/flink-docs-release-1.13}
   [Dostupnost ověřena k datu 8.5.2021].
 
@@ -54,9 +54,9 @@ Andrew McGregor.
 \newblock {\em SIGMOD Rec.}, 43(1):9–20, May 2014.
 
 \bibitem{apacheflinkgelly}
-{\em Apache Flink Gelly proudový systém pro grafová data}.
+{\em Apache Flink Gelly - proudový systém pro grafová data}.
 \newblock
-  \\url{https://ci.apache.org/projects/flink/flink-docs-release-1.13/docs/libs/gelly/overview/}
+  \url{https://ci.apache.org/projects/flink/flink-docs-release-1.13/docs/libs/gelly/overview/}
   [Dostupnost ověřena k datu 8.5.2021].
 
 \bibitem{graphsummary}
@@ -73,25 +73,27 @@ Nan Tang, Qing Chen, and Prasenjit Mitra.
   [Dostupnost ověřena k datu 8.5.2021].
 
 \bibitem{neptune}
-{\em Neptune grafová databáze}.
+{\em Neptune - grafová databáze}.
 \newblock \url{https://aws.amazon.com/neptune/} [Dostupnost ověřena k datu
   8.5.2021].
 
 \bibitem{neopropertygraph}
-{\em Neo4j grafová databáze}.
+{\em Neo4j - grafová databáze}.
 \newblock \url{https://neo4j.com/developer/graph-database/} [Dostupnost
   ověřena k datu 8.5.2021].
 
 \bibitem{dgraph}
-{\em Dgraph grafová databáze}.
+{\em Dgraph - grafová databáze}.
 \newblock \url{https://github.com/dgraph-io/dgraph} [Dostupnost ověřena k
   datu 8.5.2021].
 
 \bibitem{graphmatch}
 {\em Sémantika vyhledávání - grafový izomorfismus a grafový
   homomorfismus}.
-\newblock
-  \url{https://docs.oracle.com/cd/E56133_01/latest/reference/overview/graph-pattern-matching.html}
+\newblock PGX -
+  \url{https://docs.oracle.com/cd/E56133_01/latest/reference/overview/graph-pattern-matching.html}\\*
+  Neo4j -
+  \url{https://neo4j.com/docs/cypher-manual/current/introduction/uniqueness/}
   [Dostupnost ověřena k datu 8.5.2021].
 
 \bibitem{json}
