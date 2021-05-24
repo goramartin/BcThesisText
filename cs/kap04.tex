@@ -82,7 +82,7 @@ Soubory obsahují datové schéma v JSON formátu definovaném v sekci \ref{anal
 Soubor \textit{EdgeTypes.txt} definuje jeden druh hrany \texttt{BasicEdge} bez vlastností.
 Soubor \textit{NodeTypes.txt} definuje jeden druh vrcholu \texttt{BasicNode} bez vlastností.
 
-Generování souborů \textit{Nodes.txt}/\textit{Edges.txt} provádí program, který je obsahem přílohy zdrojových kódů \ref{prilohy.kod} v souboru \textit{GrapDataBuilder.cs}.
+Generování souborů \textit{Nodes.txt}/\textit{Edges.txt} provádí program, který je obsahem přílohy zdrojových kódů \ref{prilohy.codetransform} v souboru \textit{GrapDataBuilder.cs}.
 Výstupní soubor \textit{Edges.txt} bude obsahovat hrany v rostoucím pořadí dle položky \verb+FromNodeId+ z~originálního souboru s přidělenými \verb+IDs+ od hodnoty \verb+ID+ posledního vrcholu v souboru \textit{Nodes.txt}.
 Samotný soubor \textit{Nodes.txt} obsahuje setříděné vrcholy podle \verb+ID+ v rostoucím pořadí. Je nutné zmínit, že setřídění dat podle \verb+ID+ není nežádoucí, jelikož nezaručuje nic o seskupení vrcholů v daném grafu.
 Pro připomenutí zmíníme, že první sloupeček v datových souborech \textit{Edges.txt} a \textit{Nodes.txt} odpovídá unikátnímu \verb+ID+ v rámci celého grafu.
@@ -164,7 +164,7 @@ Soubor NodeTypes.txt:
 \end{code}
 
 Výsledné hodnoty vlastností do souborů \textit{Edges.txt}/\textit{Nodes.txt} jsou vygenerovány pomocí programu, který používá generátor náhodných čísel. 
-Program je obsažen v příloze zdrojových kódů \ref{prilohy.kod} v souboru \textit{PropertyGenerator.cs}.
+Program je obsažen v příloze zdrojových kódů \ref{prilohy.codetransform} v souboru \textit{PropertyGenerator.cs}.
 K inicializaci generátoru náhodných čísel pro každý graf jsme použili různé hodnoty. 
 Zvolené inicializační hodnoty byly vygenerovány rovněž náhodně.
 

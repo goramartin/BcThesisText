@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  23 MAY 2021 23:42
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  24 MAY 2021 18:37
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -649,7 +649,7 @@ LaTeX Info: Redefining \nameref on input line 149.
 
  (./titulka.tex
 Package hyperref Info: Option `pageanchor' set `false' on input line 6.
-<../img/logo-cs.pdf, id=449, 506.4591pt x 156.49065pt>
+<../img/logo-cs.pdf, id=453, 506.4591pt x 156.49065pt>
 File: ../img/logo-cs.pdf Graphic file (type pdf)
 <use ../img/logo-cs.pdf>
 Package pdftex.def Info: ../img/logo-cs.pdf  used on input line 10.
@@ -754,7 +754,7 @@ Kapitola 1.
 
 pdfTeX warning: pdflatex (file ../img/propertyexample.pdf): PDF inclusion: foun
 d PDF version <1.7>, but at most version <1.5> allowed
-<../img/propertyexample.pdf, id=713, 252.945pt x 213.6783pt>
+<../img/propertyexample.pdf, id=718, 252.945pt x 213.6783pt>
 File: ../img/propertyexample.pdf Graphic file (type pdf)
 <use ../img/propertyexample.pdf>
 Package pdftex.def Info: ../img/propertyexample.pdf  used on input line 82.
@@ -772,7 +772,7 @@ Kapitola 2.
 
 pdfTeX warning: pdflatex (file ../img/diaQueryObjects.pdf): PDF inclusion: foun
 d PDF version <1.7>, but at most version <1.5> allowed
-<../img/diaQueryObjects.pdf, id=842, 313.17pt x 108.405pt>
+<../img/diaQueryObjects.pdf, id=847, 313.17pt x 108.405pt>
 File: ../img/diaQueryObjects.pdf Graphic file (type pdf)
 <use ../img/diaQueryObjects.pdf>
 Package pdftex.def Info: ../img/diaQueryObjects.pdf  used on input line 456.
@@ -781,7 +781,7 @@ Package pdftex.def Info: ../img/diaQueryObjects.pdf  used on input line 456.
 
 pdfTeX warning: pdflatex (file ../img/diaQueryObjectsCon.pdf): PDF inclusion: f
 ound PDF version <1.7>, but at most version <1.5> allowed
-<../img/diaQueryObjectsCon.pdf, id=843, 262.0992pt x 17.1039pt>
+<../img/diaQueryObjectsCon.pdf, id=848, 262.0992pt x 17.1039pt>
 File: ../img/diaQueryObjectsCon.pdf Graphic file (type pdf)
 <use ../img/diaQueryObjectsCon.pdf>
 Package pdftex.def Info: ../img/diaQueryObjectsCon.pdf  used on input line 462.
@@ -791,7 +791,7 @@ Package pdftex.def Info: ../img/diaQueryObjectsCon.pdf  used on input line 462.
 
 pdfTeX warning: pdflatex (file ../img/diaQueryObjectsCall.pdf): PDF inclusion: 
 found PDF version <1.7>, but at most version <1.5> allowed
-<../img/diaQueryObjectsCall.pdf, id=844, 168.63pt x 132.495pt>
+<../img/diaQueryObjectsCall.pdf, id=849, 168.63pt x 132.495pt>
 File: ../img/diaQueryObjectsCall.pdf Graphic file (type pdf)
 <use ../img/diaQueryObjectsCall.pdf>
 Package pdftex.def Info: ../img/diaQueryObjectsCall.pdf  used on input line 468
@@ -804,7 +804,7 @@ iaQueryObjectsCall.pdf>] [26
 
 pdfTeX warning: pdflatex (file ../img/diaQueryObjectsMatchPar.pdf): PDF inclusi
 on: found PDF version <1.7>, but at most version <1.5> allowed
-<../img/diaQueryObjectsMatchPar.pdf, id=931, 232.9503pt x 293.1753pt>
+<../img/diaQueryObjectsMatchPar.pdf, id=936, 232.9503pt x 293.1753pt>
 File: ../img/diaQueryObjectsMatchPar.pdf Graphic file (type pdf)
 <use ../img/diaQueryObjectsMatchPar.pdf>
 Package pdftex.def Info: ../img/diaQueryObjectsMatchPar.pdf  used on input line
@@ -819,7 +819,7 @@ LaTeX Warning: Command \' invalid in math mode on input line 729.
 
 pdfTeX warning: pdflatex (file ../img/diaGlobalGr.pdf): PDF inclusion: found PD
 F version <1.7>, but at most version <1.5> allowed
-<../img/diaGlobalGr.pdf, id=983, 225.72331pt x 228.855pt>
+<../img/diaGlobalGr.pdf, id=988, 225.72331pt x 228.855pt>
 File: ../img/diaGlobalGr.pdf Graphic file (type pdf)
 <use ../img/diaGlobalGr.pdf>
 Package pdftex.def Info: ../img/diaGlobalGr.pdf  used on input line 1006.
@@ -828,7 +828,7 @@ Package pdftex.def Info: ../img/diaGlobalGr.pdf  used on input line 1006.
 
 pdfTeX warning: pdflatex (file ../img/diaTwoGr.pdf): PDF inclusion: found PDF v
 ersion <1.7>, but at most version <1.5> allowed
-<../img/diaTwoGr.pdf, id=1007, 277.035pt x 228.855pt>
+<../img/diaTwoGr.pdf, id=1012, 277.035pt x 228.855pt>
 File: ../img/diaTwoGr.pdf Graphic file (type pdf)
 <use ../img/diaTwoGr.pdf>
 Package pdftex.def Info: ../img/diaTwoGr.pdf  used on input line 1033.
@@ -837,7 +837,7 @@ Package pdftex.def Info: ../img/diaTwoGr.pdf  used on input line 1033.
 
 pdfTeX warning: pdflatex (file ../img/diaLocalGr.pdf): PDF inclusion: found PDF
  version <1.7>, but at most version <1.5> allowed
-<../img/diaLocalGr.pdf, id=1009, 341.35529pt x 301.125pt>
+<../img/diaLocalGr.pdf, id=1014, 341.35529pt x 301.125pt>
 File: ../img/diaLocalGr.pdf Graphic file (type pdf)
 <use ../img/diaLocalGr.pdf>
 Package pdftex.def Info: ../img/diaLocalGr.pdf  used on input line 1064.
@@ -846,7 +846,7 @@ Package pdftex.def Info: ../img/diaLocalGr.pdf  used on input line 1064.
 
 pdfTeX warning: pdflatex (file ../img/diaStreamedResultProcessor.pdf): PDF incl
 usion: found PDF version <1.7>, but at most version <1.5> allowed
-<../img/diaStreamedResultProcessor.pdf, id=1066, 168.63pt x 103.3461pt>
+<../img/diaStreamedResultProcessor.pdf, id=1071, 168.63pt x 103.3461pt>
 File: ../img/diaStreamedResultProcessor.pdf Graphic file (type pdf)
 <use ../img/diaStreamedResultProcessor.pdf>
 Package pdftex.def Info: ../img/diaStreamedResultProcessor.pdf  used on input l
@@ -856,7 +856,7 @@ ine 1158.
 
 pdfTeX warning: pdflatex (file ../img/diaStreamedQueryObjects.pdf): PDF inclusi
 on: found PDF version <1.7>, but at most version <1.5> allowed
-<../img/diaStreamedQueryObjects.pdf, id=1069, 319.1925pt x 122.3772pt>
+<../img/diaStreamedQueryObjects.pdf, id=1074, 319.1925pt x 122.3772pt>
 File: ../img/diaStreamedQueryObjects.pdf Graphic file (type pdf)
 <use ../img/diaStreamedQueryObjects.pdf>
 Package pdftex.def Info: ../img/diaStreamedQueryObjects.pdf  used on input line
@@ -866,7 +866,7 @@ Package pdftex.def Info: ../img/diaStreamedQueryObjects.pdf  used on input line
 
 pdfTeX warning: pdflatex (file ../img/diaStreamedQueryObjectsCon.pdf): PDF incl
 usion: found PDF version <1.7>, but at most version <1.5> allowed
-<../img/diaStreamedQueryObjectsCon.pdf, id=1070, 262.0992pt x 17.1039pt>
+<../img/diaStreamedQueryObjectsCon.pdf, id=1075, 262.0992pt x 17.1039pt>
 File: ../img/diaStreamedQueryObjectsCon.pdf Graphic file (type pdf)
 <use ../img/diaStreamedQueryObjectsCon.pdf>
 Package pdftex.def Info: ../img/diaStreamedQueryObjectsCon.pdf  used on input l
@@ -909,7 +909,7 @@ Kapitola 4.
 
 pdfTeX warning: pdflatex (file ../img/amazonMatch.pdf): PDF inclusion: found PD
 F version <1.7>, but at most version <1.5> allowed
-<../img/amazonMatch.pdf, id=1593, 844.83629pt x 597.432pt>
+<../img/amazonMatch.pdf, id=1598, 844.83629pt x 597.432pt>
 File: ../img/amazonMatch.pdf Graphic file (type pdf)
 <use ../img/amazonMatch.pdf>
 Package pdftex.def Info: ../img/amazonMatch.pdf  used on input line 510.
@@ -918,7 +918,7 @@ Package pdftex.def Info: ../img/amazonMatch.pdf  used on input line 510.
 
 pdfTeX warning: pdflatex (file ../img/webberkstanMatch.pdf): PDF inclusion: fou
 nd PDF version <1.7>, but at most version <1.5> allowed
-<../img/webberkstanMatch.pdf, id=1596, 844.83629pt x 597.432pt>
+<../img/webberkstanMatch.pdf, id=1601, 844.83629pt x 597.432pt>
 File: ../img/webberkstanMatch.pdf Graphic file (type pdf)
 <use ../img/webberkstanMatch.pdf>
 Package pdftex.def Info: ../img/webberkstanMatch.pdf  used on input line 516.
@@ -927,7 +927,7 @@ Package pdftex.def Info: ../img/webberkstanMatch.pdf  used on input line 516.
 
 pdfTeX warning: pdflatex (file ../img/skitterMatch.pdf): PDF inclusion: found P
 DF version <1.7>, but at most version <1.5> allowed
-<../img/skitterMatch.pdf, id=1599, 844.83629pt x 597.432pt>
+<../img/skitterMatch.pdf, id=1604, 844.83629pt x 597.432pt>
 File: ../img/skitterMatch.pdf Graphic file (type pdf)
 <use ../img/skitterMatch.pdf>
 Package pdftex.def Info: ../img/skitterMatch.pdf  used on input line 522.
@@ -947,7 +947,7 @@ LaTeX Warning: Command \' invalid in math mode on input line 605.
 
 pdfTeX warning: pdflatex (file ../img/amazonOrderByST.pdf): PDF inclusion: foun
 d PDF version <1.7>, but at most version <1.5> allowed
-<../img/amazonOrderByST.pdf, id=1676, 844.83629pt x 597.432pt>
+<../img/amazonOrderByST.pdf, id=1681, 844.83629pt x 597.432pt>
 File: ../img/amazonOrderByST.pdf Graphic file (type pdf)
 <use ../img/amazonOrderByST.pdf>
 Package pdftex.def Info: ../img/amazonOrderByST.pdf  used on input line 634.
@@ -956,7 +956,7 @@ Package pdftex.def Info: ../img/amazonOrderByST.pdf  used on input line 634.
 
 pdfTeX warning: pdflatex (file ../img/amazonOrderByPar.pdf): PDF inclusion: fou
 nd PDF version <1.7>, but at most version <1.5> allowed
-<../img/amazonOrderByPar.pdf, id=1679, 844.83629pt x 597.432pt>
+<../img/amazonOrderByPar.pdf, id=1684, 844.83629pt x 597.432pt>
 File: ../img/amazonOrderByPar.pdf Graphic file (type pdf)
 <use ../img/amazonOrderByPar.pdf>
 Package pdftex.def Info: ../img/amazonOrderByPar.pdf  used on input line 639.
@@ -965,7 +965,7 @@ Package pdftex.def Info: ../img/amazonOrderByPar.pdf  used on input line 639.
 
 pdfTeX warning: pdflatex (file ../img/webberkstanOrderByST.pdf): PDF inclusion:
  found PDF version <1.7>, but at most version <1.5> allowed
-<../img/webberkstanOrderByST.pdf, id=1682, 844.83629pt x 597.432pt>
+<../img/webberkstanOrderByST.pdf, id=1687, 844.83629pt x 597.432pt>
 File: ../img/webberkstanOrderByST.pdf Graphic file (type pdf)
 <use ../img/webberkstanOrderByST.pdf>
 Package pdftex.def Info: ../img/webberkstanOrderByST.pdf  used on input line 64
@@ -975,7 +975,7 @@ Package pdftex.def Info: ../img/webberkstanOrderByST.pdf  used on input line 64
 
 pdfTeX warning: pdflatex (file ../img/webberkstanOrderByPar.pdf): PDF inclusion
 : found PDF version <1.7>, but at most version <1.5> allowed
-<../img/webberkstanOrderByPar.pdf, id=1685, 844.83629pt x 597.432pt>
+<../img/webberkstanOrderByPar.pdf, id=1690, 844.83629pt x 597.432pt>
 File: ../img/webberkstanOrderByPar.pdf Graphic file (type pdf)
 <use ../img/webberkstanOrderByPar.pdf>
 Package pdftex.def Info: ../img/webberkstanOrderByPar.pdf  used on input line 6
@@ -988,7 +988,7 @@ Package pdftex.def Info: ../img/webberkstanOrderByPar.pdf  used on input line 6
 
 pdfTeX warning: pdflatex (file ../img/amazonGroupByST.pdf): PDF inclusion: foun
 d PDF version <1.7>, but at most version <1.5> allowed
-<../img/amazonGroupByST.pdf, id=1757, 844.83629pt x 597.432pt>
+<../img/amazonGroupByST.pdf, id=1762, 844.83629pt x 597.432pt>
 File: ../img/amazonGroupByST.pdf Graphic file (type pdf)
 <use ../img/amazonGroupByST.pdf>
 Package pdftex.def Info: ../img/amazonGroupByST.pdf  used on input line 755.
@@ -997,7 +997,7 @@ Package pdftex.def Info: ../img/amazonGroupByST.pdf  used on input line 755.
 
 pdfTeX warning: pdflatex (file ../img/amazonGroupBySTNoAgg.pdf): PDF inclusion:
  found PDF version <1.7>, but at most version <1.5> allowed
-<../img/amazonGroupBySTNoAgg.pdf, id=1760, 844.83629pt x 597.432pt>
+<../img/amazonGroupBySTNoAgg.pdf, id=1765, 844.83629pt x 597.432pt>
 File: ../img/amazonGroupBySTNoAgg.pdf Graphic file (type pdf)
 <use ../img/amazonGroupBySTNoAgg.pdf>
 Package pdftex.def Info: ../img/amazonGroupBySTNoAgg.pdf  used on input line 76
@@ -1007,7 +1007,7 @@ Package pdftex.def Info: ../img/amazonGroupBySTNoAgg.pdf  used on input line 76
 
 pdfTeX warning: pdflatex (file ../img/webberkstanGroupByST.pdf): PDF inclusion:
  found PDF version <1.7>, but at most version <1.5> allowed
-<../img/webberkstanGroupByST.pdf, id=1763, 844.83629pt x 597.432pt>
+<../img/webberkstanGroupByST.pdf, id=1768, 844.83629pt x 597.432pt>
 File: ../img/webberkstanGroupByST.pdf Graphic file (type pdf)
 <use ../img/webberkstanGroupByST.pdf>
 Package pdftex.def Info: ../img/webberkstanGroupByST.pdf  used on input line 76
@@ -1017,7 +1017,7 @@ Package pdftex.def Info: ../img/webberkstanGroupByST.pdf  used on input line 76
 
 pdfTeX warning: pdflatex (file ../img/webberkstanGroupBySTNoAgg.pdf): PDF inclu
 sion: found PDF version <1.7>, but at most version <1.5> allowed
-<../img/webberkstanGroupBySTNoAgg.pdf, id=1766, 844.83629pt x 597.432pt>
+<../img/webberkstanGroupBySTNoAgg.pdf, id=1771, 844.83629pt x 597.432pt>
 File: ../img/webberkstanGroupBySTNoAgg.pdf Graphic file (type pdf)
 <use ../img/webberkstanGroupBySTNoAgg.pdf>
 Package pdftex.def Info: ../img/webberkstanGroupBySTNoAgg.pdf  used on input li
@@ -1027,7 +1027,7 @@ ne 771.
 
 pdfTeX warning: pdflatex (file ../img/skitterGroupByST.pdf): PDF inclusion: fou
 nd PDF version <1.7>, but at most version <1.5> allowed
-<../img/skitterGroupByST.pdf, id=1769, 844.83629pt x 597.432pt>
+<../img/skitterGroupByST.pdf, id=1774, 844.83629pt x 597.432pt>
 File: ../img/skitterGroupByST.pdf Graphic file (type pdf)
 <use ../img/skitterGroupByST.pdf>
 Package pdftex.def Info: ../img/skitterGroupByST.pdf  used on input line 777.
@@ -1036,7 +1036,7 @@ Package pdftex.def Info: ../img/skitterGroupByST.pdf  used on input line 777.
 
 pdfTeX warning: pdflatex (file ../img/skitterGroupBySTNoAgg.pdf): PDF inclusion
 : found PDF version <1.7>, but at most version <1.5> allowed
-<../img/skitterGroupBySTNoAgg.pdf, id=1772, 844.83629pt x 597.432pt>
+<../img/skitterGroupBySTNoAgg.pdf, id=1777, 844.83629pt x 597.432pt>
 File: ../img/skitterGroupBySTNoAgg.pdf Graphic file (type pdf)
 <use ../img/skitterGroupBySTNoAgg.pdf>
 Package pdftex.def Info: ../img/skitterGroupBySTNoAgg.pdf  used on input line 7
@@ -1051,7 +1051,7 @@ Package pdftex.def Info: ../img/skitterGroupBySTNoAgg.pdf  used on input line 7
 
 pdfTeX warning: pdflatex (file ../img/amazonGroupByPar.pdf): PDF inclusion: fou
 nd PDF version <1.7>, but at most version <1.5> allowed
-<../img/amazonGroupByPar.pdf, id=1877, 844.83629pt x 597.432pt>
+<../img/amazonGroupByPar.pdf, id=1882, 844.83629pt x 597.432pt>
 File: ../img/amazonGroupByPar.pdf Graphic file (type pdf)
 <use ../img/amazonGroupByPar.pdf>
 Package pdftex.def Info: ../img/amazonGroupByPar.pdf  used on input line 955.
@@ -1060,7 +1060,7 @@ Package pdftex.def Info: ../img/amazonGroupByPar.pdf  used on input line 955.
 
 pdfTeX warning: pdflatex (file ../img/amazonGroupByParNoAgg.pdf): PDF inclusion
 : found PDF version <1.7>, but at most version <1.5> allowed
-<../img/amazonGroupByParNoAgg.pdf, id=1880, 844.83629pt x 597.432pt>
+<../img/amazonGroupByParNoAgg.pdf, id=1885, 844.83629pt x 597.432pt>
 File: ../img/amazonGroupByParNoAgg.pdf Graphic file (type pdf)
 <use ../img/amazonGroupByParNoAgg.pdf>
 Package pdftex.def Info: ../img/amazonGroupByParNoAgg.pdf  used on input line 9
@@ -1070,7 +1070,7 @@ Package pdftex.def Info: ../img/amazonGroupByParNoAgg.pdf  used on input line 9
 
 pdfTeX warning: pdflatex (file ../img/webberkstanGroupByPar.pdf): PDF inclusion
 : found PDF version <1.7>, but at most version <1.5> allowed
-<../img/webberkstanGroupByPar.pdf, id=1883, 844.83629pt x 597.432pt>
+<../img/webberkstanGroupByPar.pdf, id=1888, 844.83629pt x 597.432pt>
 File: ../img/webberkstanGroupByPar.pdf Graphic file (type pdf)
 <use ../img/webberkstanGroupByPar.pdf>
 Package pdftex.def Info: ../img/webberkstanGroupByPar.pdf  used on input line 9
@@ -1080,7 +1080,7 @@ Package pdftex.def Info: ../img/webberkstanGroupByPar.pdf  used on input line 9
 
 pdfTeX warning: pdflatex (file ../img/webberkstanGroupByParNoAgg.pdf): PDF incl
 usion: found PDF version <1.7>, but at most version <1.5> allowed
-<../img/webberkstanGroupByParNoAgg.pdf, id=1886, 844.83629pt x 597.432pt>
+<../img/webberkstanGroupByParNoAgg.pdf, id=1891, 844.83629pt x 597.432pt>
 File: ../img/webberkstanGroupByParNoAgg.pdf Graphic file (type pdf)
 <use ../img/webberkstanGroupByParNoAgg.pdf>
 Package pdftex.def Info: ../img/webberkstanGroupByParNoAgg.pdf  used on input l
@@ -1090,7 +1090,7 @@ ine 971.
 
 pdfTeX warning: pdflatex (file ../img/skitterGroupByPar.pdf): PDF inclusion: fo
 und PDF version <1.7>, but at most version <1.5> allowed
-<../img/skitterGroupByPar.pdf, id=1889, 844.83629pt x 597.432pt>
+<../img/skitterGroupByPar.pdf, id=1894, 844.83629pt x 597.432pt>
 File: ../img/skitterGroupByPar.pdf Graphic file (type pdf)
 <use ../img/skitterGroupByPar.pdf>
 Package pdftex.def Info: ../img/skitterGroupByPar.pdf  used on input line 977.
@@ -1099,7 +1099,7 @@ Package pdftex.def Info: ../img/skitterGroupByPar.pdf  used on input line 977.
 
 pdfTeX warning: pdflatex (file ../img/skitterGroupByParNoAgg.pdf): PDF inclusio
 n: found PDF version <1.7>, but at most version <1.5> allowed
-<../img/skitterGroupByParNoAgg.pdf, id=1892, 844.83629pt x 597.432pt>
+<../img/skitterGroupByParNoAgg.pdf, id=1897, 844.83629pt x 597.432pt>
 File: ../img/skitterGroupByParNoAgg.pdf Graphic file (type pdf)
 <use ../img/skitterGroupByParNoAgg.pdf>
 Package pdftex.def Info: ../img/skitterGroupByParNoAgg.pdf  used on input line 
@@ -1111,7 +1111,7 @@ Package pdftex.def Info: ../img/skitterGroupByParNoAgg.pdf  used on input line
 
 pdfTeX warning: pdflatex (file ../img/amazonGroupByQ1ST.pdf): PDF inclusion: fo
 und PDF version <1.7>, but at most version <1.5> allowed
-<../img/amazonGroupByQ1ST.pdf, id=1969, 597.432pt x 421.09319pt>
+<../img/amazonGroupByQ1ST.pdf, id=1974, 597.432pt x 421.09319pt>
 File: ../img/amazonGroupByQ1ST.pdf Graphic file (type pdf)
 <use ../img/amazonGroupByQ1ST.pdf>
 Package pdftex.def Info: ../img/amazonGroupByQ1ST.pdf  used on input line 1006.
@@ -1121,7 +1121,7 @@ Package pdftex.def Info: ../img/amazonGroupByQ1ST.pdf  used on input line 1006.
 
 pdfTeX warning: pdflatex (file ../img/amazonGroupByQ1Par.pdf): PDF inclusion: f
 ound PDF version <1.7>, but at most version <1.5> allowed
-<../img/amazonGroupByQ1Par.pdf, id=1972, 597.432pt x 421.09319pt>
+<../img/amazonGroupByQ1Par.pdf, id=1977, 597.432pt x 421.09319pt>
 File: ../img/amazonGroupByQ1Par.pdf Graphic file (type pdf)
 <use ../img/amazonGroupByQ1Par.pdf>
 Package pdftex.def Info: ../img/amazonGroupByQ1Par.pdf  used on input line 1012
@@ -1131,7 +1131,7 @@ Package pdftex.def Info: ../img/amazonGroupByQ1Par.pdf  used on input line 1012
 
 pdfTeX warning: pdflatex (file ../img/webberkstanGroupByQ1ST.pdf): PDF inclusio
 n: found PDF version <1.7>, but at most version <1.5> allowed
-<../img/webberkstanGroupByQ1ST.pdf, id=1975, 597.432pt x 421.09319pt>
+<../img/webberkstanGroupByQ1ST.pdf, id=1980, 597.432pt x 421.09319pt>
 File: ../img/webberkstanGroupByQ1ST.pdf Graphic file (type pdf)
 <use ../img/webberkstanGroupByQ1ST.pdf>
 Package pdftex.def Info: ../img/webberkstanGroupByQ1ST.pdf  used on input line 
@@ -1141,7 +1141,7 @@ Package pdftex.def Info: ../img/webberkstanGroupByQ1ST.pdf  used on input line
 
 pdfTeX warning: pdflatex (file ../img/webberkstanGroupByQ1Par.pdf): PDF inclusi
 on: found PDF version <1.7>, but at most version <1.5> allowed
-<../img/webberkstanGroupByQ1Par.pdf, id=1978, 597.432pt x 421.09319pt>
+<../img/webberkstanGroupByQ1Par.pdf, id=1983, 597.432pt x 421.09319pt>
 File: ../img/webberkstanGroupByQ1Par.pdf Graphic file (type pdf)
 <use ../img/webberkstanGroupByQ1Par.pdf>
 Package pdftex.def Info: ../img/webberkstanGroupByQ1Par.pdf  used on input line
@@ -1152,7 +1152,7 @@ berkstanGroupByQ1ST.pdf> <../img/webberkstanGroupByQ1Par.pdf>]
 
 pdfTeX warning: pdflatex (file ../img/skitterGroupByQ1ST.pdf): PDF inclusion: f
 ound PDF version <1.7>, but at most version <1.5> allowed
-<../img/skitterGroupByQ1ST.pdf, id=2020, 597.432pt x 421.09319pt>
+<../img/skitterGroupByQ1ST.pdf, id=2025, 597.432pt x 421.09319pt>
 File: ../img/skitterGroupByQ1ST.pdf Graphic file (type pdf)
 <use ../img/skitterGroupByQ1ST.pdf>
 Package pdftex.def Info: ../img/skitterGroupByQ1ST.pdf  used on input line 1038
@@ -1167,7 +1167,7 @@ Underfull \hbox (badness 1024) in paragraph at lines 1039--1039
 
 pdfTeX warning: pdflatex (file ../img/skitterGroupByQ1Par.pdf): PDF inclusion: 
 found PDF version <1.7>, but at most version <1.5> allowed
-<../img/skitterGroupByQ1Par.pdf, id=2023, 597.432pt x 421.09319pt>
+<../img/skitterGroupByQ1Par.pdf, id=2028, 597.432pt x 421.09319pt>
 File: ../img/skitterGroupByQ1Par.pdf Graphic file (type pdf)
 <use ../img/skitterGroupByQ1Par.pdf>
 Package pdftex.def Info: ../img/skitterGroupByQ1Par.pdf  used on input line 104
@@ -1287,7 +1287,7 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 201.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 201.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 201.
 Package rerunfilecheck Info: File `prace.out' has not changed.
-(rerunfilecheck)             Checksum: 9D5880DDB99230BCDEE5E356AA533E31;19432.
+(rerunfilecheck)             Checksum: 49B8C46B6D1B8F38B239B3A49BAA69F4;19634.
 
 
 LaTeX Warning: There were multiply-defined labels.
@@ -1295,10 +1295,10 @@ LaTeX Warning: There were multiply-defined labels.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 201.
  ) 
 Here is how much of TeX's memory you used:
- 17815 strings out of 481239
- 253303 string characters out of 5920376
- 505908 words of memory out of 5000000
- 32124 multiletter control sequences out of 15000+600000
+ 17818 strings out of 481239
+ 253350 string characters out of 5920376
+ 505965 words of memory out of 5000000
+ 32126 multiletter control sequences out of 15000+600000
  630689 words of font info for 95 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  44i,11n,41p,502b,2341s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1316,10 +1316,10 @@ ri12.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/f
 onts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.p
 fb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/t
 ype1/public/lm/lmtt12.pfb>
-Output written on prace.pdf (133 pages, 2128994 bytes).
+Output written on prace.pdf (133 pages, 2129208 bytes).
 PDF statistics:
- 2460 PDF objects out of 2487 (max. 8388607)
- 2072 compressed objects within 21 object streams
- 510 named destinations out of 1000 (max. 500000)
- 1078 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 2467 PDF objects out of 2487 (max. 8388607)
+ 2079 compressed objects within 21 object streams
+ 511 named destinations out of 1000 (max. 500000)
+ 1086 words of extra memory for PDF output out of 10000 (max. 10000000)
 

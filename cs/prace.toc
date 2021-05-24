@@ -218,8 +218,9 @@
 \contentsline {chapter}{Seznam obr\'azk\r {u}}{125}{chapter*.126}%
 \contentsline {chapter}{Seznam tabulek}{127}{chapter*.127}%
 \contentsline {chapter}{\numberline {A}Přílohy}{128}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Zdrojové kódy}{128}{section.A.1}%
+\contentsline {section}{\numberline {A.1}Benchmark stromy vůči polím}{128}{section.A.1}%
 \contentsline {section}{\numberline {A.2}Online Git repozitář}{128}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Použité grafy při experimentu}{128}{section.A.3}%
-\contentsline {section}{\numberline {A.4}Výsledky benchmarku pro jednotlivé grafy}{128}{section.A.4}%
-\contentsline {section}{\numberline {A.5}Benchmark stromy vůči polím}{128}{section.A.5}%
+\contentsline {section}{\numberline {A.3}Zdrojové kódy}{128}{section.A.3}%
+\contentsline {section}{\numberline {A.4}Kód pro transformaci grafů}{128}{section.A.4}%
+\contentsline {section}{\numberline {A.5}Použité grafy při experimentu}{128}{section.A.5}%
+\contentsline {section}{\numberline {A.6}Výsledky benchmarku pro jednotlivé grafy}{128}{section.A.6}%
