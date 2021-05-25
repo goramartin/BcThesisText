@@ -6,37 +6,37 @@
 \contentsline {figure}{\numberline {2.2}{\ignorespaces Propojení objektů pomocí položky \texttt {next} pro dotaz\\* \texttt {select x match (x) order by x}.}}{25}{figure.2.2}%
 \contentsline {figure}{\numberline {2.3}{\ignorespaces UML activity diagram rekurzivního volání metody \texttt {Compute} pro dotaz \texttt {select x match (x) order by x}.}}{25}{figure.2.3}%
 \contentsline {figure}{\numberline {2.4}{\ignorespaces Diagram paralelizace prohledávání grafu.}}{31}{figure.2.4}%
-\contentsline {figure}{\numberline {2.5}{\ignorespaces Diagram paralelizace řešení \textbf {Global}.}}{37}{figure.2.5}%
-\contentsline {figure}{\numberline {2.6}{\ignorespaces Diagram paralelizace řešení \textbf {Two-step}.}}{38}{figure.2.6}%
-\contentsline {figure}{\numberline {2.7}{\ignorespaces Diagram paralelizace řešení \textbf {Local + dvoucestné slévání} pro 4 vlákna.}}{39}{figure.2.7}%
-\contentsline {figure}{\numberline {2.8}{\ignorespaces UML class diagram nových objektů reprezentující části \textit {Group by} a~\textit {Order by}.}}{41}{figure.2.8}%
-\contentsline {figure}{\numberline {2.9}{\ignorespaces UML class diagram rozšířeného objektu \texttt {newMatch} části \textit {Match}. Objekt nyní drží přímý odkaz na \texttt {ResultProcessor} a zároveň implementuje původní logiku objektu.}}{42}{figure.2.9}%
-\contentsline {figure}{\numberline {2.10}{\ignorespaces Diagram objektů upraveného vykonání dotazu \texttt {select x match (x) order by x}. Plná šipka znázorňuje původní propojení a tečkovaná šipka představuje nové propojení.}}{42}{figure.2.10}%
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Diagram paralelizace řešení \textbf {Global}.}}{38}{figure.2.5}%
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Diagram paralelizace řešení \textbf {Two-step}.}}{39}{figure.2.6}%
+\contentsline {figure}{\numberline {2.7}{\ignorespaces Diagram paralelizace řešení \textbf {Local + dvoucestné slévání} pro 4 vlákna.}}{40}{figure.2.7}%
+\contentsline {figure}{\numberline {2.8}{\ignorespaces UML class diagram nových objektů reprezentující části \textit {Group by} a~\textit {Order by}.}}{42}{figure.2.8}%
+\contentsline {figure}{\numberline {2.9}{\ignorespaces UML class diagram rozšířeného objektu \texttt {newMatch} části \textit {Match}. Objekt nyní drží přímý odkaz na \texttt {ResultProcessor} a zároveň implementuje původní logiku objektu.}}{43}{figure.2.9}%
+\contentsline {figure}{\numberline {2.10}{\ignorespaces Diagram objektů upraveného vykonání dotazu \texttt {select x match (x) order by x}. Plná šipka znázorňuje původní propojení a tečkovaná šipka představuje nové propojení.}}{43}{figure.2.10}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Doba vykonání dotazů \textit {Match} pro graf Amazon0601 (sekce \ref {tab.grafBase}). Jedno vlákno vůči osmi vláknům.}}{100}{figure.4.1}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces Doba vykonání dotazů \textit {Match} pro graf WebBerkStan (sekce \ref {tab.grafBase}). Jedno vlákno vůči osmi vláknům}}{100}{figure.4.2}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Doba vykonání dotazů \textit {Match} pro graf As-Skitter (sekce \ref {tab.grafBase}). Jedno vlákno vůči osmi vláknům.}}{101}{figure.4.3}%
-\contentsline {figure}{\numberline {4.4}{\ignorespaces Doba vykonání dotazů \textit {Order by} pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh v jednom vláknu.}}{104}{figure.4.4}%
-\contentsline {figure}{\numberline {4.5}{\ignorespaces Doba vykonání dotazů \textit {Order by} pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh osmi vláken.}}{104}{figure.4.5}%
-\contentsline {figure}{\numberline {4.6}{\ignorespaces Doba vykonání dotazů \textit {Order by} pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh v jednom vláknu.}}{105}{figure.4.6}%
-\contentsline {figure}{\numberline {4.7}{\ignorespaces Doba vykonání dotazů \textit {Order by} pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh osmi vláken.}}{105}{figure.4.7}%
-\contentsline {figure}{\numberline {4.8}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh v jednom vláknu.}}{108}{figure.4.8}%
-\contentsline {figure}{\numberline {4.9}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf Amazon0601 (sekce \ref {tab.grafBase}) bez agregačních funkcí. Běh v jednom vláknu.}}{108}{figure.4.9}%
-\contentsline {figure}{\numberline {4.10}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh v jednom vláknu.}}{109}{figure.4.10}%
-\contentsline {figure}{\numberline {4.11}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf WebBerkStan (sekce \ref {tab.grafBase}) bez agregačních funkcí. Běh v jednom vláknu.}}{109}{figure.4.11}%
-\contentsline {figure}{\numberline {4.12}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf As-Skitter (sekce \ref {tab.grafBase}). Běh v jednom vláknu.}}{110}{figure.4.12}%
-\contentsline {figure}{\numberline {4.13}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf As-Skitter (sekce \ref {tab.grafBase}) bez agregačních funkcí. Běh v jednom vláknu.}}{110}{figure.4.13}%
-\contentsline {figure}{\numberline {4.14}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh osmi vláken.}}{114}{figure.4.14}%
-\contentsline {figure}{\numberline {4.15}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf Amazon0601 (sekce \ref {tab.grafBase}) bez agregačních funkcí. Běh osmi vláken.}}{114}{figure.4.15}%
-\contentsline {figure}{\numberline {4.16}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh osmi vláken.}}{115}{figure.4.16}%
-\contentsline {figure}{\numberline {4.17}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf WebBerkStan (sekce \ref {tab.grafBase}) bez agregačních funkcí. Běh osmi vláken.}}{115}{figure.4.17}%
-\contentsline {figure}{\numberline {4.18}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf As-Skitter (sekce \ref {tab.grafBase}). Běh osmi vláken.}}{116}{figure.4.18}%
-\contentsline {figure}{\numberline {4.19}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf As-Skitter (sekce \ref {tab.grafBase}) bez agregačních funkcí. Běh osmi vláken.}}{116}{figure.4.19}%
-\contentsline {figure}{\numberline {4.20}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh v jednom vláknu.}}{117}{figure.4.20}%
-\contentsline {figure}{\numberline {4.21}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh osmi vláken.}}{117}{figure.4.21}%
-\contentsline {figure}{\numberline {4.22}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh v jednom vláknu.}}{117}{figure.4.22}%
-\contentsline {figure}{\numberline {4.23}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh osmi vláken.}}{117}{figure.4.23}%
-\contentsline {figure}{\numberline {4.24}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf As-Skitter (sekce \ref {tab.grafBase}). Běh v jednom vláknu.}}{118}{figure.4.24}%
-\contentsline {figure}{\numberline {4.25}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf As-Skitter (sekce \ref {tab.grafBase}). Běh osmi vláken.}}{118}{figure.4.25}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Doba vykonání dotazů \textit {Match} pro graf Amazon0601 (sekce \ref {tab.grafBase}). Jedno vlákno vůči osmi vláknům.}}{102}{figure.4.1}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Doba vykonání dotazů \textit {Match} pro graf WebBerkStan (sekce \ref {tab.grafBase}). Jedno vlákno vůči osmi vláknům}}{102}{figure.4.2}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Doba vykonání dotazů \textit {Match} pro graf As-Skitter (sekce \ref {tab.grafBase}). Jedno vlákno vůči osmi vláknům.}}{103}{figure.4.3}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Doba vykonání dotazů \textit {Order by} pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh v jednom vláknu.}}{106}{figure.4.4}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Doba vykonání dotazů \textit {Order by} pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh osmi vláken.}}{106}{figure.4.5}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Doba vykonání dotazů \textit {Order by} pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh v jednom vláknu.}}{107}{figure.4.6}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Doba vykonání dotazů \textit {Order by} pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh osmi vláken.}}{107}{figure.4.7}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh v jednom vláknu.}}{110}{figure.4.8}%
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf Amazon0601 (sekce \ref {tab.grafBase}) bez agregačních funkcí. Běh v jednom vláknu.}}{110}{figure.4.9}%
+\contentsline {figure}{\numberline {4.10}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh v jednom vláknu.}}{111}{figure.4.10}%
+\contentsline {figure}{\numberline {4.11}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf WebBerkStan (sekce \ref {tab.grafBase}) bez agregačních funkcí. Běh v jednom vláknu.}}{111}{figure.4.11}%
+\contentsline {figure}{\numberline {4.12}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf As-Skitter (sekce \ref {tab.grafBase}). Běh v jednom vláknu.}}{112}{figure.4.12}%
+\contentsline {figure}{\numberline {4.13}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf As-Skitter (sekce \ref {tab.grafBase}) bez agregačních funkcí. Běh v jednom vláknu.}}{112}{figure.4.13}%
+\contentsline {figure}{\numberline {4.14}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh osmi vláken.}}{116}{figure.4.14}%
+\contentsline {figure}{\numberline {4.15}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf Amazon0601 (sekce \ref {tab.grafBase}) bez agregačních funkcí. Běh osmi vláken.}}{116}{figure.4.15}%
+\contentsline {figure}{\numberline {4.16}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh osmi vláken.}}{117}{figure.4.16}%
+\contentsline {figure}{\numberline {4.17}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf WebBerkStan (sekce \ref {tab.grafBase}) bez agregačních funkcí. Běh osmi vláken.}}{117}{figure.4.17}%
+\contentsline {figure}{\numberline {4.18}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf As-Skitter (sekce \ref {tab.grafBase}). Běh osmi vláken.}}{118}{figure.4.18}%
+\contentsline {figure}{\numberline {4.19}{\ignorespaces Doba vykonání dotazů \textit {Group by} pro graf As-Skitter (sekce \ref {tab.grafBase}) bez agregačních funkcí. Běh osmi vláken.}}{118}{figure.4.19}%
+\contentsline {figure}{\numberline {4.20}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh v jednom vláknu.}}{119}{figure.4.20}%
+\contentsline {figure}{\numberline {4.21}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf Amazon0601 (sekce \ref {tab.grafBase}). Běh osmi vláken.}}{119}{figure.4.21}%
+\contentsline {figure}{\numberline {4.22}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh v jednom vláknu.}}{119}{figure.4.22}%
+\contentsline {figure}{\numberline {4.23}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf WebBerkStan (sekce \ref {tab.grafBase}). Běh osmi vláken.}}{119}{figure.4.23}%
+\contentsline {figure}{\numberline {4.24}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf As-Skitter (sekce \ref {tab.grafBase}). Běh v jednom vláknu.}}{120}{figure.4.24}%
+\contentsline {figure}{\numberline {4.25}{\ignorespaces Doba vykonání dotazu G\_Q1 pro graf As-Skitter (sekce \ref {tab.grafBase}). Běh osmi vláken.}}{120}{figure.4.25}%
 \addvspace {10\p@ }

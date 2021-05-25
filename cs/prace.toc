@@ -39,188 +39,188 @@
 \contentsline {section}{\numberline {2.6}Order by}{32}{section.2.6}%
 \contentsline {subsection}{\numberline {2.6.1}Výběr algoritmů a paralelizace}{32}{subsection.2.6.1}%
 \contentsline {subsection}{\numberline {2.6.2}Quick sort vs Merge sort}{32}{subsection.2.6.2}%
-\contentsline {subsection}{\numberline {2.6.3}Třídění pomocí indexů}{32}{subsection.2.6.3}%
+\contentsline {subsection}{\numberline {2.6.3}Třídění pomocí indexů}{33}{subsection.2.6.3}%
 \contentsline {subsection}{\numberline {2.6.4}Optimalizace porovnání vlastností hodnot}{33}{subsection.2.6.4}%
 \contentsline {subsection}{\numberline {2.6.5}Optimalizace porovnání stejných elementů}{33}{subsection.2.6.5}%
 \contentsline {subsection}{\numberline {2.6.6}Optimalizace v paralelním prostředí}{33}{subsection.2.6.6}%
-\contentsline {section}{\numberline {2.7}Group by}{33}{section.2.7}%
+\contentsline {section}{\numberline {2.7}Group by}{34}{section.2.7}%
 \contentsline {subsection}{\numberline {2.7.1}Módy Group by}{34}{subsection.2.7.1}%
 \contentsline {subsection}{\numberline {2.7.2}Úložiště mezivýsledků agregačních funkcí}{34}{subsection.2.7.2}%
 \contentsline {subsection}{\numberline {2.7.3}Logika agregačních funkcí}{35}{subsection.2.7.3}%
-\contentsline {subsection}{\numberline {2.7.4}Jednovláknové zpracování}{35}{subsection.2.7.4}%
-\contentsline {subsection}{\numberline {2.7.5}Optimalizace při výpočtu heš hodnoty}{35}{subsection.2.7.5}%
-\contentsline {subsection}{\numberline {2.7.6}Paralelní zpracování}{36}{subsection.2.7.6}%
-\contentsline {subsection}{\numberline {2.7.7}Thread-safe agregační funkce}{36}{subsection.2.7.7}%
-\contentsline {subsection}{\numberline {2.7.8}Global Group by}{36}{subsection.2.7.8}%
-\contentsline {subsection}{\numberline {2.7.9}Two-step Group by}{37}{subsection.2.7.9}%
-\contentsline {subsection}{\numberline {2.7.10}Local + dvoucestné slévání Group by}{38}{subsection.2.7.10}%
-\contentsline {subsection}{\numberline {2.7.11}Paralelizace Single group Group by}{39}{subsection.2.7.11}%
-\contentsline {section}{\numberline {2.8}Úprava dotazovacího enginu}{39}{section.2.8}%
-\contentsline {subsection}{\numberline {2.8.1}Pohled na pozměněný způsob vykonání dotazu}{40}{subsection.2.8.1}%
-\contentsline {subsection}{\numberline {2.8.2}Order/Group by část jako bariéra}{40}{subsection.2.8.2}%
-\contentsline {subsection}{\numberline {2.8.3}Změna objektů reprezentující části Order/Group by}{41}{subsection.2.8.3}%
-\contentsline {subsection}{\numberline {2.8.4}Propojení nových objektů s objektem Match}{41}{subsection.2.8.4}%
-\contentsline {subsubsection}{Přímé spojení objektů}{41}{section*.22}%
-\contentsline {subsubsection}{Propojení vyhledávání a zpracování výsledku}{42}{section*.23}%
-\contentsline {subsection}{\numberline {2.8.5}Alternativní řešení}{42}{subsection.2.8.5}%
-\contentsline {subsection}{\numberline {2.8.6}Obecný model vykonání Order/Group by}{43}{subsection.2.8.6}%
-\contentsline {subsubsection}{Návrh Half-Streamed}{43}{section*.24}%
-\contentsline {subsubsection}{Návrh Streamed}{43}{section*.25}%
-\contentsline {section}{\numberline {2.9}Úprava Order by}{43}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Obecný princip zpracování}{44}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}Jednovláknové zpracování}{44}{subsection.2.9.2}%
-\contentsline {subsubsection}{Pole indexů + binární vyhledávání}{44}{section*.26}%
-\contentsline {subsubsection}{Vyhledávací stromy}{45}{section*.27}%
-\contentsline {subsubsection}{Experiment pole vůči vyhledávacím stromům}{45}{section*.28}%
-\contentsline {subsubsection}{Výsledky}{45}{section*.29}%
-\contentsline {subsubsection}{Experiment (a, b)-strom vůči SortedSet}{46}{section*.30}%
-\contentsline {subsubsection}{Výsledky}{46}{section*.31}%
-\contentsline {subsection}{\numberline {2.9.3}Ukládání prvků v (a, b)-stromu}{47}{subsection.2.9.3}%
-\contentsline {subsection}{\numberline {2.9.4}Řešení Half-Streamed}{47}{subsection.2.9.4}%
-\contentsline {subsection}{\numberline {2.9.5}Řešení Streamed}{48}{subsection.2.9.5}%
-\contentsline {subsubsection}{Počet přihrádek}{49}{section*.32}%
-\contentsline {subsubsection}{Rozdělování rozsahu}{49}{section*.33}%
-\contentsline {subsubsection}{Rozdělování typu Int32}{49}{section*.34}%
-\contentsline {subsubsection}{Rozdělování typu string}{49}{section*.35}%
-\contentsline {section}{\numberline {2.10}Úprava Group by}{50}{section.2.10}%
-\contentsline {subsection}{\numberline {2.10.1}Řešení Half-Streamed}{51}{subsection.2.10.1}%
-\contentsline {subsubsection}{Ukládání pouze reprezentantů skupin}{51}{section*.36}%
-\contentsline {subsection}{\numberline {2.10.2}Řešení Streamed}{51}{subsection.2.10.2}%
-\contentsline {subsubsection}{Problém synchronizace tabulky výsledků}{52}{section*.37}%
-\contentsline {subsubsection}{Nový přístup ukládání výsledků}{52}{section*.38}%
-\contentsline {subsubsection}{Sloučení pole klíčů a pole úložiště agregačních funkcí}{52}{section*.39}%
-\contentsline {section}{\numberline {2.11}Úprava Single group Group by}{53}{section.2.11}%
-\contentsline {subsection}{\numberline {2.11.1}Řešení Half-Streamed}{53}{subsection.2.11.1}%
-\contentsline {subsection}{\numberline {2.11.2}Řešení Streamed}{53}{subsection.2.11.2}%
-\contentsline {chapter}{\numberline {3}Implementace}{54}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Výběr jazyka}{54}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Značení módů}{54}{section.3.2}%
-\contentsline {section}{\numberline {3.3}Rozložení aplikace}{54}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}Rozložení řešení QueryEngine}{55}{subsection.3.3.1}%
-\contentsline {section}{\numberline {3.4}Programátorská dokumentace}{55}{section.3.4}%
-\contentsline {subsection}{\numberline {3.4.1}Reprezentace grafu}{56}{subsection.3.4.1}%
-\contentsline {subsubsection}{Třída Element}{56}{section*.40}%
-\contentsline {subsubsection}{Třída Table}{56}{section*.41}%
-\contentsline {subsubsection}{Třída Property}{57}{section*.42}%
-\contentsline {subsubsection}{Třída Graph}{57}{section*.43}%
-\contentsline {subsection}{\numberline {3.4.2}Čtení vstupních souborů}{57}{subsection.3.4.2}%
-\contentsline {subsubsection}{Vstupní soubory}{57}{section*.44}%
-\contentsline {subsubsection}{Načítání vstupních souborů}{58}{section*.45}%
-\contentsline {subsection}{\numberline {3.4.3}Načítání uživatelského dotazu}{58}{subsection.3.4.3}%
-\contentsline {subsubsection}{Třída Tokenizer}{58}{section*.46}%
-\contentsline {subsubsection}{Třída Parser}{58}{section*.47}%
-\contentsline {subsection}{\numberline {3.4.4}Reprezentace dotazu}{59}{subsection.3.4.4}%
-\contentsline {subsubsection}{Třída Query}{59}{section*.48}%
-\contentsline {subsubsection}{Třída QueryObject}{60}{section*.49}%
-\contentsline {subsection}{\numberline {3.4.5}Match}{60}{subsection.3.4.5}%
-\contentsline {subsubsection}{Třída MatchObject}{60}{section*.50}%
-\contentsline {subsubsection}{Třída ParsedPattern}{61}{section*.51}%
-\contentsline {subsubsection}{Třída DFSPattern}{61}{section*.52}%
-\contentsline {subsubsection}{Třída DFSBaseMatch}{63}{section*.53}%
-\contentsline {subsubsection}{Třída MatchFixedResultsInternal}{63}{section*.54}%
-\contentsline {subsubsection}{Třída MatchFixedResults}{64}{section*.55}%
-\contentsline {subsubsection}{Třída DFSPatternMatcherBase}{64}{section*.56}%
-\contentsline {subsubsection}{Třída DFSPatternMatcher}{64}{section*.57}%
-\contentsline {subsubsection}{Třída DFSParallelPatternMatcher}{65}{section*.58}%
-\contentsline {subsection}{\numberline {3.4.6}Tabulka výsledků}{65}{subsection.3.4.6}%
-\contentsline {subsubsection}{Třída TableResults}{65}{section*.59}%
-\contentsline {subsection}{\numberline {3.4.7}Expressions}{67}{subsection.3.4.7}%
-\contentsline {subsubsection}{Tvorba výrazů}{67}{section*.60}%
-\contentsline {subsubsection}{Třídy výrazů}{67}{section*.61}%
-\contentsline {subsubsection}{Výraz agregační funkce}{67}{section*.62}%
-\contentsline {subsection}{\numberline {3.4.8}Order by}{68}{subsection.3.4.8}%
-\contentsline {subsubsection}{Třída OrderByObject}{68}{section*.63}%
-\contentsline {subsubsection}{Třída ExpressionComparer}{68}{section*.64}%
-\contentsline {subsubsection}{Třída ExpressionComparer<T>}{68}{section*.65}%
-\contentsline {subsubsection}{Třída RowComparer a IndexToRowProxyComparer}{69}{section*.66}%
-\contentsline {subsubsection}{Řešení Normal: Merge sort}{69}{section*.67}%
-\contentsline {subsection}{\numberline {3.4.9}Group by}{70}{subsection.3.4.9}%
-\contentsline {subsubsection}{Třída GroupByObject}{70}{section*.68}%
-\contentsline {subsubsection}{Dictionary a ConcurrentDictionary}{70}{section*.69}%
-\contentsline {subsubsection}{Třída ExpressionHasher a třídy ExpressionHasher<T>}{72}{section*.70}%
-\contentsline {subsubsection}{Rozhraní IEqualityComparer<T>}{72}{section*.71}%
-\contentsline {subsubsection}{Logika agregačních funkcí}{72}{section*.72}%
-\contentsline {subsubsection}{Úložiště hodnot agregačních funkcí}{74}{section*.73}%
-\contentsline {subsubsection}{Třída AggregateBucketResult}{74}{section*.74}%
-\contentsline {subsubsection}{Group by zpracování}{75}{section*.75}%
-\contentsline {subsection}{\numberline {3.4.10}Úprava propojení}{76}{subsection.3.4.10}%
-\contentsline {subsubsection}{Zahrnutí úprav do třídy Query}{77}{section*.76}%
-\contentsline {subsubsection}{Třída ResultProcessor}{77}{section*.77}%
-\contentsline {subsubsection}{Třída MatchObjectStreamed}{77}{section*.78}%
-\contentsline {subsubsection}{Třída DFSParallelPatternMatcherStreamed}{78}{section*.79}%
-\contentsline {subsubsection}{Třída DFSPatternMatcherStreamed}{78}{section*.80}%
-\contentsline {subsection}{\numberline {3.4.11}Úprava Order by}{78}{subsection.3.4.11}%
-\contentsline {subsubsection}{Implementace (a, b)-stromu}{78}{section*.81}%
-\contentsline {subsubsection}{Třída ABTree<T>}{79}{section*.82}%
-\contentsline {subsubsection}{Třída ABTreeAccumulator<T>}{79}{section*.83}%
-\contentsline {subsubsection}{Řešení Half-Streamed}{79}{section*.84}%
-\contentsline {subsubsection}{Řešení Streamed}{81}{section*.85}%
-\contentsline {subsection}{\numberline {3.4.12}Úprava Group by}{82}{subsection.3.4.12}%
-\contentsline {subsubsection}{Řešení Half-Streamed}{82}{section*.86}%
-\contentsline {subsubsection}{Řešení Streamed}{83}{section*.87}%
-\contentsline {subsubsection}{Třída AggregateBucketResultStreamed<T>}{83}{section*.88}%
-\contentsline {subsubsection}{Třída BucketsKeyValueFactory a třída BucketKeyFactory}{84}{section*.89}%
-\contentsline {subsubsection}{Třída GlobalGroupByStreamed}{84}{section*.90}%
-\contentsline {subsection}{\numberline {3.4.13}Úprava Single group Group by}{85}{subsection.3.4.13}%
-\contentsline {subsubsection}{Třída SingleGroupGroupByHalfStreamed}{85}{section*.91}%
-\contentsline {subsubsection}{Třída SingleGroupGroupByStreamed}{86}{section*.92}%
-\contentsline {section}{\numberline {3.5}Překlad a spuštění dotazovacího enginu}{86}{section.3.5}%
-\contentsline {subsubsection}{Překlad}{86}{section*.93}%
-\contentsline {subsubsection}{Vstupní soubory}{86}{section*.94}%
-\contentsline {subsubsection}{Argumenty programu}{87}{section*.95}%
-\contentsline {subsubsection}{Zadání dotazu}{89}{section*.96}%
-\contentsline {chapter}{\numberline {4}Experiment}{90}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Příprava dat}{90}{section.4.1}%
-\contentsline {subsection}{\numberline {4.1.1}Transformace grafových dat}{91}{subsection.4.1.1}%
-\contentsline {subsection}{\numberline {4.1.2}Generování vlastností vrcholů}{92}{subsection.4.1.2}%
-\contentsline {section}{\numberline {4.2}Výběr dotazů}{93}{section.4.2}%
-\contentsline {subsection}{\numberline {4.2.1}Dotazy Match}{94}{subsection.4.2.1}%
-\contentsline {subsection}{\numberline {4.2.2}Dotazy Order by}{94}{subsection.4.2.2}%
-\contentsline {subsection}{\numberline {4.2.3}Dotazy Group by}{95}{subsection.4.2.3}%
-\contentsline {section}{\numberline {4.3}Metodika}{96}{section.4.3}%
-\contentsline {subsection}{\numberline {4.3.1}Měření uběhlého času}{97}{subsection.4.3.1}%
-\contentsline {subsection}{\numberline {4.3.2}Volitelné argumenty konstruktoru dotazu}{97}{subsection.4.3.2}%
-\contentsline {subsection}{\numberline {4.3.3}Hardwarová specifikace}{98}{subsection.4.3.3}%
-\contentsline {subsection}{\numberline {4.3.4}Příprava hardwaru}{98}{subsection.4.3.4}%
-\contentsline {subsection}{\numberline {4.3.5}Překlad}{98}{subsection.4.3.5}%
-\contentsline {section}{\numberline {4.4}Výsledky}{98}{section.4.4}%
-\contentsline {subsection}{\numberline {4.4.1}Match}{98}{subsection.4.4.1}%
-\contentsline {subsubsection}{Paralelizace prohledávání grafu}{99}{section*.97}%
-\contentsline {subsubsection}{Paralelizace slévání výsledků}{99}{section*.98}%
-\contentsline {subsubsection}{Zpomalení paralelních řešení sléváním}{99}{section*.99}%
-\contentsline {subsection}{\numberline {4.4.2}Order by}{101}{subsection.4.4.2}%
-\contentsline {subsubsection}{Obecné shrnutí jednovláknových řešení}{101}{section*.100}%
-\contentsline {subsubsection}{Výsledky jednovláknového zpracování}{102}{section*.101}%
-\contentsline {subsubsection}{Třídění pomocí vlastnosti vůči \texttt {ID}}{102}{section*.102}%
-\contentsline {subsubsection}{Obecné shrnutí paralelních řešení}{102}{section*.103}%
-\contentsline {subsubsection}{Výsledky paralelního zpracování}{102}{section*.104}%
-\contentsline {subsubsection}{Zrychlení paralelních řešení pro O\_Q3 a O\_Q4 }{103}{section*.105}%
-\contentsline {subsubsection}{Rozsah zrychlení paralelních řešení}{103}{section*.106}%
-\contentsline {subsection}{\numberline {4.4.3}Group by}{106}{subsection.4.4.3}%
-\contentsline {subsubsection}{Obecné shrnutí jednovláknových řešení}{106}{section*.107}%
-\contentsline {subsubsection}{Výsledky jednovláknového zpracování}{107}{section*.108}%
-\contentsline {subsubsection}{Zpomalení jednovláknového Half-Streamed řešení}{107}{section*.109}%
-\contentsline {subsubsection}{Porovnání výsledků úložišť List/Bucket jednovláknového zpracování}{107}{section*.110}%
-\contentsline {subsubsection}{Obecné shrnutí paralelních řešení}{111}{section*.111}%
-\contentsline {subsubsection}{Výsledky paralelního zpracování}{111}{section*.112}%
-\contentsline {subsubsection}{Test režie paralelní mapy (jedno vlákno)}{111}{section*.113}%
-\contentsline {subsubsection}{Výsledek testu režie paralelní mapy (jedno vlákno)}{112}{section*.114}%
-\contentsline {subsubsection}{Test režie paralelní mapy (osm vláken)}{112}{section*.115}%
-\contentsline {subsubsection}{Výsledek testu režie paralelní mapy (osm vláken)}{112}{section*.116}%
-\contentsline {subsubsection}{Paralelní Streamed řešení vs paralelní Normal: Global řešení}{113}{section*.117}%
-\contentsline {subsubsection}{Aplikace poznatků jednovláknového zpracování při paralelním zpracování}{113}{section*.118}%
-\contentsline {subsubsection}{Nejrychlejší paralelní řešení}{113}{section*.119}%
-\contentsline {subsubsection}{Obecné shrnutí Single group Group by řešení}{117}{section*.120}%
-\contentsline {subsubsection}{Výsledky Single group Group by zpracování}{118}{section*.121}%
-\contentsline {subsubsection}{Obecný problém synchronizace}{118}{section*.122}%
-\contentsline {chapter}{Závěr}{119}{chapter*.123}%
-\contentsline {chapter}{Seznam použité literatury}{123}{chapter*.125}%
-\contentsline {chapter}{Seznam obr\'azk\r {u}}{125}{chapter*.126}%
-\contentsline {chapter}{Seznam tabulek}{127}{chapter*.127}%
-\contentsline {chapter}{\numberline {A}Přílohy}{128}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Benchmark stromy vůči polím}{128}{section.A.1}%
-\contentsline {section}{\numberline {A.2}Online Git repozitář}{128}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Zdrojové kódy}{128}{section.A.3}%
-\contentsline {section}{\numberline {A.4}Kód pro transformaci grafů}{128}{section.A.4}%
-\contentsline {section}{\numberline {A.5}Použité grafy při experimentu}{128}{section.A.5}%
-\contentsline {section}{\numberline {A.6}Výsledky benchmarku pro jednotlivé grafy}{128}{section.A.6}%
+\contentsline {subsection}{\numberline {2.7.4}Jednovláknové zpracování}{36}{subsection.2.7.4}%
+\contentsline {subsection}{\numberline {2.7.5}Optimalizace při výpočtu heš hodnoty}{36}{subsection.2.7.5}%
+\contentsline {subsection}{\numberline {2.7.6}Paralelní zpracování}{37}{subsection.2.7.6}%
+\contentsline {subsection}{\numberline {2.7.7}Thread-safe agregační funkce}{37}{subsection.2.7.7}%
+\contentsline {subsection}{\numberline {2.7.8}Global Group by}{37}{subsection.2.7.8}%
+\contentsline {subsection}{\numberline {2.7.9}Two-step Group by}{38}{subsection.2.7.9}%
+\contentsline {subsection}{\numberline {2.7.10}Local + dvoucestné slévání Group by}{39}{subsection.2.7.10}%
+\contentsline {subsection}{\numberline {2.7.11}Paralelizace Single group Group by}{40}{subsection.2.7.11}%
+\contentsline {section}{\numberline {2.8}Úprava dotazovacího enginu}{40}{section.2.8}%
+\contentsline {subsection}{\numberline {2.8.1}Pohled na pozměněný způsob vykonání dotazu}{41}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.2}Order/Group by část jako bariéra}{41}{subsection.2.8.2}%
+\contentsline {subsection}{\numberline {2.8.3}Změna objektů reprezentující části Order/Group by}{42}{subsection.2.8.3}%
+\contentsline {subsection}{\numberline {2.8.4}Propojení nových objektů s objektem Match}{42}{subsection.2.8.4}%
+\contentsline {subsubsection}{Přímé spojení objektů}{42}{section*.22}%
+\contentsline {subsubsection}{Propojení vyhledávání a zpracování výsledku}{43}{section*.23}%
+\contentsline {subsection}{\numberline {2.8.5}Alternativní řešení}{43}{subsection.2.8.5}%
+\contentsline {subsection}{\numberline {2.8.6}Obecný model vykonání Order/Group by}{44}{subsection.2.8.6}%
+\contentsline {subsubsection}{Návrh Half-Streamed}{44}{section*.24}%
+\contentsline {subsubsection}{Návrh Streamed}{44}{section*.25}%
+\contentsline {section}{\numberline {2.9}Úprava Order by}{44}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}Obecný princip zpracování}{45}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}Jednovláknové zpracování}{45}{subsection.2.9.2}%
+\contentsline {subsubsection}{Pole indexů + binární vyhledávání}{45}{section*.26}%
+\contentsline {subsubsection}{Vyhledávací stromy}{46}{section*.27}%
+\contentsline {subsubsection}{Experiment pole vůči vyhledávacím stromům}{46}{section*.28}%
+\contentsline {subsubsection}{Výsledky}{47}{section*.29}%
+\contentsline {subsubsection}{Experiment (a, b)-strom vůči SortedSet}{47}{section*.30}%
+\contentsline {subsubsection}{Výsledky}{47}{section*.31}%
+\contentsline {subsection}{\numberline {2.9.3}Ukládání prvků v (a, b)-stromu}{48}{subsection.2.9.3}%
+\contentsline {subsection}{\numberline {2.9.4}Řešení Half-Streamed}{48}{subsection.2.9.4}%
+\contentsline {subsection}{\numberline {2.9.5}Řešení Streamed}{49}{subsection.2.9.5}%
+\contentsline {subsubsection}{Počet přihrádek}{50}{section*.32}%
+\contentsline {subsubsection}{Rozdělování rozsahu}{50}{section*.33}%
+\contentsline {subsubsection}{Rozdělování typu Int32}{50}{section*.34}%
+\contentsline {subsubsection}{Rozdělování typu string}{51}{section*.35}%
+\contentsline {section}{\numberline {2.10}Úprava Group by}{52}{section.2.10}%
+\contentsline {subsection}{\numberline {2.10.1}Řešení Half-Streamed}{52}{subsection.2.10.1}%
+\contentsline {subsubsection}{Ukládání pouze reprezentantů skupin}{52}{section*.36}%
+\contentsline {subsection}{\numberline {2.10.2}Řešení Streamed}{53}{subsection.2.10.2}%
+\contentsline {subsubsection}{Problém synchronizace tabulky výsledků}{53}{section*.37}%
+\contentsline {subsubsection}{Nový přístup ukládání výsledků}{53}{section*.38}%
+\contentsline {subsubsection}{Sloučení pole klíčů a pole úložiště agregačních funkcí}{54}{section*.39}%
+\contentsline {section}{\numberline {2.11}Úprava Single group Group by}{54}{section.2.11}%
+\contentsline {subsection}{\numberline {2.11.1}Řešení Half-Streamed}{54}{subsection.2.11.1}%
+\contentsline {subsection}{\numberline {2.11.2}Řešení Streamed}{55}{subsection.2.11.2}%
+\contentsline {chapter}{\numberline {3}Implementace}{56}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Výběr jazyka}{56}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Značení módů}{56}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Rozložení aplikace}{56}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Rozložení řešení QueryEngine}{57}{subsection.3.3.1}%
+\contentsline {section}{\numberline {3.4}Programátorská dokumentace}{57}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Reprezentace grafu}{58}{subsection.3.4.1}%
+\contentsline {subsubsection}{Třída Element}{58}{section*.40}%
+\contentsline {subsubsection}{Třída Table}{58}{section*.41}%
+\contentsline {subsubsection}{Třída Property}{59}{section*.42}%
+\contentsline {subsubsection}{Třída Graph}{59}{section*.43}%
+\contentsline {subsection}{\numberline {3.4.2}Čtení vstupních souborů}{59}{subsection.3.4.2}%
+\contentsline {subsubsection}{Vstupní soubory}{59}{section*.44}%
+\contentsline {subsubsection}{Načítání vstupních souborů}{60}{section*.45}%
+\contentsline {subsection}{\numberline {3.4.3}Načítání uživatelského dotazu}{60}{subsection.3.4.3}%
+\contentsline {subsubsection}{Třída Tokenizer}{60}{section*.46}%
+\contentsline {subsubsection}{Třída Parser}{60}{section*.47}%
+\contentsline {subsection}{\numberline {3.4.4}Reprezentace dotazu}{61}{subsection.3.4.4}%
+\contentsline {subsubsection}{Třída Query}{61}{section*.48}%
+\contentsline {subsubsection}{Třída QueryObject}{62}{section*.49}%
+\contentsline {subsection}{\numberline {3.4.5}Match}{62}{subsection.3.4.5}%
+\contentsline {subsubsection}{Třída MatchObject}{62}{section*.50}%
+\contentsline {subsubsection}{Třída ParsedPattern}{63}{section*.51}%
+\contentsline {subsubsection}{Třída DFSPattern}{63}{section*.52}%
+\contentsline {subsubsection}{Třída DFSBaseMatch}{65}{section*.53}%
+\contentsline {subsubsection}{Třída MatchFixedResultsInternal}{65}{section*.54}%
+\contentsline {subsubsection}{Třída MatchFixedResults}{66}{section*.55}%
+\contentsline {subsubsection}{Třída DFSPatternMatcherBase}{66}{section*.56}%
+\contentsline {subsubsection}{Třída DFSPatternMatcher}{66}{section*.57}%
+\contentsline {subsubsection}{Třída DFSParallelPatternMatcher}{67}{section*.58}%
+\contentsline {subsection}{\numberline {3.4.6}Tabulka výsledků}{67}{subsection.3.4.6}%
+\contentsline {subsubsection}{Třída TableResults}{67}{section*.59}%
+\contentsline {subsection}{\numberline {3.4.7}Expressions}{69}{subsection.3.4.7}%
+\contentsline {subsubsection}{Tvorba výrazů}{69}{section*.60}%
+\contentsline {subsubsection}{Třídy výrazů}{69}{section*.61}%
+\contentsline {subsubsection}{Výraz agregační funkce}{69}{section*.62}%
+\contentsline {subsection}{\numberline {3.4.8}Order by}{70}{subsection.3.4.8}%
+\contentsline {subsubsection}{Třída OrderByObject}{70}{section*.63}%
+\contentsline {subsubsection}{Třída ExpressionComparer}{70}{section*.64}%
+\contentsline {subsubsection}{Třída ExpressionComparer<T>}{70}{section*.65}%
+\contentsline {subsubsection}{Třída RowComparer a IndexToRowProxyComparer}{71}{section*.66}%
+\contentsline {subsubsection}{Řešení Normal: Merge sort}{71}{section*.67}%
+\contentsline {subsection}{\numberline {3.4.9}Group by}{72}{subsection.3.4.9}%
+\contentsline {subsubsection}{Třída GroupByObject}{72}{section*.68}%
+\contentsline {subsubsection}{Dictionary a ConcurrentDictionary}{72}{section*.69}%
+\contentsline {subsubsection}{Třída ExpressionHasher a třídy ExpressionHasher<T>}{74}{section*.70}%
+\contentsline {subsubsection}{Rozhraní IEqualityComparer<T>}{74}{section*.71}%
+\contentsline {subsubsection}{Logika agregačních funkcí}{74}{section*.72}%
+\contentsline {subsubsection}{Úložiště hodnot agregačních funkcí}{76}{section*.73}%
+\contentsline {subsubsection}{Třída AggregateBucketResult}{76}{section*.74}%
+\contentsline {subsubsection}{Group by zpracování}{77}{section*.75}%
+\contentsline {subsection}{\numberline {3.4.10}Úprava propojení}{78}{subsection.3.4.10}%
+\contentsline {subsubsection}{Zahrnutí úprav do třídy Query}{79}{section*.76}%
+\contentsline {subsubsection}{Třída ResultProcessor}{79}{section*.77}%
+\contentsline {subsubsection}{Třída MatchObjectStreamed}{79}{section*.78}%
+\contentsline {subsubsection}{Třída DFSParallelPatternMatcherStreamed}{80}{section*.79}%
+\contentsline {subsubsection}{Třída DFSPatternMatcherStreamed}{80}{section*.80}%
+\contentsline {subsection}{\numberline {3.4.11}Úprava Order by}{80}{subsection.3.4.11}%
+\contentsline {subsubsection}{Implementace (a, b)-stromu}{80}{section*.81}%
+\contentsline {subsubsection}{Třída ABTree<T>}{81}{section*.82}%
+\contentsline {subsubsection}{Třída ABTreeAccumulator<T>}{81}{section*.83}%
+\contentsline {subsubsection}{Řešení Half-Streamed}{81}{section*.84}%
+\contentsline {subsubsection}{Řešení Streamed}{83}{section*.85}%
+\contentsline {subsection}{\numberline {3.4.12}Úprava Group by}{84}{subsection.3.4.12}%
+\contentsline {subsubsection}{Řešení Half-Streamed}{84}{section*.86}%
+\contentsline {subsubsection}{Řešení Streamed}{85}{section*.87}%
+\contentsline {subsubsection}{Třída AggregateBucketResultStreamed<T>}{85}{section*.88}%
+\contentsline {subsubsection}{Třída BucketsKeyValueFactory a třída BucketKeyFactory}{86}{section*.89}%
+\contentsline {subsubsection}{Třída GlobalGroupByStreamed}{86}{section*.90}%
+\contentsline {subsection}{\numberline {3.4.13}Úprava Single group Group by}{87}{subsection.3.4.13}%
+\contentsline {subsubsection}{Třída SingleGroupGroupByHalfStreamed}{87}{section*.91}%
+\contentsline {subsubsection}{Třída SingleGroupGroupByStreamed}{88}{section*.92}%
+\contentsline {section}{\numberline {3.5}Překlad a spuštění dotazovacího enginu}{88}{section.3.5}%
+\contentsline {subsubsection}{Překlad}{88}{section*.93}%
+\contentsline {subsubsection}{Vstupní soubory}{88}{section*.94}%
+\contentsline {subsubsection}{Argumenty programu}{89}{section*.95}%
+\contentsline {subsubsection}{Zadání dotazu}{91}{section*.96}%
+\contentsline {chapter}{\numberline {4}Experiment}{92}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Příprava dat}{92}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Transformace grafových dat}{93}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Generování vlastností vrcholů}{94}{subsection.4.1.2}%
+\contentsline {section}{\numberline {4.2}Výběr dotazů}{95}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Dotazy Match}{96}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Dotazy Order by}{96}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}Dotazy Group by}{97}{subsection.4.2.3}%
+\contentsline {section}{\numberline {4.3}Metodika}{98}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Měření uběhlého času}{99}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Volitelné argumenty konstruktoru dotazu}{99}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Hardwarová specifikace}{100}{subsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.3.4}Příprava hardwaru}{100}{subsection.4.3.4}%
+\contentsline {subsection}{\numberline {4.3.5}Překlad}{100}{subsection.4.3.5}%
+\contentsline {section}{\numberline {4.4}Výsledky}{100}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Match}{100}{subsection.4.4.1}%
+\contentsline {subsubsection}{Paralelizace prohledávání grafu}{101}{section*.97}%
+\contentsline {subsubsection}{Paralelizace slévání výsledků}{101}{section*.98}%
+\contentsline {subsubsection}{Zpomalení paralelních řešení sléváním}{101}{section*.99}%
+\contentsline {subsection}{\numberline {4.4.2}Order by}{103}{subsection.4.4.2}%
+\contentsline {subsubsection}{Obecné shrnutí jednovláknových řešení}{103}{section*.100}%
+\contentsline {subsubsection}{Výsledky jednovláknového zpracování}{104}{section*.101}%
+\contentsline {subsubsection}{Třídění pomocí vlastnosti vůči \texttt {ID}}{104}{section*.102}%
+\contentsline {subsubsection}{Obecné shrnutí paralelních řešení}{104}{section*.103}%
+\contentsline {subsubsection}{Výsledky paralelního zpracování}{104}{section*.104}%
+\contentsline {subsubsection}{Zrychlení paralelních řešení pro O\_Q3 a O\_Q4 }{105}{section*.105}%
+\contentsline {subsubsection}{Rozsah zrychlení paralelních řešení}{105}{section*.106}%
+\contentsline {subsection}{\numberline {4.4.3}Group by}{108}{subsection.4.4.3}%
+\contentsline {subsubsection}{Obecné shrnutí jednovláknových řešení}{108}{section*.107}%
+\contentsline {subsubsection}{Výsledky jednovláknového zpracování}{109}{section*.108}%
+\contentsline {subsubsection}{Zpomalení jednovláknového Half-Streamed řešení}{109}{section*.109}%
+\contentsline {subsubsection}{Porovnání výsledků úložišť List/Bucket jednovláknového zpracování}{109}{section*.110}%
+\contentsline {subsubsection}{Obecné shrnutí paralelních řešení}{113}{section*.111}%
+\contentsline {subsubsection}{Výsledky paralelního zpracování}{113}{section*.112}%
+\contentsline {subsubsection}{Test režie paralelní mapy (jedno vlákno)}{113}{section*.113}%
+\contentsline {subsubsection}{Výsledek testu režie paralelní mapy (jedno vlákno)}{114}{section*.114}%
+\contentsline {subsubsection}{Test režie paralelní mapy (osm vláken)}{114}{section*.115}%
+\contentsline {subsubsection}{Výsledek testu režie paralelní mapy (osm vláken)}{114}{section*.116}%
+\contentsline {subsubsection}{Paralelní Streamed řešení vs paralelní Normal: Global řešení}{115}{section*.117}%
+\contentsline {subsubsection}{Aplikace poznatků jednovláknového zpracování při paralelním zpracování}{115}{section*.118}%
+\contentsline {subsubsection}{Nejrychlejší paralelní řešení}{115}{section*.119}%
+\contentsline {subsubsection}{Obecné shrnutí Single group Group by řešení}{119}{section*.120}%
+\contentsline {subsubsection}{Výsledky Single group Group by zpracování}{120}{section*.121}%
+\contentsline {subsubsection}{Obecný problém synchronizace}{120}{section*.122}%
+\contentsline {chapter}{Závěr}{121}{chapter*.123}%
+\contentsline {chapter}{Seznam použité literatury}{125}{chapter*.125}%
+\contentsline {chapter}{Seznam obr\'azk\r {u}}{127}{chapter*.126}%
+\contentsline {chapter}{Seznam tabulek}{129}{chapter*.127}%
+\contentsline {chapter}{\numberline {A}Přílohy}{130}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Benchmark stromy vůči polím}{130}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Online Git repozitář}{130}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Zdrojové kódy}{130}{section.A.3}%
+\contentsline {section}{\numberline {A.4}Kód pro transformaci grafů}{130}{section.A.4}%
+\contentsline {section}{\numberline {A.5}Použité grafy při experimentu}{130}{section.A.5}%
+\contentsline {section}{\numberline {A.6}Výsledky benchmarku pro jednotlivé grafy}{130}{section.A.6}%

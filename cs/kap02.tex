@@ -82,7 +82,13 @@ Každé vlastnosti tedy přidělíme unikátní identifikátor, který bude klí
 Nyní pokud držíme element grafu, můžeme přistoupit k hodnotě jeho vlastnosti skrze ukazatel na danou třídu.
 Samotný přistup pak může být realizován například generickou funkcí. 
 
-\subsection{Struktury obsahující elementy}
+Mějme $n$ elementů mající stejný \texttt{elType}.
+Paměťová složitost struktury daného \texttt{elType} je $\mathcal{O}(n)$.
+Pro každý element existuje jedna položka v seznamu \texttt{ID} a seznamu pořadí, tj. $\mathcal{O}(2\cdot n)$.
+Navíc pro každý element existují položky v polích hodnot vlastností, což je $\mathcal{O}(n\cdot k)$, kde $k$ je počet vlastností daného \texttt{elType}.
+Výsledně dostaneme $\mathcal{O}(2\cdot n+n\cdot k)$ a odtud lineární paměťová složitost.
+
+\subsection{Struktury obsahující elementy} \label{anal.graphstructs}
 
 Nyní musíme analyzovat jaké struktury by byly ideální pro uchovávání elementů grafu.
 Musíme brát v potaz, že propojení mezi vrcholy pomocí hran přímo ovlivňuje vyhledávání v části \textit{Match}.
@@ -118,6 +124,9 @@ Vrchol by si pak pamatoval rozsah svých hran v příslušných polích.
 Chceme-li procházet hrany vrcholu, stačí procházet pole \texttt{out}/\texttt{in} hran pomocí rozsahů uložených v daném vrcholu.
 Tedy čtyř indexů.
 Skrze indexy můžeme pak pole libovolně iterovat.
+
+Mějme graf $G=(V, E)$, kde $V$ je množina vrcholů a $E$ je množina hran.
+Paměťová složitost výše popsaných polí pro $G$ je $\mathcal{O}(|V|+2\cdot |E|)$, protože existuje pole vrcholů, \texttt{in} hran a \texttt{out} hran.
 
 Uvažovali jsme nad různými alternativami. 
 Například mít jeden typ hrany obsahující všechny nutné informace.
@@ -188,6 +197,7 @@ Tedy \texttt{ID} počátečního vrcholu (\texttt{fromID}) a \texttt{ID} koncov�
 Oddělovače mezi daty jsou implementační detail.
 Pro naše účely se jedná o dostačující formát a poskytuje nám jednoduché možnosti načítání dat.
 Pokud by docházelo v budoucnu k rozšířením, například víceslovné vlastnosti nebo XML vlastnosti, musí dojít k úpravě daných formátů.
+\clearpage
 Pro výše zmíněné schéma by datové soubory mohly vypadat následovně:
 \begin{code}
 Soubor hran (bez hlavičky a komentáře):
@@ -196,8 +206,6 @@ ID elType fromID toID Vlastnosti...
 51 EdgeY 0 1 44 // EdgeY má vlastnost Vlastnost1
                 // s číselnou hodnotou.
 52 EdgeX 1 2   
-\end{code}
-\begin{code}
 Soubor vrcholů (bez hlavičky a komentáře):
 ID elType Vlastnosti...
 0 NodeX    // NodeX nemá vlastnosti.
@@ -291,7 +299,8 @@ Třída reprezentující přístup k \verb+ID+ proměnné:
 class VariableIDAccess: VariableAccess<int> {
   public override bool TryEvaluate(Element[] elms, out int retVal) {
      retVal = elms[accessedVariableID].ID;
-     return true; } }
+     return true; 
+  } }
 \end{code}
 
 Typ návratu funkce je definován pomocí \texttt{T} parametru třídy \texttt{ExpReturnValue}.
@@ -312,9 +321,8 @@ class VariablePropertyAccess<T>: VariableAccess<T> {
   reaonly int accessedPropertyID; 
   public override bool TryEvaluate(Element[] elms, out T retVal) {
     return elms[accessedVariableID].
-               GetPropertyValue<T>(accessedPropertyID, out retVal);
-  }
-}
+               GetPropertyValue<T>(accessedPropertyID, out retVal); 
+  } }
 \end{code}
 
 Zde dojde k volání metody na elementu grafu, který přistoupí k třídě reprezentující jeho \verb+elType+.
@@ -341,7 +349,7 @@ Všechny počítané agregační funkce zadané uživatelem označíme pomocí \
 Druhý koncept představuje nový potomek třídy \texttt{Expression}.
 Daný potomek si pamatuje \verb+ID+ přistoupené agregační funkce a na vstupu očekává strukturu reprezentující skupinu.
 K hodnotě počítané agregace přistoupíme pomocí její \verb+ID+.
-
+\clearpage
 Následuje ukázka prvního konceptu:
 \begin{code}
 abstract class Aggregation { }
@@ -349,15 +357,11 @@ abstract class Aggregation<T>: Aggregation {
   public ExpReturnValue<T> expr; // Argument ag. funkce.
   public abstract void Apply(ValueStorage storage, Element[] elms);
 }
-\end{code}
-\begin{code}
 public class Sum<T>: Aggregation<T>{
   public override void Apply(ValueStorage storage, Element[] elms) {
     if (expr.TryEvaluate(elms, out T retVal)) {
       storage.value += retVal;
-    }
-  }
-}
+    } } }
 \end{code}
 
 Na ukázce výše vidíme položku \verb+expr+, která reprezentuje vstupní výraz agregační funkce.
@@ -372,8 +376,7 @@ class GroupAggValueAccess<T>: ExpReturnValue<T> {
   public override bool TryEvaluate(Group group, out T retVal) {
     retVal = group.GetAggValue<T>(accessedAggFuncID);
     return true; 
-  } 
-}
+  } }
 \end{code}
 
 \verb+Group+ reprezentuje výsledky jedné skupiny.
@@ -398,16 +401,16 @@ class ExpressionIntegerAdd: ExpressionBinOperation<int>{
     } else {
       retVal = default;
       return false;
-    }
-  }
-}
+    } } }
 \end{code}
-
+\clearpage
 Zde \texttt{ExpressionIntegerAdd} rozšiřuje obecný binární operátor a určuje návratovou hodnotu výrazu.
 V těle funkce \texttt{TryEvaluate} dojde k pokusu o vyhodnocení dvou podvýrazů.
 Při úspěchu dojde k vypočtení finální hodnoty a v opačném případě dojde k selhání vyhodnocení. 
 
-Tímto jsme vyřešili problémy načítání a reprezentace expressions pro náš dotazovací engine.
+Obecně k reprezentaci stromu výrazu potřebujeme $\mathcal{O}(n)$ paměti, kde $n$ je počet vrcholů stromu.
+Pro výpočet výrazu potřebujeme projít skrze všechny vrcholy a na každém z nich trávíme konstantní čas, tj. celkově $\mathcal{O}(n)$.
+Tímto jsme vyřešili problémy reprezentace výrazů pro náš dotazovací engine.
 Kód je pouze ilustrační a není finální.
 Použili jsme jej, protože poskytoval lepší možnosti vysvětlení konceptu než obrázek.
 Nyní přistoupíme k~problémům vykonávání dotazu.
@@ -556,7 +559,7 @@ Vlastnosti prohledávání grafu:
 
 \subsection{BFS vs DFS}
 
-Hledání podgrafu v grafu je obecně složitý problém. 
+Hledání podgrafu v grafu je obecně NP složitý problém. 
 Cílem této práce není navrhnout algoritmus pro vyhledávání podgrafu, proto jsme se rozhodli inspirovat a použít obecný postup k řešení daného problému.
 Mezi základní postupy vyhledávání vzoru patří prohledávání do šířky (BFS) a prohledávání do hloubky (DFS) \citep[kap. 4]{graphAlg}. 
 Na základě 1. a 2. kapitoly článku o distribuovaném zpracování PGQL dotazů \citep{asyncPGX} jsme vybrali algoritmus DFS, jelikož v průběhu prohledávání generuje menší množství mezivýsledků.
@@ -681,6 +684,27 @@ K procházení grafu máme navrženou strukturu ze~sekce reprezentace grafu \ref
 Pokud dojde k nalezení podgrafu, tak výsledek bude uložen způsobem ze sekce \ref{anal.tables}.
 V našem případě tedy překopírováním elementů z pole proměnných náležící vzoru.
 
+Mějme graf $G = (V, E)$, kde $V$ je množina vrcholů a $E$ je množina hran.
+Uvažujme nyní, že máme vzor $z$, který obsahuje pouze jednu komponentu $k$.
+Komponenta se skládá z $m_k$ hran a $n_k$ vrcholů.
+Časová složitost prohledávání grafu pro vzor $z$ bude $\mathcal{O}(|V|\cdot |E|^{m_k})$, protože z každého vrcholu je spuštěno prohledávání a~z~prvního vrcholu se v nejhorším případě projde skrze všechny hrany.
+Hrany mají vždy pouze jeden koncový vrchol a z daného vrcholu lze opět projít skrze všechny hrany.
+Přidejme na konec vzoru $z$ druhou komponentu $l$. 
+Vzor označme $z'$.
+Komponenta $l$ má $m_l$ hran a $n_l$ vrcholů.
+Uvažujme, že prohledáváním pro komponentu $k$ jsme nalezli $d_k$ výsledků.
+Časová složitost prohledávání grafu pro vzor $z'$ bude $\mathcal{O}(|V|\cdot |E|^{m_k} + d\cdot |V|\cdot |E|^{m_l})$.
+Prohledávání pro $k$ je rovnocenné a řekli jsme, že při nalezení jednoho výsledku první komponenty se provede prohledávání pro komponentu druhou.
+Ekvivalentně pro více komponent.
+Jsme si vědomi, že se jedná o~pomalý přístup, ale ušetříme tak spoustu paměti, protože nemusíme ukládat mezivýsledky.
+Navíc typický případ je prohledávání pro jednu komponentu.
+Pro experiment (kapitola \ref{expr}) použijeme vyhledávání pouze pro jednu komponentu.
+Urychlení výpočtu skalárního součinu ponecháme jako budoucí rozšíření. 
+Paměťová složitost samotného prohledávání je lineární vzhledem k délce vzoru, protože si musíme ukládat aktuálně procházené elementy.
+Samotný graf je reprezentován strukturu ze sekce \ref{anal.graphstructs}, která zabere $\mathcal{O}(|V|+2\cdot |E|)$.
+Ukládání výsledků do tabulky zabere $\mathcal{O}(d\cdot h)$ času, kde $d$ je počet nalezených výsledků při prohledávání grafu a~$h$~je počet sloupečků tabulky.
+Výsledná tabulka pak zabere $\mathcal{O}(d\cdot h)$ paměti.
+
 \subsection{Paralelizace prohledávání grafu} \label{anal.matchPar}
 
 Nyní přistoupíme k analýze paralelizace prohledávání grafu.
@@ -707,7 +731,7 @@ Děje se tak, protože reálné grafy nemají obecně rovnoměrné rozložení h
 Jedno vlákno by mohlo dostat vrcholy nacházející se v oblasti s množstvím hran, zatímco jiné vlákno by procházelo řídkou oblastí.
 Jelikož se rychle vyčerpaly startovní vrcholy, tak vlákno v řídké oblasti ukončí svou práci mnohem dříve něž vlákno první.
 Nyní se musí čekat na dokončení práce prvního vlákna.
-\clearpage
+
 \begin{figure}[!htp]
 \includegraphics{../img/diaQueryObjectsMatchPar.pdf}\centering
 \caption{Diagram paralelizace prohledávání grafu.}
@@ -759,6 +783,7 @@ Při implementaci chceme ideálně použít již existující knihovny.
 \subsection{Quick sort vs Merge sort}
 
 Uvedeme krátké porovnání na základě 3. kapitoly průvodce algoritmů \citep{labyrint}. 
+Mějme $n$ prvků k setřídění.
 Merge sort má časovou složitost $ \Theta(n\log n) $ i v nejhorším případě, zatímco Quick sort stejné složitosti dociluje pouze v průměrném případě.
 V nejhorším případě má $\Theta(n^2)$.
 Merge sort potřebuje $\Theta(n)$ pomocné paměti a je to stabilní třídící algoritmus.
@@ -860,6 +885,10 @@ Jedné skupině pak přináleží řádek v daném poli.
 Nyní pokud budeme chtít výsledky funkcí skupiny, stačí přistoupit skrze přidělený index ke chtěnému výsledku.
 \end{itemize}
 
+Mějme $d$ výsledků prohledávání grafu a označme $a_{f}$ počet počítaných agregačních funkcí.
+V~nejhorším případě bude každý výsledek reprezentován právě jednou skupinou.
+Pro oba druhy úložišť platí, že zaberou v nejhorším případě $\mathcal{O}(d\cdot a_{f})$ paměti.
+\clearpage
 Následuje ukázka možné implementace dle popisu výše v jazyce C\#:
 \begin{code}
 Bucket:
@@ -900,7 +929,6 @@ Při výpočtu dojde k porovnání a následnému uložení hodnoty.
 V objektu výsledku musíme znát aktuální minimum/maximum.
 Dále, byla-li hodnota již nastavena, protože musíme být schopni rozeznat prázdné úložiště po jeho vytvoření.
 
-
 \item \texttt{count/sum:} výsledek je počet výsledků/součet hodnot výsledků. 
 Při výpočtu musíme přičítat hodnotu k hodnotě v úložišti.
 
@@ -910,13 +938,15 @@ Dochází zde tedy k navýšení počtu výsledků a přičtení nové hodnoty k
 Pro získání finální hodnoty dojde k vypočtení podílu součtu a počtu výsledků.
 \end{itemize}
 
+Každou funkci dokážeme spočítat v konstantním čase.
+
 \subsection{Jednovláknové zpracování} \label{anal.groupby.singlethread}
 
 Po celou dobu budeme pracovat s tabulkou výsledků \textit{Match} části.
 Pro vykonání \textit{Group by} se nám nabízí několik možností.
 První možnost je řádky tabulky setřídit a následně při iteraci vytvářet skupiny a počítat agregační funkce.
 Myslíme, že možnost přináší zbytečnou režii za porovnání při třídění, protože pro každé porovnání musíme vypočítat hodnotu výrazu.
-Z tohoto důvodu chceme využít strukturu, která bude interně používat hešovací tabulku (C\#  \texttt{Dictionary<Key, Value>}).
+Z tohoto důvodu chceme využít strukturu, která bude interně používat hešovací tabulku (C\# \texttt{Dictionary<Key, Value>}).
 Záznam v tabulce bude dvojice \texttt{key/value}. 
 \texttt{key} je zde index do tabulky výsledků z \textit{Match} části (nikoliv proxy třída).
 Chceme ukládat pouze index, abychom ušetřili paměť za ukazatel na tabulku.
@@ -927,6 +957,18 @@ Pro výsledek bude vypočítána heš na základě hodnot klíčů a následně 
 Pokud už je výsledek obsažen v tabulce, tak se pro \texttt{value} (pole nebo index) pouze aktualizují hodnoty výsledků agregačních funkcí.
 V opačném případě bude vložen nový záznam s novou \texttt{value}.
 Pro \textit{Single group Group by} stačí pouze iterovat skrze tabulku a počítat agregační funkce.
+
+Uvažujme, že bychom finálně použili C\# \texttt{Dictionary} ke \textit{Group by}.
+Daná hešovací tabulka je dle dokumentace implementovaná pomocí hešování s přihrádkami \citep[str. 268]{labyrint} a má přístup blízko $\mathcal{O}(1)$ v závislosti na použité hešovací funkci.
+Jako hešovací funkci chceme zvolit nějakou hojně užívanou funkci\footnote{Příkladem mohou být funkce: \url{http://www.cse.yorku.ca/~oz/hash.html} [Dostupnost ověřena k datu 8.5.2021].}.
+Iterujeme výsledky prohledávání grafu a seskupujeme je pomocí dané hešovací tabulky.
+V nejhorším případě se vytváří v tabulce záznam pro každý výsledek prohledávání grafu.
+Tedy zaplněná tabulka společně s~úložišti hodnot agregačních funkcí zabere $\mathcal{O}(d\cdot (a_f+1))$, kde $d$ je počet výsledků prohledávání, $a_f$ je počet počítaných agregačních funkcí a $1$ je za ukládanou proxy třídu.
+Celé jednovláknové seskupování výsledně běží v lineární paměťové i časové složitosti vzhledem k počtu výsledků prohledávání.
+
+Pokud bychom uvažovali mód \textit{Single group Group by}, tak opět procházíme všechny výsledky prohledávání grafu, což nám dá lineární časovou složitost.
+Nyní však existuje pouze jedna skupina, pro kterou počítáme agregační funkce.
+Výsledná paměťová složitost je $\mathcal{O}(a_f)$, kde $a_f$ je počet počítaných agregačních funkcí, protože pro každou funkci si musíme pamatovat její výsledek.
 
 \subsection{Optimalizace při výpočtu heš hodnoty} \label{anal.groupby.opt1}
 
@@ -1059,7 +1101,7 @@ V~lokální části vlákna seskupují přidělené výsledky pomocí lokální 
 V~globální části dochází k dvoucestnému slévání lokálních výsledků vláken.
 
 
-
+\clearpage
 \begin{figure}[!htp]
 \includegraphics{../img/diaLocalGr.pdf}\centering
 \caption{Diagram paralelizace řešení \textbf{Local + dvoucestné slévání} pro 4 vlákna.}
@@ -1285,7 +1327,9 @@ Nejdříve budeme analyzovat způsob jednovláknového zpracování a následně
 \subsection{Jednovláknové zpracování} \label{anal.ordeby.single}
 
 Určili jsme, že tabulka výsledků je totožná s původní.
-Výsledek je vložen na nový řádek tabulky a index je zatříděn do indexační struktury.
+Připomeneme, že ukládání výsledků do tabulky trvá $\mathcal{O}(d\cdot h)$, kde $d$ je počet nalezených výsledků při prohledávání grafu a~$h$~je počet sloupečků tabulky.
+Výsledná tabulka pak zabere $\mathcal{O}(d\cdot h)$ paměti.
+Při nalezení výsledku je výsledek vložen na nový řádek tabulky a index je zatříděn do indexační struktury.
 Potřebujeme jen navrhnout způsob zatřídění indexu do indexační struktury.
 Uvažovali jsme nad dvěma základními přístupy.
 První kombinuje pole indexů s binárním vyhledáváním.
@@ -1295,12 +1339,13 @@ Přístupy popíšeme a následně provedeme malý experiment.
 \subsubsection{Pole indexů + binární vyhledávání}
 
 Myšlenka přístupu je udržovat setříděné pole indexů. 
-V momentě nalezení výsledku je využito binární vyhledávání \citep[str. 26]{labyrint} k nalezení vhodného místa vložení do pole.
-Prvek je vložen do pole.
-Pokud se na místě nacházel již nějaký prvek, prvek je posunut doprava.
-Pokud v poli není dostatek místa, tak je rozšířeno.
-Jedná se vlastně o algoritmus Insert sort (třídění vkládáním).
-Jediným rozdílem je, že k nalezení místa vložení se používá binární vyhledávání.
+Při zatřiďování indexu se využije binární vyhledávání \citep[str. 26]{labyrint}, které najde místo pro vložení indexu do pole.
+Vyhledávání běží v nejhorším případě jako $\mathcal{O}(\log n)$.
+Prvek je následně vložen do pole.
+Pokud se na místě nacházel již nějaký prvek, prvek je posunut doprava, což je $\mathcal{O}(n)$.
+Pokud v poli není dostatek místa, tak je rozšířeno (pro nafukovací pole \citep[str. 211]{labyrint} je to $\mathcal{O}(1)$).
+Jedno zatřídění běží v nejhorším případě jako $\mathcal{O}(n)$.
+Indexační struktura zabere celkově $\mathcal{O}(n)$ paměti. 
 
 Problém zde představuje posouvání prvků v poli.
 Předpokládáme-li, že prvky posouváme napravo, tak v nejhorším případě vložením na začátek pole posuneme všechny prvky.
@@ -1316,9 +1361,13 @@ Navíc zvyšováním počtu mezer se pole značně zvětšuje, tj. roste paměť
 \subsubsection{Vyhledávací stromy}
 
 Druhý přístup využívá vyhledávací stromy \citep[str. 177]{labyrint}.
-Chtěli bychom využít základní druhy vyhledávacích stromů jako binární vyhledávací stromy nebo $(a, b)$-stromy.
+Chtěli bychom využít základní druhy vyhledávacích stromů.
+Například vyvážené binární vyhledávací stromy (AVL stromy, Červeno-černé stromy) nebo $(a, b)$-stromy.
+Připomeneme jejich základní složitosti.
+AVL stromy i Červeno-černé stromy vkládají prvek v~čase $\Theta(\log n)$ a mají prostorovou složitost $\mathcal{O}(n)$. 
+$(a, b)$-stromy vkládají prvek v~čase $\Theta(\log n)$ a mají opět $\mathcal{O}(n)$ prostorovou složitost.
 Výhoda $(a, b)$-stromů je ta, že každý vrchol stromu obsahuje vícero klíčů, zatímco binární vyhledávací stromy drží pouze jeden klíč ve vrcholu.
-Pokud bychom implementovali řešení s vyhledávacími stromy, tak budeme ideálně chtít využít již stávajících knihoven.
+Pokud bychom implementovali řešení s~vyhledávacími stromy, tak budeme ideálně chtít využít již stávajících knihoven.
 
 \subsubsection{Experiment pole vůči vyhledávacím stromům}
 
@@ -1333,7 +1382,7 @@ K otestování jsme vybrali dvě nativní struktury C\#:
 
 \begin{enumerate}
 \item \texttt{List}: reprezentuje případ zatřiďování do pole binárním vyhledáváním.
-\item \texttt{SortedSet}: reprezentuje případ binárního vyhledávacího stromu.
+\item \texttt{SortedSet}: reprezentuje vyvážený binární vyhledávací strom.
 \end{enumerate}
 
 Struktury jsme zaplnili $n$ náhodně generovanými prvky.
@@ -1381,7 +1430,6 @@ Hodnota za názvem testu představuje parametr \textit{m}.}
 \label{tab.orderbyexpr1}
 \end{table}
 
-
 \subsubsection{Experiment (a, b)-strom vůči SortedSet}
 
 Na základě výsledků jsme se rozhodli naimplementovat $(a, b)$-strom \citep[str. 190]{labyrint}, u kterého jsme upravili definici na $b=2a$.
@@ -1389,7 +1437,6 @@ Pro experiment jsme určili parametr $a=128$, protože jsme díky němu dosahova
 Strom jsme porovnali vůči struktuře \texttt{SortedSet} při stejných testech, ale pouze pro nejvyšší řády počtu prvků stavby a vkládání.
 
 \subsubsection{Výsledky}
-
 
 Výsledky jsou zobrazeny v tabulce \ref{tab.orderbyexpr2}.
 Z tabulky vidíme, že při vkládání prvků je rychlejší $(a, b)$-strom.
@@ -1399,10 +1446,11 @@ Výsledky jsou v tabulce \ref{tab.orderbyexpr3}.
 Vidíme, že v experimentu je rychlejší \texttt{SortedSet}.
 Situaci si vysvětlujeme režií za operaci vložení do $(a, b)$-stromu, při které dochází k častému překopírovávání prvků v momentě vytváření nového vrcholu.
 Nicméně, v průběhu experimentu jsme sledovali paměťové vytížení procesu pomocí nativního nástroje \texttt{Memory Usage} Visual Studia 2019.
-Ukázalo se, že v průběhu testu \texttt{SortedSet} dosahovalo využití paměti $6,8$\,GB, zatímco $(a, b)$-strom pouze $2,1$\,GB.
+Ukázalo se, že v průběhu testu \texttt{SortedSet} dosahoval využití paměti $6,8$\,GB, zatímco $(a, b)$-strom pouze $2,1$\,GB.
 Daný jev je způsoben vytvářením nové třídy pro každý vložený prvek do struktury \texttt{SortedSet}.
 Finálně jsme se rozhodli zatřiďování realizovat pomocí $(a, b)$-stromu.
 
+\clearpage
 \begin{table}[!htb]
 \centering
 \begin{tabular}{lD{.}{,}{1.4}D{.}{,}{1.4}}
@@ -1454,6 +1502,8 @@ Pokud vkládáme prvek, který ještě není ve stromě, tak se pro prvek vytvo�
 Pole bude prázdné a položka \texttt{index} je index právě vkládaného řádku.
 Pokud vkládáme prvek, který už se nachází ve stromě, tak prvek pouze vložíme do příslušného pole.
 Tímto způsobem omezíme počet prvků ve stromě a tím i počet porovnání.
+Nicméně, pole musíme občas rozšířit.
+To lze amortizovaně v $\mathcal{O}(1)$ \citep[str. 211]{labyrint}.
 
 Nyní navrhneme způsob paralelizace třídění pro naše módy zpracování.
 V~průběhu návrhu se budeme snažit využít jíž získané informace z předchozí sekce.
@@ -1618,6 +1668,7 @@ Pokud $q\leq D_{max}$, pak $i=q/d'$, protože prvních $n$ rozsahů má o jednu 
 V opačném případě $i=n+((q-D_{max})/d)$, jelikož od $D_{max}$ jsou rozsahy původní velikosti a~předcházelo jim $n$ přihrádek.
 Přičítáme $n$, protože přihrádky jsou číslované od nuly.
 
+Výpočet správné přihrádky pro oba typy trvá konstantní dobu pomocí výše popsaných operací.
 Tímto jsme dokončili návrh vykonávání paralelního \textit{Order by}.
 Dělení popsané v předchozích kapitolách jsme určili na základě jazyka C\#.
 Dané principy se dají aplikovat i v dalších jazycích.
@@ -1637,7 +1688,7 @@ Má totiž stejný průběh vykonání jako model \textbf{Half-Streamed}.
 Oba pracují s myšlenkou práce ve dvou krocích.
 V prvním kroku dochází k lokálnímu vytváření skupin a po dokončení prohledávání grafu dojde ke slévání výsledků vláken.
 Vlákno po dokončení prohledávání nečeká na dokončení práce ostatních vláken, ale rovnou výsledky slévá do sdíleného úložiště.
-Zmiňovali jsme, že se jedná o paralelní mapu/slovník (C\# \texttt{ConcurrentDictionary}).
+Sdílené úložiště je zde paralelní mapa/slovník (C\# \texttt{ConcurrentDictionary}).
 Nepoužijeme zde řešení \textbf{Local + dvoucestné slévání}, protože samotné slévání vytváří nutnost vláken čekat na dokončení práce jiného vlákna.
 Pomocí řešení \textbf{Two-step} se problému kompletně vyhneme.
 
@@ -1721,17 +1772,17 @@ Tímto dokážeme zmenšit počet vytvářených polí.
 Protože vycházíme z~principu \textbf{Global} \textit{Group by} \ref{anal.groupby.global}, tak je zde problémem úložiště List.
 Rozhodli jsme se výsledně dané řešení s úložištěm List neimplementovat.
 
-
 \section{Úprava Single group Group by} \label{anal.improvement.singlegroup}
 
 \textit{Single group Group by} je mód, ve kterém uživatel zadal v dotazu výpočet agregačních funkcí, ale nezadal část \textit{Group by}.
 V tomto případě všechny výsledky prohledávání náleží pouze do jedné skupiny, pro kterou se počítají dané agregační funkce.
 Stačí nám tedy navrhnout způsob vykonání pro naše dva módy \textbf{Streamed} a \textbf{Half-Streamed}.
-Budeme uvažovat pouze paralelní řešení, protože jednovláknové bude pouze určitý případ paralelního.
 Obecně si můžeme všimnout, že výsledky se nemusí ukládat do tabulky.
-Po nalezení výsledku dojde k aktualizaci hodnot agregačních funkcí a výsledek není dále potřeba.
+Po nalezení výsledku dojde k aktualizaci hodnot agregačních funkcí a~výsledek není dále potřeba.
 Ušetříme tedy spoustu paměti za tabulku výsledků.
 Samotný výpočet hodnot funkcí a úložiště hodnot budou totožné s původním řešením.
+Z pohledu jednovláknového řešení se využije $\mathcal{O}(a_f)$ paměti, kde $a_f$ je počet počítaných agregačních funkcí.
+Řešení obecně běží v čase $\mathcal{O}(d\cdot a_f)$, kde $d$ je počet výsledků prohledávání grafu. 
 
 \subsection{Řešení Half-Streamed}
 

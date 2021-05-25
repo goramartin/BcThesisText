@@ -74,6 +74,10 @@ Posledně nastalo urychlení v paralelním i jednovláknovém zpracování \text
 
 \begin{enumerate}
 
+\item Obecné rozšíření dotazovacího enginu:
+
+\begin{enumerate}
+
 \item 
 Rozšíření enginu o možnost zadat \textit{Order by} a \textit{Group by} společně.
 Agregování v průběhu hledání se dá rozdělit na dvě hlavní části.
@@ -83,20 +87,21 @@ Nyní místo seskupování do pole bude stromová struktura obsahovat pouze repr
 V druhé části je nutné vyřešit dotazy, které v části \textit{Order by} obsahují výrazy agregačních funkcí.
 Zde je největší problém fakt, že výsledky agregačních funkcí jsou známy pouze po dokončení \textit{Group by}.
 
-\item Testování daných řešení na grafech s reálnými vlastnostmi.
-V našem experimentu jsme sice volili reálné grafy, ale jejich vlastnosti jsme uměle vygenerovali.
+\item
+V budoucích rozšířeních lze uvažovat nad vypracováním důmyslnějšího exekučního plánu prohledávání v části \textit{Match}.
+Exekučním plánem zde myslíme vrcholy, ze kterých začíná prohledávání grafu.
+V našem případě jsme pouze vytvořili souvislé komponenty z posloupností v~části dotazu \texttt{Match} (sekce \ref{anal.match} a \ref{impl.match}).
+Obecně lze však využít efektivnější přístupy.
+Například dojde k rozšíření dotazovacího enginu o část dotazu \textit{Where} (ekvivalent SQL \textit{Where}) a~uživatel zadá dotaz \texttt{select count(*) match (x) -> (y) -> (z) where z.Vlastnost == 42}.
+\\*Zde se jeví jako efektivnější přístup spustit prohledávání z vrcholu \texttt{z} a hledat vzor \texttt{(z) <- (y) <- (x)}, protože již v prvním kroku můžeme zjistit, že existuje jen pár vrcholů \texttt{z} splňujících podmínku \textit{Where}.
+V~našem případě by však došlo ke spuštění prohledávání z proměnné \texttt{x}.
+Výsledně bychom procházeli první dva vrcholy \texttt{x} a \texttt{y} zbytečně, když následně zjistíme, že pro ně žádný vrchol \texttt{z} neexistuje.
 
-\item Sledování obecného problému rozdělení dat při paralelizaci vylepšených řešení. 
-\textbf{Normal} přistup má vždy všechna data připravená v paměti a při zpracování je rovnoměrně rozděluje mezi vlákny.
-Vlákna tedy mají vždy stejný počet výsledků pro zpracování.
-Navíc díky kompletnosti dat lze data optimálněji zpracovávat a použít větší množství obecných algoritmů.
-Například při třídění jsme použili základní algoritmus Merge sort, který není možný aplikovat při třídění v průběhu vyhledávání.  
-Rozdělení práce vylepšených řešení závisí na počtu vyhledaných výsledků v každém vlákně.
-Mohou nastávat případy, kdy jedno vlákno má více výsledků ke zpracování než ostatní. 
-Daný problém jsme se v našem řešení prohledávání snažili vyřešit pomocí přidělování malých skupin vrcholů vláknům.
-Vlákno po prohledání daných vrcholů zažádalo o další.
-Nicméně, dané řešení nemůže zaručit stoprocentně rovnoměrné rozdělení práce.
-Bylo by vhodné prozkoumat, jak daná situace ovlivňuje naše řešení.
+\item
+V budoucnu lze vylepšit dotazy, které obsahují skalární součin hledaných podgrafů v části \textit{Match}.
+V našem řešení jsme použili pouze triviální přistup, který je pomalý.
+
+\end{enumerate}
 
 \item Rozšíření \textit{Order by}:
 \begin{enumerate}
@@ -123,10 +128,32 @@ V budoucím výzkumu je možné prozkoumat a navrhnout komplexnější návrhy p
 
 \end{enumerate}
 
+
+\item Rozšíření testování:
+\begin{enumerate}
+
+\item Testování daných řešení na grafech s reálnými vlastnostmi.
+V našem experimentu jsme sice volili reálné grafy, ale jejich vlastnosti jsme uměle vygenerovali.
+
 \item
 Obecně paralelní řešení \textit{Group/Order by} jsme otestovali jen při využití osmi vláken.
 V budoucím výzkumu by bylo vhodné prozkoumat škálovatelnost řešení pro různé počty vláken.
- 
+
+\item 
+Sledování obecného problému rozdělení dat při paralelizaci vylepšených řešení. 
+\textbf{Normal} přistup má vždy všechna data připravená v paměti a při zpracování je rovnoměrně rozděluje mezi vlákny.
+Vlákna tedy mají vždy stejný počet výsledků pro zpracování.
+Navíc díky kompletnosti dat lze data optimálněji zpracovávat a použít větší množství obecných algoritmů.
+Například při třídění jsme použili základní algoritmus Merge sort, který není možný aplikovat při třídění v průběhu vyhledávání.  
+Rozdělení práce vylepšených řešení závisí na počtu vyhledaných výsledků v každém vlákně.
+Mohou nastávat případy, kdy jedno vlákno má více výsledků ke zpracování než ostatní. 
+Daný problém jsme se v našem řešení prohledávání snažili vyřešit pomocí přidělování malých skupin vrcholů vláknům.
+Vlákno po prohledání daných vrcholů zažádalo o další.
+Nicméně, dané řešení nemůže zaručit stoprocentně rovnoměrné rozdělení práce.
+Bylo by vhodné prozkoumat, jak daná situace ovlivňuje naše řešení.
+
+\end{enumerate}
+
 \item
 Dotazy v našem dotazovacím enginu jsou zadávány pomocí podmnožiny jazyka PGQL.
 Při implementaci jsme se snažili oddělit načítání dotazu od zpracování dotazu.
@@ -139,15 +166,6 @@ Nicméně, dané konstruktory a rozhraní \texttt{IVisitor} se dají jednoduše 
 Přínosem je pak možnost využít i jiné dotazovací jazyky za cenu malých úprav.
 Dalším přínosem je také možnost využít třídu \texttt{Tokenizer} a \texttt{Parser} jako separátní knihovnu k načítání PGQL dotazu pro jazyk C\#, protože dle našeho průzkumu neexistuje v C\# knihovna pro práci s PGQL. 
 
-\item
-V budoucích rozšířeních lze uvažovat nad vypracováním důmyslnějšího exekučního plánu prohledávání v části \textit{Match}.
-Exekučním plánem zde myslíme vrcholy, ze kterých začíná prohledávání grafu.
-V našem případě jsme pouze vytvořili souvislé komponenty z posloupností v části dotazu \texttt{Match} (sekce \ref{anal.match} a \ref{impl.match}).
-Obecně lze však využít efektivnější přístupy.
-Například dojde k rozšíření dotazovacího enginu o část dotazu \textit{Where} (ekvivalent SQL \textit{Where}) a~uživatel zadá dotaz \texttt{select count(*) match (x) -> (y) -> (z) where z.Vlastnost == 42}.
-Zde se jeví jako efektivnější přístup spustit prohledávání z vrcholu \texttt{z} a hledat vzor \texttt{(z) <- (y) <- (x)}, protože již v prvním kroku můžeme zjistit, že existuje jen pár vrcholů \texttt{z} splňujících podmínku \textit{Where}.
-V našem případě by však došlo ke spuštění prohledávání z proměnné \texttt{x}.
-Výsledně bychom procházeli první dva vrcholy \texttt{x} a \texttt{y} zbytečně, když následně zjistíme, že pro ně žádný vrchol \texttt{z} neexistuje.
 
 \end{enumerate}
 
