@@ -62,7 +62,7 @@ Při příkladu transformace budeme vycházet z následující ukázky hlavičky
 
 Výstupem transformace budou soubory popisující schéma vrcholů/hran \textit{NodeTypes.txt}/\textit{EdgeTypes.txt} a datové soubory vrcholů/hran \textit{Nodes.txt}/\textit{Edges.txt}.
 V~našem případě graf bude obsahovat pouze jeden typ hrany a jeden typ vrcholu. 
-Dané omezení pouze snižuje počet nalezených výsledků, což není určující pro náš experiment. 
+Dané omezení pouze ovlivňuje pouze část \textit{Match}, což není určující pro náš experiment. 
 
 Ukázka zvoleného schématu pro \textit{Nodes.txt}/\textit{Edges.txt}:
 \begin{code}
@@ -174,8 +174,8 @@ Zvolené inicializační hodnoty byly vygenerovány rovněž náhodně.
 \toprule
 \mc{} & \mc{\textbf{Inicializační hodnota}} \\
 \midrule
-Amazon0601     & 429185 \\
-WebBerkStan &  20022 \\
+Amazon0601     & 429 185 \\
+WebBerkStan &  20 022 \\
 As-Skitter    & 82 \\
 \bottomrule
 \end{tabular}
@@ -318,7 +318,7 @@ Tímto jsme dokázali shora omezit počet skupin v dotazech G\_Q7 a G\_Q8 horní
 Další nutnou znalostí je způsob paralelizace prohledávání grafu (sekce \ref{anal.matchPar}).
 Každé vlákno provádí prohledávání grafu z určité části vrcholů v~grafu.
 Platí, že každé vlákno neprovede prohledávání ze stejného vrcholu jako vlákno jiné.
-Tedy vrcholy představující proměnnou x jsou unikátní pro každé vlákno, taktéž hodnoty jejich vlastností.
+Tedy vrcholy představující proměnnou \texttt{x} jsou unikátní pro každé vlákno, taktéž hodnoty jejich vlastností.
 Při paralelizaci se provádí paralelní slévání výsledků do globální struktury.
 V dotazech G\_Q3 a G\_Q6 pak vlákna při slévání výsledků vytvářejí vždy nové záznamy v dané struktuře, jelikož výsledky vláken jsou vždy rozdílné.  
 To nám umožní sledovat situaci, kdy vlákna vytvářejí navzájem rozdílné záznamy.
@@ -329,7 +329,7 @@ Následuje shrnutí:
 \begin{itemize}
 
 \item G\_Q1 testuje \textit{Single group Group by}. Vše je agregováno pouze do jedné skupiny. 
-\item G\_Q2 a G\_Q3  testuje vytváření skupin podle \verb+ID+ vrcholů. Rozdíl mezi nimi je ten, že proměnná x je při paralelním zpracování přístupná pouze jednomu vláknu za celý běh vyhledávání. Maximální počet skupin je shora omezen počtem vrcholů v~grafu.
+\item G\_Q2 a G\_Q3  testuje vytváření skupin podle \verb+ID+ vrcholů. Rozdíl mezi nimi je ten, že proměnná \texttt{x} je při paralelním zpracování přístupná pouze jednomu vláknu za celý běh vyhledávání. Maximální počet skupin je shora omezen počtem vrcholů v~grafu.
 \item G\_Q4 a G\_Q5 přidávají režii za ukládání a zpracovávání další proměnné. Počet skupin je shora omezen počtem hran v~grafu. Tyto dotazy obsahují nejvíce skupin mezi zbylými dotazy.
 \item G\_Q6 testuje vytváření skupin náhodně vygenerovaných hodnot z celého rozsahu \verb+Int32+ (viz \ref{tab.grafProps}). Počet skupin je shora omezen počtem vrcholů v~grafu.
 \item G\_Q7 testuje vytváření skupin náhodně vygenerovaných hodnot z rozsahu $[0; 100$ $000]$ \verb+Int32+ (viz \ref{tab.grafProps}). Dojde k rozprostření několika stejných hodnot v~grafu. Maximální počet skupin je 100 000.
@@ -396,7 +396,7 @@ Navíc náš hardware a operační systém umožňují využití časovače s vy
 
 \subsection{Volitelné argumenty konstruktoru dotazu}
 
-Pro měření argumenty \verb+FixedArraySize+ a \verb+VerticesPerThread+ (sekce \ref{impl.arguments}) jsme volili následovně:
+Argumenty \verb+FixedArraySize+ a \verb+VerticesPerThread+ (sekce \ref{impl.arguments}) jsme zvolili pro experiment následovně:
 
 \begin{table}[!htb]
 \centering
@@ -566,7 +566,11 @@ V~tomto případě bychom zbytečně navyšovali režii za vzniklá pole, která
 \subsubsection{Třídění pomocí vlastnosti vůči \texttt{ID}}
 
 Dle našich předpokladů se ukázalo, že třídění pomocí hodnot vlastnosti (dotazy O\_Q3 a O\_Q4) vůči \verb+ID+ (dotazy O\_Q1 a O\_Q2) vede ke znatelnému zpomalení.
-Je to způsobeno nutným přístupem k databázi, při kterém se ověřuje, jestli daná vlastnost existuje na daném elementu a následném čtení hodnoty ze struktury obsahující ji.
+Při čtení hodnoty vlastnosti elementu grafu se přistupuje k databázi.
+Během přístupu se ověřuje, zda daná vlastnost existuje na daném elementu.
+Následně se hodnota načte.
+Hodnota \texttt{ID} je uložena přímo ve struktuře elementu.
+Hodnota tedy vždy existuje a nemusí se přistupovat k úložišti hodnot vlastností.
 
 \subsubsection{Obecné shrnutí paralelních řešení}
 
@@ -806,7 +810,7 @@ Byli jsme překvapeni, že vylepšená řešení se mnohdy nevyrovnala původní
 Danou situaci si vysvětlujeme synchronizací. 
 První vrstva synchronizace nastává u přístupu k~paralelní mapě a čtení/vložení záznamu.
 Po získání \verb+value+ z mapy následuje druhá vrstva, která obsahuje volání thread-safe funkcí pro výpočet agregovaných hodnot pro danou skupinu.
-Z grafů \ref{figure.amazonGQ1Par}, \ref{figure.webberkstanGQ1Par} a \ref{figure.skitterGQ1Par} (paralelní \textbf{Streamed} řešení) v sekci \ref{expr.results.groupby.sinleGroup} je pak vidět značnou režii za synchronizaci za thread-safe agregační funkce při přístupu osmi vláken.
+Z grafů \ref{figure.amazonGQ1Par}, \ref{figure.webberkstanGQ1Par} a \ref{figure.skitterGQ1Par} (paralelní \textbf{Streamed} řešení) v sekci \ref{expr.results.groupby.sinleGroup} je pak vidět značnou režii za synchronizaci thread-safe agregačních funkcí při přístupu osmi vláken.
 
 \subsubsection{Test režie paralelní mapy (jedno vlákno)}
 
@@ -994,9 +998,9 @@ Jednovláknové \textbf{Half-Streamed} a \textbf{Streamed} řešení jsou totož
 V průběhu prohledávání aktualizují hodnotu agregační funkce a výsledek zahodí. 
 Paralelní \textbf{Normal} řešení všem vláknům přidělí stejný počet výsledků prohledávání a každé lokálně spočte hodnoty agregačních funkcí.
 Po ukončení práce všech vláken jedno vybrané vlákno sloučí výsledky všech ostatních vláken. 
-Řešení \textbf{Half-Streamed} provádí stejnou práci jako v jednovláknovém zpracování.
+V řešení \textbf{Half-Streamed} vlákna provádí stejnou práci jako v jednovláknovém zpracování.
 Po dokončení prohledávání dojde ke sloučení všech lokálních výsledků.
-\textbf{Streamed} řešení pracuje se sdíleným úložištěm výsledků a používá thread-safe funkce k aktualizaci výsledků.
+V \textbf{Streamed} řešení vlákna pracují se sdíleným úložištěm výsledků a používá thread-safe funkce k aktualizaci výsledků.
 Obě řešení výsledky neukládají.
 
 \begin{figure}[!htp]
