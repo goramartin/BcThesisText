@@ -116,6 +116,11 @@ Frank Buschmann, Regine Meunier, Hans Rohnert, Peter Sommerlad, and Michael
 \newblock {\em Pattern-oriented Software Architecture: A System of Patterns}.
 \newblock John Wiley \& Sons, Inc., New York, NY, USA, 1996.
 
+\bibitem{labyrint}
+Martin Mareš and Tomáš Valla.
+\newblock {\em Průvodce labyrintem algoritmů}.
+\newblock CZ.NIC, z.s.p.o., 2017.
+
 \bibitem{asyncPGX}
 Nicholas~P. Roth, Vasileios Trigonakis, Sungpack Hong, Hassan Chafi, Anthony
   Potter, Boris Motik, and Ian Horrocks.
@@ -123,11 +128,6 @@ Nicholas~P. Roth, Vasileios Trigonakis, Sungpack Hong, Hassan Chafi, Anthony
 \newblock In {\em Proceedings of the Fifth International Workshop on Graph
   Data-Management Experiences and Systems}, GRADES'17, New York, NY, USA, 2017.
   Association for Computing Machinery.
-
-\bibitem{labyrint}
-Martin Mareš and Tomáš Valla.
-\newblock {\em Průvodce labyrintem algoritmů}.
-\newblock CZ.NIC, z.s.p.o., 2017.
 
 \bibitem{hpcsharp}
 Victor~J. Duvanenko.

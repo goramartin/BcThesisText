@@ -90,7 +90,7 @@
 \contentsline {subsubsection}{Nový přístup ukládání výsledků}{53}{section*.38}%
 \contentsline {subsubsection}{Sloučení pole klíčů a pole úložiště agregačních funkcí}{54}{section*.39}%
 \contentsline {section}{\numberline {2.11}Úprava Single group Group by}{54}{section.2.11}%
-\contentsline {subsection}{\numberline {2.11.1}Řešení Half-Streamed}{54}{subsection.2.11.1}%
+\contentsline {subsection}{\numberline {2.11.1}Řešení Half-Streamed}{55}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}Řešení Streamed}{55}{subsection.2.11.2}%
 \contentsline {chapter}{\numberline {3}Implementace}{56}{chapter.3}%
 \contentsline {section}{\numberline {3.1}Výběr jazyka}{56}{section.3.1}%

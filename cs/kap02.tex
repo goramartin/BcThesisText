@@ -408,12 +408,10 @@ Zde \texttt{ExpressionIntegerAdd} rozšiřuje obecný binární operátor a urč
 V těle funkce \texttt{TryEvaluate} dojde k pokusu o vyhodnocení dvou podvýrazů.
 Při úspěchu dojde k vypočtení finální hodnoty a v opačném případě dojde k selhání vyhodnocení. 
 
-Obecně k reprezentaci stromu výrazu potřebujeme $\mathcal{O}(n)$ paměti, kde $n$ je počet vrcholů stromu.
-Pro výpočet výrazu potřebujeme projít skrze všechny vrcholy a na každém z nich trávíme konstantní čas, tj. celkově $\mathcal{O}(n)$.
-Tímto jsme vyřešili problémy reprezentace výrazů pro náš dotazovací engine.
-Kód je pouze ilustrační a není finální.
-Použili jsme jej, protože poskytoval lepší možnosti vysvětlení konceptu než obrázek.
-Nyní přistoupíme k~problémům vykonávání dotazu.
+Obecně k reprezentaci stromu výrazu potřebujeme $\mathcal{O}(v)$ paměti, kde $v$ je počet vrcholů stromu.
+Pro výpočet výrazu potřebujeme projít skrze všechny vrcholy a~na každém z nich trávíme konstantní čas, tj. celkově $\mathcal{O}(v)$.
+V našich vybraných případech (přístup k hodnotě \texttt{ID}/vlastnosti/výsledku agregační funkce a výpočet logiky agregační funkce) je $v=1$.
+Výsledně při výpočtu $m$ výrazů pro $n$ prvků trávíme čas $\mathcal{O}(m\cdot n)$, což je lineární vzhledem k $n$.
 
 \section{Vykonání dotazu} \label{anal.vykonanidotazu}
 
@@ -523,6 +521,9 @@ Problém se dá částečně řešit uchováváním výsledků, ale konkrétní 
 V tento moment jsme se rozhodli jít cestou menší paměťové náročnosti na úkor výkonnosti.
 Pro výsledky \textit{Group by} můžeme opět v představě volit tabulku.
 Jediný rozdíl bude, že řádek zde bude reprezentovat jednu skupinu (opět uložené elementy grafu) společně s~vypočtenými hodnotami agregačních funkcí.
+
+Ukládání výsledků do tabulky zabere $\mathcal{O}(d\cdot h)$ času (rozšíření tabulky amortizovaně v $\mathcal{O}(1)$ \citep[str. 211]{labyrint}), kde $d$ je počet nalezených výsledků při prohledávání grafu a~$h$~je počet sloupečků tabulky.
+Výsledná tabulka pak zabere $\mathcal{O}(d\cdot h)$ paměti.
 
 \subsection{Proxy třída jako řádek tabulky}
 
@@ -820,7 +821,7 @@ Pokud dojde k porovnání řádků, pro který byl výraz již vypočítán, tak
 
 \subsection{Optimalizace porovnání stejných elementů} \label{anal.orderby.opt2}
 
-Další možná optimalizace porovnání může nastat v případě, pokud pro použitý graf platí \#Vrcholů $<<$ \#Hran.
+Další možná optimalizace porovnání může nastat v případě, pokud pro použitý graf platí \#Vrcholů $\ll $ \#Hran.
 Daná vlastnost může mít za následek, že porovnávané řádky budou často obsahovat stejné elementy pro dotazy typu:
 \begin{code}
 select x.PropOne match (x) -> (y) order by x.PropOne;
@@ -963,12 +964,13 @@ Daná hešovací tabulka je dle dokumentace implementovaná pomocí hešování 
 Jako hešovací funkci chceme zvolit nějakou hojně užívanou funkci\footnote{Příkladem mohou být funkce: \url{http://www.cse.yorku.ca/~oz/hash.html} [Dostupnost ověřena k datu 8.5.2021].}.
 Iterujeme výsledky prohledávání grafu a seskupujeme je pomocí dané hešovací tabulky.
 V nejhorším případě se vytváří v tabulce záznam pro každý výsledek prohledávání grafu.
-Tedy zaplněná tabulka společně s~úložišti hodnot agregačních funkcí zabere $\mathcal{O}(d\cdot (a_f+1))$, kde $d$ je počet výsledků prohledávání, $a_f$ je počet počítaných agregačních funkcí a $1$ je za ukládanou proxy třídu.
+Tedy zaplněná tabulka společně s~úložišti hodnot agregačních funkcí zabere $\mathcal{O}(d\cdot a_f+ d)$, kde $d$ je počet výsledků prohledávání a $a_f$ je počet počítaných agregačních funkcí.
+$+d$ je za ukládanou proxy třídu řádků.
 Celé jednovláknové seskupování výsledně běží v lineární paměťové i časové složitosti vzhledem k počtu výsledků prohledávání.
 
 Pokud bychom uvažovali mód \textit{Single group Group by}, tak opět procházíme všechny výsledky prohledávání grafu, což nám dá lineární časovou složitost.
 Nyní však existuje pouze jedna skupina, pro kterou počítáme agregační funkce.
-Výsledná paměťová složitost je $\mathcal{O}(a_f)$, kde $a_f$ je počet počítaných agregačních funkcí, protože pro každou funkci si musíme pamatovat její výsledek.
+Výsledná paměťová složitost je $\mathcal{O}(a_f)$, protože pro každou funkci si musíme pamatovat její výsledek.
 
 \subsection{Optimalizace při výpočtu heš hodnoty} \label{anal.groupby.opt1}
 
@@ -1340,10 +1342,10 @@ Přístupy popíšeme a následně provedeme malý experiment.
 
 Myšlenka přístupu je udržovat setříděné pole indexů. 
 Při zatřiďování indexu se využije binární vyhledávání \citep[str. 26]{labyrint}, které najde místo pro vložení indexu do pole.
-Vyhledávání běží v nejhorším případě jako $\mathcal{O}(\log n)$.
+Vyhledávání běží v nejhorším případě jako $\mathcal{O}(\log n)$, kde $n$ je počet prvků v poli.
 Prvek je následně vložen do pole.
 Pokud se na místě nacházel již nějaký prvek, prvek je posunut doprava, což je $\mathcal{O}(n)$.
-Pokud v poli není dostatek místa, tak je rozšířeno (pro nafukovací pole \citep[str. 211]{labyrint} je to $\mathcal{O}(1)$).
+Pokud v poli není dostatek místa, tak je rozšířeno (pro nafukovací pole \citep[str. 211]{labyrint} je to amortizovaně $\mathcal{O}(1)$).
 Jedno zatřídění běží v nejhorším případě jako $\mathcal{O}(n)$.
 Indexační struktura zabere celkově $\mathcal{O}(n)$ paměti. 
 
@@ -1364,7 +1366,7 @@ Druhý přístup využívá vyhledávací stromy \citep[str. 177]{labyrint}.
 Chtěli bychom využít základní druhy vyhledávacích stromů.
 Například vyvážené binární vyhledávací stromy (AVL stromy, Červeno-černé stromy) nebo $(a, b)$-stromy.
 Připomeneme jejich základní složitosti.
-AVL stromy i Červeno-černé stromy vkládají prvek v~čase $\Theta(\log n)$ a mají prostorovou složitost $\mathcal{O}(n)$. 
+AVL stromy i Červeno-černé stromy vkládají prvek v~čase $\Theta(\log n)$, kde $n$ je počet prvků ve stromě, a mají prostorovou složitost $\mathcal{O}(n)$. 
 $(a, b)$-stromy vkládají prvek v~čase $\Theta(\log n)$ a mají opět $\mathcal{O}(n)$ prostorovou složitost.
 Výhoda $(a, b)$-stromů je ta, že každý vrchol stromu obsahuje vícero klíčů, zatímco binární vyhledávací stromy drží pouze jeden klíč ve vrcholu.
 Pokud bychom implementovali řešení s~vyhledávacími stromy, tak budeme ideálně chtít využít již stávajících knihoven.
@@ -1713,6 +1715,11 @@ Zbytek zpracování bude totožný s původním řešením \textbf{Two-step}.
 Úložiště hodnot agregačních funkcí bude implementováno rovněž totožně.
 Platí pro něj obdobné problémy, které jsme již zmínili v sekci popisu daného zpracování \ref{anal.groupby.twostep}. 
 
+Výsledně z pohledu jednovláknového řešení při seskupení trávíme čas $\mathcal{O}(d)$, kde $d$ je počet nalezených výsledků prohledávání grafu.
+Prostorová složitost seskupení je $\mathcal{O}((s\cdot a_f+s)+(s\cdot k))$, kde $a_f$ je počet počítaných agregačních funkcí, $k$ je počet sloupečků tabulky výsledků prohledávání a $s$ je počet vytvořených skupin.
+První závorka obsahuje využitou paměť hešovací tabulky a druhá obsahuje paměť tabulky výsledků prohledávání. 
+V nejhorším případě je $s=d$, ale v typickém případě je $s\ll d$. Výsledně je využitá paměť lineární vzhledem k $s$.
+
 \subsection{Řešení Streamed}
 
 Při tomto řešení budeme vycházet z přístupu \textbf{Global} \textit{Group by} ze sekce \ref{anal.groupby.global}, protože zpracovává výsledky stejným způsobem jako model \textbf{Streamed}.
@@ -1772,6 +1779,12 @@ Tímto dokážeme zmenšit počet vytvářených polí.
 Protože vycházíme z~principu \textbf{Global} \textit{Group by} \ref{anal.groupby.global}, tak je zde problémem úložiště List.
 Rozhodli jsme se výsledně dané řešení s úložištěm List neimplementovat.
 
+Výsledně z pohledu jednovláknového řešení při seskupení trávíme čas $\mathcal{O}(d)$, kde $d$ je počet nalezených výsledků prohledávání grafu.
+Prostorová složitost seskupení je $\mathcal{O}(s\cdot a_f + s\cdot c)$, kde $a_f$ je počet počítaných agregačních funkcí, $c$~je počet klíčů seskupení a $s$ je počet vytvořených skupin.
+První člen složitosti obsahuje paměť k~uložení výsledků agregačních funkcí a druhý člen obsahuje paměť k~uložení hodnot klíčů seskupení.
+Vše je uloženo v hešovací tabulce. 
+Jako u~\textbf{Half-Streamed} je v nejhorším případě $s=d$, ale v~typickém případě je $s\ll d$. Výsledně je využitá paměť lineární vzhledem k $s$.
+
 \section{Úprava Single group Group by} \label{anal.improvement.singlegroup}
 
 \textit{Single group Group by} je mód, ve kterém uživatel zadal v dotazu výpočet agregačních funkcí, ale nezadal část \textit{Group by}.
@@ -1782,7 +1795,7 @@ Po nalezení výsledku dojde k aktualizaci hodnot agregačních funkcí a~výsle
 Ušetříme tedy spoustu paměti za tabulku výsledků.
 Samotný výpočet hodnot funkcí a úložiště hodnot budou totožné s původním řešením.
 Z pohledu jednovláknového řešení se využije $\mathcal{O}(a_f)$ paměti, kde $a_f$ je počet počítaných agregačních funkcí.
-Řešení obecně běží v čase $\mathcal{O}(d\cdot a_f)$, kde $d$ je počet výsledků prohledávání grafu. 
+Řešení obecně běží v čase $\mathcal{O}(d)$, kde $d$ je počet výsledků prohledávání grafu. 
 
 \subsection{Řešení Half-Streamed}
 
