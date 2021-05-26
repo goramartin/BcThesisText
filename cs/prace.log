@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  26 MAY 2021 19:24
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.10)  26 MAY 2021 19:34
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -894,15 +894,8 @@ Kapitola 3.
 
 
 ] [57] [58] [59] [60] [61] [62] [63] [64] [65] [66] [67] [68] [69] [70]
-[71] [72] [73] [74]
-Overfull \hbox (14.23172pt too wide) in paragraph at lines 871--877
-\T1/lmr/m/n/12 jako prin-cip \T1/lmr/m/it/12 Com-pare and Ex-change\T1/lmr/m/n/
-12 . Po-tomci dané t°ídy jsou \T1/lmtt/m/n/12 Min<T> \T1/lmr/m/n/12 a \T1/lmtt/
-m/n/12 Max<T>\T1/lmr/m/n/12 .|
- []
-
-[75] [76] [77] [78] [79] [80] [81] [82] [83] [84] [85] [86] [87] [88] [89]
-[90]) [91]
+[71] [72] [73] [74] [75] [76] [77] [78] [79] [80] [81] [82] [83] [84] [85]
+[86] [87] [88] [89] [90]) [91]
 \openout2 = `kap04.aux'.
 
  (./kap04.tex
@@ -911,7 +904,9 @@ Kapitola 4.
 
 
 
-] [93] [94] [95
+] [93] [94
+
+] [95
 
 ] [96] [97] [98
 
@@ -1326,7 +1321,7 @@ i10.pfb></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb></usr/share/texmf/fo
 nts/type1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy8.pf
 b></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf/fonts/ty
 pe1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt12.pfb>
-Output written on prace.pdf (135 pages, 2154224 bytes).
+Output written on prace.pdf (135 pages, 2154247 bytes).
 PDF statistics:
  2494 PDF objects out of 2984 (max. 8388607)
  2101 compressed objects within 22 object streams
