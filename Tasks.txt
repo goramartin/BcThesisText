@@ -1,15 +1,4 @@
 
-prilohy:
-Cely solution applikace
-Banechmark trees vs arrays
-Perperty generator
-GraphData builder
-Prilohy namerenych dat:
-	odamazat duplicitni zaznamy z Q1 a nechat jen to pouzite v datovych souborech + prepis te promene v nazvu
-upravit vypis v aplikaci query engine. 
-------------------------------
-
-dopsat tam casove a prostorove slozitosti
-------------------------------
+Nothing to do...
 
 
